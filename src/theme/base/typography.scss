@@ -1,0 +1,98 @@
+@import "mixins";
+
+/** Fonts CSS Variables **/
+:root {
+  /** typeface **/
+  --font-primary: 'Nunito', 'sans-serif';
+
+  /** sizing **/
+  --font-size-display: 4rem;
+  --font-size-heading-1: 2rem;
+  --font-size-heading-2: 1.75rem;
+  --font-size-heading-3: 1.5rem;
+  --font-size-heading-4: 1.25rem;
+  --font-size-heading-5: 1.125rem;
+  --font-size-paragraph-xl: 1.25rem;
+  --font-size-paragraph-l: 1.125rem;
+  --font-size-paragraph-m: 1rem;
+  --font-size-paragraph-s: 0.875rem;
+  --font-size-paragraph-xs: 0.75rem;
+
+  /** line-height **/
+  --font-line-height-display: 4rem;
+  --font-line-height-heading-1: 2.5rem;
+  --font-line-height-heading-2: 2.25rem;
+  --font-line-height-heading-3: 2rem;
+  --font-line-height-heading-4: 1.75rem;
+  --font-line-height-heading-5: 1.5rem;
+  --font-line-height-paragraph-xl: 1.75rem;
+  --font-line-height-paragraph-l: 1.5rem;
+  --font-line-height-paragraph-m: 1.5rem;
+  --font-line-height-paragraph-s: 1.25rem;
+  --font-line-height-paragraph-xs: 1rem;
+
+  /** weight **/
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+}
+
+.font-display {
+  font-size: var(--font-size-display);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--font-line-height-display);
+}
+
+h1,
+.font-heading-1 {
+  @include heading-1;
+
+  &.font-heading-1--bold {
+    font-weight: var(--font-weight-extrabold);
+  }
+}
+
+h2,
+.font-heading-2 {
+  @include heading-2;
+}
+
+h3,
+.font-heading-3 {
+  @include heading-3;
+}
+
+h4,
+.font-heading-4 {
+  @include heading-4;
+}
+
+h5,
+.font-heading-5 {
+  @include heading-5;
+}
+
+.font-paragraph-xl {
+  @include paragraph-xl;
+}
+
+.font-paragraph-l {
+  @include paragraph-l;
+}
+
+p,
+ul li,
+.font-paragraph-m {
+  @include paragraph-m;
+}
+
+.font-paragraph-s {
+  @include paragraph-s;
+}
+
+.font-paragraph-xs {
+  @include paragraph-xs;
+}

@@ -20,7 +20,13 @@
 
 /* Optional CSS utils that can be commented out */
 @import "@ionic/angular/css/padding.css";
-@import "@ionic/angular/css/float-elements.css";
+// @import "@ionic/angular/css/float-elements.css";
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
-@import "@ionic/angular/css/flex-utils.css";
+// @import "@ionic/angular/css/flex-utils.css";
+
+// Base Theme configuration
+@import "./theme/base/colors";
+@import "./theme/base/spacing";
+@import "./theme/base/typography";
+@import "./theme/base/rewrites";

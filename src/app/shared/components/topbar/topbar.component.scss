@@ -1,0 +1,8 @@
+.topbar {
+  padding-top: var(--space-xxs);
+}
+
+.topbar__toolbar {
+  --background: transparent;
+  --border-width: 0 !important;
+}

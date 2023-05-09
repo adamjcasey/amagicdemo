@@ -1,19 +1,19 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
-import { AppComponent } from './app.component';
+import { LayoutPage } from './layout.page';
 
-describe('AppComponent', () => {
+describe('LayoutPage', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [AppComponent],
+      declarations: [LayoutPage],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
   });
 
   it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
+    const fixture = TestBed.createComponent(LayoutPage);
     const app = fixture.componentInstance;
     expect(app).toBeTruthy();
   });

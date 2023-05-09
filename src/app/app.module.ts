@@ -4,13 +4,21 @@ import { RouteReuseStrategy } from '@angular/router';
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 
-import { AppComponent } from './app.component';
-import { AppRoutingModule } from './app-routing.module';
+import * as fromCore from '@core/index';
 
 @NgModule({
-  declarations: [AppComponent],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
-  bootstrap: [AppComponent],
+  declarations: [],
+  imports: [
+    BrowserModule, 
+    IonicModule.forRoot({
+      mode: 'ios'
+    }),
+    fromCore.CoreModule
+  ],
+  providers: [{ 
+    provide: RouteReuseStrategy, 
+    useClass: IonicRouteStrategy 
+  }],
+  bootstrap: [fromCore.LayoutPage],
 })
 export class AppModule {}
