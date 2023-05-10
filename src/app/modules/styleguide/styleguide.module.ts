@@ -4,7 +4,8 @@ import { IonicModule } from '@ionic/angular';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import * as fromPages from './pages';
-import { StyleguidePageRoutingModule } from './styleguide-routing.module';
+import { StyleguideRoutingModule } from './styleguide-routing.module';
+import { SharedModule } from '@app/shared/shared.module';
 
 @NgModule({
   imports: [
@@ -12,7 +13,8 @@ import { StyleguidePageRoutingModule } from './styleguide-routing.module';
     FormsModule,
     ReactiveFormsModule,
     IonicModule,
-    StyleguidePageRoutingModule
+    StyleguideRoutingModule,
+    SharedModule,
   ],
   declarations: [fromPages.pages]
 })

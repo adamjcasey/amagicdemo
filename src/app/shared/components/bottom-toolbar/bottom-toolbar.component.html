@@ -1,9 +1,9 @@
 <ion-tab-bar class="bottom-toolbar" slot="bottom">
-  <ion-tab-button tab="home">
+  <ion-tab-button tab="home" [ngClass]="{'is-active': isActivePath('home')}">
     <ion-icon size="large" src="/assets/icon/home.svg"></ion-icon>
     Home
   </ion-tab-button>
-  <ion-tab-button tab="activity">
+  <ion-tab-button tab="activity" [ngClass]="{'is-active': isActivePath('activity')}">
     <ion-icon size="large" src="/assets/icon/activity.svg"></ion-icon>
     Activity
   </ion-tab-button>
@@ -14,11 +14,11 @@
     </ion-button>
   </ion-tab-button>
 
-  <ion-tab-button tab="resources">
+  <ion-tab-button tab="resources" [ngClass]="{'is-active': isActivePath('resources')}">
     <ion-icon size="large" src="/assets/icon/resources.svg"></ion-icon>
     Resources
   </ion-tab-button>
-  <ion-tab-button tab="settings">
+  <ion-tab-button tab="settings" [ngClass]="{'is-active': isActivePath('settings')}">
     <ion-icon size="large" src="/assets/icon/settings.svg"></ion-icon>
     Settings
   </ion-tab-button>
