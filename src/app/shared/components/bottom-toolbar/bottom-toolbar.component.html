@@ -1,4 +1,4 @@
-<ion-tab-bar class="bottom-toolbar" slot="bottom">
+<ion-tab-bar class="bottom-toolbar" slot="bottom" *ngIf="!excludedPaths.includes(currentRoute)">
   <ion-tab-button tab="home" [ngClass]="{'is-active': isActivePath('home')}">
     <ion-icon size="large" src="/assets/icon/home.svg"></ion-icon>
     Home

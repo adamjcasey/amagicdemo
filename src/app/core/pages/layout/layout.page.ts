@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'said-layout',
+  selector: 'automagic-layout',
   templateUrl: 'layout.page.html',
   styleUrls: ['layout.page.scss'],
 })

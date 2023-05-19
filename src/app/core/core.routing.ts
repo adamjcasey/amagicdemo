@@ -6,6 +6,15 @@ import * as fromPages from './pages';
 const routes: Routes = [
   {
     path: '',
+    redirectTo: '/welcome',
+    pathMatch: 'full'
+  },
+  {
+    path: 'welcome',
+    loadChildren: () => import('src/app/modules/welcome/welcome.module').then( m => m.WelcomeModule)
+  },
+  {
+    path: '',
     children: [
       {
         path: 'home',
@@ -23,11 +32,6 @@ const routes: Routes = [
         path: 'settings',
         loadChildren: () => import('src/app/modules/settings/settings.module').then(m => m.SettingsModule)
       },
-      {
-        path: '',
-        redirectTo: '/home',
-        pathMatch: 'full'
-      }
     ]
   },
   {

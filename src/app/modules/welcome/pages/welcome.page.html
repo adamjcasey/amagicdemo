@@ -1,0 +1,43 @@
+<ion-content [fullscreen]="true">
+  <section class="welcome-page step-{{ currentStep }}">
+    <div class="welcome-page__asset">
+      <swiper
+        #sliderAsset
+        effect="fade"
+        (swiper)="onSwiper($event)"
+        (slideChange)="onSlideChange()"
+      >
+        <ng-template class="welcome-slide-asset" swiperSlide *ngFor="let step of sliderItems">
+          <div class="welcome-slide-asset__wrapper" style="text-align: center;">
+            <img [src]="step.asset" />
+          </div>
+        </ng-template>
+      </swiper>
+    </div>
+
+    <div class="welcome-page__content">
+      <div class="welcome-page__navigation" *ngIf="currentStep < 5">
+        <div class="swiper-pagination"></div>
+      </div>
+
+      <swiper
+        #sliderContent
+        effect="fade"
+        (swiper)="onSwiper($event)"
+        (slideChange)="onSlideChange()"
+        [pagination]="{ el: '.swiper-pagination' }"
+      >
+        <ng-template class="welcome-slide-content" swiperSlide *ngFor="let step of sliderItems">
+          <div class="text-wrapper" [innerHTML]="step.content"></div>
+          <div class="cards-wrapper" *ngIf="step.cards">
+            <automagic-card *ngFor="let card of step.cards" [card]="card"></automagic-card>
+          </div>
+
+          <div class="button-wrapper" *ngIf="step.buttonLabel">
+            <ion-button (click)="step.buttonAction()" color="purple">{{ step.buttonLabel }}</ion-button>
+          </div>
+        </ng-template>
+      </swiper>
+    </div>
+  </section>
+</ion-content>

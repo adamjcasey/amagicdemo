@@ -1,4 +1,4 @@
-# tkd-said
+# automagic
 
 
 

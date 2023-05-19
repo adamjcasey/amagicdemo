@@ -23,7 +23,7 @@
           "error",
           {
             "type": "element",
-            "prefix": "said",
+            "prefix": "automagic",
             "style": "kebab-case"
           }
         ],
@@ -31,7 +31,7 @@
           "error",
           {
             "type": "attribute",
-            "prefix": "said",
+            "prefix": "automagic",
             "style": "camelCase"
           }
         ]

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'said-components',
+  selector: 'automagic-components',
   templateUrl: 'components.page.html',
   styleUrls: ['components.page.scss'],
 })
