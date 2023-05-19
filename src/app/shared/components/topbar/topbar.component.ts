@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'said-topbar',
+  selector: 'automagic-topbar',
   templateUrl: 'topbar.component.html',
   styleUrls: ['topbar.component.scss'],
 })

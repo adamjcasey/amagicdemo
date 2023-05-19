@@ -1,11 +1,13 @@
 <ion-content [fullscreen]="true" class="ion-padding">
   <section class="components-page">
+    <ion-button color="purple" [routerLink]="['/styleguide']">Go to Styleguide</ion-button>
+
     <h2>Buttons</h2>
     <ion-button>Default</ion-button>
     <ion-button [disabled]="true">Default Disabled</ion-button>
     <ion-button color="purple">Purple</ion-button>
     <ion-button color="salmon">Salmon</ion-button>
-    
+  
     <h2>Outline Buttons</h2>
     <ion-button fill="outline">Default Outline</ion-button>
     <ion-button fill="outline" [disabled]="true">Default Disabled Outline</ion-button>
@@ -13,9 +15,9 @@
     <ion-button color="salmon" fill="outline">Salmon Outline</ion-button>
 
     <h2>Navigation Header</h2>
-    <said-topbar></said-topbar>
+    <automagic-topbar></automagic-topbar>
 
     <h2>Navigation Bottom</h2>
-    <said-bottom-toolbar></said-bottom-toolbar>
+    <automagic-bottom-toolbar></automagic-bottom-toolbar>
   </section>
 </ion-content>

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'said-styleguide',
+  selector: 'automagic-styleguide',
   templateUrl: 'styleguide.page.html',
   styleUrls: ['styleguide.page.scss'],
 })

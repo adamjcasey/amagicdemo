@@ -2,7 +2,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'io.ionic.starter',
-  appName: 'said',
+  appName: 'automagic',
   webDir: 'www',
   server: {
     androidScheme: 'https'
