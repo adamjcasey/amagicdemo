@@ -2,13 +2,18 @@ import {
   Component,
   ViewChild,
   ViewEncapsulation,
+  AfterContentInit,
 } from '@angular/core';
 import { Router } from '@angular/router';
-
+import { Store } from "@ngrx/store";
 import { SwiperComponent } from "swiper/angular";
 import SwiperCore, { Pagination, EffectFade } from 'swiper';
 // install Swiper modules
 SwiperCore.use([Pagination, EffectFade]);
+
+import * as fromStore from '@shared/store';
+import * as fromSharedDirectives from '@shared/directives'
+import { WelcomeTestComponent } from '../components';
 
 @Component({
   selector: 'automagic-welcome',
@@ -16,13 +21,18 @@ SwiperCore.use([Pagination, EffectFade]);
   styleUrls: ['welcome.page.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class WelcomePage {
+export class WelcomePage implements AfterContentInit {
   @ViewChild('sliderAsset', { static: false }) sliderAsset!: SwiperComponent;
   @ViewChild('sliderContent', { static: false }) sliderContent!: SwiperComponent;
   public sliderItems: Array<any> = [];
   public currentStep: number = 1;
 
-  constructor(private _router: Router) {
+  @ViewChild(fromSharedDirectives.HostDirective, {static: true}) host!: fromSharedDirectives.HostDirective;
+
+  constructor(
+    private _router: Router,
+    private _store: Store<fromStore.SharedState>,
+  ) {
     this.sliderItems = [
       {
         asset: 'assets/images/welcome-step-1.svg',
@@ -86,8 +96,15 @@ export class WelcomePage {
     ];
   }
 
-  onSwiper(event: any) {
-    console.log(event);
+  ngAfterContentInit() {
+    this._store.dispatch(new fromStore.OverlayShow({
+      options: {
+        transition: 'fade',
+        fullScreen: true,
+        showHeader: false,
+      },
+      content: true,
+    }));
   }
 
   slidePrev() {

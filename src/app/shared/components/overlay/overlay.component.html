@@ -1,0 +1,22 @@
+<section class="overlay" [ngClass]="{ 
+  'is-open': show$|async, 
+  'is-full-screen': options.fullScreen, 
+  'transition-fade': options.transition === 'fade', 
+  'transition-move': options.transition === 'move', 
+}">
+  <div class="overlay__wrapper">
+    <header *ngIf="options.showHeader" class="overlay__header">
+      <ion-img class="logo" src="/assets/images/overlay-header-logo.svg"></ion-img>
+      <ion-img class="ellipse" src="/assets/images/overlay-header-ellipse.svg"></ion-img>
+    </header>
+    <div class="overlay__content">
+      <ng-template host></ng-template>
+      <div *ngIf="!isComponent" [innerHTML]="content"></div>
+    </div>
+
+    <div class="overlay__fold" (click)="toggle()">
+      <ion-icon *ngIf="!show" class="info" slot="icon-only" src="/assets/icon/info.svg"></ion-icon>
+      <ion-icon *ngIf="show" class="close" slot="icon-only" name="chevron-up-outline"></ion-icon>
+    </div>
+  </div>
+</section>
