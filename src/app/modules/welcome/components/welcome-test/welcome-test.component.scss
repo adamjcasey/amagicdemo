@@ -1,0 +1,20 @@
+.welcome-sign-up {
+  text-align: center;
+
+  h1 {
+    margin-top: 0;
+    margin-bottom: 40px;
+  }
+
+  p {
+    font-size: var(--font-size-paragraph-l);
+  }
+
+  ion-input {
+    text-align: left;
+  }
+
+  ion-button {
+    margin-top: 48px;
+  }
+}

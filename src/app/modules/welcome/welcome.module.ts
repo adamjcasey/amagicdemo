@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SwiperModule } from 'swiper/angular';
 
 import * as fromPages from './pages';
+import * as fromComponents from './components';
 import { WelcomeRoutingModule } from './welcome-routing.module';
 import { SharedModule } from '@shared/shared.module';
 
@@ -14,10 +15,13 @@ import { SharedModule } from '@shared/shared.module';
     FormsModule,
     ReactiveFormsModule,
     IonicModule,
-    WelcomeRoutingModule,
     SwiperModule,
     SharedModule,
+    WelcomeRoutingModule,
   ],
-  declarations: [fromPages.pages]
+  declarations: [
+    fromPages.pages,
+    fromComponents.components
+  ],
 })
 export class WelcomeModule {}

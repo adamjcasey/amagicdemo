@@ -1,0 +1,47 @@
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { StoreModule, ActionReducer, MetaReducer, Action } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { storeLogger } from 'ngrx-store-logger';
+
+import * as fromStore from './core.store';
+import * as fromReducer from './core.reducer';
+import * as fromEffects from './core.effects';
+import { environment } from 'src/environments/environment';
+import { SharedStoreModule } from '@shared/store';
+
+export function logger(reducer: ActionReducer<fromStore.CoreState>): any {
+  // default, no options
+  return storeLogger()(reducer);
+}
+
+export function clearState(reducer: any) {
+  return function (state: any, action: Action) {
+    // if (action.type === fromStoreLogin.ActionTypes.Logout) {
+    //   state = {}
+    // }
+    return reducer(state, action);
+  }
+}
+
+export const metaReducers: MetaReducer<fromStore.CoreState>[] = 
+  !environment.production
+  ? [logger]
+  : [];
+metaReducers.push(clearState);
+
+@NgModule({
+  imports: [
+    CommonModule,
+    StoreModule.forRoot(fromReducer.CoreReducers, { metaReducers: metaReducers }),
+    EffectsModule.forRoot(fromEffects.CoreEffects),
+    StoreDevtoolsModule.instrument({
+      maxAge: 25, // Retains last 25 states
+      logOnly: environment.production, // Restrict extension to log-only mode
+    }),
+    SharedStoreModule,
+  ],
+})
+export class CoreStoreModule {}
+  
