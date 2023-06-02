@@ -39,3 +39,15 @@ ion-button {
     }
   }
 }
+
+ion-input {
+  &.input-fill-outline {
+    --border-width: 2px;
+
+    &.sc-ion-input-md-h {
+      --border-color: var(--color-gray);
+      --border-radius: 16px;
+      --color: var(--color-gray-medium);
+    }
+  }
+}
