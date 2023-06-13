@@ -1,7 +1,7 @@
-import { WelcomeTestComponent } from './welcome-test/welcome-test.component';
+import { WelcomeSignUpComponent } from './welcome-sign-up/welcome-sign-up.component';
 
 export const components: any[] = [
-  WelcomeTestComponent
+  WelcomeSignUpComponent
 ];
 
-export * from './welcome-test/welcome-test.component';
+export * from './welcome-sign-up/welcome-sign-up.component';

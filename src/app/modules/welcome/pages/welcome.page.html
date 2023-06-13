@@ -1,4 +1,4 @@
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" [scrollY]="false">
   <section class="welcome-page step-{{ currentStep }}">
     <div class="welcome-page__asset">
       <swiper
@@ -15,23 +15,39 @@
     </div>
 
     <div class="welcome-page__content">
-      <div class="welcome-page__navigation" *ngIf="currentStep < 5">
+      <div class="welcome-page__navigation" [ngClass]="{ 'visibility-hidden': currentStep === 1 }">
         <div class="swiper-pagination"></div>
       </div>
-
+      
       <swiper
         #sliderContent
         effect="fade"
         (slideChange)="onSlideChange()"
         [pagination]="{ el: '.swiper-pagination' }"
       >
-        <ng-template class="welcome-slide-content" swiperSlide *ngFor="let step of sliderItems">
+        <ng-template class="welcome-page__slide" swiperSlide *ngFor="let step of sliderItems">
           <div class="text-wrapper" [innerHTML]="step.content"></div>
           <div class="cards-wrapper" *ngIf="step.cards">
             <automagic-card *ngFor="let card of step.cards" [card]="card"></automagic-card>
           </div>
+          <div class="form-wrapper" *ngIf="step.form">
+            <form [formGroup]="welcomeFormGroup" autocomplete="off">
+              <div *ngIf="step.form.field === 'name'" class="field-wrapper">
+                <p class="field-label">What’s your name?</p>
+                <ion-input 
+                  color="light" 
+                  fill="outline" 
+                  mode="md" 
+                  placeholder="Name" 
+                  errorText="{{ welcomeFormGroup.get('name')?.errors?.['required'] ? 'Please enter your name' : null }}" 
+                  formControlName="name" 
+                ></ion-input>
+              </div>
+            </form>
+          </div>
 
           <div class="button-wrapper" *ngIf="step.buttonLabel">
+            <div ></div>
             <ion-button (click)="step.buttonAction()" color="purple">{{ step.buttonLabel }}</ion-button>
           </div>
         </ng-template>
