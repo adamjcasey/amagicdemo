@@ -1,31 +1,59 @@
 import { Action } from '@ngrx/store';
 
 export enum ActionTypes {
-  OverlayShow = '[Overlay] Show Overlay',
-  OverlayClose = '[Overlay] Close Overlay',
-  OverlayOptions = '[Overlay] Set Options',
-  OverlayContent = '[Overlay] Set Content',
+  BackdropTopShow = '[BackdropTop] Show',
+  BackdropTopClose = '[BackdropTop] Close',
+  BackdropTopOptions = '[BackdropTop] Set Options',
+  BackdropTopContent = '[BackdropTop] Set Content',
+  BackdropBottomShow = '[BackdropBottom] Show',
+  BackdropBottomClose = '[BackdropBottom] Close',
+  BackdropBottomOptions = '[BackdropBottom] Set Options',
+  BackdropBottomContent = '[BackdropBottom] Set Content',
 }
-export class OverlayShow implements Action {
-  readonly type = ActionTypes.OverlayShow;
+export class BackdropTopShow implements Action {
+  readonly type = ActionTypes.BackdropTopShow;
 
   constructor(public payload: any) {}
 }
-export class OverlayClose implements Action {
-  readonly type = ActionTypes.OverlayClose;
+export class BackdropTopClose implements Action {
+  readonly type = ActionTypes.BackdropTopClose;
 }
-export class OverlayOptions implements Action {
-  readonly type = ActionTypes.OverlayOptions;
+export class BackdropTopOptions implements Action {
+  readonly type = ActionTypes.BackdropTopOptions;
 
   constructor(public payload: any) {}
 }
-export class OverlayContent implements Action {
-  readonly type = ActionTypes.OverlayContent;
+export class BackdropTopContent implements Action {
+  readonly type = ActionTypes.BackdropTopContent;
 
   constructor(public payload: any) {}
 }
+
+export class BackdropBottomShow implements Action {
+  readonly type = ActionTypes.BackdropBottomShow;
+
+  constructor(public payload: any) {}
+}
+export class BackdropBottomClose implements Action {
+  readonly type = ActionTypes.BackdropBottomClose;
+}
+export class BackdropBottomOptions implements Action {
+  readonly type = ActionTypes.BackdropBottomOptions;
+
+  constructor(public payload: any) {}
+}
+export class BackdropBottomContent implements Action {
+  readonly type = ActionTypes.BackdropBottomContent;
+
+  constructor(public payload: any) {}
+}
+
 export type ActionsUnion 
-  = OverlayShow 
-  | OverlayClose
-  | OverlayOptions
-  | OverlayContent;
+  = BackdropTopShow 
+  | BackdropTopClose
+  | BackdropTopOptions
+  | BackdropTopContent
+  | BackdropBottomShow 
+  | BackdropBottomClose
+  | BackdropBottomOptions
+  | BackdropBottomContent;

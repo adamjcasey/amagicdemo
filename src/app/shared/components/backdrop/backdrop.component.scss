@@ -1,0 +1,203 @@
+:root {
+  --backdrop-size-default: 75vh;
+  --backdrop-size-default: 75vh;
+  --backdrop-color-bg: var(--color-black);
+}
+
+.backdrop-top {
+  position: absolute;
+  top: -75vh;
+  left: 0;
+  z-index: 100;
+  width: 100vw;
+  height: var(--backdrop-size-default);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    opacity: 0;
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(3px);
+    transition-property: opacity;
+    transition-duration: 300ms;
+    transition-timing-function: ease-in-out;
+  }
+
+  &.is-full-screen {
+    top: -100vh;
+    height: 100vh;
+  }
+
+  .backdrop-top__wrapper {
+    position: relative;
+    z-index: 100;
+    display: grid;
+    grid-auto-rows: max-content auto;
+    width: 100%;
+    height: 100%;
+  }
+
+  .backdrop-top__header,
+  .backdrop-top__content {
+    background-color: var(--backdrop-color-bg);
+  }
+
+  .backdrop-top__header {
+    grid-row: 1;
+    padding-top: 50px;
+
+    .logo {
+      width: 135px;
+      margin: 0 auto;
+    }
+
+    .ellipse {
+      width: 100%;
+      margin-top: var(--space-s);
+    }
+  }
+
+  .backdrop-top__content {
+    grid-row: 2;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    padding: var(--space-xxs) var(--space-m) var(--space-s);
+    color: var(--color-white);
+
+    p {
+      font-size: var(--font-size-paragraph-l);
+      font-weight: var(--font-weight-medium);
+    }
+
+    .main-menu {
+      display: flex;
+      align-items: center;
+      width: calc(100vw - 60px);
+
+      swiper {
+        .swiper-slide {
+          text-align: center;
+
+          &:not(.swiper-slide-active) {
+            opacity: 0 !important;
+          }
+
+          .battery-indicator {
+            position: relative;
+
+            p {
+              font-weight: var(--font-weight-bold);
+            }
+
+            ion-icon {
+              font-size: 60px;
+            }
+
+            .battery-indicator__value {
+              position: absolute;
+              width: 40px;
+              text-align: center;
+              left: calc(50% - 20px);
+              bottom: 15px;
+              font-size: var(--font-size-paragraph-xs);
+            }
+          }
+
+          ion-list {
+            --ion-item-background: transparent;
+
+
+
+            ion-item {
+              &:last-child {
+                --border-width: 0;
+              }
+            }
+
+            ion-label {
+              --color: var(--color-white);
+              font-weight: var(--font-weight-extrabold);
+            }
+          }
+
+          .buttons-container {
+            margin-top: var(--space-l);
+
+            ion-button {
+              margin-bottom: var(--space-m);
+
+              &:last-child {
+                margin-bottom: 0;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .backdrop-top__fold {
+    position: absolute;
+    top: 100%;
+    left: calc(50% - 81px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 162px;
+    height: 106px;
+    border-bottom-left-radius: 81px;
+    border-bottom-right-radius: 81px;
+    background-color: var(--color-black);
+    text-align: center;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.5);
+
+    ion-icon {
+      font-size: 64px;
+
+      &.close {
+        position: relative;
+        top: 25px;
+        opacity: 0;
+        color: var(--color-white);
+        font-size: 32px;
+        transition-property: top, opacity;
+        transition-duration: 800ms;
+        transition-timing-function: ease-in-out;
+        visibility: hidden;
+      }
+    }
+  }
+  
+  &.is-open {
+    &::before {
+      opacity: 1;
+      transition-delay: 500ms;
+      transition-timing-function: ease-in;
+    }
+
+    &.transition-move {
+      .backdrop-top__fold {
+        top: calc(100% - 5px);
+      }
+    }
+
+    .backdrop-top__fold {
+      ion-icon {
+        &.close {
+          top: 0;
+          opacity: 1;
+          transition-delay: 10s;
+          transition-timing-function: ease-in;
+          visibility: visible;
+        }
+      }
+    }
+  }
+}

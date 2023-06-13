@@ -5,33 +5,88 @@ import * as fromActions from './shared.actions';
 
 export function SharedReducer(
   state = fromStore.initialState,
-  action: fromActions.ActionsUnion
+  action: fromActions.ActionsUnion,
 ): fromStore.SharedState {
   switch (action.type) {
-    case fromActions.ActionTypes.OverlayShow: {
+    case fromActions.ActionTypes.BackdropTopShow: {
       return {
-        ...state,
-        showOverlay: true,
-        overlayOptions: action.payload.options,
-        overlayContent: action.payload.content
+        backdropTopConfig: {
+          ...state.backdropTopConfig,  
+          ...action.payload,
+          show: true,
+          // fullScreen: action.payload.fullScreen,
+          // transition: action.payload.transition,
+          // header: action.payload.header,
+          // template: action.payload.template,
+          // component: action.payload.component,
+        },
       };
     }
-    case fromActions.ActionTypes.OverlayClose: {
+    case fromActions.ActionTypes.BackdropTopClose: {
       return {
-        ...state,
-        showOverlay: false,
+        backdropTopConfig: {
+          ...state.backdropTopConfig,
+          show: false,
+        },
       };
     }
-    case fromActions.ActionTypes.OverlayOptions: {
+    case fromActions.ActionTypes.BackdropTopOptions: {
       return {
-        ...state,
-        overlayOptions: action.payload,
+        backdropTopConfig: {
+          ...state.backdropTopConfig,
+          transition: action.payload.transition,
+          fullScreen: action.payload.fullScreen,
+          header: action.payload.header,
+        },
       };
     }
-    case fromActions.ActionTypes.OverlayContent: {
+    case fromActions.ActionTypes.BackdropTopContent: {
       return {
-        ...state,
-        overlayContent: action.payload,
+        backdropTopConfig: {
+          ...state.backdropTopConfig,
+          template: action.payload?.template ? action.payload?.template : null,
+          component: action.payload?.component ? action.payload?.template : null,
+        }
+      };
+    }
+
+    case fromActions.ActionTypes.BackdropBottomShow: {
+      return {
+        backdropBottomConfig: {
+          ...state.backdropBottomConfig,  
+          ...action.payload,
+          show: true,
+          // header: action.payload.header,
+          // template: action.payload.template,
+          // component: action.payload.component,
+          // controls: action.payload.controls,
+        },
+      };
+    }
+    case fromActions.ActionTypes.BackdropBottomClose: {
+      return {
+        backdropBottomConfig: {
+          ...state.backdropBottomConfig,
+          show: false,
+        },
+      };
+    }
+    case fromActions.ActionTypes.BackdropBottomOptions: {
+      return {
+        backdropBottomConfig: {
+          ...state.backdropBottomConfig,
+          header: action.payload.header,
+          controls: action.payload.controls,
+        },
+      };
+    }
+    case fromActions.ActionTypes.BackdropBottomContent: {
+      return {
+        backdropBottomConfig: {
+          ...state.backdropBottomConfig,
+          template: action.payload?.template,
+          component: action.payload?.component,
+        }
       };
     }
     default: {
@@ -40,11 +95,9 @@ export function SharedReducer(
   }
 }
 
-const exportOverlayShow = (state: fromStore.SharedState) => state.showOverlay;
-const exportOverlayOptions = (state: fromStore.SharedState) => state.overlayOptions;
-const exportOverlayContent = (state: fromStore.SharedState) => state.overlayContent;
+const exportBackdropTopConfig = (state: fromStore.SharedState) => state.backdropTopConfig;
+const exportBackdropBottomConfig = (state: fromStore.SharedState) => state.backdropBottomConfig;
 const selectSharedState = createFeatureSelector<fromStore.SharedState>('shared');
 
-export const getOverlayShow = createSelector(selectSharedState, exportOverlayShow);
-export const getOverlayOptions = createSelector(selectSharedState, exportOverlayOptions);
-export const getOverlayContent = createSelector(selectSharedState, exportOverlayContent);
+export const getBackdropTopConfig = createSelector(selectSharedState, exportBackdropTopConfig);
+export const getBackdropBottomConfig = createSelector(selectSharedState, exportBackdropBottomConfig);
