@@ -32,3 +32,14 @@
 @import "./theme/base/spacing";
 @import "./theme/base/typography";
 @import "./theme/base/rewrites";
+
+.activity-page,
+.home-page,
+.resources-page,
+.settings-page,
+.styleguide-page,
+.components-page {
+  h1 {
+    margin-top: 96px;
+  }
+}

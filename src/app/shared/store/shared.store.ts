@@ -1,15 +1,26 @@
 export interface SharedState {
-  showOverlay: boolean;
-  overlayOptions: object;
-  overlayContent: any;
+  backdropTopConfig?: object;
+  backdropBottomConfig?: object;
 }
 
 export const initialState: SharedState = {
-  showOverlay: false,
-  overlayOptions: {
-    transition: 'fade',
-    fullScreen: true,
-    showHeader: false,
+  backdropTopConfig: {
+    show: false,
+    fullScreen: false,
+    transition: 'move',
+    header: true,
+    template: null,
+    component: null,
   },
-  overlayContent: '',
+  backdropBottomConfig: {
+    show: false,
+    header: true,
+    template: null,
+    component: null,
+    controls: {
+      template: null,
+      buttonLabel: null,
+      buttonAction: null,
+    }
+  }
 }
