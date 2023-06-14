@@ -28,6 +28,7 @@
   .month__week {
     td {
       @include paragraph-s;
+      width: 35px;
       padding-top: var(--space-xxxs);
       padding-bottom: var(--space-xxxs);
       text-align: center;

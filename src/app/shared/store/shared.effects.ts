@@ -75,7 +75,6 @@ export class SharedEffects {
           })
         }
         else {
-          console.log('close fade');
           animate(
             `#backdrop-top`,
             { opacity: [ 0.8, 0.5, 0 ] }, 

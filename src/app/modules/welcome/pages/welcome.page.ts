@@ -155,6 +155,12 @@ export class WelcomePage implements OnInit, AfterContentInit {
     this.currentStep = this.sliderContent.swiperRef.activeIndex + 1;
   }
 
+  inputName(event: any) {
+    this._store.dispatch(new fromStore.SetData({
+      name: event.target.value
+    }));
+  }
+
   async allowBluetooth() {
     if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios') {
       this.slideNext();
@@ -172,8 +178,8 @@ export class WelcomePage implements OnInit, AfterContentInit {
       this._store.dispatch(new fromSharedStore.BackdropBottomShow({
         header: false,
         template: `
-          <h1 class="font-heading-1--bold"> Let’s set the  dose schedule for those notifications.</h1>
-          <p>Typical dosing for Theryx®:  1 weekly for the first 4 weeks,  Every 2 weeks afterwards</p>
+          <h1 class="font-heading-1--bold"> Let’s set the<br> dose schedule for<br> those notifications.</h1>
+          <p>Typical dosing for Theryx:<br> 1 weekly for the first 4 weeks,<br> Every 2 weeks afterwards</p>
         `,
         component: 'welcome-doses-selector',
         controls: {
@@ -183,12 +189,11 @@ export class WelcomePage implements OnInit, AfterContentInit {
           buttonLabel: 'Proceed',
           buttonAction: () => {
             if (this.welcomeFormGroup.get('doses')?.valid) {
-              console.log('es valido');
               this._store.dispatch(new fromSharedStore.BackdropBottomClose());
               this.slideNext();
             }
             else {
-              console.log('no e valido');
+              // show error message if the user don't select a date
             }
           },
         }

@@ -40,6 +40,7 @@
                   mode="md" 
                   placeholder="Name" 
                   errorText="{{ welcomeFormGroup.get('name')?.errors?.['required'] ? 'Please enter your name' : null }}" 
+                  (input)="inputName($event)"
                   formControlName="name" 
                 ></ion-input>
               </div>
