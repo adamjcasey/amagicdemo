@@ -6,6 +6,7 @@ import {
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
+import { animate  } from 'motion';
 import { SwiperComponent } from "swiper/angular";
 import SwiperCore, { EffectFade } from 'swiper';
 // install Swiper modules
@@ -28,6 +29,7 @@ export class BackdropComponent implements OnInit {
   @ViewChild('sliderMainMenu', { static: false }) sliderMainMenu!: SwiperComponent;
   @ViewChild(fromDirectives.HostDirective, {static: true}) host!: fromDirectives.HostDirective;
 
+
   public configBottom$: Observable<any>;
   public configBottom: any;
 
@@ -47,7 +49,7 @@ export class BackdropComponent implements OnInit {
       if (configTop) {
         this.configTop = configTop;
         if (this.configTop?.component !== null) {
-          this._loadComponent();
+          this._loadComponent(this.host);
         }
         else {
           this.host.viewContainerRef.clear();
@@ -59,7 +61,7 @@ export class BackdropComponent implements OnInit {
       if (configBottom) {
         this.configBottom = configBottom;
         if (this.configBottom.component !== null) {
-          this._loadComponent();
+          this._loadComponent(this.host);
         }
         else {
           this.host.viewContainerRef.clear();
@@ -90,8 +92,8 @@ export class BackdropComponent implements OnInit {
     this.sliderMainMenu.swiperRef.slideTo(step);
   }
 
-  private _loadComponent() {
-    const viewContainerRef = this.host.viewContainerRef;
+  private _loadComponent(host: any) {
+    const viewContainerRef = host.viewContainerRef;
     viewContainerRef.clear();
     const componentRef = viewContainerRef.createComponent(WelcomeSignUpComponent);
   }

@@ -17,10 +17,6 @@ export const initialState: SharedState = {
     header: true,
     template: null,
     component: null,
-    controls: {
-      template: null,
-      buttonLabel: null,
-      buttonAction: null,
-    }
+    controls: null
   }
 }

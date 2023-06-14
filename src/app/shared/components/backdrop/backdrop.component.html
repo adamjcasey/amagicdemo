@@ -110,11 +110,20 @@
   </div>
 </section>
 
-<!-- <section id="backdrop-bottom" class="backdrop-bottom" [ngClass]="{ 
+<section id="backdrop-bottom" class="backdrop-bottom" [ngClass]="{ 
   'is-open': configBottom?.show
 }">
-  <div *ngIf="configBottom?.controls" class="backdrop-bottom__controls">
+  <div class="backdrop-bottom__content">
+    <div 
+      *ngIf="configBottom?.template" 
+      [innerHTML]="configBottom?.template" 
+      class="backdrop-bottom__content-template"
+    ></div>
+    <ng-template host></ng-template>
+  </div>
+
+  <div class="backdrop-bottom__controls">
     <div *ngIf="configBottom?.controls?.template" class="backdrop-bottom__controls-template" [innerHTML]="configBottom?.controls?.template"></div>
     <ion-button color="purple" size="large" (click)="configBottom?.controls?.buttonAction()">{{ configBottom?.controls?.buttonLabel }}</ion-button>
   </div>
-</section> -->
+</section>
