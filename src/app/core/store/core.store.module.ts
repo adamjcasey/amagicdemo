@@ -10,10 +10,6 @@ import * as fromEffects from './core.effects';
 import { environment } from 'src/environments/environment';
 import { SharedStoreModule } from '@shared/store';
 
-// export function logger(reducer: ActionReducer<fromStore.CoreState>): any {
-//   // default, no options
-//   return storeLogger()(reducer);
-// }
 
 export function clearState(reducer: any) {
   return function (state: any, action: Action) {
@@ -43,4 +39,3 @@ metaReducers.push(clearState);
   ],
 })
 export class CoreStoreModule {}
-  
