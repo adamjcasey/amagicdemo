@@ -1,3 +1,5 @@
+@import 'src/theme/base/mixins';
+
 .welcome-page {
   padding-top: 56px;
 
@@ -30,11 +32,15 @@
       grid-row: 1;
       padding-top: var(--space-l);
 
+      &.visibility-hidden {
+        display: none;
+      }
+
       .swiper-pagination {
         position: initial;
 
         .swiper-pagination-bullet {
-          &:nth-child(n+5) {
+          &:first-child {
             display: none;
           }
 
@@ -49,12 +55,12 @@
       grid-row: 2;
     }
 
-    .welcome-slide-content {
+    .welcome-page__slide {
       display: grid;
       grid-template-rows: auto auto max-content;
       gap: 8px;
       max-width: 100vw;
-      padding: 0 20px 32px;
+      padding: 0 var(--space-s) var(--space-m);
       box-sizing: border-box;
       text-align: center;
       overflow-y: scroll;
@@ -95,34 +101,42 @@
         }
       }
 
+      .form-wrapper {
+        .field-label {
+          @include paragraph-s;
+          margin-top: 0;
+          font-weight: var(--font-weight-bold);
+        }
+
+        .field-wrapper {
+          text-align: left;
+        }
+      }
+
       .button-wrapper {
         grid-row: 3;
       }
     }
   }
 
-  &.step-1 {
-    background-color: var(--color-bg-pastel-honey-yellow);
-  }
-
+  &.step-1,
   &.step-2 {
-    background-color: var(--color-bg-pastel-blue);
+    background-color: var(--color-bg-pastel-green);
   }
 
   &.step-3 {
-    background-color: var(--color-bg-pastel-salmon);
+    background-color: var(--color-bg-pastel-blue);
   }
 
   &.step-4 {
-    background-color: var(--color-bg-pastel-purple);
+    background-color: var(--color-bg-pastel-honey-yellow);
   }
 
-  &.step-5,
-  &.step-6 {
-    background-color: var(--color-bg-pastel-mint);
+  &.step-5 {
+    background-color: var(--color-bg-pastel-lime);
   }
 }
 
-.welcome-overlay-message {
+.welcome-backdrop-message {
   text-align: center;
 }

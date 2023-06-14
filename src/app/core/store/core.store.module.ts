@@ -9,11 +9,8 @@ import * as fromReducer from './core.reducer';
 import * as fromEffects from './core.effects';
 import { environment } from 'src/environments/environment';
 import { SharedStoreModule } from '@shared/store';
+import { WelcomeStoreModule } from '@welcome/store';
 
-// export function logger(reducer: ActionReducer<fromStore.CoreState>): any {
-//   // default, no options
-//   return storeLogger()(reducer);
-// }
 
 export function clearState(reducer: any) {
   return function (state: any, action: Action) {
@@ -40,7 +37,7 @@ metaReducers.push(clearState);
       logOnly: environment.production, // Restrict extension to log-only mode
     }),
     SharedStoreModule,
+    WelcomeStoreModule,
   ],
 })
 export class CoreStoreModule {}
-  
