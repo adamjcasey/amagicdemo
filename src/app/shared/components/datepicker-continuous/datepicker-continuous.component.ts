@@ -83,21 +83,20 @@ export class DatepickerContinuousComponent {
 
   selectDate(event: any, month: string, day: number, year: number) {
     const dateSelected = new Date(`${month} ${day} ${year}`);
-    const index = this.selectedDates.indexOf(dateSelected);
-
+    const selectedDates = [...this.selectedDates];
+    const index = selectedDates.indexOf(dateSelected);
     if (event.target.classList.contains('is-selected')) {
       event.target.classList.remove('is-selected');
       if (index > -1) {
-        this.selectedDates.splice(index, 1);
+        selectedDates.splice(index, 1);
       }
     }
     else {
       event.target.classList.add('is-selected');
-      if (index === -1) {
-        this.selectedDates.push(dateSelected);
-      }
+      selectedDates.push(dateSelected);
     }
 
+    this.selectedDates = selectedDates;
     this.dateSelected.emit(this.selectedDates);
   }
 

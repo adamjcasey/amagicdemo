@@ -3,10 +3,12 @@ import {
   ViewChild,
   ViewEncapsulation,
   AfterContentInit,
+  OnInit,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
 import { Capacitor } from '@capacitor/core';
 import { BleClient } from '@capacitor-community/bluetooth-le';
 import { PushNotifications } from '@capacitor/push-notifications';
@@ -15,9 +17,8 @@ import SwiperCore, { Pagination, EffectFade } from 'swiper';
 // install Swiper modules
 SwiperCore.use([Pagination, EffectFade]);
 
+import * as fromStore from '../store'
 import * as fromSharedStore from '@shared/store';
-import * as fromSharedDirectives from '@shared/directives'
-import { WelcomeSignUpComponent } from '../components';
 
 @Component({
   selector: 'automagic-welcome',
@@ -25,13 +26,13 @@ import { WelcomeSignUpComponent } from '../components';
   styleUrls: ['welcome.page.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class WelcomePage implements AfterContentInit {
+export class WelcomePage implements OnInit, AfterContentInit {
+  public pageData$: Observable<any>;
+  public pageData: any;
   @ViewChild('sliderAsset', { static: false }) sliderAsset!: SwiperComponent;
   @ViewChild('sliderContent', { static: false }) sliderContent!: SwiperComponent;
   public sliderItems: Array<any> = [];
   public currentStep: number = 1;
-
-  @ViewChild(fromSharedDirectives.HostDirective, { static: true }) host!: fromSharedDirectives.HostDirective;
   public welcomeFormGroup: FormGroup;
 
   constructor(
@@ -39,8 +40,10 @@ export class WelcomePage implements AfterContentInit {
     private _store: Store<fromSharedStore.SharedState>,
     private _formBuilder: FormBuilder,
   ) {
+    this.pageData$ = this._store.select(fromStore.getWelcomeState);
     this.welcomeFormGroup = this._formBuilder.group({
-      name: ['', [ Validators.required ]]
+      name: ['', [ Validators.required ]],
+      doses: ['', [ Validators.required ]],
     });
 
     this.sliderItems = [
@@ -63,7 +66,7 @@ export class WelcomePage implements AfterContentInit {
         },
         buttonLabel: 'Continue',
         buttonAction: () => {
-          if (this.welcomeFormGroup.valid) {
+          if (this.welcomeFormGroup.get('name')?.valid) {
             this.slideNext();
           }
           else {
@@ -101,13 +104,32 @@ export class WelcomePage implements AfterContentInit {
     ];
   }
 
+  ngOnInit() {
+    this.pageData$.subscribe(pageData => {
+      if (pageData) {
+        this.pageData = pageData;
+        if (this.pageData.doses.length > 0) {
+          this.welcomeFormGroup.patchValue({
+            doses: this.pageData.doses
+          });
+
+          if (document.getElementById('backdrop-bottom')?.classList.contains('is-open')) {
+            const controlsTemplate = document.querySelector('#backdrop-bottom .backdrop-bottom__controls-template strong');
+            if (controlsTemplate !== null) {
+              controlsTemplate.textContent = `${this.pageData.doses.length} ${this.pageData.doses.length > 1 ? 'doses' : 'dose'}`;
+            }
+          }
+        }
+      }
+    });
+  }
+
   ngAfterContentInit() {
     this._store.dispatch(new fromSharedStore.BackdropTopShow({
       transition: 'fade',
       fullScreen: true,
       header: false,
-      // component: WelcomeSignUpComponent,
-      component: true,
+      component: 'welcome-sign-up',
     }));
   }
 
@@ -146,6 +168,32 @@ export class WelcomePage implements AfterContentInit {
   }
 
   async allowNotifications() {
+    const showDosesSelector = () => {
+      this._store.dispatch(new fromSharedStore.BackdropBottomShow({
+        header: false,
+        template: `
+          <h1 class="font-heading-1--bold"> Let’s set the  dose schedule for those notifications.</h1>
+          <p>Typical dosing for Theryx®:  1 weekly for the first 4 weeks,  Every 2 weeks afterwards</p>
+        `,
+        component: 'welcome-doses-selector',
+        controls: {
+          template: `
+            <p><strong>${this.welcomeFormGroup.value.doses.length} doses</strong> are preselected</p>
+          `,
+          buttonLabel: 'Proceed',
+          buttonAction: () => {
+            if (this.welcomeFormGroup.get('doses')?.valid) {
+              console.log('es valido');
+              this._store.dispatch(new fromSharedStore.BackdropBottomClose());
+              this.slideNext();
+            }
+            else {
+              console.log('no e valido');
+            }
+          },
+        }
+      }));
+    }
     if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios') {
       let permissionStatus = await PushNotifications.checkPermissions();
       
@@ -158,13 +206,13 @@ export class WelcomePage implements AfterContentInit {
       }
 
       if (permissionStatus.receive === 'granted') {
-        this.slideNext();
+        showDosesSelector();
       }
 
       await PushNotifications.register();
     }
     else {
-      this.slideNext();
+      showDosesSelector();
     }
   }
 
