@@ -84,7 +84,7 @@ export class DatepickerContinuousComponent {
   selectDate(event: any, month: string, day: number, year: number) {
     const dateSelected = new Date(`${month} ${day} ${year}`);
     const selectedDates = [...this.selectedDates];
-    const index = selectedDates.indexOf(dateSelected);
+    const index = selectedDates.findIndex((date) => date.getTime() === dateSelected.getTime());
     if (event.target.classList.contains('is-selected')) {
       event.target.classList.remove('is-selected');
       if (index > -1) {
