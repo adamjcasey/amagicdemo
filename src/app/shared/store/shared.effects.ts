@@ -53,7 +53,6 @@ export class SharedEffects {
       })
     )
   }, { dispatch: false });
-
   backdropTopClose$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(fromActions.ActionTypes.BackdropTopClose),
@@ -98,19 +97,26 @@ export class SharedEffects {
     return this.actions$.pipe(
       ofType(fromActions.ActionTypes.BackdropBottomShow),
       map((action: fromActions.BackdropBottomShow) => action.payload),
-      tap((payload) => {
-        this._backdropBottomOptions = payload;
+      tap(() => {
+        const windowHeight = window.innerHeight;
         animate(
-          `#backdrop-bottom`,
-          { y: window.innerHeight * 0.75 },
+          `#backdrop-bottom .backdrop-bottom__content`, { 
+            top: [`${windowHeight * 0.4}px`, `${windowHeight * 0.2}px`, `0px`],
+            opacity: [0.25, 0.5, 0.75, 1],
+          },
           { 
             easing: spring({
               stiffness: 80,
               damping: 20,
               mass: 1,
-              velocity: 800,
-            })
+            }),
           }
+        )
+
+        animate(
+          `#backdrop-bottom .backdrop-bottom__controls`,
+          { opacity: [ 0.5, 0.8, 1 ]},
+          { easing: 'ease-in-out', duration: 0.5 }
         )
       })
     )
@@ -121,22 +127,32 @@ export class SharedEffects {
       ofType(fromActions.ActionTypes.BackdropBottomClose),
       map((action: fromActions.BackdropBottomClose) => action),
       tap(() => {
+        const windowHeight = window.innerHeight;
         animate(
-          `#backdrop-bottom`,
-          { y: 0 }, 
-          {
-            easing: 'ease-in-out',
-            duration: 0.3,
+          `#backdrop-bottom .backdrop-bottom__content`, { 
+            top: [`${windowHeight * 0.2}px`, `${windowHeight * 0.4}px`, `${windowHeight * 0.6}px`],
+            opacity: [0.75, 0.5, 0.25, 0],
           },
-        ).finished.then(() => {
-          this._store.dispatch(new fromActions.BackdropBottomContent(null));
-        })
+          {
+            easing: spring({
+              stiffness: 80,
+              damping: 20,
+              mass: 1,
+              velocity: 800,
+            })
+          }
+        )
+
+        animate(
+          `#backdrop-bottom .backdrop-bottom__controls`,
+          { opacity: [ 0.5, 0.2, 0 ]},
+          { easing: 'ease-in-out', duration: 0.5 }
+        )
       })
     )
   }, { dispatch: false });
 
   private _backdropTopOptions: any;
-  private _backdropBottomOptions: any;
 
   constructor(
     private actions$: Actions,
