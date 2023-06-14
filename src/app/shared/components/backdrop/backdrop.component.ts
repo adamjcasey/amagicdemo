@@ -44,23 +44,26 @@ export class BackdropComponent implements OnInit {
 
   ngOnInit() {
     this.configTop$.subscribe(configTop => {
-      this.configTop = configTop;
-      if (this.configTop?.component !== null) {
-        this._loadComponent();
-      }
-      else {
-        this.host.viewContainerRef.clear();
+      if (configTop) {
+        this.configTop = configTop;
+        if (this.configTop?.component !== null) {
+          this._loadComponent();
+        }
+        else {
+          this.host.viewContainerRef.clear();
+        }
       }
     });
 
     this.configBottom$.subscribe(configBottom => {
-      this.configBottom = configBottom;
-
-      if (this.configBottom?.component !== null) {
-        this._loadComponent();
-      }
-      else {
-        this.host.viewContainerRef.clear();
+      if (configBottom) {
+        this.configBottom = configBottom;
+        if (this.configBottom.component !== null) {
+          this._loadComponent();
+        }
+        else {
+          this.host.viewContainerRef.clear();
+        }
       }
     });
   }

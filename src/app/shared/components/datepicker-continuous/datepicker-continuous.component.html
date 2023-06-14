@@ -1,0 +1,19 @@
+<div class="datepicker-continuous" [ngClass]="{ 'limit-size': limitSize }">
+  <table *ngFor="let month of months" class="month">
+    <tbody>
+      <tr class="month__title">
+        <td colspan="7">{{ month.name }} {{ month.year }}</td>
+      </tr>
+      <tr class="month__weekdays">
+        <td *ngFor="let day of weekdays">{{ day | ellipsis: 3 : false }}</td>
+      </tr>
+      <tr *ngFor="let week of month.weeks" class="month__week">
+        <td 
+          *ngFor="let day of week.days" 
+          [ngClass]="{ 'is-today': day.isToday }"
+          (click)="selectDate($event, month.name, day.number, month.year)"
+        >{{ day.number }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
