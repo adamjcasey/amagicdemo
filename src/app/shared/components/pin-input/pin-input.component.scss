@@ -5,7 +5,6 @@
   grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: var(--space-s);
 
-
   .pin-input__digit {
     @include heading-1;
     width: 52px;
@@ -15,7 +14,6 @@
     border: 1px solid var(--color-gray);
     border-radius: 8px;
     background-color: transparent;
-    color: var(--color-white);
     text-align: center;
 
     &:focus {

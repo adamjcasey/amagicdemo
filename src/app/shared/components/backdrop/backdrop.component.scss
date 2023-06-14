@@ -75,6 +75,12 @@
       font-size: var(--font-size-paragraph-l);
       font-weight: var(--font-weight-medium);
     }
+    
+    .pin-input {
+      .pin-input__digit {
+        color: var(--color-white);
+      }
+    }
 
     .main-menu {
       display: flex;
