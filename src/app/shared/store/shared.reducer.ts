@@ -10,6 +10,7 @@ export function SharedReducer(
   switch (action.type) {
     case fromActions.ActionTypes.BackdropTopShow: {
       return {
+        ...state,
         backdropTopConfig: {
           ...state.backdropTopConfig,  
           ...action.payload,
@@ -24,6 +25,7 @@ export function SharedReducer(
     }
     case fromActions.ActionTypes.BackdropTopClose: {
       return {
+        ...state,
         backdropTopConfig: {
           ...state.backdropTopConfig,
           show: false,
@@ -32,6 +34,7 @@ export function SharedReducer(
     }
     case fromActions.ActionTypes.BackdropTopOptions: {
       return {
+        ...state,
         backdropTopConfig: {
           ...state.backdropTopConfig,
           transition: action.payload.transition,
@@ -42,6 +45,7 @@ export function SharedReducer(
     }
     case fromActions.ActionTypes.BackdropTopContent: {
       return {
+        ...state,
         backdropTopConfig: {
           ...state.backdropTopConfig,
           template: action.payload?.template ? action.payload?.template : null,
@@ -52,6 +56,7 @@ export function SharedReducer(
 
     case fromActions.ActionTypes.BackdropBottomShow: {
       return {
+        ...state,
         backdropBottomConfig: {
           ...state.backdropBottomConfig,  
           ...action.payload,
@@ -65,6 +70,7 @@ export function SharedReducer(
     }
     case fromActions.ActionTypes.BackdropBottomClose: {
       return {
+        ...state,
         backdropBottomConfig: {
           ...state.backdropBottomConfig,
           show: false,
@@ -73,6 +79,7 @@ export function SharedReducer(
     }
     case fromActions.ActionTypes.BackdropBottomOptions: {
       return {
+        ...state,
         backdropBottomConfig: {
           ...state.backdropBottomConfig,
           header: action.payload.header,
@@ -82,6 +89,7 @@ export function SharedReducer(
     }
     case fromActions.ActionTypes.BackdropBottomContent: {
       return {
+        ...state,
         backdropBottomConfig: {
           ...state.backdropBottomConfig,
           template: action.payload?.template,

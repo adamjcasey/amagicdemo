@@ -2,20 +2,19 @@ import {
   Component, 
   OnInit,
   ViewChild,
-  ViewEncapsulation
+  ViewEncapsulation,
+  ViewContainerRef
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { animate  } from 'motion';
 import { SwiperComponent } from "swiper/angular";
 import SwiperCore, { EffectFade } from 'swiper';
 // install Swiper modules
 SwiperCore.use([EffectFade]);
 
+import { WelcomeSignUpComponent, WelcomeDosesSelectorComponent } from '@welcome/components';
 import * as fromStore from '@shared/store';
-import * as fromDirectives from '@shared/directives';
-
-import { WelcomeSignUpComponent } from '@welcome/components';
+import * as fromWelcomeStore from '@welcome/store';
 
 @Component({
   selector: 'automagic-backdrop',
@@ -27,8 +26,8 @@ export class BackdropComponent implements OnInit {
   public configTop$: Observable<any>;
   public configTop: any;
   @ViewChild('sliderMainMenu', { static: false }) sliderMainMenu!: SwiperComponent;
-  @ViewChild(fromDirectives.HostDirective, {static: true}) host!: fromDirectives.HostDirective;
-
+  @ViewChild('topContentComponent', { read: ViewContainerRef }) topContentComponent!: ViewContainerRef;
+  @ViewChild('bottomContentComponent', { read: ViewContainerRef }) bottomContentComponent!: ViewContainerRef;
 
   public configBottom$: Observable<any>;
   public configBottom: any;
@@ -48,11 +47,13 @@ export class BackdropComponent implements OnInit {
     this.configTop$.subscribe(configTop => {
       if (configTop) {
         this.configTop = configTop;
-        if (this.configTop?.component !== null) {
-          this._loadComponent(this.host);
+        if (this.configTop.component !== null) {
+          this._loadComponent(this.configTop.component);
         }
         else {
-          this.host.viewContainerRef.clear();
+          if (this.topContentComponent) {
+            this.topContentComponent.clear();
+          }
         }
       }
     });
@@ -61,10 +62,12 @@ export class BackdropComponent implements OnInit {
       if (configBottom) {
         this.configBottom = configBottom;
         if (this.configBottom.component !== null) {
-          this._loadComponent(this.host);
+          this._loadComponent(this.configBottom.component);
         }
         else {
-          this.host.viewContainerRef.clear();
+          if (this.bottomContentComponent) {
+            this.bottomContentComponent.clear();
+          }
         }
       }
     });
@@ -79,11 +82,9 @@ export class BackdropComponent implements OnInit {
     }
     else {
       this._store.dispatch(new fromStore.BackdropTopClose);
+      this.topContentComponent.clear();
       if (this.isContentEmpty(this.configTop)) {
         this.menuMoveTo(0);
-      }
-      else {
-        this.host.viewContainerRef.clear();
       }
     }
   }
@@ -92,9 +93,25 @@ export class BackdropComponent implements OnInit {
     this.sliderMainMenu.swiperRef.slideTo(step);
   }
 
-  private _loadComponent(host: any) {
-    const viewContainerRef = host.viewContainerRef;
-    viewContainerRef.clear();
-    const componentRef = viewContainerRef.createComponent(WelcomeSignUpComponent);
+  private _loadComponent(component: any) {
+    switch(component) {
+      case 'welcome-sign-up':
+        this.topContentComponent.clear();
+        this.topContentComponent.createComponent(WelcomeSignUpComponent);
+        break;
+      case 'welcome-doses-selector':
+        this.bottomContentComponent.clear();
+        const componentRef = this.bottomContentComponent.createComponent(WelcomeDosesSelectorComponent);
+        if (componentRef.instance instanceof WelcomeDosesSelectorComponent) {
+          // Listen to the dosesSelected event
+          componentRef.instance.onDosesChange.subscribe((doses: number) => {
+            // Handle the event in the parent component
+            this._store.dispatch(new fromWelcomeStore.SetData({
+              doses: doses,
+            }));
+          });
+        }
+        break;
+    }
   }
 }

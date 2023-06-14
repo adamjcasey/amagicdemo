@@ -9,6 +9,7 @@ import * as fromReducer from './core.reducer';
 import * as fromEffects from './core.effects';
 import { environment } from 'src/environments/environment';
 import { SharedStoreModule } from '@shared/store';
+import { WelcomeStoreModule } from '@welcome/store';
 
 
 export function clearState(reducer: any) {
@@ -36,6 +37,7 @@ metaReducers.push(clearState);
       logOnly: environment.production, // Restrict extension to log-only mode
     }),
     SharedStoreModule,
+    WelcomeStoreModule,
   ],
 })
 export class CoreStoreModule {}
