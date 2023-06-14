@@ -6,6 +6,7 @@ import { SwiperModule } from 'swiper/angular';
 
 import * as fromComponents from './components';
 import * as fromDirectives from './directives';
+import * as fromPipes from './pipes';
 
 @NgModule({
   imports: [
@@ -18,6 +19,7 @@ import * as fromDirectives from './directives';
   declarations: [
     fromComponents.components,
     fromDirectives.directives,
+    fromPipes.pipes,
   ],
   exports: [fromComponents.components]
 })
