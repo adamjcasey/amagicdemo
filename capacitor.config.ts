@@ -2,7 +2,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'io.ionic.automagic',
-  appName: 'automagic',
+  appName: 'Automagic Ally',
   webDir: 'www',
   server: {
     androidScheme: 'https'
