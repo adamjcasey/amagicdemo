@@ -1,0 +1,129 @@
+<section id="backdrop-top" class="backdrop-top" [ngClass]="{ 
+  'is-open': configTop.show, 
+  'is-full-screen': configTop.fullScreen, 
+  'transition-fade': configTop.transition === 'fade', 
+  'transition-move': configTop.transition === 'move', 
+}">
+  <div class="backdrop-top__wrapper">
+    <header *ngIf="configTop.header" class="backdrop-top__header">
+      <ion-img class="logo" src="/assets/images/backdrop-header-logo.svg"></ion-img>
+      <ion-img class="ellipse" src="/assets/images/backdrop-header-ellipse.svg"></ion-img>
+    </header>
+
+    <div class="backdrop-top__content">
+      <div *ngIf="configTop.template" [innerHTML]="configTop.template"></div>
+      <ng-template #topContentComponent></ng-template>
+      <div *ngIf="isContentEmpty(configTop)" class="main-menu">
+        <swiper 
+          #sliderMainMenu 
+          effect="fade" 
+          [allowTouchMove]="false"
+        >
+          <ng-template swiperSlide>
+            <h1 class="font-heading-1--bold">Main Menu</h1>
+            <p>Here you’ll find guidance on resetting, packing, sharing, and giving feedback on the prototype.</p>
+            <div class="battery-indicator">
+              <p>AutoMagic Injector Battery:</p>
+              <ion-icon src="/assets/icons/battery-indicator.svg"></ion-icon>
+              <span class="battery-indicator__value">47%</span>
+            </div>
+
+            <ion-list lines="full">
+              <ion-item (click)="menuMoveTo(1)">
+                <ion-icon src="/assets/icons/flag.svg" slot="start" size="large"></ion-icon>
+                <ion-label>I’m all done...</ion-label>
+                <ion-icon name="chevron-forward-outline" slot="end" color="light"></ion-icon>
+              </ion-item>
+              <ion-item (click)="menuMoveTo(2)">
+                <ion-icon src="/assets/icons/time-loader.svg" slot="start" size="large"></ion-icon>
+                <ion-label>Try it again</ion-label>
+                <ion-icon name="chevron-forward-outline" slot="end" color="light"></ion-icon>
+              </ion-item>
+              <ion-item (click)="menuMoveTo(3)">
+                <ion-icon src="/assets/icons/help.svg" slot="start" size="large"></ion-icon>
+                <ion-label>Help! Something broke</ion-label>
+                <ion-icon name="chevron-forward-outline" slot="end" color="light"></ion-icon>
+              </ion-item>
+            </ion-list>
+          </ng-template>
+
+          <ng-template swiperSlide>
+            <h1 class="font-heading-1--bold">I’m all done</h1>
+
+            <div class="buttons-container">
+              <ion-button fill="outline" expand="block" color="light">
+                Share feedback
+                <ion-icon name="chevron-forward-outline" slot="end" color="light"></ion-icon>
+              </ion-button>
+
+              <ion-button fill="outline" expand="block" color="light">
+                Share this demo kit
+                <ion-icon name="chevron-forward-outline" slot="end" color="light"></ion-icon>
+              </ion-button>
+
+              <ion-button fill="outline" expand="block" color="light">
+                Pack up and return
+              </ion-button>
+
+              <ion-button fill="outline" expand="block" color="light">
+                Learn more about AutoMagic
+                <ion-icon name="information-circle-outline" slot="end" color="light" size="large"></ion-icon>
+              </ion-button>
+            </div>
+          </ng-template>
+
+          <ng-template swiperSlide>
+            <h1 class="font-heading-1--bold">Try it again</h1>
+
+            <div class="buttons-container">
+              <ion-button fill="outline" expand="block" color="light">
+                Restart from the beginning
+              </ion-button>
+
+              <ion-button fill="outline" expand="block" color="light">
+                Do another injection
+              </ion-button>
+            </div>
+          </ng-template>
+
+          <ng-template swiperSlide>
+            <h1 class="font-heading-1--bold">Help! Something broke!</h1>
+
+            <div class="buttons-container">
+              <ion-button fill="outline" expand="block" color="light">
+                Pack up and return
+              </ion-button>
+
+              <ion-button fill="outline" expand="block" color="light">
+                View troubleshooting tips
+              </ion-button>
+            </div>
+          </ng-template>
+        </swiper>
+      </div>
+    </div>
+
+    <div class="backdrop-top__fold" (click)="toggleTop()">
+      <ion-icon *ngIf="!configTop.show" class="info" slot="icon-only" src="/assets/icons/info.svg"></ion-icon>
+      <ion-icon *ngIf="configTop.show" class="close" slot="icon-only" name="chevron-up-outline"></ion-icon>
+    </div>
+  </div>
+</section>
+
+<section id="backdrop-bottom" class="backdrop-bottom" [ngClass]="{ 
+  'is-open': configBottom?.show
+}">
+  <div class="backdrop-bottom__content">
+    <div 
+      *ngIf="configBottom?.template" 
+      [innerHTML]="configBottom?.template" 
+      class="backdrop-bottom__content-template"
+    ></div>
+    <ng-template #bottomContentComponent></ng-template>
+  </div>
+
+  <div class="backdrop-bottom__controls">
+    <div *ngIf="configBottom?.controls?.template" class="backdrop-bottom__controls-template" [innerHTML]="configBottom?.controls?.template"></div>
+    <ion-button color="purple" size="large" (click)="configBottom?.controls?.buttonAction()">{{ configBottom?.controls?.buttonLabel }}</ion-button>
+  </div>
+</section>

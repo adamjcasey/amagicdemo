@@ -1,0 +1,25 @@
+@import 'src/theme/base/mixins';
+
+.pin-input {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: var(--space-s);
+
+  .pin-input__digit {
+    @include heading-1;
+    width: 52px;
+    height: 64px;
+    box-sizing: border-box;
+    padding: var(--space-xxs) var(--space-xs);
+    border: 1px solid var(--color-gray);
+    border-radius: 8px;
+    background-color: transparent;
+    text-align: center;
+
+    &:focus {
+      outline: 0;
+      border-width: 2px;
+      border-color: #8C5DF9;
+    }
+  }
+}
