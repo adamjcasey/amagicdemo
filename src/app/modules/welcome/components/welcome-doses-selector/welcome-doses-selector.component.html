@@ -1,3 +1,7 @@
 <div class="welcome-doses-selector">
-  <automagic-datepicker-continuous (dateSelected)="getDosesDates($event)"></automagic-datepicker-continuous>
+  <automagic-datepicker 
+    (dateSelected)="getDosesDates($event)" 
+    [continuous]="true" 
+    [multiple]="true"
+  ></automagic-datepicker>
 </div>

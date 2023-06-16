@@ -1,14 +1,38 @@
 @import 'src/theme/base/mixins';
 
 .welcome-page {
-  padding-top: 56px;
+  display: grid;
+  grid-template-rows: auto max-content;
+  height: 100vh;
+  padding-top: var(--topbar-size);
+
+  &.step-1,
+  &.step-2 {
+    background-color: var(--color-bg-pastel-green);
+  }
+
+  &.step-3 {
+    background-color: var(--color-bg-pastel-blue);
+  }
+
+  &.step-4 {
+    background-color: var(--color-bg-pastel-honey-yellow);
+  }
+
+  &.step-5 {
+    background-color: var(--color-bg-pastel-lime);
+  }
 
   .welcome-page__asset {
+    grid-row: 1;
     display: flex;
     align-items: center;
-    height: calc(55vh - 28px);
+    width: 100vw;
+    padding-top: var(--topbar-size) + var(--space-xs);
 
     .welcome-slide-asset {
+      grid-row: 2;
+
       &:not(.swiper-slide-active) {
         opacity: 0 !important;
       }
@@ -20,10 +44,11 @@
   }
 
   .welcome-page__content {
+    grid-row: 2;
     display: grid;
     grid-template-rows: max-content auto;
     gap: var(--space-xxxxs);
-    height: calc(45vh - 28px);
+    height: 370px;
     box-shadow: 0px 0px 16px rgba(0, 0, 0, 0.1);
     border-radius: 16px 16px 0px 0px;
     background-color: var(--color-white);
@@ -117,23 +142,6 @@
         grid-row: 3;
       }
     }
-  }
-
-  &.step-1,
-  &.step-2 {
-    background-color: var(--color-bg-pastel-green);
-  }
-
-  &.step-3 {
-    background-color: var(--color-bg-pastel-blue);
-  }
-
-  &.step-4 {
-    background-color: var(--color-bg-pastel-honey-yellow);
-  }
-
-  &.step-5 {
-    background-color: var(--color-bg-pastel-lime);
   }
 }
 

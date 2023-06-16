@@ -17,8 +17,7 @@
         <swiper 
           #sliderMainMenu 
           effect="fade" 
-          [allowTouchMove]="false"
-        >
+          [allowTouchMove]="false">
           <ng-template swiperSlide>
             <h1 class="font-heading-1--bold">Main Menu</h1>
             <p>Here you’ll find guidance on resetting, packing, sharing, and giving feedback on the prototype.</p>
@@ -104,8 +103,8 @@
     </div>
 
     <div class="backdrop-top__fold" (click)="toggleTop()">
-      <ion-icon *ngIf="!configTop.show" class="info" slot="icon-only" src="/assets/icons/info.svg"></ion-icon>
-      <ion-icon *ngIf="configTop.show" class="close" slot="icon-only" name="chevron-up-outline"></ion-icon>
+      <ion-icon *ngIf="!configTop.show" class="info" src="/assets/icons/info.svg"></ion-icon>
+      <ion-icon *ngIf="configTop.show" class="close" name="chevron-up-outline"></ion-icon>
     </div>
   </div>
 </section>
@@ -113,7 +112,12 @@
 <section id="backdrop-bottom" class="backdrop-bottom" [ngClass]="{ 
   'is-open': configBottom?.show
 }">
-  <div class="backdrop-bottom__content">
+  <div 
+    class="backdrop-bottom__content" 
+    [style.background-color]="configBottom.bgColor ? 'var(' + configBottom.bgColor + ')': ''">
+    <div *ngIf="configBottom.closeButton" class="backdrop-bottom__close" (click)="closeBotom()">
+      <ion-icon name="close-outline"></ion-icon>
+    </div>
     <div 
       *ngIf="configBottom?.template" 
       [innerHTML]="configBottom?.template" 

@@ -23,10 +23,24 @@
     <h2>Pin Input</h2>
     <automagic-pin-input></automagic-pin-input>
     
+    <h2>Datepicker</h2>
+    <automagic-datepicker></automagic-datepicker>
+
     <h2>Datepicker Continuous</h2>
-    <automagic-datepicker-continuous [limitSize]="true"></automagic-datepicker-continuous>
+    <automagic-datepicker [limitSize]="true" [continuous]="true"></automagic-datepicker>
+
+    <h2>Datepicker Continuous Multiple</h2>
+    <automagic-datepicker [limitSize]="true" [continuous]="true" [multiple]="true"></automagic-datepicker>
 
     <h2>Backdrop Bottom</h2>
-    <ion-button color="purple" (click)="openBackdropBottom()">Open</ion-button>
+    <ion-button color="purple" (click)="openBackdropBottom({ 
+      closeButton: true 
+    })">Open</ion-button>
+
+    <h2>Backdrop Bottom with different bg color</h2>
+    <ion-button color="purple" (click)="openBackdropBottom({ 
+      closeButton: true,
+      bgColor: '--color-bg-pastel-green'
+    })">Open</ion-button>
   </section>
 </ion-content>
