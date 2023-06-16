@@ -81,6 +81,31 @@
       }
     }
 
+    .datepicker {
+      .month {
+        .month__title,
+        .month__weekdays,
+        .month__week {
+          td {
+            color: var(--color-white);
+          }
+        }
+
+        .month__week {
+          td {
+            &.is-today {
+              background-color: var(--color-primary-green);
+            }
+            
+            &.is-selected {
+              background-color: var(--color-gray-dark);
+              color: var(--color-white);
+            }
+          }
+        }
+      }
+    }
+
     .main-menu {
       display: flex;
       align-items: center;

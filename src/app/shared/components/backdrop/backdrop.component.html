@@ -114,7 +114,7 @@
 }">
   <div 
     class="backdrop-bottom__content" 
-    [style.background-color]="configBottom.bgColor ? 'var(' + configBottom.bgColor + ')': ''">
+    [style.background-color]="configBottom.bgColor ? 'var(' + configBottom.bgColor + ')': 'var(--color-white)'">
     <div *ngIf="configBottom.closeButton" class="backdrop-bottom__close" (click)="closeBotom()">
       <ion-icon name="close-outline"></ion-icon>
     </div>

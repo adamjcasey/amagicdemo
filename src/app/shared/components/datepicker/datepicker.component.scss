@@ -49,6 +49,7 @@
         &.is-today,
         &.is-selected {
           border-radius: 5px;
+          font-weight: var(--font-weight-bold);
         }
   
         &.is-today {
