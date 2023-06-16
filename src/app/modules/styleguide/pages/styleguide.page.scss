@@ -1,5 +1,5 @@
 .styleguide-page {
-  margin-top: var(--topbar-size);
+  margin-top: calc(var(--topbar-size) + var(--space-m));
 }
 
 .styleguide-page__section {

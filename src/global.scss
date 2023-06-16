@@ -42,6 +42,6 @@
 .resources-page,
 .settings-page {
   h1 {
-    margin-top: var(--topbar-size);
+    margin-top: calc(var(--topbar-size) + var(--space-m));
   }
 }
