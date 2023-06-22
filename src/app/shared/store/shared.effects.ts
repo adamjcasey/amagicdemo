@@ -19,7 +19,7 @@ export class SharedEffects {
         if (this._backdropTopOptions.transition === 'move') {
           animate(
             `#backdrop-top`,
-            { y: window.innerHeight * 0.75 },
+            { top: '0px' },
             { easing: spring({
               stiffness: 80,
               damping: 20,
@@ -31,7 +31,7 @@ export class SharedEffects {
         else {
           animate(
             `#backdrop-top`,
-            { y: window.innerHeight },
+            { top: '0px' },
             { duration: 0 }
           ).finished.then(() => {
             animate(
@@ -62,13 +62,15 @@ export class SharedEffects {
         return action;
       }),
       tap(() => {
+        const element = document.getElementById('backdrop-top');
+        const elementSize = Number(element?.offsetHeight);
         if (this._backdropTopOptions.transition === 'move') {
           animate(
             `#backdrop-top`,
-            { y: 0 }, 
+            { top: `${(elementSize) * -1}px` },
             {
               easing: 'ease-in-out',
-              duration: 0.3,
+              duration: 0.6,
             },
           ).finished.then(() => {
             this._store.dispatch(new fromActions.BackdropTopContent(null));
@@ -82,7 +84,7 @@ export class SharedEffects {
           ).finished.then(() => {
             animate(
               `#backdrop-top`,
-              { y: 0 },
+              { top: `${(elementSize) * -1}px` }, 
             ).finished.then(() => {
               this._store.dispatch(new fromActions.BackdropTopContent(null));
             })

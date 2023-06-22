@@ -5,8 +5,11 @@ import {
   Output, 
   EventEmitter,
   ViewChild, 
-  ElementRef
+  ElementRef,
+  AfterViewInit,
+  OnInit
 } from '@angular/core';
+import * as moment from 'moment';
 
 @Component({
   selector: 'automagic-datepicker',
@@ -14,21 +17,22 @@ import {
   styleUrls: ['datepicker.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class DatepickerComponent {
-  @Input() limitSize?: boolean = false;
+export class DatepickerComponent implements OnInit {
   @Input() labelInput?: string = 'Label Datepicker';
   @Input() continuous?: boolean = false;
   @Input() multiple?: boolean = false;
+  @Input() disabled?: boolean = false;
+  @Input() selectedDates: Date[] = [];
   @Output() dateSelected = new EventEmitter<Date[]>();
   @ViewChild('datePickerInput') datePickerInput!: ElementRef;
   @ViewChild('datePickerList') datePickerList!: ElementRef;
-  public months: any[]; // Array to hold the months data
-  public weekdays: string[]; // Array to hold the weekdays data
-  public selectedDates: Date[] = [];
+  public months: any[] = []; // Array to hold the months data
+  public weekdays: string[] = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];; // Array to hold the weekdays data
 
-  constructor() {
+  constructor() {}
+
+  ngOnInit(): void {
     this.months = this.generateMonths();
-    this.weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   }
 
   generateMonths(): any[] {
@@ -72,7 +76,8 @@ export class DatepickerComponent {
       const isToday = currentDate.toDateString() === today.toDateString();
       week.push({ 
         number: day,
-        isToday: isToday 
+        isToday: isToday,
+        isSelected: this.selectedDates?.filter(date => moment(date).isSame(currentDate)).length,
       });
 
       if (week.length === 7) {
@@ -99,40 +104,42 @@ export class DatepickerComponent {
   }
 
   selectDate(event: any, month: string, day: number, year: number) {
-    const selectedDates = [...this.selectedDates];
-    const dateSelected = new Date(`${month} ${day} ${year}`);
-    if (event.target.classList.contains('is-selected')) {
-      if (this.multiple) {
-        const index = selectedDates.findIndex((date) => date.getTime() === dateSelected.getTime());
-        if (index > -1) {
-          selectedDates.splice(index, 1);
+    if (!this.disabled) {
+      const selectedDates = [...this.selectedDates];
+      const dateSelected = new Date(`${month} ${day} ${year}`);
+      if (event.target.classList.contains('is-selected')) {
+        if (this.multiple) {
+          const index = selectedDates.findIndex((date) => date.getTime() === dateSelected.getTime());
+          if (index > -1) {
+            selectedDates.splice(index, 1);
+          }
         }
-      }
-      event.target.classList.remove('is-selected');
-    }
-    else {
-      if (this.multiple) {
-        selectedDates.push(dateSelected);
+        event.target.classList.remove('is-selected');
       }
       else {
-        this.datePickerList.nativeElement.querySelectorAll('.month__week td').forEach((day: HTMLElement) => {
-          if (day.classList.contains('is-selected')) {
-            day.classList.remove('is-selected');
-          }
-        });
+        if (this.multiple) {
+          selectedDates.push(dateSelected);
+        }
+        else {
+          this.datePickerList.nativeElement.querySelectorAll('.month__week td').forEach((day: HTMLElement) => {
+            if (day.classList.contains('is-selected')) {
+              day.classList.remove('is-selected');
+            }
+          });
+        }
+        event.target.classList.add('is-selected');
       }
-      event.target.classList.add('is-selected');
-    }
 
-    if (this.multiple) {
-      this.selectedDates = selectedDates;
-      this.dateSelected.emit(this.selectedDates);
-    }
-    else {
-      this.dateSelected.emit([dateSelected]);
-      if (!this.continuous) {
-        const inputNativeElement = this.datePickerInput.nativeElement;
-        inputNativeElement.value = dateSelected;
+      if (this.multiple) {
+        this.selectedDates = selectedDates;
+        this.dateSelected.emit(this.selectedDates);
+      }
+      else {
+        this.dateSelected.emit([dateSelected]);
+        if (!this.continuous) {
+          const inputNativeElement = this.datePickerInput.nativeElement;
+          inputNativeElement.value = dateSelected;
+        }
       }
     }
   }

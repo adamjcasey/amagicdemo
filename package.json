@@ -35,6 +35,7 @@
     "@ngrx/store": "^16.0.0",
     "@ngrx/store-devtools": "^16.0.0",
     "ionicons": "^7.0.0",
+    "moment": "^2.29.4",
     "motion": "^10.16.2",
     "rxjs": "~7.8.0",
     "swiper": "^8.4.6",

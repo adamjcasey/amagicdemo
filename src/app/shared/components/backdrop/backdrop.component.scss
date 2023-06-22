@@ -215,6 +215,7 @@
       opacity: 1;
       transition-delay: 500ms;
       transition-timing-function: ease-in;
+      pointer-events: initial;
     }
 
     &.transition-move {

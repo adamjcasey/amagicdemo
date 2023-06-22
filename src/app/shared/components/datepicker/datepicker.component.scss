@@ -1,11 +1,9 @@
 @import 'src/theme/base/mixins';
 
 .datepicker {
-  &.limit-size {
-    max-height: 500px;
-    padding-bottom: var(--space-m);
-    overflow-y: auto;
-  }
+  max-height: 375px;
+  padding-bottom: var(--space-m);
+  overflow-y: auto;
 
   .month {
     width: 100%;
@@ -27,39 +25,58 @@
     .month__week {
       td {
         @include paragraph-s;
-        width: 35px;
-        padding-top: var(--space-xxxs);
-        padding-bottom: var(--space-xxxs);
-        text-align: center;
       }
     }
   
     .month__weekdays {
-      margin-top: var(--space-xxxs);
-  
       td {
+        padding-top: var(--space-xs);
+        padding-bottom: var(--space-xxxs);
         color: var(--color-gray-medium);
       }
     }
     
     .month__week {
       td {
+        padding-top: calc(var(--space-xxxxs) / 2);
+        padding-bottom: calc(var(--space-xxxxs)  / 2);
         color: var(--color-primary-dark-blue);
+
+        span {
+          display: block;
+          width: 38px;
+          margin: 0 auto;
+          height: 36px;
+          line-height: 36px;
+        }
   
         &.is-today,
         &.is-selected {
-          border-radius: 5px;
           font-weight: var(--font-weight-bold);
+
+          span {
+            border-radius: 5px;
+          }
         }
   
         &.is-today {
-          background-color: var(--color-primary-purple);
           color: var(--color-white);
+
+          span {
+            background-color: var(--color-primary-purple);
+          }
+
+          &.is-selected {
+            color: var(--color-gray-dark);
+          }
         }
   
         &.is-selected {
-          background-color: var(--color-bg-pastel-purple);
           font-weight: var(--font-weight-bold);
+
+          span {
+            background-color: var(--color-bg-pastel-purple);
+          }
         }
       }
     }

@@ -15,7 +15,6 @@
     class="datepicker" 
     [ngClass]="{ 
       'is-continuous': continuous, 
-      'limit-size': limitSize 
     }">
     <div *ngIf="!continuous" class="datepicker__controls">
       <ion-button>
@@ -36,9 +35,14 @@
         <tr *ngFor="let week of month.weeks" class="month__week">
           <td 
             *ngFor="let day of week.days" 
-            [ngClass]="{ 'is-today': day.isToday }"
+            [ngClass]="{ 
+              'is-today': day.isToday,
+              'is-selected': day.isSelected 
+            }"
             (click)="selectDate($event, month.name, day.number, month.year)"
-          >{{ day.number }}</td>
+          >
+            <span>{{ day.number }}</span>
+          </td>
         </tr>
       </tbody>
     </table>

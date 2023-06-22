@@ -55,24 +55,18 @@ export class WelcomeSignUpComponent {
 
     animate(
       "#backdrop-top",
-      { y: window.innerHeight * 0.75 },
-      { duration: 0 }
-    ).finished.then(() => {
-      animate(
-        "#backdrop-top",
-        { height: [
-          `${window.innerHeight}px`,
-          `${window.innerHeight * 0.9}px`,
-          `${window.innerHeight * 0.8}px`,
-          `${window.innerHeight * 0.75}px`
-        ] },
-        { easing: spring({
-          stiffness: 100,
-          damping: 15,
-          mass: 1,
-          velocity: 800,
-        }) }
-      );
-    })
+      { height: [
+        `${window.innerHeight}px`,
+        `${window.innerHeight * 0.9}px`,
+        `${window.innerHeight * 0.8}px`,
+        `${window.innerHeight * 0.75}px`
+      ] },
+      { easing: spring({
+        stiffness: 100,
+        damping: 15,
+        mass: 1,
+        velocity: 800,
+      }) }
+    )
   }
 }

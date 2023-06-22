@@ -1,7 +1,9 @@
 <div class="welcome-doses-selector">
   <automagic-datepicker 
-    (dateSelected)="getDosesDates($event)" 
+    *ngIf="defaultDoses.length > 0"
     [continuous]="true" 
     [multiple]="true"
+    [selectedDates]="defaultDoses"
+    [disabled]="true"
   ></automagic-datepicker>
 </div>
