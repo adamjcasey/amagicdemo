@@ -1,16 +1,14 @@
 :root {
-  --backdrop-size-default: 75vh;
-  --backdrop-size-default: 75vh;
-  --backdrop-color-bg: var(--color-black);
+  --backdrop-top-size: 75vh;
 }
 
 .backdrop-top {
   position: absolute;
-  top: -75vh;
+  top: calc(var(--backdrop-top-size) * -1);
   left: 0;
   z-index: 100;
   width: 100vw;
-  height: var(--backdrop-size-default);
+  height: var(--backdrop-top-size);
 
   &::before {
     content: '';
@@ -25,6 +23,7 @@
     transition-property: opacity;
     transition-duration: 300ms;
     transition-timing-function: ease-in-out;
+    pointer-events: none;
   }
 
   &.is-full-screen {
@@ -43,7 +42,7 @@
 
   .backdrop-top__header,
   .backdrop-top__content {
-    background-color: var(--backdrop-color-bg);
+    background-color: var(--color-black);
   }
 
   .backdrop-top__header {
@@ -79,6 +78,31 @@
     .pin-input {
       .pin-input__digit {
         color: var(--color-white);
+      }
+    }
+
+    .datepicker {
+      .month {
+        .month__title,
+        .month__weekdays,
+        .month__week {
+          td {
+            color: var(--color-white);
+          }
+        }
+
+        .month__week {
+          td {
+            &.is-today {
+              background-color: var(--color-primary-green);
+            }
+            
+            &.is-selected {
+              background-color: var(--color-gray-dark);
+              color: var(--color-white);
+            }
+          }
+        }
       }
     }
 
@@ -167,6 +191,11 @@
     ion-icon {
       font-size: 64px;
 
+      &.info {
+        position: relative;
+        top: 10px;
+      }
+
       &.close {
         position: relative;
         top: 25px;
@@ -186,6 +215,7 @@
       opacity: 1;
       transition-delay: 500ms;
       transition-timing-function: ease-in;
+      pointer-events: initial;
     }
 
     &.transition-move {
@@ -212,11 +242,11 @@
   position: absolute;
   top: 0;
   left: 0;
+  display: grid;
+  grid-template-rows: auto max-content;
   width: 100vw;
   height: 100vh;
   max-height: 100vh;
-  display: grid;
-  grid-template-rows: auto max-content;
   pointer-events: none;
 
   .backdrop-bottom__content,
@@ -231,8 +261,7 @@
     position: relative;
     top: 60vh;
     grid-row: 1;
-    max-height: calc(100vh - 133px);
-    padding-top: 120px;
+    padding-top: calc(var(--topbar-size) + var(--space-m));
     overflow-y: auto;
 
     .backdrop-bottom__content-template {
@@ -264,6 +293,17 @@
 
     .backdrop-bottom__controls-template {
       margin-bottom: var(--space-xxxs);
+    }
+  }
+
+  .backdrop-bottom__close {
+    position: absolute;
+    top: calc(var(--topbar-size) + var(--space-m));
+    right: var(--space-xs);
+    cursor: pointer;
+
+    ion-icon {
+      font-size: 50px;
     }
   }
 

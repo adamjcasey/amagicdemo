@@ -1,0 +1,50 @@
+<div class="datepicker__wrapper">
+  <div *ngIf="!continuous" class="datepicker__input">
+    <ion-input 
+      #datePickerInput 
+      color="purple" 
+      fill="outline" 
+      mode="md" 
+      label="{{ labelInput }}" 
+      labelPlacement="floating" 
+      (click)="openPicker()" 
+    ></ion-input>
+  </div>
+  <div 
+    #datePickerList 
+    class="datepicker" 
+    [ngClass]="{ 
+      'is-continuous': continuous, 
+    }">
+    <div *ngIf="!continuous" class="datepicker__controls">
+      <ion-button>
+        <ion-icon slot="chevron-back-outline" name="star"></ion-icon>
+      </ion-button>
+      <ion-button>
+        <ion-icon slot="chevron-forward-outline" name="star"></ion-icon>
+      </ion-button>
+    </div>
+    <table *ngFor="let month of months; let i = index" class="month {{ i === 0 ? 'is-active' : null }}">
+      <tbody>
+        <tr class="month__title">
+          <td colspan="7">{{ month.name }} {{ month.year }}</td>
+        </tr>
+        <tr class="month__weekdays">
+          <td *ngFor="let day of weekdays">{{ day | ellipsis: 3 : false }}</td>
+        </tr>
+        <tr *ngFor="let week of month.weeks" class="month__week">
+          <td 
+            *ngFor="let day of week.days" 
+            [ngClass]="{ 
+              'is-today': day.isToday,
+              'is-selected': day.isSelected 
+            }"
+            (click)="selectDate($event, month.name, day.number, month.year)"
+          >
+            <span>{{ day.number }}</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

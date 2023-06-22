@@ -89,6 +89,11 @@ export class BackdropComponent implements OnInit {
     }
   }
 
+  closeBotom() {
+    this._store.dispatch(new fromStore.BackdropBottomClose);
+    this.bottomContentComponent.clear();
+  }
+
   menuMoveTo(step: number) {
     this.sliderMainMenu.swiperRef.slideTo(step);
   }

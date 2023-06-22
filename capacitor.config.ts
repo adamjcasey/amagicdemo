@@ -1,8 +1,9 @@
 import { CapacitorConfig } from '@capacitor/cli';
+import { KeyboardResize, KeyboardStyle } from '@capacitor/keyboard';
 
 const config: CapacitorConfig = {
   appId: 'io.ionic.automagic',
-  appName: 'automagic',
+  appName: 'Automagic Ally',
   webDir: 'www',
   server: {
     androidScheme: 'https'
@@ -18,7 +19,12 @@ const config: CapacitorConfig = {
         availableDevices: 'Available devices',
         noDeviceFound: 'No device found'
       }
-    }
+    },
+    Keyboard: {
+      resize: KeyboardResize.Body,
+      style: KeyboardStyle.Light,
+      resizeOnFullScreen: true,
+    },
   }
 };
 

@@ -96,7 +96,7 @@ export class WelcomePage implements OnInit, AfterContentInit {
         asset: 'assets/images/welcome-step-4.svg',
         content: `
           <h1 class="font-heading-1--bold">You're ready to rock!</h1>
-          <p>To help you remember your dose schedule and know when medication is at the right temperature, please <strong>enable notifications.</strong> You can customize notifications in the Settings menu.</p>
+          <p>Your app is configured to harness the power of the AutoMagic autoinjector.</p>
         `,
         buttonLabel: 'Continue',
         buttonAction: () => { this.goTo('home') }
@@ -184,7 +184,7 @@ export class WelcomePage implements OnInit, AfterContentInit {
         component: 'welcome-doses-selector',
         controls: {
           template: `
-            <p><strong>${this.welcomeFormGroup.value.doses.length} doses</strong> are preselected</p>
+            <p><strong>6 doses</strong> are preselected</p>
           `,
           buttonLabel: 'Proceed',
           buttonAction: () => {

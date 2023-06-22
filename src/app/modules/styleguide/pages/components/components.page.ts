@@ -14,10 +14,12 @@ export class ComponentsPage {
     private _store: Store<fromSharedStore.SharedState>,
   ) {}
 
-  openBackdropBottom() {
+  openBackdropBottom(config: any) {
     this._store.dispatch(new fromSharedStore.BackdropBottomShow({
       header: false,
       template: `<br><br><br><br><br><br><br><br><h1>Hello World</h1>`,
+      closeButton: config.closeButton,
+      bgColor: config.bgColor,
       controls: {
         template: `Template Controls`,
         buttonLabel: 'Continue',

@@ -4,6 +4,7 @@
       <swiper
         #sliderAsset
         effect="fade"
+        [allowTouchMove]="false"
         (slideChange)="onSlideChange()"
       >
         <ng-template class="welcome-slide-asset" swiperSlide *ngFor="let step of sliderItems">
@@ -22,6 +23,7 @@
       <swiper
         #sliderContent
         effect="fade"
+        [allowTouchMove]="false"
         (slideChange)="onSlideChange()"
         [pagination]="{ el: '.swiper-pagination' }"
       >

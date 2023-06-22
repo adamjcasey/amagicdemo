@@ -15,11 +15,6 @@ export function SharedReducer(
           ...state.backdropTopConfig,  
           ...action.payload,
           show: true,
-          // fullScreen: action.payload.fullScreen,
-          // transition: action.payload.transition,
-          // header: action.payload.header,
-          // template: action.payload.template,
-          // component: action.payload.component,
         },
       };
     }
@@ -61,10 +56,6 @@ export function SharedReducer(
           ...state.backdropBottomConfig,  
           ...action.payload,
           show: true,
-          // header: action.payload.header,
-          // template: action.payload.template,
-          // component: action.payload.component,
-          // controls: action.payload.controls,
         },
       };
     }
@@ -92,8 +83,8 @@ export function SharedReducer(
         ...state,
         backdropBottomConfig: {
           ...state.backdropBottomConfig,
-          template: action.payload?.template,
-          component: action.payload?.component,
+          template: action.payload?.template ? action.payload?.template : null,
+          component: action.payload?.component ? action.payload?.template : null,
         }
       };
     }
