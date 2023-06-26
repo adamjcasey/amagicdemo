@@ -115,7 +115,7 @@ export class SharedEffects {
         )
 
         animate(
-          `#backdrop-bottom .backdrop-bottom__controls`,
+          `#backdrop-bottom .backdrop-bottom__toolbar`,
           { opacity: [ 0.5, 0.8, 1 ]},
           { easing: 'ease-in-out', duration: 0.5 }
         )
@@ -142,10 +142,12 @@ export class SharedEffects {
               velocity: 800,
             })
           }
-        )
+        ).finished.then(() => {
+          this._store.dispatch(new fromActions.BackdropBottomContent(null));
+        })
 
         animate(
-          `#backdrop-bottom .backdrop-bottom__controls`,
+          `#backdrop-bottom .backdrop-bottom__toolbar`,
           { opacity: [ 0.5, 0.2, 0 ]},
           { easing: 'ease-in-out', duration: 0.5 }
         )

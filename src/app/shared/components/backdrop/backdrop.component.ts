@@ -8,8 +8,9 @@ import {
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { SwiperComponent } from "swiper/angular";
+
+// Swiper Config
 import SwiperCore, { EffectFade } from 'swiper';
-// install Swiper modules
 SwiperCore.use([EffectFade]);
 
 import { WelcomeSignUpComponent, WelcomeDosesSelectorComponent } from '@welcome/components';

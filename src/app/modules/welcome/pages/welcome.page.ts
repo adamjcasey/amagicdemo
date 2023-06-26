@@ -13,8 +13,9 @@ import { Capacitor } from '@capacitor/core';
 import { BleClient } from '@capacitor-community/bluetooth-le';
 import { PushNotifications } from '@capacitor/push-notifications';
 import { SwiperComponent } from 'swiper/angular';
+
+// Swiper Config
 import SwiperCore, { Pagination, EffectFade } from 'swiper';
-// install Swiper modules
 SwiperCore.use([Pagination, EffectFade]);
 
 import * as fromStore from '../store'
@@ -53,8 +54,10 @@ export class WelcomePage implements OnInit, AfterContentInit {
           <h1 class="font-heading-1--bold">Welcome to Theryx AutoMagic.</h1>
           <p>The AutoMagic connected ecosystem empowers you to make the most of your Theryx prescription</p>
         `,
-        buttonLabel: 'Get started',
-        buttonAction: () => { this.slideNext() }
+        button: {
+          label: 'Get started',
+          action: () => { this.slideNext() }
+        },
       },
       {
         asset: 'assets/images/welcome-step-1.svg',
@@ -64,13 +67,15 @@ export class WelcomePage implements OnInit, AfterContentInit {
         form: {
           field: 'name',
         },
-        buttonLabel: 'Continue',
-        buttonAction: () => {
-          if (this.welcomeFormGroup.get('name')?.valid) {
-            this.slideNext();
-          }
-          else {
-            this.welcomeFormGroup.get('name')?.markAllAsTouched();
+        button: {
+          label: 'Continue',
+          action: () => {
+            if (this.welcomeFormGroup.get('name')?.valid) {
+              this.slideNext();
+            }
+            else {
+              this.welcomeFormGroup.get('name')?.markAllAsTouched();
+            }
           }
         }
       },
@@ -80,8 +85,10 @@ export class WelcomePage implements OnInit, AfterContentInit {
           <h1 class="font-heading-1--bold">Let's get connected.</h1>
           <p>To get the most out of your connected autoinjector and enable dose tracking and help with your injection experience, please enable bluetooth.</p>
         `,
-        buttonLabel: 'Enable Bluetooth',
-        buttonAction: () => { this.allowBluetooth() }
+        button: {
+          label: 'Enable Bluetooth',
+          action: () => { this.allowBluetooth() }
+        },
       },
       {
         asset: 'assets/images/welcome-step-3.svg',
@@ -89,8 +96,10 @@ export class WelcomePage implements OnInit, AfterContentInit {
           <h1 class="font-heading-1--bold">Allow Notifications.</h1>
           <p>To help you remember your dose schedule and know when medication is at the right temperature, please <strong>enable notifications.</strong> You can customize notifications in the Settings menu.</p>
         `,
-        buttonLabel: 'Allow Notifications',
-        buttonAction: () => { this.allowNotifications() }
+        button: {
+          label: 'Allow Notifications',
+          action: () => { this.allowNotifications() }
+        },
       },
       {
         asset: 'assets/images/welcome-step-4.svg',
@@ -98,8 +107,10 @@ export class WelcomePage implements OnInit, AfterContentInit {
           <h1 class="font-heading-1--bold">You're ready to rock!</h1>
           <p>Your app is configured to harness the power of the AutoMagic autoinjector.</p>
         `,
-        buttonLabel: 'Continue',
-        buttonAction: () => { this.goTo('home') }
+        button: {
+          label: 'Continue',
+          action: () => { this.goTo('home') }
+        },
       },
     ];
   }
@@ -108,15 +119,14 @@ export class WelcomePage implements OnInit, AfterContentInit {
     this.pageData$.subscribe(pageData => {
       if (pageData) {
         this.pageData = pageData;
-        if (this.pageData.doses.length > 0) {
+        if (this.pageData?.doses.length > 0) {
           this.welcomeFormGroup.patchValue({
             doses: this.pageData.doses
           });
-
           if (document.getElementById('backdrop-bottom')?.classList.contains('is-open')) {
-            const controlsTemplate = document.querySelector('#backdrop-bottom .backdrop-bottom__controls-template strong');
-            if (controlsTemplate !== null) {
-              controlsTemplate.textContent = `${this.pageData.doses.length} ${this.pageData.doses.length > 1 ? 'doses' : 'dose'}`;
+            const toolbarTemplate = document.querySelector('#backdrop-bottom .backdrop-bottom__toolbar-template strong');
+            if (toolbarTemplate !== null) {
+              toolbarTemplate.textContent = `${this.pageData.doses.length} ${this.pageData.doses.length > 1 ? 'doses' : 'dose'}`;
             }
           }
         }
@@ -182,20 +192,24 @@ export class WelcomePage implements OnInit, AfterContentInit {
           <p>Typical dosing for Theryx:<br> 1 weekly for the first 4 weeks,<br> Every 2 weeks afterwards</p>
         `,
         component: 'welcome-doses-selector',
-        controls: {
+        toolbar: {
           template: `
             <p><strong>6 doses</strong> are preselected</p>
           `,
-          buttonLabel: 'Proceed',
-          buttonAction: () => {
-            if (this.welcomeFormGroup.get('doses')?.valid) {
-              this._store.dispatch(new fromSharedStore.BackdropBottomClose());
-              this.slideNext();
+          actions: [
+            {
+              label: 'Proceed',
+              action: () => {
+                if (this.welcomeFormGroup.get('doses')?.valid) {
+                  this._store.dispatch(new fromSharedStore.BackdropBottomClose());
+                  this.slideNext();
+                }
+                else {
+                  // show error message if the user don't select a date
+                }
+              },
             }
-            else {
-              // show error message if the user don't select a date
-            }
-          },
+          ],
         }
       }));
     }

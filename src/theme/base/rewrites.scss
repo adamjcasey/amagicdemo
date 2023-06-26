@@ -29,6 +29,8 @@ ion-button {
   }
 
   &.button-disabled {
+    opacity: 1;
+
     &:not(.button-outline) {
       --background: var(--color-gray-medium);
     }
@@ -38,6 +40,7 @@ ion-button {
       --color: var(--color-gray-medium);
     }
   }
+
 }
 
 ion-input {
@@ -45,9 +48,32 @@ ion-input {
     --border-width: 2px;
 
     &.sc-ion-input-md-h {
-      --border-color: var(--color-gray);
+      --border-color: var(--color-gray-medium);
       --border-radius: 16px;
-      --color: var(--color-gray-medium);
+      --color: var(--color-black);
+    }
+
+    &.has-focus {
+      &.ion-valid {
+        &.sc-ion-input-md-h {
+          &.ion-color-purple {
+            --highlight-color: var(--color-primary-purple);
+          }
+
+          &.ion-color-salmon {
+            --highlight-color: var(--color-primary-salmon);
+          }
+
+          &.ion-color-green {
+            --highlight-color: var(--color-primary-green);
+          }
+        }
+      }
+    }
+    
+    &.input-disabled {
+      opacity: 0.3;
+      pointer-events: none;
     }
   }
 }

@@ -1,5 +1,5 @@
 import { CapacitorConfig } from '@capacitor/cli';
-import { KeyboardResize, KeyboardStyle } from '@capacitor/keyboard';
+import { Keyboard, KeyboardResize, KeyboardStyle } from '@capacitor/keyboard';
 
 const config: CapacitorConfig = {
   appId: 'io.ionic.automagic',
@@ -21,7 +21,7 @@ const config: CapacitorConfig = {
       }
     },
     Keyboard: {
-      resize: KeyboardResize.Body,
+      resize: KeyboardResize.None,
       style: KeyboardStyle.Light,
       resizeOnFullScreen: true,
     },

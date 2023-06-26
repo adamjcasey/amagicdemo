@@ -1,0 +1,35 @@
+.hero {
+  position: relative;
+  padding-top: calc(var(--topbar-size) + var(--space-s));
+  overflow: hidden;
+
+  .hero__layer {
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 100vw;
+    height: 10vw;
+    background-image: url(/assets/images/hero-layer.svg);
+    background-size: contain;
+    background-position: center center;
+    background-repeat: no-repeat;
+  }
+
+  .hero__template,
+  .hero__actions {
+    padding-right: var(--space-s);
+    padding-left: var(--space-s);
+    text-align: center;
+  }
+
+  .hero__template {
+    > *:first-child {
+        margin-top: 0;
+    }
+  }
+
+  .hero__image {
+    max-width: 280px;
+    margin: 0 auto;
+  }
+}

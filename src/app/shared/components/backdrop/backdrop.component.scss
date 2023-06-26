@@ -250,7 +250,7 @@
   pointer-events: none;
 
   .backdrop-bottom__content,
-  .backdrop-bottom__controls {
+  .backdrop-bottom__toolbar {
     padding: var(--space-xs) var(--space-s) var(--space-s);
     background-color: var(--color-white);
     opacity: 0;
@@ -264,7 +264,7 @@
     padding-top: calc(var(--topbar-size) + var(--space-m));
     overflow-y: auto;
 
-    .backdrop-bottom__content-template {
+    .backdrop-bottom__template {
       > * {
         position: relative;
         top: 25px;
@@ -282,7 +282,7 @@
     }
   }
 
-  .backdrop-bottom__controls {
+  .backdrop-bottom__toolbar {
     position: relative;
     z-index: 10;
     grid-row: 2;
@@ -291,8 +291,19 @@
     box-shadow: 0px -4px 16px rgba(0, 0, 0, 0.1);
     border-radius: 16px 16px 0px 0px;
 
-    .backdrop-bottom__controls-template {
+    .backdrop-bottom__template {
       margin-bottom: var(--space-xxxs);
+
+      + .backdrop-bottom__toolbar-actions {
+        margin-top: var(--space-xxs);
+      }
+    }
+
+    .backdrop-bottom__toolbar-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-xxxs);
     }
   }
 
@@ -311,7 +322,7 @@
     pointer-events: initial;
 
     .backdrop-bottom__content {
-      .backdrop-bottom__content-template {
+      .backdrop-bottom__template {
         > * {
           top: 0;
           opacity: 1;

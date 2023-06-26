@@ -20,6 +20,41 @@
     <h2>Navigation Bottom</h2>
     <automagic-bottom-toolbar></automagic-bottom-toolbar>
 
+    <h2>Input</h2>
+    <div class="field-wrapper field--required">
+      <p class="field-label">Label</p>
+      <ion-input 
+        color="purple" 
+        fill="outline" 
+        mode="md" 
+        placeholder="Value"
+      ></ion-input>
+    </div>
+
+    <h2>Input disabled</h2>
+    <div class="field-wrapper">
+      <p class="field-label">Label</p>
+      <ion-input 
+        color="purple" 
+        fill="outline" 
+        mode="md" 
+        placeholder="Value" 
+        [disabled]="true"
+      ></ion-input>
+    </div>
+
+    <h2>Input with erros</h2>
+    <div class="field-wrapper  field--required">
+      <p class="field-label">Label</p>
+      <ion-input 
+        color="purple" 
+        fill="outline" 
+        mode="md" 
+        placeholder="Value" 
+        errorText="Error message"
+      ></ion-input>
+    </div>
+
     <h2>Pin Input</h2>
     <automagic-pin-input></automagic-pin-input>
     

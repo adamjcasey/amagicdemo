@@ -1,11 +1,12 @@
 <div class="card">
   <figure class="card__image">
-    <img src="{{ card.asset }}" alt="{{ card.title }}">
+    <ion-img src="{{ card.asset }}"></ion-img>
   </figure>
 
   <div class="card__content">
     <h5 class="card__title" *ngIf="card.title">{{ card.title }}</h5>
     <div class="card__description" *ngIf="card.description" [innerHTML]="card.description"></div>
     <div class="card__disclaimer" *ngIf="card.disclamerText" [innerHTML]="card.disclamerText"></div>
+    <a class="card__button" *ngIf="card.button" (click)="card.button.action()">{{ card.button.label }}</a>
   </div>
 </div>

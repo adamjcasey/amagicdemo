@@ -1,0 +1,9 @@
+.home-page {
+  padding-bottom: var(--space-l);
+
+  .home-page__subtitle {
+    max-width: 270px;
+    margin: var(--space-s) auto var(--space-xs);
+    text-align: center;
+  }
+}
