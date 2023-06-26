@@ -4,6 +4,7 @@ import { BottomToolbarComponent } from './bottom-toolbar/bottom-toolbar.componen
 import { CardComponent } from './card/card.component';
 import { PinInputComponent } from './pin-input/pin-input.component';
 import { DatepickerComponent } from './datepicker/datepicker.component';
+import { HeroComponent } from './hero/hero.component';
 
 export const components: any[] = [
   TopBarComponent,
@@ -11,7 +12,8 @@ export const components: any[] = [
   BottomToolbarComponent,
   CardComponent,
   PinInputComponent,
-  DatepickerComponent
+  DatepickerComponent,
+  HeroComponent
 ];
 
 export * from './topbar/topbar.component';
@@ -20,3 +22,4 @@ export * from './bottom-toolbar/bottom-toolbar.component';
 export * from './card/card.component';
 export * from './pin-input/pin-input.component';
 export * from './datepicker/datepicker.component';
+export * from './hero/hero.component';

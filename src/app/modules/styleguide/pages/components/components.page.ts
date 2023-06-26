@@ -20,12 +20,21 @@ export class ComponentsPage {
       template: `<br><br><br><br><br><br><br><br><h1>Hello World</h1>`,
       closeButton: config.closeButton,
       bgColor: config.bgColor,
-      controls: {
-        template: `Template Controls`,
-        buttonLabel: 'Continue',
-        buttonAction: () => {
-          console.log('controls action');
-        },
+      toolbar: {
+        actions: [
+          {
+            label: 'Action 1',
+            action: () => {
+              console.log('toolbar action 1');
+            },
+          },
+          {
+            label: 'Action 2',
+            action: () => {
+              console.log('toolbar action 2');
+            },
+          },
+        ],
       }
     }));
   }

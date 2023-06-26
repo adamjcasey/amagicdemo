@@ -1,4 +1,9 @@
-<ion-tab-bar class="bottom-toolbar" slot="bottom" *ngIf="!excludedPaths.includes(currentRoute)">
+<ion-tab-bar 
+  id="bottom-toolbar" 
+  class="bottom-toolbar" 
+  [ngClass]="{ 'is-open': isOpen }" 
+  slot="bottom" 
+  *ngIf="!excludedPaths.includes(currentRoute)">
   <ion-tab-button tab="home" [ngClass]="{'is-active': isActivePath('home')}">
     <ion-icon size="large" src="/assets/icons/home.svg"></ion-icon>
     Home
@@ -9,8 +14,8 @@
   </ion-tab-button>
 
   <ion-tab-button>
-    <ion-button fill="solid" shape="circle" color="purple" size="large">
-      <ion-icon slot="icon-only" name="add-outline"></ion-icon>
+    <ion-button (click)="toggleOpen()" fill="solid" shape="circle" color="purple" size="large">
+      <ion-icon slot="icon-only" [name]="isOpen ? 'close-outline' : 'add-outline'"></ion-icon>
     </ion-button>
   </ion-tab-button>
 
@@ -22,4 +27,22 @@
     <ion-icon size="large" src="/assets/icons/settings.svg"></ion-icon>
     Settings
   </ion-tab-button>
+
+  <section class="bottom-toolbar__content">
+    <div class="cta">
+      <ion-img src="/assets/images/start-dose.svg"></ion-img>
+      <ion-button 
+        color="purple">
+        Start dose
+      </ion-button>
+    </div>
+
+    <div class="cta">
+      <ion-img src="/assets/images/add-symptom.svg"></ion-img>
+      <ion-button 
+        color="purple">
+        Add Symptom
+      </ion-button>
+    </div>
+  </section>
 </ion-tab-bar>

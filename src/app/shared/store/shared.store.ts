@@ -14,9 +14,8 @@ export const initialState: SharedState = {
   },
   backdropBottomConfig: {
     show: false,
-    header: true,
     template: null,
     component: null,
-    controls: null
+    toolbar: null
   }
 }

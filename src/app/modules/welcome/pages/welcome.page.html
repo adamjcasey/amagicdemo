@@ -37,7 +37,7 @@
               <div *ngIf="step.form.field === 'name'" class="field-wrapper">
                 <p class="field-label">What’s your name?</p>
                 <ion-input 
-                  color="light" 
+                  color="purple" 
                   fill="outline" 
                   mode="md" 
                   placeholder="Name" 
@@ -49,9 +49,8 @@
             </form>
           </div>
 
-          <div class="button-wrapper" *ngIf="step.buttonLabel">
-            <div ></div>
-            <ion-button (click)="step.buttonAction()" color="purple">{{ step.buttonLabel }}</ion-button>
+          <div class="button-wrapper" *ngIf="step.button">
+            <ion-button (click)="step.button.action()" color="purple">{{ step.button.label }}</ion-button>
           </div>
         </ng-template>
       </swiper>

@@ -1,0 +1,18 @@
+<div class="hero">
+  <div class="hero__bg" [ngStyle]="{ 'background-color': color }"></div>
+  <div class="hero__content">
+    <div *ngIf="template" class="hero__template" [innerHTML]="template"></div>
+    <div *ngIf="actions.length > 0" class="hero__actions">
+      <ion-button 
+        *ngFor="let button of actions; let i = index"
+        color="purple" 
+        (click)="button.action ? button.action($event) : null" 
+        [fill]="i % 2 !== 1 && actions.length > 1 ? 'outline': null">
+        {{ button.label }}
+      </ion-button>
+    </div>
+  </div>
+  <figure class="hero__image">
+    <ion-img src="{{ image }}"></ion-img>
+  </figure>
+</div>

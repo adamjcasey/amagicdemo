@@ -115,19 +115,28 @@
   <div 
     class="backdrop-bottom__content" 
     [style.background-color]="configBottom.bgColor ? 'var(' + configBottom.bgColor + ')': 'var(--color-white)'">
-    <div *ngIf="configBottom.closeButton" class="backdrop-bottom__close" (click)="closeBotom()">
+    <div *ngIf="configBottom?.closeButton" class="backdrop-bottom__close" (click)="closeBotom()">
       <ion-icon name="close-outline"></ion-icon>
     </div>
     <div 
       *ngIf="configBottom?.template" 
       [innerHTML]="configBottom?.template" 
-      class="backdrop-bottom__content-template"
+      class="backdrop-bottom__template"
     ></div>
     <ng-template #bottomContentComponent></ng-template>
   </div>
 
-  <div class="backdrop-bottom__controls">
-    <div *ngIf="configBottom?.controls?.template" class="backdrop-bottom__controls-template" [innerHTML]="configBottom?.controls?.template"></div>
-    <ion-button color="purple" size="large" (click)="configBottom?.controls?.buttonAction()">{{ configBottom?.controls?.buttonLabel }}</ion-button>
+  <div class="backdrop-bottom__toolbar">
+    <div *ngIf="configBottom?.toolbar?.template" class="backdrop-bottom__toolbar-template" [innerHTML]="configBottom?.toolbar?.template"></div>
+    <div *ngIf="configBottom?.toolbar?.actions" class="backdrop-bottom__toolbar-actions">
+      <ion-button 
+        *ngFor="let button of configBottom?.toolbar?.actions; let i = index"
+        color="purple" 
+        size="large" 
+        (click)="button.action($event)" 
+        [fill]="i % 2 !== 1 && configBottom?.toolbar?.actions.length > 1 ? 'outline': null">
+        {{ button.label }}
+      </ion-button>
+    </div>
   </div>
 </section>

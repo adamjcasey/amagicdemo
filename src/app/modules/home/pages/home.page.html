@@ -1,6 +1,15 @@
-<ion-content [fullscreen]="true" class="ion-padding">
+<ion-content [fullscreen]="true">
   <section class="home-page">
-    <h1>HomePage</h1>
-    <ion-button color="purple" [routerLink]="['/styleguide']">Go to Styleguide</ion-button>
+    <automagic-hero
+      [color]="heroConfig.color"
+      [image]="heroConfig.image"
+      [template]="heroConfig.template"
+      [actions]="heroConfig.actions"
+    ></automagic-hero>
+
+    <div class="ion-padding">
+      <h5 class="home-page__subtitle"> Set up your dosing regimen and track your progress</h5>
+      <automagic-card [card]="card"></automagic-card>
+    </div>
   </section>
 </ion-content>

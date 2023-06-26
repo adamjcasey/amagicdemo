@@ -44,7 +44,7 @@ export function SharedReducer(
         backdropTopConfig: {
           ...state.backdropTopConfig,
           template: action.payload?.template ? action.payload?.template : null,
-          component: action.payload?.component ? action.payload?.template : null,
+          component: action.payload?.component ? action.payload?.component : null,
         }
       };
     }
@@ -74,7 +74,7 @@ export function SharedReducer(
         backdropBottomConfig: {
           ...state.backdropBottomConfig,
           header: action.payload.header,
-          controls: action.payload.controls,
+          toolbar: action.payload.toolbar,
         },
       };
     }
@@ -84,7 +84,7 @@ export function SharedReducer(
         backdropBottomConfig: {
           ...state.backdropBottomConfig,
           template: action.payload?.template ? action.payload?.template : null,
-          component: action.payload?.component ? action.payload?.template : null,
+          component: action.payload?.component ? action.payload?.component : null,
         }
       };
     }

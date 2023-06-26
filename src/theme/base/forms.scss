@@ -1,0 +1,25 @@
+.field {
+  &-wrapper {
+    text-align: left;
+  }
+
+  &-label {
+    @include paragraph-s;
+    display: inline-block;
+    margin-top: 0;
+    font-weight: var(--font-weight-bold);
+  }
+
+  &--required {
+    .field-label {
+      position: relative;
+
+      &::after {
+        content: '*';
+        position: absolute;
+        right: calc(var(--space-xxxs) * -1);
+        color: var(--ion-color-salmon);
+      }
+    }
+  }
+}

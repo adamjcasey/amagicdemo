@@ -126,18 +126,6 @@
         }
       }
 
-      .form-wrapper {
-        .field-label {
-          @include paragraph-s;
-          margin-top: 0;
-          font-weight: var(--font-weight-bold);
-        }
-
-        .field-wrapper {
-          text-align: left;
-        }
-      }
-
       .button-wrapper {
         grid-row: 3;
       }

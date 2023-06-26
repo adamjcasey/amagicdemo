@@ -32,13 +32,13 @@
 @import "./theme/base/spacing";
 @import "./theme/base/typography";
 @import "./theme/base/rewrites";
+@import "./theme/base/forms";
 
 :root {
   --topbar-size: 106px;
 }
 
 .activity-page,
-.home-page,
 .resources-page,
 .settings-page {
   h1 {
