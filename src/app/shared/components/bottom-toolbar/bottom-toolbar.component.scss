@@ -54,9 +54,6 @@
       position: relative;
       top: 25px;
       opacity: 0;
-      transition-property: top, opacity;
-      transition-duration: 0.25s;
-      transition-timing-function: ease-in-out;
       text-align: center;
 
       ion-img {
@@ -67,17 +64,6 @@
 
       ion-button {
         margin-top: var(--space-xxs);
-      }
-    }
-  }
-
-  &.is-open {
-    .bottom-toolbar__content {
-      .cta {
-        top: 0;
-        opacity: 1;
-        transition-timing-function: ease-in;
-        transition-delay: 0.4s;
       }
     }
   }

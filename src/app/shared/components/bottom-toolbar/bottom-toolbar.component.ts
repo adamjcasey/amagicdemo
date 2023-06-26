@@ -48,19 +48,37 @@ export class BottomToolbarComponent {
           mass: 1,
           velocity: 800,
         }) }
-      )
+      );
+
+      animate(
+        `#bottom-toolbar .bottom-toolbar__content .cta`, 
+        { 
+          opacity: [ 0, 0.5, 0.8, 1 ],
+          top: '0px',
+        },
+        { easing: 'ease-in-out', duration: 0.3, delay: 0.45 }
+      );
     }
     else {
       animate(
-        `#bottom-toolbar`,
-        { height: '64px' },
-        { easing: spring({
-          stiffness: 80,
-          damping: 20,
-          mass: 1,
-          velocity: 800,
-        }) }
-      )
+        `#bottom-toolbar .bottom-toolbar__content .cta`, 
+        { 
+          opacity: [ 0.8, 0.5, 0 ],
+          top: '25px',
+        },
+        { easing: 'ease-in-out', duration: 0.3 }
+      ).finished.then(() => {
+        animate(
+          `#bottom-toolbar`,
+          { height: '64px' },
+          { easing: spring({
+            stiffness: 80,
+            damping: 20,
+            mass: 1,
+            velocity: 800,
+          }) }
+        )
+      })
     }
   }
 }
