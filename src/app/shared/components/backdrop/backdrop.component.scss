@@ -265,6 +265,8 @@
     overflow-y: auto;
 
     .backdrop-bottom__template {
+      color: var(--color-black);
+
       > * {
         position: relative;
         top: 25px;
@@ -291,8 +293,9 @@
     box-shadow: 0px -4px 16px rgba(0, 0, 0, 0.1);
     border-radius: 16px 16px 0px 0px;
 
-    .backdrop-bottom__template {
+    .backdrop-bottom__toolbar-template {
       margin-bottom: var(--space-xxxs);
+      color: var(--color-black);
 
       + .backdrop-bottom__toolbar-actions {
         margin-top: var(--space-xxs);
