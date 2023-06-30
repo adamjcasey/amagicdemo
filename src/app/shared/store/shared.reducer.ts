@@ -8,81 +8,41 @@ export function SharedReducer(
   action: fromActions.ActionsUnion,
 ): fromStore.SharedState {
   switch (action.type) {
-    case fromActions.ActionTypes.BackdropTopShow: {
+    case fromActions.ActionTypes.BackdropShow: {
       return {
         ...state,
-        backdropTopConfig: {
-          ...state.backdropTopConfig,  
+        backdropConfig: {
+          ...state.backdropConfig,  
           ...action.payload,
           show: true,
         },
       };
     }
-    case fromActions.ActionTypes.BackdropTopClose: {
+    case fromActions.ActionTypes.BackdropClose: {
       return {
         ...state,
-        backdropTopConfig: {
-          ...state.backdropTopConfig,
+        backdropConfig: {
+          ...state.backdropConfig,
           show: false,
         },
       };
     }
-    case fromActions.ActionTypes.BackdropTopOptions: {
+    case fromActions.ActionTypes.BackdropConfig: {
       return {
         ...state,
-        backdropTopConfig: {
-          ...state.backdropTopConfig,
+        backdropConfig: {
+          ...state.backdropConfig,
           transition: action.payload.transition,
           fullScreen: action.payload.fullScreen,
           header: action.payload.header,
         },
       };
     }
-    case fromActions.ActionTypes.BackdropTopContent: {
+    case fromActions.ActionTypes.BackdropContent: {
       return {
         ...state,
-        backdropTopConfig: {
-          ...state.backdropTopConfig,
-          template: action.payload?.template ? action.payload?.template : null,
-          component: action.payload?.component ? action.payload?.component : null,
-        }
-      };
-    }
-
-    case fromActions.ActionTypes.BackdropBottomShow: {
-      return {
-        ...state,
-        backdropBottomConfig: {
-          ...state.backdropBottomConfig,  
-          ...action.payload,
-          show: true,
-        },
-      };
-    }
-    case fromActions.ActionTypes.BackdropBottomClose: {
-      return {
-        ...state,
-        backdropBottomConfig: {
-          ...state.backdropBottomConfig,
-          show: false,
-        },
-      };
-    }
-    case fromActions.ActionTypes.BackdropBottomOptions: {
-      return {
-        ...state,
-        backdropBottomConfig: {
-          ...state.backdropBottomConfig,
-          header: action.payload.header,
-          toolbar: action.payload.toolbar,
-        },
-      };
-    }
-    case fromActions.ActionTypes.BackdropBottomContent: {
-      return {
-        ...state,
-        backdropBottomConfig: {
-          ...state.backdropBottomConfig,
+        backdropConfig: {
+          ...state.backdropConfig,
           template: action.payload?.template ? action.payload?.template : null,
           component: action.payload?.component ? action.payload?.component : null,
         }
@@ -94,9 +54,7 @@ export function SharedReducer(
   }
 }
 
-const exportBackdropTopConfig = (state: fromStore.SharedState) => state.backdropTopConfig;
-const exportBackdropBottomConfig = (state: fromStore.SharedState) => state.backdropBottomConfig;
+const exportBackdropConfig = (state: fromStore.SharedState) => state.backdropConfig;
 const selectSharedState = createFeatureSelector<fromStore.SharedState>('shared');
 
-export const getBackdropTopConfig = createSelector(selectSharedState, exportBackdropTopConfig);
-export const getBackdropBottomConfig = createSelector(selectSharedState, exportBackdropBottomConfig);
+export const getBackdropConfig = createSelector(selectSharedState, exportBackdropConfig);

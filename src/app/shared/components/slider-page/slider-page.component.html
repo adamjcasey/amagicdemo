@@ -1,0 +1,107 @@
+<ion-content [fullscreen]="true" [scrollY]="false">
+  <div class="slider-page" [ngStyle]="{ 'background-color': currentSlide.color }">
+    <div class="slider-page__asset">
+      <swiper
+        #sliderAsset
+        effect="fade"
+        [allowTouchMove]="false">
+
+        <ng-template class="slider-page__slide" swiperSlide *ngFor="let step of slides">
+          <div style="text-align: center;">
+            <img [src]="step.asset" />
+          </div>
+        </ng-template>
+      </swiper>
+    </div>
+
+    <div 
+      [ngClass]="{ 'is-expanded': configContent?.isExpanded }"
+      class="slider-page__content">
+      
+      <div class="wrapper-small">
+        <div 
+          [ngClass]="{ 'visibility-hidden': currentSlide.showNavigation === false }" 
+          class="slider-page__navigation">
+
+          <div class="swiper-pagination"></div>
+        </div>
+
+        <swiper
+          #sliderContent 
+          effect="fade" 
+          [allowTouchMove]="false" 
+          [pagination]="{ el: '.swiper-pagination' }"
+          (slideChange)="slideChange()">
+
+          <ng-template 
+            swiperSlide 
+            *ngFor="let step of slides"
+            class="slider-page__slide">
+
+            <div class="text-wrapper" [innerHTML]="step.content"></div>
+
+            <div class="cards-wrapper" *ngIf="step.cards">
+              <automagic-card *ngFor="let card of step.cards" [card]="card"></automagic-card>
+            </div>
+
+            <div class="form-wrapper" *ngIf="step.form">
+              <form [formGroup]="step.form.group" autocomplete="off">
+                <div class="field-wrapper" *ngFor="let field of step.form.fields">
+                  <p class="field-label">{{ field.label }}</p>
+                  <ion-input 
+                    color="purple" 
+                    fill="outline" 
+                    mode="md" 
+                    placeholder="{{ field.placeholder }}" 
+                    errorText="{{ step.form.group.get(field.name)?.errors?.['required'] ? 'Please enter your name' : null }}" 
+                    (input)="field.onInput($event)" 
+                    formControlName="{{ field.name }}" 
+                  ></ion-input>
+                </div>
+              </form>
+            </div>
+
+            <div class="button-wrapper" *ngIf="step.button">
+              <ion-button (click)="step.button.action()" color="purple">{{ step.button.label }}</ion-button>
+            </div>
+          </ng-template>
+        </swiper>
+      </div>
+
+      <div 
+        class="wrapper-large" 
+        [style.background-color]="configContent?.bgColor ? 'var(' + configContent.bgColor + ')': 'var(--color-white)'">
+
+        <div class="wrapper-large__content">
+          <div 
+            *ngIf="configContent?.template" 
+            [innerHTML]="configContent.template" 
+            class="wrapper-large__template"
+          ></div>
+          <div class="wrapper-large__component">
+            <ng-template #contentComponent></ng-template>
+          </div>
+        </div>
+
+        <div *ngIf="configContent?.toolbar" class="wrapper-large__toolbar">
+          <div 
+            *ngIf="configContent.toolbar.template" 
+            [innerHTML]="configContent.toolbar.template" 
+            class="wrapper-large__toolbar-template"
+          ></div>
+
+          <div *ngIf="configContent.toolbar.actions" class="wrapper-large__toolbar-actions">
+            <ion-button 
+              *ngFor="let button of configContent.toolbar?.actions; let i = index"
+              color="purple" 
+              size="large" 
+              (click)="button.action($event)" 
+              [fill]="i % 2 !== 1 && configContent.toolbar?.actions.length > 1 ? 'outline': null">
+              {{ button.label }}
+            </ion-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

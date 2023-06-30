@@ -3,6 +3,7 @@
   class="bottom-toolbar" 
   [ngClass]="{ 'is-open': isOpen }" 
   slot="bottom" 
+  color="light"
   *ngIf="!excludedPaths.includes(currentRoute)">
   <ion-tab-button tab="home" [ngClass]="{'is-active': isActivePath('home')}">
     <ion-icon size="large" src="/assets/icons/home.svg"></ion-icon>

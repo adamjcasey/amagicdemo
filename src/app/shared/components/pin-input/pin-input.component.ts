@@ -3,7 +3,8 @@ import {
   Output, 
   EventEmitter, 
   ViewEncapsulation, 
-  AfterViewInit
+  AfterViewInit,
+  Input
 } from '@angular/core';
 
 @Component({
@@ -14,6 +15,7 @@ import {
 })
 export class PinInputComponent implements AfterViewInit {
   @Output() pinChange = new EventEmitter<number>();
+  @Input() error!: any;
 
   constructor() {}
 

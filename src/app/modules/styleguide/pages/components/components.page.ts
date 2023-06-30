@@ -14,29 +14,4 @@ export class ComponentsPage {
     private _store: Store<fromSharedStore.SharedState>,
   ) {}
 
-  openBackdropBottom(config: any) {
-    this._store.dispatch(new fromSharedStore.BackdropBottomShow({
-      header: false,
-      template: `<br><br><br><br><br><br><br><br><h1>Hello World</h1>`,
-      closeButton: config.closeButton,
-      bgColor: config.bgColor,
-      toolbar: {
-        actions: [
-          {
-            label: 'Action 1',
-            action: () => {
-              console.log('toolbar action 1');
-            },
-          },
-          {
-            label: 'Action 2',
-            action: () => {
-              console.log('toolbar action 2');
-            },
-          },
-        ],
-      }
-    }));
-  }
-
 }

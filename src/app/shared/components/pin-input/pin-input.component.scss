@@ -1,9 +1,11 @@
 @import 'src/theme/base/mixins';
 
 .pin-input {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  gap: var(--space-s);
+  .pin-input__wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: var(--space-s);
+  }
 
   .pin-input__digit {
     @include heading-1;
@@ -20,6 +22,18 @@
       outline: 0;
       border-width: 2px;
       border-color: #8C5DF9;
+    }
+  }
+
+  .error-message {
+    @include paragraph-l;
+    margin-bottom: var(--space-s);
+    color: var(--color-primary-salmon--light);
+  }
+
+  &.is-invalid {
+    .pin-input__digit {
+      border-color: var(--color-primary-salmon--light);
     }
   }
 }

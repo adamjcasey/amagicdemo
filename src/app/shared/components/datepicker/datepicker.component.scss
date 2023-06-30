@@ -2,7 +2,9 @@
 
 .datepicker {
   max-height: 375px;
+  padding-right: var(--space-xxs);
   padding-bottom: var(--space-m);
+  padding-left: var(--space-xxs);
   overflow-y: auto;
 
   .month {
@@ -25,6 +27,7 @@
     .month__week {
       td {
         @include paragraph-s;
+        text-align: center;
       }
     }
   
@@ -44,10 +47,10 @@
 
         span {
           display: block;
-          width: 38px;
-          margin: 0 auto;
+          width: 36px;
           height: 36px;
-          line-height: 36px;
+          margin: 0 auto;
+          line-height: 38px;
           text-align: center;
         }
   

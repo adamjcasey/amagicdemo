@@ -1,7 +1,7 @@
 <form [formGroup]="signUpFormGroup" class="welcome-sign-up" (ngSubmit)="registerUser()" autocomplete="off">
   <h1 class="font-heading-1--bold">This is demo is for internal use.</h1>
   <ion-img class="logo" src="/assets/images/welcome-sign-up.svg"></ion-img>
-  <p>Enter 4 digit code printed on the autoinjector box to access</p>
-  <automagic-pin-input (pinChange)="getPinCode($event)"></automagic-pin-input>
+  <p *ngIf="!pinInvalid">Enter 4 digit code printed on the autoinjector box to access</p>
+  <automagic-pin-input (pinChange)="getPinCode($event)" [error]="pinInvalid ? 'Invalid digital code' : ''"></automagic-pin-input>
   <ion-button type="submit" color="light" fill="outline" [disabled]="!signUpFormGroup.valid">Submit</ion-button>
 </form>
