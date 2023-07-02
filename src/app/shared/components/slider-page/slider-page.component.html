@@ -1,11 +1,7 @@
 <ion-content [fullscreen]="true" [scrollY]="false">
   <div class="slider-page" [ngStyle]="{ 'background-color': currentSlide.color }">
     <div class="slider-page__asset">
-      <swiper
-        #sliderAsset
-        effect="fade"
-        [allowTouchMove]="false">
-
+      <swiper #sliderAsset effect="fade" [allowTouchMove]="false">
         <ng-template class="slider-page__slide" swiperSlide *ngFor="let step of slides">
           <div style="text-align: center;">
             <img [src]="step.asset" />
@@ -14,30 +10,20 @@
       </swiper>
     </div>
 
-    <div 
-      [ngClass]="{ 'is-expanded': configContent?.isExpanded }"
-      class="slider-page__content">
-      
+    <div class="slider-page__content" [ngClass]="{ 'is-expanded': config?.content.isExpanded }">
       <div class="wrapper-small">
-        <div 
-          [ngClass]="{ 'visibility-hidden': currentSlide.showNavigation === false }" 
-          class="slider-page__navigation">
-
+        <div class="slider-page__navigation" [ngClass]="{ 'visibility-hidden': currentSlide.showNavigation === false }">
           <div class="swiper-pagination"></div>
         </div>
 
-        <swiper
+        <swiper 
           #sliderContent 
           effect="fade" 
           [allowTouchMove]="false" 
-          [pagination]="{ el: '.swiper-pagination' }"
+          [pagination]="{ el: '.swiper-pagination' }" 
           (slideChange)="slideChange()">
 
-          <ng-template 
-            swiperSlide 
-            *ngFor="let step of slides"
-            class="slider-page__slide">
-
+          <ng-template class="slider-page__slide" swiperSlide *ngFor="let step of slides">
             <div class="text-wrapper" [innerHTML]="step.content"></div>
 
             <div class="cards-wrapper" *ngIf="step.cards">
@@ -68,35 +54,33 @@
         </swiper>
       </div>
 
-      <div 
-        class="wrapper-large" 
-        [style.background-color]="configContent?.bgColor ? 'var(' + configContent.bgColor + ')': 'var(--color-white)'">
-
+      <div class="wrapper-large" [style.background-color]="config?.content.bgColor ? 'var(' + config?.content.bgColor + ')': 'var(--color-white)'">
         <div class="wrapper-large__content">
           <div 
-            *ngIf="configContent?.template" 
-            [innerHTML]="configContent.template" 
-            class="wrapper-large__template"
+            class="wrapper-large__template" 
+            *ngIf="config?.content.template" 
+            [innerHTML]="config?.content.template"
           ></div>
+
           <div class="wrapper-large__component">
             <ng-template #contentComponent></ng-template>
           </div>
         </div>
 
-        <div *ngIf="configContent?.toolbar" class="wrapper-large__toolbar">
+        <div *ngIf="config?.content.toolbar" class="wrapper-large__toolbar">
           <div 
-            *ngIf="configContent.toolbar.template" 
-            [innerHTML]="configContent.toolbar.template" 
-            class="wrapper-large__toolbar-template"
+            class="wrapper-large__toolbar-template" 
+            *ngIf="config?.content.toolbar.template" 
+            [innerHTML]="config?.content.toolbar.template"
           ></div>
 
-          <div *ngIf="configContent.toolbar.actions" class="wrapper-large__toolbar-actions">
+          <div *ngIf="config?.content.toolbar.actions" class="wrapper-large__toolbar-actions">
             <ion-button 
-              *ngFor="let button of configContent.toolbar?.actions; let i = index"
+              *ngFor="let button of config?.content.toolbar?.actions; let i = index"
               color="purple" 
               size="large" 
               (click)="button.action($event)" 
-              [fill]="i % 2 !== 1 && configContent.toolbar?.actions.length > 1 ? 'outline': null">
+              [fill]="i % 2 !== 1 && config?.content.toolbar?.actions.length > 1 ? 'outline': null">
               {{ button.label }}
             </ion-button>
           </div>

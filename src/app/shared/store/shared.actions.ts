@@ -5,6 +5,7 @@ export enum ActionTypes {
   BackdropClose = '[Backdrop] Close',
   BackdropConfig = '[Backdrop] Set Options',
   BackdropContent = '[Backdrop] Set Content',
+  SliderPageExpandContent = '[SliderPage] Expand Content',
 }
 export class BackdropShow implements Action {
   readonly type = ActionTypes.BackdropShow;
@@ -24,9 +25,15 @@ export class BackdropContent implements Action {
 
   constructor(public payload: any) {}
 }
+export class SliderPageExpandContent implements Action {
+  readonly type = ActionTypes.SliderPageExpandContent;
+
+  constructor(public payload: any) {}
+}
 
 export type ActionsUnion 
   = BackdropShow 
   | BackdropClose
   | BackdropConfig
-  | BackdropContent;
+  | BackdropContent
+  | SliderPageExpandContent;

@@ -6,7 +6,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { animate, spring } from 'motion';
 
-import * as fromStore from '@shared/store';
+import * as fromStore from '../../store';
+import * as fromStoreShared from '@shared/store';
 
 @Component({
   selector: 'automagic-welcome-sign-up',
@@ -19,7 +20,7 @@ export class WelcomeSignUpComponent {
   public pinInvalid: boolean = false;
 
   constructor(
-    private _store: Store<fromStore.SharedState>,
+    private _store: Store<fromStore.WelcomeState>,
     private _formBuilder: FormBuilder,
   ) {
     this.signUpFormGroup = this._formBuilder.group({
@@ -39,12 +40,16 @@ export class WelcomeSignUpComponent {
   }
 
   registerUser() {
-    this._store.dispatch(new fromStore.BackdropConfig({
+    this._store.dispatch(new fromStore.SetData({
+      pin: this.signUpFormGroup.value.code
+    }));
+
+    this._store.dispatch(new fromStoreShared.BackdropConfig({
       fullScreen: false,
       transition: 'move',
       header: true,
     }));
-    this._store.dispatch(new fromStore.BackdropContent({
+    this._store.dispatch(new fromStoreShared.BackdropContent({
       template: `
         <div class="welcome-backdrop-message">
           <h1 class="font-heading-1--bold">Welcome</h1>
@@ -52,7 +57,7 @@ export class WelcomeSignUpComponent {
           <p>You can access it at any  time by clicking the 'i' at the top.</p>
           <p>Anything you see on this overlay would NOT be visible to patients / end users.</p>
         </div>
-      `
+      `,
     }));
 
     animate(

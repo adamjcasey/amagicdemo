@@ -3,6 +3,8 @@ import {
   ViewEncapsulation,
   ViewChild,
   OnInit,
+  AfterViewInit,
+  ElementRef,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -22,12 +24,13 @@ import * as fromSharedComponent from '@shared/components';
   styleUrls: ['welcome.page.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class WelcomePage implements OnInit {
+export class WelcomePage implements OnInit, AfterViewInit {
   public pageData$: Observable<any>;
   public pageData: any;
   public slides: Array<any> = [];
   public welcomeFormGroup: FormGroup;
   @ViewChild('sliderPage', { static: false }) sliderPage!: fromSharedComponent.SliderPageComponent;
+  @ViewChild('videoIntro') videoIntro!: ElementRef;
 
   constructor(
     private _router: Router,
@@ -36,6 +39,7 @@ export class WelcomePage implements OnInit {
   ) {
     this.pageData$ = this._store.select(fromStore.getWelcomeState);
     this.welcomeFormGroup = this._formBuilder.group({
+      pin: ['', [ Validators.required, Validators.minLength(4) ]],
       name: ['', [ Validators.required ]],
       doses: ['', [ Validators.required ]],
     });
@@ -45,7 +49,7 @@ export class WelcomePage implements OnInit {
         color: 'var(--color-bg-pastel-green)',
         asset: 'assets/images/welcome-step-1.svg',
         content: `
-          <h1 class="font-heading-1--bold">Welcome to Theryx AutoMagic.</h1>
+          <h1 class="font-heading-1--bold">Welcome to AutoMagic for Theryx.</h1>
           <p>The AutoMagic connected ecosystem empowers you to make the most of your Theryx prescription</p>
         `,
         button: {
@@ -68,7 +72,9 @@ export class WelcomePage implements OnInit {
               name: 'name',
               placeholder: 'Name',
               onInput: (event: any) => {
-                this.inputName(event);
+                this._store.dispatch(new fromStore.SetData({
+                  name: event.target.value
+                }));
               },
             }
           ],
@@ -114,7 +120,7 @@ export class WelcomePage implements OnInit {
         asset: 'assets/images/welcome-step-4.svg',
         content: `
           <h1 class="font-heading-1--bold">You're ready to rock!</h1>
-          <p>Your app is configured to harness the power of the AutoMagic autoinjector.</p>
+          <p>The AutoMagic app is configured to harness the power of the AutoMagic autoinjector.</p>
         `,
         button: {
           label: 'Continue',
@@ -137,13 +143,21 @@ export class WelcomePage implements OnInit {
     });
   }
 
-  showPinCodeInput() {
-    this._store.dispatch(new fromSharedStore.BackdropShow({
-      transition: 'fade',
-      fullScreen: true,
-      header: false,
-      component: 'welcome-sign-up',
-    }));
+  ngAfterViewInit() {
+    this.videoIntro.nativeElement.muted = true;
+    this.videoIntro.nativeElement.play();
+    this.videoIntro.nativeElement.onended = () => {
+      this._store.dispatch(new fromSharedStore.BackdropShow({
+        transition: 'fade',
+        fullScreen: true,
+        header: false,
+        component: 'welcome-sign-up',
+      }));
+
+      setTimeout(() => {
+        this.videoIntro.nativeElement.classList.add('is-ended');
+      }, 800);
+    }
   }
 
   slideNext(sliders: any) {
@@ -160,12 +174,6 @@ export class WelcomePage implements OnInit {
     sliders.content.slideNext(500);
   }
 
-  inputName(event: any) {
-    this._store.dispatch(new fromStore.SetData({
-      name: event.target.value
-    }));
-  }
-
   async allowBluetooth() {
     if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios') {
       this.sliderPage.slideNext();
@@ -179,11 +187,11 @@ export class WelcomePage implements OnInit {
 
   async allowNotifications() {
     const showDosesSelector = () => {
-      this.sliderPage.expandContent({
+      this._store.dispatch(new fromSharedStore.SliderPageExpandContent({
         isExpanded: true,
         template: `
-          <h1 class="font-heading-1--bold"> Let’s set the<br> dose schedule for<br> those notifications.</h1>
-          <p>Typical dosing for Theryx:<br> 1 weekly for the first 4 weeks,<br> Every 2 weeks afterwards</p>
+          <h1 class="font-heading-1--bold">Confirm your dosing schedule.</h1>
+          <p>Typical dosing for Theryx®:<br> 1 weekly for the first 4 weeks,<br> Every 2 weeks afterwards</p>
         `,
         component: 'welcome-doses-selector',
         toolbar: {
@@ -195,19 +203,16 @@ export class WelcomePage implements OnInit {
               label: 'Proceed',
               action: () => {
                 if (this.welcomeFormGroup.get('doses')?.valid) {
-                  this.sliderPage.expandContent({
+                  this._store.dispatch(new fromSharedStore.SliderPageExpandContent({
                     isExpanded: false
-                  });
+                  }));
                   this.sliderPage.slideNext();
-                }
-                else {
-                  // show error message if the user don't select a date
                 }
               },
             }
           ],
         }
-      });
+      }));
     }
 
     if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios') {

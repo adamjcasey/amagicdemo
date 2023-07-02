@@ -72,9 +72,7 @@ export class SharedEffects {
               easing: 'ease-in-out',
               duration: 0.6,
             },
-          ).finished.then(() => {
-            this._store.dispatch(new fromActions.BackdropContent(null));
-          })
+          )
         }
         else {
           animate(
@@ -85,16 +83,96 @@ export class SharedEffects {
             animate(
               `#backdrop`,
               { top: `${(elementSize) * -1}px` }, 
-            ).finished.then(() => {
-              this._store.dispatch(new fromActions.BackdropContent(null));
-            })
+            )
           })
         }
       })
     )
   }, { dispatch: false });
 
+  sliderPageExpandContent$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(fromActions.ActionTypes.SliderPageExpandContent),
+      withLatestFrom(this._store.pipe(select(fromReducer.getSliderPageConfig))),
+      map(([action, options]) => {
+        this._sliderPageContentConfig = options;
+        return action;
+      }),
+      tap(() => {
+        const easingConfig = {
+          stiffness: 80,
+          damping: 20,
+          mass: 1,
+          velocity: 800,
+        };
+        if (this._sliderPageContentConfig.content.isExpanded) {
+          animate(
+            `.slider-page`, 
+            { paddingTop: `0px` },
+            { easing: spring(easingConfig) }
+          );
+    
+          animate(
+            `.slider-page__content`, 
+            { height: `${window.innerHeight}px` },
+            { easing: spring(easingConfig) }
+          );
+
+          animate(
+            `.slider-page__content .wrapper-small`, 
+            { opacity: [ 0.75, 0.5, 0 ] },
+            {
+              easing: 'ease-in-out',
+              duration: 0.2,
+            },
+          );
+    
+          animate(
+            `.slider-page__content .wrapper-large`, 
+            { opacity: [ 0, 0.5, 1 ] },
+            {
+              easing: 'ease-in-out',
+              duration: 0.4,
+            },
+          );
+        }
+        else {
+          animate(
+            `.slider-page`, 
+            { paddingTop: `${window.innerHeight * 0.55}px` },
+            { easing: spring(easingConfig) }
+          );
+    
+          animate(
+            `.slider-page__content`, 
+            { height: `${window.innerHeight * 0.45}px` },
+            { easing: spring(easingConfig) }
+          );
+
+          animate(
+            `.slider-page__content .wrapper-small`, 
+            { opacity: [ 0, 0.25, 0.5, 1 ] },
+            {
+              easing: 'ease-in-out',
+              duration: 0.4,
+            },
+          );
+
+          animate(
+            `.slider-page__content .wrapper-large`, 
+            { opacity: [ 0.75, 0.5, 0 ] },
+            {
+              easing: 'ease-in-out',
+              duration: 0.2,
+            },
+          );
+        }
+      })
+    )
+  }, { dispatch: false });
+
   private _backdropTopOptions: any;
+  private _sliderPageContentConfig: any;
 
   constructor(
     private actions$: Actions,

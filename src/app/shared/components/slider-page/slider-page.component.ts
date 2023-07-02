@@ -10,16 +10,16 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { animate, spring  } from 'motion';
+import { Observable } from 'rxjs';
 
 // Swiper Config
 import { SwiperComponent } from 'swiper/angular';
 import SwiperCore, { Pagination, EffectFade } from 'swiper';
 SwiperCore.use([Pagination, EffectFade]);
 
-import * as fromWelcomeComponents from '@welcome/components'
-import * as fromSharedStore from '@shared/store';
+import * as fromStore from '@shared/store';
 import * as fromWelcomeStore from '@welcome/store';
+import * as fromWelcomeComponents from '@welcome/components'
 
 @Component({
   selector: 'automagic-slider-page',
@@ -35,15 +35,29 @@ export class SliderPageComponent implements OnInit, AfterContentInit {
   @ViewChild('sliderAsset', { static: false }) sliderAsset!: SwiperComponent;
   @ViewChild('sliderContent', { static: false }) sliderContent!: SwiperComponent;
   @ViewChild('contentComponent', { read: ViewContainerRef }) contentComponent!: ViewContainerRef;
+  public config$: Observable<any>;
+  public config: any;
   public currentSlide: any;
-  public configContent: any;
 
-  constructor(
-    private _store: Store<fromSharedStore.SharedState>,
-  ) {}
+  constructor(private _store: Store<fromStore.SharedState>) {
+    this.config$ = this._store.select(fromStore.getSliderPageConfig);
+  }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.currentSlide = this.slides[0];
+    this.config$.subscribe(config => {
+      if (config) {
+        this.config = config;
+        if (this.config.content.isExpanded) {
+          if (this.config.content.component !== null) {
+            this._loadComponent(this.config.content.component);
+          }
+        }
+        else {
+          this.contentComponent?.clear();
+        }
+      }
+    });
   }
 
   ngAfterContentInit() {
@@ -51,7 +65,7 @@ export class SliderPageComponent implements OnInit, AfterContentInit {
   }
 
   slidePrev() {
-    if (typeof this.onPrevSlide === 'function') {
+    if (this.onPrevSlide.observers.length > 0) {
       this.onPrevSlide.emit({
         asset: this.sliderAsset.swiperRef,
         content: this.sliderContent.swiperRef,
@@ -80,89 +94,9 @@ export class SliderPageComponent implements OnInit, AfterContentInit {
     this.currentSlide = this.slides[this.sliderContent.swiperRef.activeIndex];
   }
 
-  expandContent(config: any) {
-    this.configContent = config;
-    const easingConfig = {
-      stiffness: 80,
-      damping: 20,
-      mass: 1,
-      velocity: 800,
-    };
-
-    if (this.configContent.isExpanded) {
-      animate(
-        `.slider-page`, 
-        { paddingTop: `0px` },
-        { easing: spring(easingConfig) }
-      );
-
-      animate(
-        `.slider-page__content`, 
-        { height: `${window.innerHeight}px` },
-        { easing: spring(easingConfig) }
-      );
-
-      animate(
-        `.slider-page__content .wrapper-small`, 
-        { opacity: [ 0.75, 0.5, 0 ] },
-        {
-          easing: 'ease-in-out',
-          duration: 0.2,
-        },
-      );
-
-      animate(
-        `.slider-page__content .wrapper-large`, 
-        { opacity: [ 0, 0.5, 1 ] },
-        {
-          easing: 'ease-in-out',
-          duration: 0.4,
-        },
-      );
-
-      if (this.configContent.component !== null) {
-        this._loadComponent(this.configContent.component);
-      }
-    }
-    else {
-      animate(
-        `.slider-page`, 
-        { paddingTop: `${window.innerHeight * 0.55}px` },
-        { easing: spring(easingConfig) }
-      );
-
-      animate(
-        `.slider-page__content`, 
-        { height: `${window.innerHeight * 0.45}px` },
-        { easing: spring(easingConfig) }
-      ).finished.then(() => {
-        this.contentComponent.clear();
-      });
-
-      animate(
-        `.slider-page__content .wrapper-small`, 
-        { opacity: [ 0, 0.25, 0.5, 1 ] },
-        {
-          easing: 'ease-in-out',
-          duration: 0.4,
-        },
-      );
-
-      animate(
-        `.slider-page__content .wrapper-large`, 
-        { opacity: [ 0.75, 0.5, 0 ] },
-        {
-          easing: 'ease-in-out',
-          duration: 0.2,
-        },
-      );
-    }
-  }
-
   private _loadComponent(component: any) {
     switch(component) {
       case 'welcome-doses-selector':
-        this.contentComponent.clear();
         const componentRef = this.contentComponent.createComponent(fromWelcomeComponents.WelcomeDosesSelectorComponent);
         if (componentRef.instance instanceof fromWelcomeComponents.WelcomeDosesSelectorComponent) {
           // Listen to the dosesSelected event

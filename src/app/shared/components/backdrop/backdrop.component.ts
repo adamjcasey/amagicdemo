@@ -26,7 +26,7 @@ export class BackdropComponent implements OnInit {
   public config$: Observable<any>;
   public config: any;
   @ViewChild('sliderMainMenu', { static: false }) sliderMainMenu!: SwiperComponent;
-  @ViewChild('topContentComponent', { read: ViewContainerRef }) topContentComponent!: ViewContainerRef;
+  @ViewChild('contentComponent', { read: ViewContainerRef }) contentComponent!: ViewContainerRef;
 
   constructor(
     private _store: Store<fromStore.SharedState>,
@@ -42,19 +42,25 @@ export class BackdropComponent implements OnInit {
     this.config$.subscribe(config => {
       if (config) {
         this.config = config;
-        if (this.config.component !== null) {
-          this._loadComponent(this.config.component);
+        if (this.config.show) {
+          if (this.config.component !== null) {
+            this._loadComponent(this.config.component);
+          }
+          else {
+            this.contentComponent?.clear();
+          }
         }
         else {
-          if (this.topContentComponent) {
-            this.topContentComponent.clear();
+          this.contentComponent?.clear();
+          if (this.isContentEmpty()) {
+            this.menuMoveTo(0);
           }
         }
       }
     });
   }
 
-  toggleTop() {
+  toggle() {
     if (!this.config.show) {
       this._store.dispatch(new fromStore.BackdropShow({
         transition: 'move',
@@ -63,22 +69,18 @@ export class BackdropComponent implements OnInit {
     }
     else {
       this._store.dispatch(new fromStore.BackdropClose);
-      this.topContentComponent.clear();
-      if (this.isContentEmpty()) {
-        this.menuMoveTo(0);
-      }
     }
   }
 
   menuMoveTo(step: number) {
-    this.sliderMainMenu.swiperRef.slideTo(step);
+    this.sliderMainMenu?.swiperRef.slideTo(step);
   }
 
   private _loadComponent(component: any) {
     switch(component) {
       case 'welcome-sign-up':
-        this.topContentComponent.clear();
-        this.topContentComponent.createComponent(WelcomeSignUpComponent);
+        this.contentComponent.clear();
+        this.contentComponent.createComponent(WelcomeSignUpComponent);
         break;
     }
   }

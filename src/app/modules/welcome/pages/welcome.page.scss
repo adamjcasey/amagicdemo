@@ -1,3 +1,17 @@
+.welcome-page__video-intro {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+
+  &.is-ended {
+    display: none;
+  }
+}
+
 .welcome-backdrop-message {
   text-align: center;
 }

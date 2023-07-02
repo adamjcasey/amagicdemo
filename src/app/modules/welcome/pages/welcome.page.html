@@ -1,8 +1,14 @@
 <ion-content [fullscreen]="true" [scrollY]="false">
+  <video 
+    #videoIntro
+    class="welcome-page__video-intro" 
+    src="/assets/videos/welcome.mp4" 
+    fullscreen="true"
+  ></video>
+
   <automagic-slider-page 
     #sliderPage
     [slides]="slides"
-    (onContentInit)="showPinCodeInput()"
     (onNextSlide)="slideNext($event)"
   ></automagic-slider-page>
 </ion-content>

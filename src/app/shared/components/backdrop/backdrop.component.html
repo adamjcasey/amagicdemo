@@ -12,7 +12,7 @@
 
     <div class="backdrop__content">
       <div *ngIf="config.template" [innerHTML]="config.template"></div>
-      <ng-template #topContentComponent></ng-template>
+      <ng-template #contentComponent></ng-template>
       <div *ngIf="isContentEmpty()" class="main-menu">
         <swiper 
           #sliderMainMenu 
@@ -102,7 +102,7 @@
       </div>
     </div>
 
-    <div class="backdrop__fold" (click)="toggleTop()">
+    <div class="backdrop__fold" (click)="toggle()">
       <ion-icon *ngIf="!config.show" class="info" src="/assets/icons/info.svg"></ion-icon>
       <ion-icon *ngIf="config.show" class="close" name="chevron-up-outline"></ion-icon>
     </div>

@@ -24,6 +24,8 @@ export function SharedReducer(
         backdropConfig: {
           ...state.backdropConfig,
           show: false,
+          component: null,
+          template: null,
         },
       };
     }
@@ -32,8 +34,8 @@ export function SharedReducer(
         ...state,
         backdropConfig: {
           ...state.backdropConfig,
-          transition: action.payload.transition,
           fullScreen: action.payload.fullScreen,
+          transition: action.payload.transition,
           header: action.payload.header,
         },
       };
@@ -48,6 +50,15 @@ export function SharedReducer(
         }
       };
     }
+    case fromActions.ActionTypes.SliderPageExpandContent: {
+      return {
+        ...state,
+        sliderPageConfig: {
+          ...state.sliderPageConfig,
+          content: action.payload,
+        }
+      };
+    }
     default: {
       return state;
     }
@@ -55,6 +66,8 @@ export function SharedReducer(
 }
 
 const exportBackdropConfig = (state: fromStore.SharedState) => state.backdropConfig;
+const exportSliderPageConfig = (state: fromStore.SharedState) => state.sliderPageConfig;
 const selectSharedState = createFeatureSelector<fromStore.SharedState>('shared');
 
 export const getBackdropConfig = createSelector(selectSharedState, exportBackdropConfig);
+export const getSliderPageConfig = createSelector(selectSharedState, exportSliderPageConfig);
