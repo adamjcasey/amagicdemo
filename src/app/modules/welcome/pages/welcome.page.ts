@@ -16,7 +16,7 @@ import { PushNotifications } from '@capacitor/push-notifications';
 
 import * as fromStore from '../store';
 import * as fromSharedStore from '@shared/store';
-import * as fromSharedComponent from '@shared/components';
+import * as fromSharedComponents from '@shared/components';
 
 @Component({
   selector: 'automagic-welcome',
@@ -29,7 +29,7 @@ export class WelcomePage implements OnInit, AfterViewInit {
   public pageData: any;
   public slides: Array<any> = [];
   public welcomeFormGroup: FormGroup;
-  @ViewChild('sliderPage', { static: false }) sliderPage!: fromSharedComponent.SliderPageComponent;
+  @ViewChild('sliderPage', { static: false }) sliderPage!: fromSharedComponents.SliderPageComponent;
   @ViewChild('videoIntro') videoIntro!: ElementRef;
 
   constructor(

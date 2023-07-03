@@ -9,6 +9,7 @@ import {
   AfterContentInit,
   ViewContainerRef,
 } from '@angular/core';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 
@@ -19,7 +20,8 @@ SwiperCore.use([Pagination, EffectFade]);
 
 import * as fromStore from '@shared/store';
 import * as fromWelcomeStore from '@welcome/store';
-import * as fromWelcomeComponents from '@welcome/components'
+import * as fromWelcomeComponents from '@welcome/components';
+import * as fromHomeComponents from '@home/components';
 
 @Component({
   selector: 'automagic-slider-page',
@@ -39,7 +41,10 @@ export class SliderPageComponent implements OnInit, AfterContentInit {
   public config: any;
   public currentSlide: any;
 
-  constructor(private _store: Store<fromStore.SharedState>) {
+  constructor(
+    private _store: Store<fromStore.SharedState>,
+    private _sanitizer: DomSanitizer,
+  ) {
     this.config$ = this._store.select(fromStore.getSliderPageConfig);
   }
 
@@ -94,10 +99,15 @@ export class SliderPageComponent implements OnInit, AfterContentInit {
     this.currentSlide = this.slides[this.sliderContent.swiperRef.activeIndex];
   }
 
+  sanitizeContent(htmlContent: string): SafeHtml {
+    return this._sanitizer.bypassSecurityTrustHtml(htmlContent);
+  }
+
   private _loadComponent(component: any) {
+    let componentRef;
     switch(component) {
       case 'welcome-doses-selector':
-        const componentRef = this.contentComponent.createComponent(fromWelcomeComponents.WelcomeDosesSelectorComponent);
+        componentRef = this.contentComponent.createComponent(fromWelcomeComponents.WelcomeDosesSelectorComponent);
         if (componentRef.instance instanceof fromWelcomeComponents.WelcomeDosesSelectorComponent) {
           // Listen to the dosesSelected event
           componentRef.instance.onDosesChange.subscribe((doses: number) => {
@@ -107,6 +117,9 @@ export class SliderPageComponent implements OnInit, AfterContentInit {
             }));
           });
         }
+        break;
+      case 'start-dose-survey':
+        componentRef = this.contentComponent.createComponent(fromHomeComponents.StartDoseSurveyComponent);
         break;
     }
   }

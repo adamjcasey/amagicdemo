@@ -24,7 +24,7 @@
           (slideChange)="slideChange()">
 
           <ng-template class="slider-page__slide" swiperSlide *ngFor="let step of slides">
-            <div class="text-wrapper" [innerHTML]="step.content"></div>
+            <div class="text-wrapper" [innerHTML]="sanitizeContent(step.content)"></div>
 
             <div class="cards-wrapper" *ngIf="step.cards">
               <automagic-card *ngFor="let card of step.cards" [card]="card"></automagic-card>
@@ -59,7 +59,7 @@
           <div 
             class="wrapper-large__template" 
             *ngIf="config?.content.template" 
-            [innerHTML]="config?.content.template"
+            [innerHTML]="sanitizeContent(config?.content.template)"
           ></div>
 
           <div class="wrapper-large__component">
@@ -71,7 +71,7 @@
           <div 
             class="wrapper-large__toolbar-template" 
             *ngIf="config?.content.toolbar.template" 
-            [innerHTML]="config?.content.toolbar.template"
+            [innerHTML]="sanitizeContent(config?.content.toolbar.template)"
           ></div>
 
           <div *ngIf="config?.content.toolbar.actions" class="wrapper-large__toolbar-actions">
