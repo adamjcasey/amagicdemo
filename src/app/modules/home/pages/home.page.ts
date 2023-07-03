@@ -1,15 +1,23 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Router } from '@angular/router';
+
+import * as fromStore from '@home/store';
+import * as fromSharedStore from '@shared/store';
 
 @Component({
   selector: 'automagic-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-export class HomePage {
+export class HomePage implements AfterViewInit {
   public heroConfig: any;
   public card: any;
 
-  constructor() {
+  constructor(
+    private _store: Store<fromStore.HomeState>,
+    private _router: Router,
+  ) {
     this.heroConfig = {
       color: 'var(--color-bg-pastel-green)',
       image: '/assets/images/homepage.svg',
@@ -21,6 +29,9 @@ export class HomePage {
       actions: [
         {
           label: 'Start dose',
+          action: () => {
+            this.goTo('/home/start-dose');
+          }
         }
       ]
     }
@@ -38,4 +49,20 @@ export class HomePage {
     }
   }
 
+  ngAfterViewInit() {
+    this._store.dispatch(new fromSharedStore.BackdropShow({
+      transition: 'move',
+      fullScreen: true,
+      header: true,
+      bgTemplate: 'top-hole',
+      template: `
+        <h1 class="font-heading-1--bold">Dose Day</h1>
+        <p>For this demo, let's pretend that <br>you're scheduled for your first at-<br>home dose today</p>
+      `,
+    }));
+  }
+
+  goTo(path: string) {
+    this._router.navigate([path]);
+  }
 }
