@@ -48,8 +48,6 @@ export class WelcomeSignUpComponent {
       fullScreen: false,
       transition: 'move',
       header: true,
-    }));
-    this._store.dispatch(new fromStoreShared.BackdropContent({
       template: `
         <div class="welcome-backdrop-message">
           <h1 class="font-heading-1--bold">Welcome</h1>

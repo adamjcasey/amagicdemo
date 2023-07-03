@@ -62,19 +62,41 @@ export class SharedEffects {
         return action;
       }),
       tap(() => {
-        const element = document.getElementById('backdrop');
-        const elementSize = Number(element?.offsetHeight);
+        const elementSize = window.innerHeight * 0.75;
         if (this._backdropTopOptions.transition === 'move') {
-          animate(
-            `#backdrop`,
-            { top: `${(elementSize) * -1}px` },
-            {
-              easing: 'ease-in-out',
-              duration: 0.6,
-            },
-          )
+          if (this._backdropTopOptions.fullScreen) {
+            animate(
+              `#backdrop`,
+              {
+                top: `${(window.innerHeight) * -1}px`,
+                height: [
+                  `${window.innerHeight}px`,
+                  `${window.innerHeight * 0.9}px`,
+                  `${window.innerHeight * 0.8}px`,
+                  `${window.innerHeight * 0.75}px`
+                ] 
+              },
+              { easing: spring({
+                stiffness: 80,
+                damping: 20,
+                mass: 1,
+                velocity: 800,
+              }) },
+            );
+          }
+          else {
+            animate(
+              `#backdrop`,
+              { top: `${(elementSize) * -1}px` },
+              {
+                easing: 'ease-in-out',
+                duration: 0.6,
+              } 
+            )
+          }
         }
         else {
+
           animate(
             `#backdrop`,
             { opacity: [ 0.8, 0.5, 0 ] }, 

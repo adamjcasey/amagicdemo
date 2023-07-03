@@ -12,7 +12,7 @@ export function SharedReducer(
       return {
         ...state,
         backdropConfig: {
-          ...state.backdropConfig,  
+          ...fromStore.initialState, 
           ...action.payload,
           show: true,
         },
@@ -24,8 +24,6 @@ export function SharedReducer(
         backdropConfig: {
           ...state.backdropConfig,
           show: false,
-          component: null,
-          template: null,
         },
       };
     }
@@ -34,31 +32,28 @@ export function SharedReducer(
         ...state,
         backdropConfig: {
           ...state.backdropConfig,
-          fullScreen: action.payload.fullScreen,
-          transition: action.payload.transition,
-          header: action.payload.header,
+          ...action.payload,
+          template: action.payload?.template ? action.payload?.template : null,
+          component: action.payload?.component ? action.payload?.component : null,
         },
       };
     }
-    case fromActions.ActionTypes.BackdropContent: {
-      return {
-        ...state,
-        backdropConfig: {
-          ...state.backdropConfig,
-          template: action.payload?.template ? action.payload?.template : null,
-          component: action.payload?.component ? action.payload?.component : null,
-        }
-      };
-    }
+
     case fromActions.ActionTypes.SliderPageExpandContent: {
       return {
         ...state,
         sliderPageConfig: {
           ...state.sliderPageConfig,
-          content: action.payload,
+          content: {
+            ...state.sliderPageConfig.content,
+            ...action.payload,
+            template: action.payload?.template ? action.payload?.template : null,
+            component: action.payload?.component ? action.payload?.component : null,
+          }
         }
       };
     }
+
     default: {
       return state;
     }

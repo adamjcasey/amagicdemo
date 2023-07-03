@@ -5,9 +5,10 @@ import {
   ViewEncapsulation,
   ViewContainerRef
 } from '@angular/core';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { SwiperComponent } from "swiper/angular";
+import { SwiperComponent } from 'swiper/angular';
 
 // Swiper Config
 import SwiperCore, { EffectFade } from 'swiper';
@@ -30,12 +31,13 @@ export class BackdropComponent implements OnInit {
 
   constructor(
     private _store: Store<fromStore.SharedState>,
+    private _sanitizer: DomSanitizer,
   ) {
     this.config$ = this._store.select(fromStore.getBackdropConfig);
   }
 
   isContentEmpty(): boolean {
-    return this.config.template === null && this.config.component === null;
+    return !this.config.template && !this.config.component;
   }
 
   ngOnInit() {
@@ -53,7 +55,10 @@ export class BackdropComponent implements OnInit {
         else {
           this.contentComponent?.clear();
           if (this.isContentEmpty()) {
-            this.menuMoveTo(0);
+            this.showSubmenu(0);
+          }
+          if (typeof this.config.onClose === 'function') {
+            this.config.onClose();
           }
         }
       }
@@ -72,14 +77,18 @@ export class BackdropComponent implements OnInit {
     }
   }
 
-  menuMoveTo(step: number) {
+  showSubmenu(step: number) {
     this.sliderMainMenu?.swiperRef.slideTo(step);
   }
 
+  sanitizeContent(htmlContent: string): SafeHtml {
+    return this._sanitizer.bypassSecurityTrustHtml(htmlContent);
+  }
+
   private _loadComponent(component: any) {
+    this.contentComponent.clear();
     switch(component) {
       case 'welcome-sign-up':
-        this.contentComponent.clear();
         this.contentComponent.createComponent(WelcomeSignUpComponent);
         break;
     }
