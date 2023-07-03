@@ -6,7 +6,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { animate, spring } from 'motion';
 
-import * as fromStore from '@shared/store';
+import * as fromStore from '../../store';
+import * as fromStoreShared from '@shared/store';
 
 @Component({
   selector: 'automagic-welcome-sign-up',
@@ -16,9 +17,10 @@ import * as fromStore from '@shared/store';
 })
 export class WelcomeSignUpComponent {
   public signUpFormGroup: FormGroup;
+  public pinInvalid: boolean = false;
 
   constructor(
-    private _store: Store<fromStore.SharedState>,
+    private _store: Store<fromStore.WelcomeState>,
     private _formBuilder: FormBuilder,
   ) {
     this.signUpFormGroup = this._formBuilder.group({
@@ -38,23 +40,26 @@ export class WelcomeSignUpComponent {
   }
 
   registerUser() {
-    this._store.dispatch(new fromStore.BackdropTopOptions({
+    this._store.dispatch(new fromStore.SetData({
+      pin: this.signUpFormGroup.value.code
+    }));
+
+    this._store.dispatch(new fromStoreShared.BackdropConfig({
       fullScreen: false,
       transition: 'move',
       header: true,
-    }));
-    this._store.dispatch(new fromStore.BackdropTopContent({
       template: `
         <div class="welcome-backdrop-message">
           <h1 class="font-heading-1--bold">Welcome</h1>
-          <p>For this demo, we’ll guide you through the experience using this black backdrop.</p>
-          <p>Anything you see on this backdrop would NOT be visible to patients / end users.</p>
+          <p>For this demo, this black overlay will sometimes appear to provide additional context.</p>
+          <p>You can access it at any  time by clicking the 'i' at the top.</p>
+          <p>Anything you see on this overlay would NOT be visible to patients / end users.</p>
         </div>
-      `
-    })); 
+      `,
+    }));
 
     animate(
-      "#backdrop-top",
+      "#backdrop",
       { height: [
         `${window.innerHeight}px`,
         `${window.innerHeight * 0.9}px`,
@@ -67,6 +72,6 @@ export class WelcomeSignUpComponent {
         mass: 1,
         velocity: 800,
       }) }
-    )
+    );
   }
 }

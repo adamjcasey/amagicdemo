@@ -1,19 +1,38 @@
-<section id="backdrop-top" class="backdrop-top" [ngClass]="{ 
-  'is-open': configTop.show, 
-  'is-full-screen': configTop.fullScreen, 
-  'transition-fade': configTop.transition === 'fade', 
-  'transition-move': configTop.transition === 'move', 
+<section id="backdrop" class="backdrop" [ngClass]="{ 
+  'is-open': config.show, 
+  'is-full-screen': config.fullScreen, 
+  'transition-fade': config.transition === 'fade', 
+  'transition-move': config.transition === 'move', 
+  'bg-template': config.bgTemplate, 
+  'bg-template--top-hole': config.bgTemplate === 'top-hole', 
+  'bg-template--bottom-hole': config.bgTemplate === 'bottom-hole', 
 }">
-  <div class="backdrop-top__wrapper">
-    <header *ngIf="configTop.header" class="backdrop-top__header">
+  <div class="backdrop__wrapper" [ngStyle]="{ 'background-image': 'url(/assets/images/backdrop-' + config.bgTemplate + '.svg)'}">
+
+    <header class="backdrop__header" *ngIf="config.header">
       <ion-img class="logo" src="/assets/images/backdrop-header-logo.svg"></ion-img>
       <ion-img class="ellipse" src="/assets/images/backdrop-header-ellipse.svg"></ion-img>
     </header>
 
-    <div class="backdrop-top__content">
-      <div *ngIf="configTop.template" [innerHTML]="configTop.template"></div>
-      <ng-template #topContentComponent></ng-template>
-      <div *ngIf="isContentEmpty(configTop)" class="main-menu">
+    <div class="backdrop__content">
+      <div 
+        class="backdrop__template" 
+        *ngIf="config.template" 
+        [innerHTML]="sanitizeContent(config.template)"
+      ></div>
+
+      <div class="backdrop__component">
+        <ng-template #contentComponent></ng-template>
+      </div>
+
+      <ion-icon 
+        class="close" 
+        name="chevron-up-outline" 
+        *ngIf="config.fullScreen && config.bgTemplate" 
+        (click)="toggle()" 
+      ></ion-icon>
+
+      <div class="main-menu" *ngIf="isContentEmpty()">
         <swiper 
           #sliderMainMenu 
           effect="fade" 
@@ -28,17 +47,17 @@
             </div>
 
             <ion-list lines="full">
-              <ion-item (click)="menuMoveTo(1)">
+              <ion-item (click)="showSubmenu(1)">
                 <ion-icon src="/assets/icons/flag.svg" slot="start" size="large"></ion-icon>
                 <ion-label>I’m all done...</ion-label>
                 <ion-icon name="chevron-forward-outline" slot="end" color="light"></ion-icon>
               </ion-item>
-              <ion-item (click)="menuMoveTo(2)">
+              <ion-item (click)="showSubmenu(2)">
                 <ion-icon src="/assets/icons/time-loader.svg" slot="start" size="large"></ion-icon>
                 <ion-label>Try it again</ion-label>
                 <ion-icon name="chevron-forward-outline" slot="end" color="light"></ion-icon>
               </ion-item>
-              <ion-item (click)="menuMoveTo(3)">
+              <ion-item (click)="showSubmenu(3)">
                 <ion-icon src="/assets/icons/help.svg" slot="start" size="large"></ion-icon>
                 <ion-label>Help! Something broke</ion-label>
                 <ion-icon name="chevron-forward-outline" slot="end" color="light"></ion-icon>
@@ -102,41 +121,9 @@
       </div>
     </div>
 
-    <div class="backdrop-top__fold" (click)="toggleTop()">
-      <ion-icon *ngIf="!configTop.show" class="info" src="/assets/icons/info.svg"></ion-icon>
-      <ion-icon *ngIf="configTop.show" class="close" name="chevron-up-outline"></ion-icon>
-    </div>
-  </div>
-</section>
-
-<section id="backdrop-bottom" class="backdrop-bottom" [ngClass]="{ 
-  'is-open': configBottom?.show
-}">
-  <div 
-    class="backdrop-bottom__content" 
-    [style.background-color]="configBottom.bgColor ? 'var(' + configBottom.bgColor + ')': 'var(--color-white)'">
-    <div *ngIf="configBottom?.closeButton" class="backdrop-bottom__close" (click)="closeBotom()">
-      <ion-icon name="close-outline"></ion-icon>
-    </div>
-    <div 
-      *ngIf="configBottom?.template" 
-      [innerHTML]="configBottom?.template" 
-      class="backdrop-bottom__template"
-    ></div>
-    <ng-template #bottomContentComponent></ng-template>
-  </div>
-
-  <div class="backdrop-bottom__toolbar">
-    <div *ngIf="configBottom?.toolbar?.template" class="backdrop-bottom__toolbar-template" [innerHTML]="configBottom?.toolbar?.template"></div>
-    <div *ngIf="configBottom?.toolbar?.actions" class="backdrop-bottom__toolbar-actions">
-      <ion-button 
-        *ngFor="let button of configBottom?.toolbar?.actions; let i = index"
-        color="purple" 
-        size="large" 
-        (click)="button.action($event)" 
-        [fill]="i % 2 !== 1 && configBottom?.toolbar?.actions.length > 1 ? 'outline': null">
-        {{ button.label }}
-      </ion-button>
+    <div class="backdrop__fold" (click)="toggle()">
+      <ion-icon *ngIf="!config.show" class="info" src="/assets/icons/info.svg"></ion-icon>
+      <ion-icon *ngIf="config.show" class="close" name="chevron-up-outline"></ion-icon>
     </div>
   </div>
 </section>

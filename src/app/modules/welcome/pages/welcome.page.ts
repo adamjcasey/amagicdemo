@@ -1,9 +1,10 @@
 import {
   Component,
-  ViewChild,
   ViewEncapsulation,
-  AfterContentInit,
+  ViewChild,
   OnInit,
+  AfterViewInit,
+  ElementRef,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -12,14 +13,10 @@ import { Observable } from 'rxjs';
 import { Capacitor } from '@capacitor/core';
 import { BleClient } from '@capacitor-community/bluetooth-le';
 import { PushNotifications } from '@capacitor/push-notifications';
-import { SwiperComponent } from 'swiper/angular';
 
-// Swiper Config
-import SwiperCore, { Pagination, EffectFade } from 'swiper';
-SwiperCore.use([Pagination, EffectFade]);
-
-import * as fromStore from '../store'
+import * as fromStore from '../store';
 import * as fromSharedStore from '@shared/store';
+import * as fromSharedComponents from '@shared/components';
 
 @Component({
   selector: 'automagic-welcome',
@@ -27,14 +24,13 @@ import * as fromSharedStore from '@shared/store';
   styleUrls: ['welcome.page.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class WelcomePage implements OnInit, AfterContentInit {
+export class WelcomePage implements OnInit, AfterViewInit {
   public pageData$: Observable<any>;
   public pageData: any;
-  @ViewChild('sliderAsset', { static: false }) sliderAsset!: SwiperComponent;
-  @ViewChild('sliderContent', { static: false }) sliderContent!: SwiperComponent;
-  public sliderItems: Array<any> = [];
-  public currentStep: number = 1;
+  public slides: Array<any> = [];
   public welcomeFormGroup: FormGroup;
+  @ViewChild('sliderPage', { static: false }) sliderPage!: fromSharedComponents.SliderPageComponent;
+  @ViewChild('videoIntro') videoIntro!: ElementRef;
 
   constructor(
     private _router: Router,
@@ -43,35 +39,51 @@ export class WelcomePage implements OnInit, AfterContentInit {
   ) {
     this.pageData$ = this._store.select(fromStore.getWelcomeState);
     this.welcomeFormGroup = this._formBuilder.group({
+      pin: ['', [ Validators.required, Validators.minLength(4) ]],
       name: ['', [ Validators.required ]],
       doses: ['', [ Validators.required ]],
     });
 
-    this.sliderItems = [
+    this.slides = [
       {
+        color: 'var(--color-bg-pastel-green)',
         asset: 'assets/images/welcome-step-1.svg',
         content: `
-          <h1 class="font-heading-1--bold">Welcome to Theryx AutoMagic.</h1>
+          <h1 class="font-heading-1--bold">Welcome to AutoMagic for Theryx.</h1>
           <p>The AutoMagic connected ecosystem empowers you to make the most of your Theryx prescription</p>
         `,
         button: {
           label: 'Get started',
-          action: () => { this.slideNext() }
+          action: () => { this.sliderPage.slideNext() }
         },
+        showNavigation: false,
       },
       {
+        color: 'var(--color-bg-pastel-green)',
         asset: 'assets/images/welcome-step-1.svg',
         content: `
           <h1 class="font-heading-1--bold">Let’s get to know each other.</h1>
         `,
         form: {
-          field: 'name',
+          group: this.welcomeFormGroup,
+          fields: [
+            {
+              label: 'What’s your name?',
+              name: 'name',
+              placeholder: 'Name',
+              onInput: (event: any) => {
+                this._store.dispatch(new fromStore.SetData({
+                  name: event.target.value
+                }));
+              },
+            }
+          ],
         },
         button: {
           label: 'Continue',
           action: () => {
             if (this.welcomeFormGroup.get('name')?.valid) {
-              this.slideNext();
+              this.sliderPage.slideNext();
             }
             else {
               this.welcomeFormGroup.get('name')?.markAllAsTouched();
@@ -80,6 +92,7 @@ export class WelcomePage implements OnInit, AfterContentInit {
         }
       },
       {
+        color: 'var(--color-bg-pastel-blue)',
         asset: 'assets/images/welcome-step-2.svg',
         content: `
           <h1 class="font-heading-1--bold">Let's get connected.</h1>
@@ -91,6 +104,7 @@ export class WelcomePage implements OnInit, AfterContentInit {
         },
       },
       {
+        color: 'var(--color-bg-pastel-honey-yellow)',
         asset: 'assets/images/welcome-step-3.svg',
         content: `
           <h1 class="font-heading-1--bold">Allow Notifications.</h1>
@@ -102,10 +116,11 @@ export class WelcomePage implements OnInit, AfterContentInit {
         },
       },
       {
+        color: 'var(--color-bg-pastel-lime)',
         asset: 'assets/images/welcome-step-4.svg',
         content: `
           <h1 class="font-heading-1--bold">You're ready to rock!</h1>
-          <p>Your app is configured to harness the power of the AutoMagic autoinjector.</p>
+          <p>The AutoMagic app is configured to harness the power of the AutoMagic autoinjector.</p>
         `,
         button: {
           label: 'Continue',
@@ -123,73 +138,60 @@ export class WelcomePage implements OnInit, AfterContentInit {
           this.welcomeFormGroup.patchValue({
             doses: this.pageData.doses
           });
-          if (document.getElementById('backdrop-bottom')?.classList.contains('is-open')) {
-            const toolbarTemplate = document.querySelector('#backdrop-bottom .backdrop-bottom__toolbar-template strong');
-            if (toolbarTemplate !== null) {
-              toolbarTemplate.textContent = `${this.pageData.doses.length} ${this.pageData.doses.length > 1 ? 'doses' : 'dose'}`;
-            }
-          }
         }
       }
     });
   }
 
-  ngAfterContentInit() {
-    this._store.dispatch(new fromSharedStore.BackdropTopShow({
-      transition: 'fade',
-      fullScreen: true,
-      header: false,
-      component: 'welcome-sign-up',
-    }));
+  ngAfterViewInit() {
+    this.videoIntro.nativeElement.muted = true;
+    this.videoIntro.nativeElement.play();
+    this.videoIntro.nativeElement.onended = () => {
+      this._store.dispatch(new fromSharedStore.BackdropShow({
+        transition: 'fade',
+        fullScreen: true,
+        header: false,
+        component: 'welcome-sign-up',
+      }));
+
+      setTimeout(() => {
+        this.videoIntro.nativeElement.classList.add('is-ended');
+      }, 800);
+    }
   }
 
-  slidePrev() {
-    this.sliderAsset.swiperRef.slidePrev(500);
-    this.sliderContent.swiperRef.slidePrev(500);
-  }
-
-  slideNext() {
-    if (this.currentStep > 1) {
-      if (this.currentStep === 2) {
-        this.sliderAsset.swiperRef.slideTo(2);
+  slideNext(sliders: any) {
+    const currentSlide = sliders.content.activeIndex;
+    if (currentSlide > 1) {
+      if (currentSlide === 2) {
+        sliders.asset.slideTo(2);
       }
       else {
-        this.sliderAsset.swiperRef.slideNext(500);
+        sliders.asset.slideNext(500);
       }
     }
 
-    this.sliderContent.swiperRef.slideNext(500);
-  }
-
-  onSlideChange() {
-    this.currentStep = this.sliderContent.swiperRef.activeIndex + 1;
-  }
-
-  inputName(event: any) {
-    this._store.dispatch(new fromStore.SetData({
-      name: event.target.value
-    }));
+    sliders.content.slideNext(500);
   }
 
   async allowBluetooth() {
     if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios') {
-      this.slideNext();
+      this.sliderPage.slideNext();
       // await BleClient.initialize()
       // const isEnabled = await BleClient.isEnabled()
-      // alert(`isEnabled? ${isEnabled}`);
     }
     else {
-      this.slideNext();
+      this.sliderPage.slideNext();
     }
   }
 
   async allowNotifications() {
     const showDosesSelector = () => {
-      this._store.dispatch(new fromSharedStore.BackdropBottomShow({
-        header: false,
+      this._store.dispatch(new fromSharedStore.SliderPageExpandContent({
+        isExpanded: true,
         template: `
-          <h1 class="font-heading-1--bold"> Let’s set the<br> dose schedule for<br> those notifications.</h1>
-          <p>Typical dosing for Theryx:<br> 1 weekly for the first 4 weeks,<br> Every 2 weeks afterwards</p>
+          <h1 class="font-heading-1--bold">Confirm your dosing schedule.</h1>
+          <p>Typical dosing for Theryx®:<br> 1 weekly for the first 4 weeks,<br> Every 2 weeks afterwards</p>
         `,
         component: 'welcome-doses-selector',
         toolbar: {
@@ -201,11 +203,10 @@ export class WelcomePage implements OnInit, AfterContentInit {
               label: 'Proceed',
               action: () => {
                 if (this.welcomeFormGroup.get('doses')?.valid) {
-                  this._store.dispatch(new fromSharedStore.BackdropBottomClose());
-                  this.slideNext();
-                }
-                else {
-                  // show error message if the user don't select a date
+                  this._store.dispatch(new fromSharedStore.SliderPageExpandContent({
+                    isExpanded: false
+                  }));
+                  this.sliderPage.slideNext();
                 }
               },
             }
@@ -213,6 +214,7 @@ export class WelcomePage implements OnInit, AfterContentInit {
         }
       }));
     }
+
     if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios') {
       let permissionStatus = await PushNotifications.checkPermissions();
       

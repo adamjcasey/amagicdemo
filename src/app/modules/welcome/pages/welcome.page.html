@@ -1,59 +1,14 @@
 <ion-content [fullscreen]="true" [scrollY]="false">
-  <section class="welcome-page step-{{ currentStep }}">
-    <div class="welcome-page__asset">
-      <swiper
-        #sliderAsset
-        effect="fade"
-        [allowTouchMove]="false"
-        (slideChange)="onSlideChange()"
-      >
-        <ng-template class="welcome-slide-asset" swiperSlide *ngFor="let step of sliderItems">
-          <div class="welcome-slide-asset__wrapper" style="text-align: center;">
-            <img [src]="step.asset" />
-          </div>
-        </ng-template>
-      </swiper>
-    </div>
+  <video 
+    #videoIntro
+    class="welcome-page__video-intro" 
+    src="/assets/videos/welcome.mp4" 
+    fullscreen="true"
+  ></video>
 
-    <div class="welcome-page__content">
-      <div class="welcome-page__navigation" [ngClass]="{ 'visibility-hidden': currentStep === 1 }">
-        <div class="swiper-pagination"></div>
-      </div>
-      
-      <swiper
-        #sliderContent
-        effect="fade"
-        [allowTouchMove]="false"
-        (slideChange)="onSlideChange()"
-        [pagination]="{ el: '.swiper-pagination' }"
-      >
-        <ng-template class="welcome-page__slide" swiperSlide *ngFor="let step of sliderItems">
-          <div class="text-wrapper" [innerHTML]="step.content"></div>
-          <div class="cards-wrapper" *ngIf="step.cards">
-            <automagic-card *ngFor="let card of step.cards" [card]="card"></automagic-card>
-          </div>
-          <div class="form-wrapper" *ngIf="step.form">
-            <form [formGroup]="welcomeFormGroup" autocomplete="off">
-              <div *ngIf="step.form.field === 'name'" class="field-wrapper">
-                <p class="field-label">What’s your name?</p>
-                <ion-input 
-                  color="purple" 
-                  fill="outline" 
-                  mode="md" 
-                  placeholder="Name" 
-                  errorText="{{ welcomeFormGroup.get('name')?.errors?.['required'] ? 'Please enter your name' : null }}" 
-                  (input)="inputName($event)"
-                  formControlName="name" 
-                ></ion-input>
-              </div>
-            </form>
-          </div>
-
-          <div class="button-wrapper" *ngIf="step.button">
-            <ion-button (click)="step.button.action()" color="purple">{{ step.button.label }}</ion-button>
-          </div>
-        </ng-template>
-      </swiper>
-    </div>
-  </section>
+  <automagic-slider-page 
+    #sliderPage
+    [slides]="slides"
+    (onNextSlide)="slideNext($event)"
+  ></automagic-slider-page>
 </ion-content>

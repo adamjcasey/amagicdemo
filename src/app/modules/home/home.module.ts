@@ -4,6 +4,7 @@ import { IonicModule } from '@ionic/angular';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import * as fromPages from './pages';
+import * as fromComponents from './components';
 import { HomeRoutingModule } from './home-routing.module';
 import { SharedModule } from '@shared/shared.module';
 
@@ -16,6 +17,9 @@ import { SharedModule } from '@shared/shared.module';
     HomeRoutingModule,
     SharedModule,
   ],
-  declarations: [fromPages.pages]
+  declarations: [
+    fromPages.pages,
+    fromComponents.components,
+  ]
 })
 export class HomeModule {}

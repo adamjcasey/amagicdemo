@@ -5,9 +5,10 @@ import {
   ViewEncapsulation,
   ViewContainerRef
 } from '@angular/core';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { SwiperComponent } from "swiper/angular";
+import { SwiperComponent } from 'swiper/angular';
 
 // Swiper Config
 import SwiperCore, { EffectFade } from 'swiper';
@@ -15,7 +16,6 @@ SwiperCore.use([EffectFade]);
 
 import { WelcomeSignUpComponent, WelcomeDosesSelectorComponent } from '@welcome/components';
 import * as fromStore from '@shared/store';
-import * as fromWelcomeStore from '@welcome/store';
 
 @Component({
   selector: 'automagic-backdrop',
@@ -24,99 +24,72 @@ import * as fromWelcomeStore from '@welcome/store';
   encapsulation: ViewEncapsulation.None
 })
 export class BackdropComponent implements OnInit {
-  public configTop$: Observable<any>;
-  public configTop: any;
+  public config$: Observable<any>;
+  public config: any;
   @ViewChild('sliderMainMenu', { static: false }) sliderMainMenu!: SwiperComponent;
-  @ViewChild('topContentComponent', { read: ViewContainerRef }) topContentComponent!: ViewContainerRef;
-  @ViewChild('bottomContentComponent', { read: ViewContainerRef }) bottomContentComponent!: ViewContainerRef;
-
-  public configBottom$: Observable<any>;
-  public configBottom: any;
+  @ViewChild('contentComponent', { read: ViewContainerRef }) contentComponent!: ViewContainerRef;
 
   constructor(
     private _store: Store<fromStore.SharedState>,
+    private _sanitizer: DomSanitizer,
   ) {
-    this.configTop$ = this._store.select(fromStore.getBackdropTopConfig);
-    this.configBottom$ = this._store.select(fromStore.getBackdropBottomConfig);
+    this.config$ = this._store.select(fromStore.getBackdropConfig);
   }
 
-  isContentEmpty(config: any): boolean {
-    return config.template === null && config.component === null;
+  isContentEmpty(): boolean {
+    return !this.config.template && !this.config.component;
   }
 
   ngOnInit() {
-    this.configTop$.subscribe(configTop => {
-      if (configTop) {
-        this.configTop = configTop;
-        if (this.configTop.component !== null) {
-          this._loadComponent(this.configTop.component);
-        }
-        else {
-          if (this.topContentComponent) {
-            this.topContentComponent.clear();
+    this.config$.subscribe(config => {
+      if (config) {
+        this.config = config;
+        if (this.config.show) {
+          if (this.config.component !== null) {
+            this._loadComponent(this.config.component);
+          }
+          else {
+            this.contentComponent?.clear();
           }
         }
-      }
-    });
-
-    this.configBottom$.subscribe(configBottom => {
-      if (configBottom) {
-        this.configBottom = configBottom;
-        if (this.configBottom.component !== null) {
-          this._loadComponent(this.configBottom.component);
-        }
         else {
-          if (this.bottomContentComponent) {
-            this.bottomContentComponent.clear();
+          this.contentComponent?.clear();
+          if (this.isContentEmpty()) {
+            this.showSubmenu(0);
+          }
+          if (typeof this.config.onClose === 'function') {
+            this.config.onClose();
           }
         }
       }
     });
   }
 
-  toggleTop() {
-    if (!this.configTop.show) {
-      this._store.dispatch(new fromStore.BackdropTopShow({
+  toggle() {
+    if (!this.config.show) {
+      this._store.dispatch(new fromStore.BackdropShow({
         transition: 'move',
         header: true,
       }));
     }
     else {
-      this._store.dispatch(new fromStore.BackdropTopClose);
-      this.topContentComponent.clear();
-      if (this.isContentEmpty(this.configTop)) {
-        this.menuMoveTo(0);
-      }
+      this._store.dispatch(new fromStore.BackdropClose);
     }
   }
 
-  closeBotom() {
-    this._store.dispatch(new fromStore.BackdropBottomClose);
-    this.bottomContentComponent.clear();
+  showSubmenu(step: number) {
+    this.sliderMainMenu?.swiperRef.slideTo(step);
   }
 
-  menuMoveTo(step: number) {
-    this.sliderMainMenu.swiperRef.slideTo(step);
+  sanitizeContent(htmlContent: string): SafeHtml {
+    return this._sanitizer.bypassSecurityTrustHtml(htmlContent);
   }
 
   private _loadComponent(component: any) {
+    this.contentComponent.clear();
     switch(component) {
       case 'welcome-sign-up':
-        this.topContentComponent.clear();
-        this.topContentComponent.createComponent(WelcomeSignUpComponent);
-        break;
-      case 'welcome-doses-selector':
-        this.bottomContentComponent.clear();
-        const componentRef = this.bottomContentComponent.createComponent(WelcomeDosesSelectorComponent);
-        if (componentRef.instance instanceof WelcomeDosesSelectorComponent) {
-          // Listen to the dosesSelected event
-          componentRef.instance.onDosesChange.subscribe((doses: number) => {
-            // Handle the event in the parent component
-            this._store.dispatch(new fromWelcomeStore.SetData({
-              doses: doses,
-            }));
-          });
-        }
+        this.contentComponent.createComponent(WelcomeSignUpComponent);
         break;
     }
   }

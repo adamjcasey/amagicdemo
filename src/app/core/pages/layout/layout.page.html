@@ -1,6 +1,6 @@
 <ion-app class="automagic">
   <automagic-topbar></automagic-topbar>
-  <main role="main" class="automagic__wrapper">
+  <main role="main" class="automagic__wrapper" [ngClass]="{ 'in-welcome': inWelcome }">
     <ion-router-outlet></ion-router-outlet>
     <ion-tabs>
       <automagic-bottom-toolbar></automagic-bottom-toolbar>

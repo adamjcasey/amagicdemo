@@ -1,59 +1,32 @@
 import { Action } from '@ngrx/store';
 
 export enum ActionTypes {
-  BackdropTopShow = '[BackdropTop] Show',
-  BackdropTopClose = '[BackdropTop] Close',
-  BackdropTopOptions = '[BackdropTop] Set Options',
-  BackdropTopContent = '[BackdropTop] Set Content',
-  BackdropBottomShow = '[BackdropBottom] Show',
-  BackdropBottomClose = '[BackdropBottom] Close',
-  BackdropBottomOptions = '[BackdropBottom] Set Options',
-  BackdropBottomContent = '[BackdropBottom] Set Content',
+  BackdropShow = '[Backdrop] Show',
+  BackdropClose = '[Backdrop] Close',
+  BackdropConfig = '[Backdrop] Set Options',
+  SliderPageExpandContent = '[SliderPage] Expand Content',
 }
-export class BackdropTopShow implements Action {
-  readonly type = ActionTypes.BackdropTopShow;
+export class BackdropShow implements Action {
+  readonly type = ActionTypes.BackdropShow;
 
   constructor(public payload: any) {}
 }
-export class BackdropTopClose implements Action {
-  readonly type = ActionTypes.BackdropTopClose;
+export class BackdropClose implements Action {
+  readonly type = ActionTypes.BackdropClose;
 }
-export class BackdropTopOptions implements Action {
-  readonly type = ActionTypes.BackdropTopOptions;
+export class BackdropConfig implements Action {
+  readonly type = ActionTypes.BackdropConfig;
 
   constructor(public payload: any) {}
 }
-export class BackdropTopContent implements Action {
-  readonly type = ActionTypes.BackdropTopContent;
-
-  constructor(public payload: any) {}
-}
-
-export class BackdropBottomShow implements Action {
-  readonly type = ActionTypes.BackdropBottomShow;
-
-  constructor(public payload: any) {}
-}
-export class BackdropBottomClose implements Action {
-  readonly type = ActionTypes.BackdropBottomClose;
-}
-export class BackdropBottomOptions implements Action {
-  readonly type = ActionTypes.BackdropBottomOptions;
-
-  constructor(public payload: any) {}
-}
-export class BackdropBottomContent implements Action {
-  readonly type = ActionTypes.BackdropBottomContent;
+export class SliderPageExpandContent implements Action {
+  readonly type = ActionTypes.SliderPageExpandContent;
 
   constructor(public payload: any) {}
 }
 
 export type ActionsUnion 
-  = BackdropTopShow 
-  | BackdropTopClose
-  | BackdropTopOptions
-  | BackdropTopContent
-  | BackdropBottomShow 
-  | BackdropBottomClose
-  | BackdropBottomOptions
-  | BackdropBottomContent;
+  = BackdropShow 
+  | BackdropClose
+  | BackdropConfig
+  | SliderPageExpandContent;

@@ -15,7 +15,8 @@ export class BottomToolbarComponent {
 
   constructor(private _router: Router) {
     this.excludedPaths = [
-      '/welcome'
+      '/welcome',
+      '/home/start-dose'
     ];
 
     this.routerEvents$ = this._router.events.subscribe(

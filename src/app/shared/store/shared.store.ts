@@ -1,21 +1,25 @@
 export interface SharedState {
-  backdropTopConfig?: object;
-  backdropBottomConfig?: object;
+  backdropConfig?: any;
+  sliderPageConfig?: any;
 }
 
 export const initialState: SharedState = {
-  backdropTopConfig: {
+  backdropConfig: {
     show: false,
     fullScreen: false,
+    bgTemplate: null,
     transition: 'move',
     header: true,
     template: null,
     component: null,
   },
-  backdropBottomConfig: {
-    show: false,
-    template: null,
-    component: null,
-    toolbar: null
-  }
+  sliderPageConfig: {
+    content: {
+      isExpanded: false,
+      bgColor: null,
+      template: null,
+      component: null,
+      toolbar: null,
+    },
+  },
 }

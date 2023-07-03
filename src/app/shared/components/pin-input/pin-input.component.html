@@ -1,6 +1,11 @@
-<div class="pin-input">
-  <input id="digit-1" type="number" class="pin-input__digit" (input)="limitToOneDigit($event)" (keyup)="onDigit($event, 1)">
-  <input id="digit-2" type="number" class="pin-input__digit" (input)="limitToOneDigit($event)" (keyup)="onDigit($event, 2)" disabled>
-  <input id="digit-3" type="number" class="pin-input__digit" (input)="limitToOneDigit($event)" (keyup)="onDigit($event, 3)" disabled>
-  <input id="digit-4" type="number" class="pin-input__digit" (input)="limitToOneDigit($event)" (keyup)="onDigit($event, 4)" disabled>
+<div [ngClass]="{ 'is-invalid': error }" class="pin-input">
+  <p *ngIf="error" class="error-message">
+    {{ error }}
+  </p>
+  <div class="pin-input__wrapper">
+    <input id="digit-1" type="number" class="pin-input__digit" (input)="limitToOneDigit($event)" (keyup)="onDigit($event, 1)">
+    <input id="digit-2" type="number" class="pin-input__digit" (input)="limitToOneDigit($event)" (keyup)="onDigit($event, 2)" disabled>
+    <input id="digit-3" type="number" class="pin-input__digit" (input)="limitToOneDigit($event)" (keyup)="onDigit($event, 3)" disabled>
+    <input id="digit-4" type="number" class="pin-input__digit" (input)="limitToOneDigit($event)" (keyup)="onDigit($event, 4)" disabled>
+  </div>
 </div>

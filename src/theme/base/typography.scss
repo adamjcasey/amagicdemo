@@ -32,12 +32,17 @@
   --font-line-height-paragraph-xs: 1rem;
 
   /** weight **/
+  --font-weight-extra-light: 200;
   --font-weight-light: 300;
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
   --font-weight-extrabold: 800;
+
+  /** rewrites for text rules of ionic **/
+  --ion-text-color: var(--color-text);
+  --ion-font-family: var(--font-primary);
 }
 
 .font-display {
@@ -85,6 +90,7 @@ h5,
 
 p,
 ul li,
+a,
 .font-paragraph-m {
   @include paragraph-m;
 }
