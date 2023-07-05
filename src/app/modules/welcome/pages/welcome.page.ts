@@ -11,10 +11,12 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { Capacitor } from '@capacitor/core';
+import { CapacitorVideoPlayer } from 'capacitor-video-player';
 import { BleClient } from '@capacitor-community/bluetooth-le';
 import { PushNotifications } from '@capacitor/push-notifications';
 
 import * as fromStore from '../store';
+import * as fromLayoutStore from '@core/store';
 import * as fromSharedStore from '@shared/store';
 import * as fromSharedComponents from '@shared/components';
 
@@ -25,19 +27,23 @@ import * as fromSharedComponents from '@shared/components';
   encapsulation: ViewEncapsulation.None
 })
 export class WelcomePage implements OnInit, AfterViewInit {
-  public pageData$: Observable<any>;
-  public pageData: any;
+  public config$: Observable<any>;
+  public config: any;
+  public videoPlayer: any;
   public slides: Array<any> = [];
   public welcomeFormGroup: FormGroup;
+  public isIOS: boolean = false;
+  @ViewChild('videoWrapper') videoWrapper!: ElementRef;
+  @ViewChild('videoTag') videoTag!: ElementRef;
   @ViewChild('sliderPage', { static: false }) sliderPage!: fromSharedComponents.SliderPageComponent;
-  @ViewChild('videoIntro') videoIntro!: ElementRef;
 
   constructor(
     private _router: Router,
     private _store: Store<fromSharedStore.SharedState>,
     private _formBuilder: FormBuilder,
   ) {
-    this.pageData$ = this._store.select(fromStore.getWelcomeState);
+    this.config$ = this._store.select(fromStore.getWelcomeState);
+    this.isIOS = Capacitor.getPlatform() === 'ios';
     this.welcomeFormGroup = this._formBuilder.group({
       pin: ['', [ Validators.required, Validators.minLength(4) ]],
       name: ['', [ Validators.required ]],
@@ -131,12 +137,12 @@ export class WelcomePage implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.pageData$.subscribe(pageData => {
-      if (pageData) {
-        this.pageData = pageData;
-        if (this.pageData?.doses.length > 0) {
+    this.config$.subscribe(config => {
+      if (config) {
+        this.config = config;
+        if (this.config?.doses.length > 0) {
           this.welcomeFormGroup.patchValue({
-            doses: this.pageData.doses
+            doses: this.config.doses
           });
         }
       }
@@ -144,9 +150,14 @@ export class WelcomePage implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.videoIntro.nativeElement.muted = true;
-    this.videoIntro.nativeElement.play();
-    this.videoIntro.nativeElement.onended = () => {
+    this.playVideoIntro();
+  }
+
+  async playVideoIntro() {
+    this._store.dispatch(new fromLayoutStore.SetFullScreen(true));
+
+    const endHandler = () => {
+      this._store.dispatch(new fromLayoutStore.SetFullScreen(false));
       this._store.dispatch(new fromSharedStore.BackdropShow({
         transition: 'fade',
         fullScreen: true,
@@ -155,8 +166,36 @@ export class WelcomePage implements OnInit, AfterViewInit {
       }));
 
       setTimeout(() => {
-        this.videoIntro.nativeElement.classList.add('is-ended');
+        this.videoWrapper.nativeElement.classList.add('is-ended');
       }, 800);
+    }
+
+    if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios') {
+      this.videoPlayer = CapacitorVideoPlayer;
+      await this.videoPlayer.initPlayer({ 
+        mode: 'fullscreen', 
+        url: 'public/assets/videos/welcome.mp4', 
+        showControls: false, 
+        playerId: 'welcome-video-intro', 
+        width: window.innerWidth, 
+        height: window.innerHeight, 
+        bkmodeEnabled: false,
+      });
+      // TODO: Refactor, use end video event to run endHandler functionality
+      // This line breaks the application
+      // this.videoPlayer.addListener('jeepCapVideoPlayerEnded', () => endHandler(), true);
+      // Temporal solution, 4s is the duration of the video.
+      setTimeout(() => {
+        endHandler();
+      }, 3600);
+    }
+    else {
+      const videoElement = this.videoTag.nativeElement;
+      videoElement.muted = true;
+      videoElement.play();
+      videoElement.onended = () => {
+        endHandler();
+      }
     }
   }
 

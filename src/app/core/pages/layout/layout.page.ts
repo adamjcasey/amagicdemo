@@ -1,5 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { Router, Event, NavigationEnd } from '@angular/router';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
+
+import * as fromStore from '../../store';
+import * as fromSharedStore from '@shared/store';
 
 @Component({
   selector: 'automagic-layout',
@@ -7,28 +11,34 @@ import { Router, Event, NavigationEnd } from '@angular/router';
   styleUrls: ['layout.page.scss'],
 })
 export class LayoutPage implements OnInit {
-  public inWelcome: boolean = true;
+  public config$: Observable<any>;
+  public config: any;
+  public backdropConfig$: Observable<any>;
+  public backdropConfig: any;
+  @ViewChild('main') wrapper!: ElementRef;
 
-  constructor(private _router: Router) {}
+  constructor(
+    private _store: Store<fromStore.LayoutState>,
+  ) {
+    this.config$ = this._store.select(fromStore.getLayoutState);
+    this.backdropConfig$ = this._store.select(fromSharedStore.getBackdropConfig);
+  }
 
   ngOnInit() {
-    this._router.events.subscribe((event: Event) => {
-      if (event instanceof NavigationEnd) {
-        if (event.url === '/welcome') {
-          const videoIntro = document.querySelector('.welcome-page__video-intro');
-          if (videoIntro instanceof HTMLVideoElement) {
-            const observer = setInterval(() => {
-              if (videoIntro.ended) {
-                this.inWelcome = false;
-                clearInterval(observer);
-              }
-            }, 200);
-          }
-        }
-        else {
-          this.inWelcome = false;
-        }
+    this.config$.subscribe(config => {
+      if (config) {
+        this.config = config;
       }
     });
+    
+    this.backdropConfig$.subscribe(backdropConfig => {
+      if (backdropConfig) {
+        this.backdropConfig = backdropConfig;
+      }
+    });
+  }
+
+  onPanGesture(event: any) {
+    console.log('onPanGesture ', event);
   }
 }

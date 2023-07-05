@@ -31,6 +31,7 @@ metaReducers.push(clearState);
   imports: [
     CommonModule,
     StoreModule.forRoot(fromReducer.CoreReducers, { metaReducers: metaReducers }),
+    StoreModule.forFeature('layout', fromReducer.LayoutReducer),
     EffectsModule.forRoot(fromEffects.CoreEffects),
     StoreDevtoolsModule.instrument({
       maxAge: 25, // Retains last 25 states

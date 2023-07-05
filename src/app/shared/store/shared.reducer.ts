@@ -12,7 +12,7 @@ export function SharedReducer(
       return {
         ...state,
         backdropConfig: {
-          ...fromStore.initialState, 
+          ...fromStore.initialState.backdropConfig, 
           ...action.payload,
           show: true,
         },

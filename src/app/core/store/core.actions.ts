@@ -5,8 +5,7 @@ export enum ActionTypes {
   Go = '[Router] Go',
   Back = '[Router] Back',
   Forward = '[Router] Forward',
-  Unsuscribe = '[Router] Unsuscribe',
-  Unsuscribed = '[Router] Unsuscribed',
+  SetFullScreen = '[Router] SetFullScreen',
 }
 
 export class Go implements Action {
@@ -27,21 +26,14 @@ export class Forward implements Action {
   readonly type = ActionTypes.Forward;
 }
 
-export class Unsuscribe implements Action {
-  readonly type = ActionTypes.Unsuscribe;
+export class SetFullScreen implements Action {
+  readonly type = ActionTypes.SetFullScreen;
 
-  constructor(public payload: any) {}
-}
-
-export class Unsuscribed implements Action {
-  readonly type = ActionTypes.Unsuscribed;
-
-  constructor(public payload: any) {}
+  constructor(public payload: boolean) {}
 }
 
 export type ActionsUnion 
   = Go 
   | Back
   | Forward
-  | Unsuscribe
-  | Unsuscribed;
+  | SetFullScreen;

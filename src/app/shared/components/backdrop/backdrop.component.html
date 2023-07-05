@@ -7,7 +7,9 @@
   'bg-template--top-hole': config.bgTemplate === 'top-hole', 
   'bg-template--bottom-hole': config.bgTemplate === 'bottom-hole', 
 }">
-  <div class="backdrop__wrapper" [ngStyle]="{ 'background-image': 'url(/assets/images/backdrop-' + config.bgTemplate + '.svg)'}">
+  <div 
+    class="backdrop__wrapper" [ngStyle]="{ 
+    'background-image': 'url(' + (config.bgTemplate ? ('/assets/images/backdrop-'+ config.bgTemplate +'.svg') : '') + ')' }">
 
     <header class="backdrop__header" *ngIf="config.header">
       <ion-img class="logo" src="/assets/images/backdrop-header-logo.svg"></ion-img>

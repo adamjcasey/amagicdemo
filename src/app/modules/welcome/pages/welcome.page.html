@@ -1,10 +1,13 @@
 <ion-content [fullscreen]="true" [scrollY]="false">
-  <video 
-    #videoIntro
-    class="welcome-page__video-intro" 
-    src="/assets/videos/welcome.mp4" 
-    fullscreen="true"
-  ></video>
+  <div #videoWrapper class="welcome-page__video-wrapper" slot="fixed">
+    <video 
+      #videoTag 
+      id="welcome-video-intro"
+      class="welcome-page__video-intro" 
+      src="/assets/videos/welcome.mp4" 
+      fullscreen="true"
+    ></video>
+  </div>
 
   <automagic-slider-page 
     #sliderPage

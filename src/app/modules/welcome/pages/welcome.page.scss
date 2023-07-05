@@ -1,4 +1,4 @@
-.welcome-page__video-intro {
+.welcome-page__video-wrapper {
   position: absolute;
   top: 0;
   left: 0;
@@ -6,9 +6,20 @@
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+  background-color: var(--color-black);
+  opacity: 1;
+  transition-property: opacity;
+  transition-duration: 250ms;
+  transition-timing-function: ease-in-out;
 
   &.is-ended {
-    display: none;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  video {
+    width: 100%;
+    height: auto;
   }
 }
 
