@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import * as fromPages from './pages';
-import * as fromComponents from './components';
 
 const routes: Routes = [
   {
@@ -11,7 +10,7 @@ const routes: Routes = [
   },
   {
     path: 'start-dose',
-    component: fromComponents.StartDoseComponent
+    component: fromPages.StartDosePage
   },
 ];
 

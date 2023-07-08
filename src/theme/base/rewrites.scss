@@ -26,7 +26,7 @@ ion-button {
     opacity: 1;
 
     &:not(.button-outline) {
-      --background: var(--color-gray-medium);
+      --ion-color-base: var(--color-gray-medium);
     }
 
     &.button-outline {

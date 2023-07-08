@@ -10,21 +10,22 @@ import { Observable } from 'rxjs';
 import * as fromStore from '../../store';
 import * as fromSharedStore from '@shared/store';
 import * as fromSharedComponents from '@shared/components';
+import * as fromCoreStore from '@core/store';
 
 @Component({
   selector: 'automagic-start-dose',
-  templateUrl: 'start-dose.component.html',
-  styleUrls: ['start-dose.component.scss'],
+  templateUrl: 'start-dose.page.html',
+  styleUrls: ['start-dose.page.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class StartDoseComponent implements OnInit {
+export class StartDosePage implements OnInit {
   public pageData$!: Observable<any>;
   public pageData: any;
   public slides: Array<any> = [];
   @ViewChild('sliderPage', { static: false }) sliderPage!: fromSharedComponents.SliderPageComponent;
 
   constructor(
-    private _store: Store<fromStore.HomeState>,
+    private _store: Store<fromCoreStore.CoreState>,
   ) {
     this.pageData$ = this._store.select(fromStore.getHomeState);
     this.slides = [
@@ -80,6 +81,25 @@ export class StartDoseComponent implements OnInit {
         this.pageData = pageData;
       }
     });
+
+    setTimeout(() => {
+      this._store.dispatch(new fromSharedStore.AlertShow({
+        mode: 'full',
+        template: `
+          <img src="assets/images/drug-ready-to-inject.svg" />
+          <h1 class="font-heading-1--bold">Ready to inject</h1>
+          <p>Theryx has reached a comfortable temperature of 65° </p>
+        `,
+        buttons: [
+          {
+            label: 'Ok, let’s go!',
+            action: () => {
+              this._store.dispatch(new fromSharedStore.AlertClose());
+            },
+          }
+        ],
+      }));
+    }, 3500);
   }
 
   slideNext(sliders: any) {
@@ -89,6 +109,7 @@ export class StartDoseComponent implements OnInit {
     const currentSlide = sliders.content.activeIndex;
     if (currentSlide === 1) {
       // TODO: refactor this, make the Bluetooth connection to the device.
+      // simulate bluetooth connection process.
       setTimeout(() => {
         this.sliderPage.slideNext()
       }, 3000);
@@ -96,11 +117,11 @@ export class StartDoseComponent implements OnInit {
   }
 
   showStepTemperature = () => {
-    this._store.dispatch(new fromSharedStore.SliderPageExpandContent({
+    this._store.dispatch(new fromSharedStore.SliderPageSetContent({
       isExpanded: true,
       template: `
         <div class="start-dose__instructions">
-          <img src="assets/images/drug-temp.svg" />
+          <img src="assets/images/drug-cold-temp.svg" />
           <h1 class="font-heading-1--bold">Theryx® temperature</h1>
 
           <div class="temperature-status">
@@ -122,7 +143,7 @@ export class StartDoseComponent implements OnInit {
           {
             label: 'Proceed',
             action: () => {
-              this.showStepTimer();
+              this.showStepTempTimer();
             },
           }
         ],
@@ -130,73 +151,27 @@ export class StartDoseComponent implements OnInit {
     }));
   }
 
-  showStepTimer() {
-    this._store.dispatch(new fromSharedStore.SliderPageExpandContent({
-      template: `
-        <div class="start-dose__instructions">
-          <img src="assets/images/drug-settings.svg" />
-          <h1 class="font-heading-1--bold">Theryx® temperature</h1>
-          <h3>Set the injector somewhere safe while the medicine warms up</h3>
-          <p>SWe’ll notify you when in about 12 minutes when it’s ready.</p>
-          <div class="timer">
-            <p>12:00</p>
-          </div>
-          <p>While you wait, let’s take care of some other preparation.</p>
-        </div>
-      `,
+  showStepTempTimer() {
+    this._store.dispatch(new fromSharedStore.SliderPageSetContent({
+      component: 'start-dose-temp-timer',
       toolbar: {
         actions: [
           {
             label: 'Ok, let’s go!',
-            action: () => {
-              // TODO: Start the timer
-              this.showStepDoseSetup();
-            },
-          }
-        ],
-      }
-    }));
-  }
-
-  showStepDoseSetup() {
-    this._store.dispatch(new fromSharedStore.SliderPageExpandContent({
-      template: `
-        <div class="start-dose__instructions">
-          <img src="assets/images/drug-settings.svg" />
-          <h1 class="font-heading-1--bold">Dose setup</h1>
-          <h3>Let’s finish setting up for the dose while Theryx® warms to room temperature.</h3>
-          <p>There’s a countdown and a notification will remind you.</p>
-          <div class="timer">
-            <p>12:00</p>
-          </div>
-        </div>
-      `,
-      toolbar: {
-        actions: [
-          {
-            label: 'Ok, let’s go!',
+            // setting as disabled to avoid user unnecessary action, 
+            // will be enable after show Dose setup view
+            disabled: true,
             action: () => {
               this.showStepInspect();
             },
-          },
-        ]
-      },
-    }));
-
-    this._store.dispatch(new fromSharedStore.BackdropShow({
-      transition: 'move',
-      fullScreen: true,
-      header: true,
-      bgTemplate: 'bottom-hole',
-      template: `
-        <h1 class="font-heading-1--bold">No need to wait!</h1>
-        <p>For this demo we’ve sped up the<br> warming time.</p>
-      `,
+          }
+        ],
+      }
     }));
   }
 
   showStepInspect() {
-    this._store.dispatch(new fromSharedStore.SliderPageExpandContent({
+    this._store.dispatch(new fromSharedStore.SliderPageSetContent({
       template: `
         <div class="start-dose__instructions">
           <img src="assets/images/drug-window.svg" />
@@ -242,7 +217,7 @@ export class StartDoseComponent implements OnInit {
   }
 
   showStepSurvey() {
-    this._store.dispatch(new fromSharedStore.SliderPageExpandContent({
+    this._store.dispatch(new fromSharedStore.SliderPageSetContent({
       template: `
         <div class="start-dose__survey">
           <h1 class="font-heading-1--bold">While you’re waiting, how are you feeling?</h1>
@@ -255,15 +230,30 @@ export class StartDoseComponent implements OnInit {
           {
             label: 'Skip',
             action: () => {
-              // code
+              this.showStepWaitingToInject();
             },
           },
           {
             label: 'Proceed',
             action: () => {
-              // code
+              this.showStepWaitingToInject();
             },
           }
+        ],
+      }
+    }));
+  }
+
+  showStepWaitingToInject() {
+    this._store.dispatch(new fromSharedStore.SliderPageSetContent({
+      component: 'start-dose-waiting-to-inject',
+      toolbar: {
+        actions: [
+          {
+            label: 'Ok, let’s go!',
+            // button will be disabled until finish the timer
+            disabled: true
+          },
         ],
       }
     }));
