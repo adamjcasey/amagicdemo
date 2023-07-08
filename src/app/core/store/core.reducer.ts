@@ -43,6 +43,23 @@ export function LayoutReducer(
       };
     }
 
+    case fromActions.ActionTypes.SetRightCornerEl: {
+      return {
+        ...state,
+        rightCornerEl: {
+          ...state.rightCornerEl,
+          ...action.payload,
+        },
+      };
+    }
+
+    case fromActions.ActionTypes.ClearRightCornerEl: {
+      return {
+        ...state,
+        rightCornerEl: null,
+      };
+    }
+
     default: {
       return state;
     }
@@ -52,5 +69,5 @@ export function LayoutReducer(
 const exportLayout = (state: fromStore.LayoutState) => state;
 const selectLayoutState = createFeatureSelector<fromStore.LayoutState>('layout');
 
-export const getLayoutState = createSelector(selectLayoutState, exportLayout);
+export const getLayoutConfig = createSelector(selectLayoutState, exportLayout);
 

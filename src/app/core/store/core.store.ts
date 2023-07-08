@@ -8,8 +8,10 @@ export interface CoreState {
 
 export interface LayoutState {
   fullScreen: boolean;
+  rightCornerEl: any,
 }
 
 export const initialState: LayoutState = {
   fullScreen: false,
+  rightCornerEl: null,
 }

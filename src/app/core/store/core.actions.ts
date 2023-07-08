@@ -5,7 +5,9 @@ export enum ActionTypes {
   Go = '[Router] Go',
   Back = '[Router] Back',
   Forward = '[Router] Forward',
-  SetFullScreen = '[Router] SetFullScreen',
+  SetFullScreen = '[Layout] Set FullScreen',
+  SetRightCornerEl = '[Layout] Set Right Corner Element',
+  ClearRightCornerEl = '[Layout] Clear Right Corner Element',
 }
 
 export class Go implements Action {
@@ -32,8 +34,20 @@ export class SetFullScreen implements Action {
   constructor(public payload: boolean) {}
 }
 
+export class SetRightCornerEl implements Action {
+  readonly type = ActionTypes.SetRightCornerEl;
+
+  constructor(public payload: any) {}
+}
+
+export class ClearRightCornerEl implements Action {
+  readonly type = ActionTypes.ClearRightCornerEl;
+}
+
 export type ActionsUnion 
   = Go 
   | Back
   | Forward
-  | SetFullScreen;
+  | SetFullScreen
+  | SetRightCornerEl
+  | ClearRightCornerEl;
