@@ -79,7 +79,8 @@
               *ngFor="let button of config?.content.toolbar?.actions; let i = index"
               color="purple" 
               size="large" 
-              (click)="button.action($event)" 
+              [disabled]="button.disabled ? true : null"
+              (click)="button.action ? button.action($event) : null" 
               [fill]="i % 2 !== 1 && config?.content.toolbar?.actions.length > 1 ? 'outline': null">
               {{ button.label }}
             </ion-button>

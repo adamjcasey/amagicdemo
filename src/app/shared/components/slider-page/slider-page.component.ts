@@ -52,15 +52,22 @@ export class SliderPageComponent implements OnInit, AfterContentInit {
     this.currentSlide = this.slides[0];
     this.config$.subscribe(config => {
       if (config) {
-        this.config = config;
-        if (this.config.content.isExpanded) {
-          if (this.config.content.component !== null) {
-            this._loadComponent(this.config.content.component);
+        if (config.content.isExpanded) {
+          if (config.content.component === null) {
+            this.contentComponent?.clear();
+          }
+          else {
+            if (this.config.content.component === null) {
+              this._loadComponent(config.content.component);
+            }
+            else {
+              if (config.content.component !== this.config.content.component) {
+                this._loadComponent(config.content.component);  
+              }
+            }
           }
         }
-        else {
-          this.contentComponent?.clear();
-        }
+        this.config = config;
       }
     });
   }
@@ -104,6 +111,8 @@ export class SliderPageComponent implements OnInit, AfterContentInit {
   }
 
   private _loadComponent(component: any) {
+    // clear template before loading a new component
+    this.contentComponent?.clear();
     let componentRef;
     switch(component) {
       case 'welcome-doses-selector':
@@ -118,8 +127,17 @@ export class SliderPageComponent implements OnInit, AfterContentInit {
           });
         }
         break;
+      case 'start-dose-temp-timer':
+        componentRef = this.contentComponent.createComponent(fromHomeComponents.StartDoseTempTimerComponent);
+        break;
+      case 'start-dose-setup':
+        componentRef = this.contentComponent.createComponent(fromHomeComponents.StartDoseSetupComponent);
+        break;
       case 'start-dose-survey':
         componentRef = this.contentComponent.createComponent(fromHomeComponents.StartDoseSurveyComponent);
+        break;
+      case 'start-dose-waiting-to-inject':
+        componentRef = this.contentComponent.createComponent(fromHomeComponents.StartDoseWaitingToInjectComponent);
         break;
     }
   }
