@@ -9,8 +9,12 @@ const routes: Routes = [
     component: fromPages.HomePage
   },
   {
-    path: 'start-dose',
-    component: fromPages.StartDosePage
+    path: 'start-dose/prepare',
+    component: fromPages.StartDosePreparePage
+  },
+  {
+    path: 'start-dose/ready-to-inject',
+    component: fromPages.StartDoseReadyToInjectPage
   },
 ];
 

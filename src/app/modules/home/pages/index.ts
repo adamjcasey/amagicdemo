@@ -1,10 +1,13 @@
 import { HomePage } from './home.page';
-import { StartDosePage } from './start-dose/start-dose.page';
+import { StartDosePreparePage } from './start-dose-prepare/start-dose-prepare.page';
+import { StartDoseReadyToInjectPage } from './start-dose-ready-to-inject/start-dose-ready-to-inject.page';
 
 export const pages: any[] = [
     HomePage,
-    StartDosePage,
+    StartDosePreparePage,
+    StartDoseReadyToInjectPage,
 ];
 
 export * from './home.page';
-export * from './start-dose/start-dose.page';
+export * from './start-dose-prepare/start-dose-prepare.page';
+export * from './start-dose-ready-to-inject/start-dose-ready-to-inject.page';

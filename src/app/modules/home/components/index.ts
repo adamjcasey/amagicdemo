@@ -1,10 +1,16 @@
-import { StartDoseComponent } from './start-dose/start-dose.component';
-import { StartDoseSurveyComponent } from './start-dose-survey/start-dose-survey.component';
+import { StartDosePrepareTempTimerComponent } from './start-dose-prepare-temp-timer/start-dose-prepare-temp-timer.component';
+import { StartDosePrepareSetupComponent } from './start-dose-prepare-setup/start-dose-prepare-setup.component';
+import { StartDosePrepareSurveyComponent } from './start-dose-prepare-survey/start-dose-prepare-survey.component';
+import { StartDosePrepareWaitingToInjectComponent } from './start-dose-prepare-waiting-to-inject/start-dose-prepare-waiting-to-inject.component';
 
 export const components: any[] = [
-  StartDoseComponent,
-  StartDoseSurveyComponent,
+  StartDosePrepareTempTimerComponent,
+  StartDosePrepareSetupComponent,
+  StartDosePrepareSurveyComponent,
+  StartDosePrepareWaitingToInjectComponent,
 ];
 
-export * from './start-dose/start-dose.component';
-export * from './start-dose-survey/start-dose-survey.component';
+export * from './start-dose-prepare-survey/start-dose-prepare-survey.component';
+export * from './start-dose-prepare-temp-timer/start-dose-prepare-temp-timer.component';
+export * from './start-dose-prepare-setup/start-dose-prepare-setup.component';
+export * from './start-dose-prepare-waiting-to-inject/start-dose-prepare-waiting-to-inject.component';

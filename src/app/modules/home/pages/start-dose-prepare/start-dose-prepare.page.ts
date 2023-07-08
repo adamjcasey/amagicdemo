@@ -5,29 +5,24 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
 
-import * as fromStore from '../../store';
 import * as fromSharedStore from '@shared/store';
 import * as fromSharedComponents from '@shared/components';
 import * as fromCoreStore from '@core/store';
 
 @Component({
-  selector: 'automagic-start-dose',
-  templateUrl: 'start-dose.page.html',
-  styleUrls: ['start-dose.page.scss'],
+  selector: 'automagic-start-dose-prepare',
+  templateUrl: 'start-dose-prepare.page.html',
+  styleUrls: ['start-dose-prepare.page.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class StartDosePage implements OnInit {
-  public pageData$!: Observable<any>;
-  public pageData: any;
+export class StartDosePreparePage implements OnInit {
   public slides: Array<any> = [];
   @ViewChild('sliderPage', { static: false }) sliderPage!: fromSharedComponents.SliderPageComponent;
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
   ) {
-    this.pageData$ = this._store.select(fromStore.getHomeState);
     this.slides = [
       {
         color: 'var(--color-bg-pastel-purple)',
@@ -37,10 +32,14 @@ export class StartDosePage implements OnInit {
           <h1 class="font-heading-1--bold">Take the autoinjector out of the box.</h1>
           <p>Your Automagic autoinjector will turn on automatically when you pick it up.</p>
         `,
-        button: {
-          label: 'Continue',
-          action: () => { this.sliderPage.slideNext() }
-        },
+        actions: [
+          {
+            label: 'Continue',
+            action: () => { 
+              this.sliderPage.slideNext() 
+            }
+          }
+        ],
       },
       {
         color: 'var(--color-bg-pastel-mint)',
@@ -65,42 +64,19 @@ export class StartDosePage implements OnInit {
             disclamerText: 'Expires 06/24/2024',
           }
         ],
-        button: {
-          label: 'Continue',
-          action: () => {
-            this.showStepTemperature();
+        actions: [
+          {
+            label: 'Continue',
+            action: () => {
+              this.showStepTemperature();
+            }
           }
-        },
+        ],
       },
     ]
   }
 
-  ngOnInit() {
-    this.pageData$.subscribe(pageData => {
-      if (pageData) {
-        this.pageData = pageData;
-      }
-    });
-
-    setTimeout(() => {
-      this._store.dispatch(new fromSharedStore.AlertShow({
-        mode: 'full',
-        template: `
-          <img src="assets/images/drug-ready-to-inject.svg" />
-          <h1 class="font-heading-1--bold">Ready to inject</h1>
-          <p>Theryx has reached a comfortable temperature of 65° </p>
-        `,
-        buttons: [
-          {
-            label: 'Ok, let’s go!',
-            action: () => {
-              this._store.dispatch(new fromSharedStore.AlertClose());
-            },
-          }
-        ],
-      }));
-    }, 3500);
-  }
+  ngOnInit() {}
 
   slideNext(sliders: any) {
     sliders.asset.slideNext(500);
@@ -120,7 +96,7 @@ export class StartDosePage implements OnInit {
     this._store.dispatch(new fromSharedStore.SliderPageSetContent({
       isExpanded: true,
       template: `
-        <div class="start-dose__instructions">
+        <div class="start-dose-prepare__instructions">
           <img src="assets/images/drug-cold-temp.svg" />
           <h1 class="font-heading-1--bold">Theryx® temperature</h1>
 
@@ -153,7 +129,7 @@ export class StartDosePage implements OnInit {
 
   showStepTempTimer() {
     this._store.dispatch(new fromSharedStore.SliderPageSetContent({
-      component: 'start-dose-temp-timer',
+      component: 'start-dose-prepare-temp-timer',
       toolbar: {
         actions: [
           {
@@ -173,7 +149,7 @@ export class StartDosePage implements OnInit {
   showStepInspect() {
     this._store.dispatch(new fromSharedStore.SliderPageSetContent({
       template: `
-        <div class="start-dose__instructions">
+        <div class="start-dose-prepare__instructions">
           <img src="assets/images/drug-window.svg" />
           <h1 class="font-heading-1--bold">Inspect your Theryx®</h1>
           <div class="inspection">
@@ -219,12 +195,12 @@ export class StartDosePage implements OnInit {
   showStepSurvey() {
     this._store.dispatch(new fromSharedStore.SliderPageSetContent({
       template: `
-        <div class="start-dose__survey">
+        <div class="start-dose-prepare__survey">
           <h1 class="font-heading-1--bold">While you’re waiting, how are you feeling?</h1>
           <p>Tracking these ratings over time can help you<br> and your care team understand how Theryx®<br> impacts your condition.</p>
         </div>
       `,
-      component: 'start-dose-survey',
+      component: 'start-dose-prepare-survey',
       toolbar: {
         actions: [
           {
@@ -246,7 +222,7 @@ export class StartDosePage implements OnInit {
 
   showStepWaitingToInject() {
     this._store.dispatch(new fromSharedStore.SliderPageSetContent({
-      component: 'start-dose-waiting-to-inject',
+      component: 'start-dose-prepare-waiting-to-inject',
       toolbar: {
         actions: [
           {

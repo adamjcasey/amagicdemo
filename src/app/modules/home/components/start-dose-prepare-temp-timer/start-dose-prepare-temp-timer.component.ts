@@ -11,12 +11,12 @@ import * as fromSharedStore from '@shared/store';
 import * as fromCoreStore from '@core/store';
 
 @Component({
-  selector: 'automagic-start-dose-temp-timer',
-  templateUrl: 'start-dose-temp-timer.component.html',
-  styleUrls: ['start-dose-temp-timer.component.scss'],
+  selector: 'automagic-start-dose-prepare-temp-timer',
+  templateUrl: 'start-dose-prepare-temp-timer.component.html',
+  styleUrls: ['start-dose-prepare-temp-timer.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class StartDoseTempTimerComponent implements OnInit, AfterViewInit {
+export class StartDosePrepareTempTimerComponent implements OnInit, AfterViewInit {
   public sliderPageConfig$!: Observable<any>;
   public sliderPageConfig: any;
   public layoutConfig$!: Observable<any>;
@@ -72,7 +72,7 @@ export class StartDoseTempTimerComponent implements OnInit, AfterViewInit {
       // enable toolbar button but keeping same
       setTimeout(() => {
         this._store.dispatch(new fromSharedStore.SliderPageSetContent({
-          component: 'start-dose-setup',
+          component: 'start-dose-prepare-setup',
           toolbar: {
             actions: [
               {

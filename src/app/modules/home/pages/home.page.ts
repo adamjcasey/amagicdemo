@@ -1,8 +1,7 @@
 import { AfterViewInit, Component } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Router } from '@angular/router';
 
-import * as fromStore from '@home/store';
+import * as fromCoreStore from '@core/store';
 import * as fromSharedStore from '@shared/store';
 
 @Component({
@@ -15,8 +14,7 @@ export class HomePage implements AfterViewInit {
   public card: any;
 
   constructor(
-    private _store: Store<fromStore.HomeState>,
-    private _router: Router,
+    private _store: Store<fromCoreStore.CoreState>,
   ) {
     this.heroConfig = {
       color: 'var(--color-bg-pastel-green)',
@@ -30,7 +28,7 @@ export class HomePage implements AfterViewInit {
         {
           label: 'Start dose',
           action: () => {
-            this.goTo('/home/start-dose');
+            this.goTo('/home/start-dose/prepare');
           }
         }
       ]
@@ -63,6 +61,8 @@ export class HomePage implements AfterViewInit {
   }
 
   goTo(path: string) {
-    this._router.navigate([path]);
+    this._store.dispatch(new fromCoreStore.Go({
+      path: [path]
+    }));
   }
 }

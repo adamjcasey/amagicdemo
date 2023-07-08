@@ -53,14 +53,21 @@ export class SliderPageComponent implements OnInit, AfterContentInit {
     this.config$.subscribe(config => {
       if (config) {
         if (config.content.isExpanded) {
+          // if the most recent config don't have a configured component
+          // clean up content component element
           if (config.content.component === null) {
             this.contentComponent?.clear();
           }
           else {
+            // if the one step back config don't have a configured component
+            // load the component of the most recent config
             if (this.config.content.component === null) {
               this._loadComponent(config.content.component);
             }
             else {
+              // If in both configs there is a configured component, 
+              // validate if they are different component, if they 
+              // are different load the component on the most recent config
               if (config.content.component !== this.config.content.component) {
                 this._loadComponent(config.content.component);  
               }
@@ -127,17 +134,17 @@ export class SliderPageComponent implements OnInit, AfterContentInit {
           });
         }
         break;
-      case 'start-dose-temp-timer':
-        componentRef = this.contentComponent.createComponent(fromHomeComponents.StartDoseTempTimerComponent);
+      case 'start-dose-prepare-temp-timer':
+        componentRef = this.contentComponent.createComponent(fromHomeComponents.StartDosePrepareTempTimerComponent);
         break;
-      case 'start-dose-setup':
-        componentRef = this.contentComponent.createComponent(fromHomeComponents.StartDoseSetupComponent);
+      case 'start-dose-prepare-setup':
+        componentRef = this.contentComponent.createComponent(fromHomeComponents.StartDosePrepareSetupComponent);
         break;
-      case 'start-dose-survey':
-        componentRef = this.contentComponent.createComponent(fromHomeComponents.StartDoseSurveyComponent);
+      case 'start-dose-prepare-survey':
+        componentRef = this.contentComponent.createComponent(fromHomeComponents.StartDosePrepareSurveyComponent);
         break;
-      case 'start-dose-waiting-to-inject':
-        componentRef = this.contentComponent.createComponent(fromHomeComponents.StartDoseWaitingToInjectComponent);
+      case 'start-dose-prepare-waiting-to-inject':
+        componentRef = this.contentComponent.createComponent(fromHomeComponents.StartDosePrepareWaitingToInjectComponent);
         break;
     }
   }

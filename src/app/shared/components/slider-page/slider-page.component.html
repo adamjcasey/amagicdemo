@@ -1,16 +1,29 @@
 <ion-content [fullscreen]="true" [scrollY]="false">
   <div class="slider-page" [ngStyle]="{ 'background-color': currentSlide.color }">
-    <div class="slider-page__asset">
+    <div 
+      class="slider-page__asset"
+      [ngClass]="{
+        'has-template': currentSlide.assetTemplate,
+        'is-content-expanded': config?.content.isExpanded,
+      }">
+
       <swiper #sliderAsset effect="fade" [allowTouchMove]="false">
         <ng-template class="slider-page__slide" swiperSlide *ngFor="let step of slides">
           <div style="text-align: center;">
             <img [src]="step.asset" />
+            <div [innerHTML]="sanitizeContent(step.assetTemplate)"></div>
           </div>
         </ng-template>
       </swiper>
     </div>
 
-    <div class="slider-page__content" [ngClass]="{ 'is-expanded': config?.content.isExpanded }">
+    <div 
+      class="slider-page__content" 
+      [ngClass]="{ 
+        'is-expanded': config?.content.isExpanded,
+        'has-template': currentSlide.content || currentSlide.form
+      }">
+
       <div class="wrapper-small">
         <div class="slider-page__navigation" [ngClass]="{ 'visibility-hidden': currentSlide.showNavigation === false }">
           <div class="swiper-pagination"></div>
@@ -24,7 +37,7 @@
           (slideChange)="slideChange()">
 
           <ng-template class="slider-page__slide" swiperSlide *ngFor="let step of slides">
-            <div class="text-wrapper" [innerHTML]="sanitizeContent(step.content)"></div>
+            <div class="text-wrapper" *ngIf="step.content" [innerHTML]="sanitizeContent(step.content)"></div>
 
             <div class="cards-wrapper" *ngIf="step.cards">
               <automagic-card *ngFor="let card of step.cards" [card]="card"></automagic-card>
@@ -47,8 +60,22 @@
               </form>
             </div>
 
-            <div class="button-wrapper" *ngIf="step.button">
-              <ion-button (click)="step.button.action()" color="purple">{{ step.button.label }}</ion-button>
+            <div class="actions-wrapper" *ngIf="step.actions">
+              <ion-button 
+                *ngFor="let button of step.actions; let i = index"
+                color="purple" 
+                size="large" 
+                [disabled]="button.disabled ? true : null"
+                (click)="button.action ? button.action($event) : null" 
+                [fill]="
+                  button.fill 
+                  ? button.fill
+                  : (i % 2 !== 1 && step.actions.length > 1 
+                    ? 'outline' 
+                    : null)
+                ">
+                {{ button.label }}
+              </ion-button>
             </div>
           </ng-template>
         </swiper>
@@ -74,14 +101,20 @@
             [innerHTML]="sanitizeContent(config?.content.toolbar.template)"
           ></div>
 
-          <div *ngIf="config?.content.toolbar.actions" class="wrapper-large__toolbar-actions">
+          <div class="wrapper-large__toolbar-actions" *ngIf="config?.content.toolbar.actions">
             <ion-button 
               *ngFor="let button of config?.content.toolbar?.actions; let i = index"
               color="purple" 
               size="large" 
               [disabled]="button.disabled ? true : null"
               (click)="button.action ? button.action($event) : null" 
-              [fill]="i % 2 !== 1 && config?.content.toolbar?.actions.length > 1 ? 'outline': null">
+              [fill]="
+                button.fill 
+                ? button.fill
+                : (i % 2 !== 1 && config?.content.toolbar?.actions.length > 1 
+                  ? 'outline' 
+                  : null)
+              ">
               {{ button.label }}
             </ion-button>
           </div>

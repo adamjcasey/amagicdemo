@@ -24,4 +24,4 @@ export function HomeReducer(
 const exportHome = (state: fromStore.HomeState) => state;
 const selectHomeState = createFeatureSelector<fromStore.HomeState>('home');
 
-export const getHomeState = createSelector(selectHomeState, exportHome);
+export const getHomeConfig = createSelector(selectHomeState, exportHome);

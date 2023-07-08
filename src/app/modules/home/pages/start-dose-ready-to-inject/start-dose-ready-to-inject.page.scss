@@ -1,0 +1,27 @@
+@import 'src/theme/base/mixins';
+
+.first-time-dose {
+  padding-right: var(--space-xl);
+  padding-left: var(--space-xl);
+  text-align: center;
+
+  p {
+    font-size: var(--font-size-paragraph-l);
+  }
+  
+  .first-time-dose__video-indicator {
+    position: relative;
+
+    ion-icon {
+      position: absolute;
+      z-index: 50;
+      top: calc(50% - 24px);
+      left: calc(50% - 24px);
+      font-size: 48px;
+    }
+  }
+}
+
+.no-needless-message {
+  text-align: center;
+}

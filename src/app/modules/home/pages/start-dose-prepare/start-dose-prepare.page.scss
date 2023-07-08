@@ -1,6 +1,6 @@
 @import 'src/theme/base/mixins';
 
-.start-dose__instructions {
+.start-dose-prepare__instructions {
   h3 {
     @include paragraph-xl;
     font-weight: var(--font-weight-bold);

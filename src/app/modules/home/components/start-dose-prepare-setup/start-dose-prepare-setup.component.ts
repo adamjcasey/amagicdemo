@@ -6,16 +6,15 @@ import {
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 
-import * as fromStore from '../../store';
 import * as fromCoreStore from '@core/store';
 
 @Component({
-  selector: 'automagic-start-dose-setup',
-  templateUrl: 'start-dose-setup.component.html',
-  styleUrls: ['start-dose-setup.component.scss'],
+  selector: 'automagic-start-dose-prepare-setup',
+  templateUrl: 'start-dose-prepare-setup.component.html',
+  styleUrls: ['start-dose-prepare-setup.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class StartDoseSetupComponent implements OnInit {
+export class StartDosePrepareSetupComponent implements OnInit {
   public layoutConfig$!: Observable<any>;
   public layoutConfig: any;
   public timer!: number;
