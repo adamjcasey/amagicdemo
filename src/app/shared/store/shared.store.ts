@@ -1,6 +1,7 @@
 export interface SharedState {
   backdropConfig?: any;
   sliderPageConfig?: any;
+  alertConfig?: any;
 }
 
 export const initialState: SharedState = {
@@ -12,6 +13,7 @@ export const initialState: SharedState = {
     header: true,
     template: null,
     component: null,
+    backButton: null,
   },
   sliderPageConfig: {
     content: {
@@ -21,5 +23,11 @@ export const initialState: SharedState = {
       component: null,
       toolbar: null,
     },
+  },
+  alertConfig: {
+    show: false,
+    mode: 'move',
+    template: null,
+    component: null,
   },
 }

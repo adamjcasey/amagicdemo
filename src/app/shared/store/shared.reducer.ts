@@ -27,7 +27,7 @@ export function SharedReducer(
         },
       };
     }
-    case fromActions.ActionTypes.BackdropConfig: {
+    case fromActions.ActionTypes.BackdropSetConfig: {
       return {
         ...state,
         backdropConfig: {
@@ -39,7 +39,7 @@ export function SharedReducer(
       };
     }
 
-    case fromActions.ActionTypes.SliderPageExpandContent: {
+    case fromActions.ActionTypes.SliderPageSetContent: {
       return {
         ...state,
         sliderPageConfig: {
@@ -54,15 +54,61 @@ export function SharedReducer(
       };
     }
 
+    case fromActions.ActionTypes.SliderPageSetContentOptions: {
+      return {
+        ...state,
+        sliderPageConfig: {
+          ...state.sliderPageConfig,
+          content: {
+            ...state.sliderPageConfig.content,
+            ...action.payload,
+          }
+        }
+      };
+    }
+
+    case fromActions.ActionTypes.AlertShow: {
+      return {
+        ...state,
+        alertConfig: {
+          ...fromStore.initialState.alertConfig, 
+          ...action.payload,
+          show: true,
+        },
+      };
+    }
+    case fromActions.ActionTypes.AlertHide: {
+      return {
+        ...state,
+        alertConfig: {
+          ...state.alertConfig,
+          show: false,
+        },
+      };
+    }
+    case fromActions.ActionTypes.AlertSetConfig: {
+      return {
+        ...state,
+        alertConfig: {
+          ...state.alertConfig,
+          ...action.payload,
+          template: action.payload?.template ? action.payload?.template : null,
+          component: action.payload?.component ? action.payload?.component : null,
+        },
+      };
+    }
+
     default: {
       return state;
     }
   }
 }
 
-const exportBackdropConfig = (state: fromStore.SharedState) => state.backdropConfig;
+const exportBackdropSetConfig = (state: fromStore.SharedState) => state.backdropConfig;
 const exportSliderPageConfig = (state: fromStore.SharedState) => state.sliderPageConfig;
+const exportAlertConfig = (state: fromStore.SharedState) => state.alertConfig;
 const selectSharedState = createFeatureSelector<fromStore.SharedState>('shared');
 
-export const getBackdropConfig = createSelector(selectSharedState, exportBackdropConfig);
+export const getBackdropConfig = createSelector(selectSharedState, exportBackdropSetConfig);
 export const getSliderPageConfig = createSelector(selectSharedState, exportSliderPageConfig);
+export const getAlertConfig = createSelector(selectSharedState, exportAlertConfig);
