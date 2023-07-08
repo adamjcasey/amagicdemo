@@ -7,9 +7,19 @@
     </ion-buttons>
 
     <ion-buttons slot="end">
-      <ion-button>
-        <ion-icon slot="icon-only" src="/assets/icons/notifications.svg"></ion-icon>
-      </ion-button>
+      <div *ngIf="layoutConfig.rightCornerEl; else default">
+        <div 
+          class="timer"
+          *ngIf="layoutConfig.rightCornerEl.type === 'timer'">
+          <span class="timer__label">{{ layoutConfig?.rightCornerEl?.timer|secondsToMinutes }}</span>
+          <ion-icon src="/assets/icons/timer.svg"></ion-icon>
+        </div>
+      </div>
+      <ng-template #default>
+        <ion-button>
+          <ion-icon slot="icon-only" src="/assets/icons/notifications.svg"></ion-icon>
+        </ion-button>
+      </ng-template>
     </ion-buttons>
   </ion-toolbar>
 
