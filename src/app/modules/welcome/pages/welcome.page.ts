@@ -165,6 +165,7 @@ export class WelcomePage implements OnInit, AfterViewInit {
         component: 'welcome-sign-up',
       }));
 
+      // holding a moment to hide the video and do match with the opening of Backdrop
       setTimeout(() => {
         this.videoWrapper.nativeElement.classList.add('is-ended');
       }, 800);
@@ -181,10 +182,10 @@ export class WelcomePage implements OnInit, AfterViewInit {
         height: window.innerHeight, 
         bkmodeEnabled: false,
       });
-      // TODO: Refactor, use end video event to run endHandler functionality
-      // This line breaks the application
+      // TODO: refactor, use end video event to run endHandler functionality.
+      // ALERT: the following line breaks the application.
       // this.videoPlayer.addListener('jeepCapVideoPlayerEnded', () => endHandler(), true);
-      // Temporal solution, 4s is the duration of the video.
+      // TEMPORARY: hold on 3.6s to run ended preprocess, is the duration of the video.
       setTimeout(() => {
         endHandler();
       }, 3600);
@@ -216,8 +217,8 @@ export class WelcomePage implements OnInit, AfterViewInit {
   async allowBluetooth() {
     if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios') {
       this.sliderPage.slideNext();
-      // await BleClient.initialize()
-      // const isEnabled = await BleClient.isEnabled()
+      // await BleClient.initialize();
+      // const isEnabled = await BleClient.isEnabled();
     }
     else {
       this.sliderPage.slideNext();
@@ -226,7 +227,7 @@ export class WelcomePage implements OnInit, AfterViewInit {
 
   async allowNotifications() {
     const showDosesSelector = () => {
-      this._store.dispatch(new fromSharedStore.SliderPageExpandContent({
+      this._store.dispatch(new fromSharedStore.SliderPageSetContent({
         isExpanded: true,
         template: `
           <h1 class="font-heading-1--bold">Confirm your dosing schedule.</h1>
@@ -242,7 +243,7 @@ export class WelcomePage implements OnInit, AfterViewInit {
               label: 'Proceed',
               action: () => {
                 if (this.welcomeFormGroup.get('doses')?.valid) {
-                  this._store.dispatch(new fromSharedStore.SliderPageExpandContent({
+                  this._store.dispatch(new fromSharedStore.SliderPageSetContent({
                     isExpanded: false
                   }));
                   this.sliderPage.slideNext();

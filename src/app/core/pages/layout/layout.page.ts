@@ -20,7 +20,7 @@ export class LayoutPage implements OnInit {
   constructor(
     private _store: Store<fromStore.LayoutState>,
   ) {
-    this.config$ = this._store.select(fromStore.getLayoutState);
+    this.config$ = this._store.select(fromStore.getLayoutConfig);
     this.backdropConfig$ = this._store.select(fromSharedStore.getBackdropConfig);
   }
 

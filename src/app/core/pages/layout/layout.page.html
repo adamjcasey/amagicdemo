@@ -5,7 +5,9 @@
     role="main" 
     class="automagic__wrapper" 
     (pan)="onPanGesture($event)"
-    [ngClass]="{ 'is-full-screen': config.fullScreen }">
+    [ngClass]="{ 
+      'is-full-screen': config.fullScreen 
+    }">
 
     <ion-router-outlet></ion-router-outlet>
     <ion-tabs>
