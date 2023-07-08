@@ -16,7 +16,7 @@ import { BleClient } from '@capacitor-community/bluetooth-le';
 import { PushNotifications } from '@capacitor/push-notifications';
 
 import * as fromStore from '../store';
-import * as fromLayoutStore from '@core/store';
+import * as fromCoreStore from '@core/store';
 import * as fromSharedStore from '@shared/store';
 import * as fromSharedComponents from '@shared/components';
 
@@ -38,8 +38,7 @@ export class WelcomePage implements OnInit, AfterViewInit {
   @ViewChild('sliderPage', { static: false }) sliderPage!: fromSharedComponents.SliderPageComponent;
 
   constructor(
-    private _router: Router,
-    private _store: Store<fromSharedStore.SharedState>,
+    private _store: Store<fromCoreStore.CoreState>,
     private _formBuilder: FormBuilder,
   ) {
     this.config$ = this._store.select(fromStore.getWelcomeState);
@@ -54,15 +53,17 @@ export class WelcomePage implements OnInit, AfterViewInit {
       {
         color: 'var(--color-bg-pastel-green)',
         asset: 'assets/images/welcome-step-1.svg',
+        showNavigation: false,
         content: `
           <h1 class="font-heading-1--bold">Welcome to AutoMagic for Theryx.</h1>
           <p>The AutoMagic connected ecosystem empowers you to make the most of your Theryx prescription</p>
         `,
-        button: {
-          label: 'Get started',
-          action: () => { this.sliderPage.slideNext() }
-        },
-        showNavigation: false,
+        actions: [
+          {
+            label: 'Get started',
+            action: () => { this.sliderPage.slideNext() }
+          }
+        ],
       },
       {
         color: 'var(--color-bg-pastel-green)',
@@ -85,17 +86,19 @@ export class WelcomePage implements OnInit, AfterViewInit {
             }
           ],
         },
-        button: {
-          label: 'Continue',
-          action: () => {
-            if (this.welcomeFormGroup.get('name')?.valid) {
-              this.sliderPage.slideNext();
-            }
-            else {
-              this.welcomeFormGroup.get('name')?.markAllAsTouched();
+        actions: [
+          {
+            label: 'Continue',
+            action: () => {
+              if (this.welcomeFormGroup.get('name')?.valid) {
+                this.sliderPage.slideNext();
+              }
+              else {
+                this.welcomeFormGroup.get('name')?.markAllAsTouched();
+              }
             }
           }
-        }
+        ],
       },
       {
         color: 'var(--color-bg-pastel-blue)',
@@ -104,10 +107,12 @@ export class WelcomePage implements OnInit, AfterViewInit {
           <h1 class="font-heading-1--bold">Let's get connected.</h1>
           <p>To get the most out of your connected autoinjector and enable dose tracking and help with your injection experience, please enable bluetooth.</p>
         `,
-        button: {
-          label: 'Enable Bluetooth',
-          action: () => { this.allowBluetooth() }
-        },
+        actions: [
+          {
+            label: 'Enable Bluetooth',
+            action: () => { this.allowBluetooth() }
+          },
+        ],
       },
       {
         color: 'var(--color-bg-pastel-honey-yellow)',
@@ -116,10 +121,12 @@ export class WelcomePage implements OnInit, AfterViewInit {
           <h1 class="font-heading-1--bold">Allow Notifications.</h1>
           <p>To help you remember your dose schedule and know when medication is at the right temperature, please <strong>enable notifications.</strong> You can customize notifications in the Settings menu.</p>
         `,
-        button: {
-          label: 'Allow Notifications',
-          action: () => { this.allowNotifications() }
-        },
+        actions: [
+          {
+            label: 'Allow Notifications',
+            action: () => { this.allowNotifications() }
+          },
+        ],
       },
       {
         color: 'var(--color-bg-pastel-lime)',
@@ -128,10 +135,12 @@ export class WelcomePage implements OnInit, AfterViewInit {
           <h1 class="font-heading-1--bold">You're ready to rock!</h1>
           <p>The AutoMagic app is configured to harness the power of the AutoMagic autoinjector.</p>
         `,
-        button: {
-          label: 'Continue',
-          action: () => { this.goTo('home') }
-        },
+        actions: [
+          {
+            label: 'Continue',
+            action: () => { this.goTo('home') }
+          }
+        ],
       },
     ];
   }
@@ -154,10 +163,10 @@ export class WelcomePage implements OnInit, AfterViewInit {
   }
 
   async playVideoIntro() {
-    this._store.dispatch(new fromLayoutStore.SetFullScreen(true));
+    this._store.dispatch(new fromCoreStore.SetFullScreen(true));
 
     const endHandler = () => {
-      this._store.dispatch(new fromLayoutStore.SetFullScreen(false));
+      this._store.dispatch(new fromCoreStore.SetFullScreen(false));
       this._store.dispatch(new fromSharedStore.BackdropShow({
         transition: 'fade',
         fullScreen: true,
@@ -278,6 +287,8 @@ export class WelcomePage implements OnInit, AfterViewInit {
   }
 
   goTo(path: string) {
-    this._router.navigate([path]);
+    this._store.dispatch(new fromCoreStore.Go({
+      path: [path]
+    }));
   }
 }
