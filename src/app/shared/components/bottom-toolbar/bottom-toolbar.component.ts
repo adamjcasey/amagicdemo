@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 import { Router, NavigationEnd, Event as NavigationEvent } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { animate, spring  } from 'motion';
+
+import * as fromCoreStore from '@core/store';
 
 @Component({
   selector: 'automagic-bottom-toolbar',
@@ -13,10 +16,15 @@ export class BottomToolbarComponent {
   public excludedPaths: Array<string>;
   public isOpen: boolean = false;
 
-  constructor(private _router: Router) {
+  constructor(
+    private _router: Router,
+    private _store: Store<fromCoreStore.CoreState>,
+  ) {
+    // list of excluded pages to shown bottom toolbar component
     this.excludedPaths = [
       '/welcome',
-      '/home/start-dose'
+      '/home/start-dose/prepare',
+      '/home/start-dose/ready-to-inject',
     ];
 
     this.routerEvents$ = this._router.events.subscribe(
@@ -81,5 +89,11 @@ export class BottomToolbarComponent {
         )
       })
     }
+  }
+
+  goTo(path: string) {
+    this._store.dispatch(new fromCoreStore.Go({
+      path: [path]
+    }));
   }
 }
