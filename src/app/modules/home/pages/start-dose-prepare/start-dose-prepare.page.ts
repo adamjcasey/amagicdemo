@@ -25,53 +25,65 @@ export class StartDosePreparePage implements OnInit {
   ) {
     this.slides = [
       {
-        color: 'var(--color-bg-pastel-purple)',
-        asset: 'assets/images/start-dose-1.svg',
-        showNavigation: false,
-        content: `
-          <h1 class="font-heading-1--bold">Take the autoinjector out of the box.</h1>
-          <p>Your Automagic autoinjector will turn on automatically when you pick it up.</p>
-        `,
-        actions: [
-          {
-            label: 'Continue',
-            action: () => { 
-              this.sliderPage.slideNext() 
+        header: {
+          color: '--color-bg-pastel-purple',
+          asset: 'assets/images/start-dose-prepare-1.svg',
+        },
+        content: {
+          showNavigation: false,
+          template: `
+            <h1 class="font-heading-1--bold">Take the autoinjector out of the box.</h1>
+            <p>Your Automagic autoinjector will turn on automatically when you pick it up.</p>
+          `,
+          actions: [
+            {
+              label: 'Continue',
+              action: () => { 
+                this.sliderPage.slideNext() 
+              }
             }
-          }
-        ],
+          ],
+        }
       },
       {
-        color: 'var(--color-bg-pastel-mint)',
-        asset: 'assets/images/start-dose-2.svg',
-        showNavigation: false,
-        content: `
-          <h1 class="font-heading-1--bold">Connecting...</h1>
-        `,
+        header: {
+          color: '--color-bg-pastel-mint',
+          asset: 'assets/images/start-dose-prepare-2.svg',
+        },
+        content: {
+          showNavigation: false,
+          template: `
+            <h1 class="font-heading-1--bold">Connecting...</h1>
+          `,
+        },
       },
       {
-        color: 'var(--color-bg-pastel-mint)',
-        asset: 'assets/images/start-dose-3.svg',
-        showNavigation: false,
-        content: `
-          <h1 class="font-heading-1--bold">Connected!</h1>
-        `,
-        cards: [
-          {
-            asset: '/assets/images/dose.svg',
-            title: 'Theryx®, 80mg',
-            description: 'Synthesized in Dayton, OH on 05/04/2023',
-            disclamerText: 'Expires 06/24/2024',
-          }
-        ],
-        actions: [
-          {
-            label: 'Continue',
-            action: () => {
-              this.showStepTemperature();
+        header: {
+          color: '--color-bg-pastel-mint',
+          asset: 'assets/images/start-dose-prepare-3.svg',
+        },
+        content: {
+          showNavigation: false,
+          template: `
+            <h1 class="font-heading-1--bold">Connected!</h1>
+          `,
+          cards: [
+            {
+              asset: '/assets/images/dose.svg',
+              title: 'Theryx®, 80mg',
+              description: 'Synthesized in Dayton, OH on 05/04/2023',
+              disclamerText: 'Expires 06/24/2024',
             }
-          }
-        ],
+          ],
+          actions: [
+            {
+              label: 'Continue',
+              action: () => {
+                this.showStepTemperature();
+              }
+            }
+          ],
+        },
       },
     ]
   }
@@ -128,7 +140,8 @@ export class StartDosePreparePage implements OnInit {
   }
 
   showStepTempTimer() {
-    this._store.dispatch(new fromSharedStore.SliderPageSetContent({
+    this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
+      template: null,
       component: 'start-dose-prepare-temp-timer',
       toolbar: {
         actions: [
@@ -147,7 +160,8 @@ export class StartDosePreparePage implements OnInit {
   }
 
   showStepInspect() {
-    this._store.dispatch(new fromSharedStore.SliderPageSetContent({
+    this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
+      component: null,
       template: `
         <div class="start-dose-prepare__instructions">
           <img src="assets/images/drug-window.svg" />
@@ -193,7 +207,7 @@ export class StartDosePreparePage implements OnInit {
   }
 
   showStepSurvey() {
-    this._store.dispatch(new fromSharedStore.SliderPageSetContent({
+    this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
       template: `
         <div class="start-dose-prepare__survey">
           <h1 class="font-heading-1--bold">While you’re waiting, how are you feeling?</h1>
@@ -221,7 +235,8 @@ export class StartDosePreparePage implements OnInit {
   }
 
   showStepWaitingToInject() {
-    this._store.dispatch(new fromSharedStore.SliderPageSetContent({
+    this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
+      template: null,
       component: 'start-dose-prepare-waiting-to-inject',
       toolbar: {
         actions: [

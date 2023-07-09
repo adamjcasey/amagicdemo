@@ -3,6 +3,7 @@ import {
   ViewEncapsulation, 
   OnInit,
   ViewChild,
+  AfterViewInit,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
@@ -18,148 +19,474 @@ import * as fromCoreStore from '@core/store';
   styleUrls: ['start-dose-ready-to-inject.page.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class StartDoseReadyToInjectPage implements OnInit {
+export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
   public homeConfig$!: Observable<any>;
   public homeConfig: any;
+  public sliderPageConfig$!: Observable<any>;
+  public sliderPageConfig: any;
   public slides: Array<any> = [];
   @ViewChild('sliderPage', { static: false }) sliderPage!: fromSharedComponents.SliderPageComponent;
+  public selectedBodyPart: string = '';
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
   ) {
+    this.sliderPageConfig$ = this._store.select(fromSharedStore.getSliderPageConfig);
     this.homeConfig$ = this._store.select(fromStore.getHomeConfig);
-    // this.slides = [
-    //   {
-    //     color: 'var(--color-bg-pastel-purple)',
-    //     asset: 'assets/images/start-dose-1.svg',
-    //     showNavigation: false,
-    //     content: `
-    //       <h1 class="font-heading-1--bold">Take the autoinjector out of the box.</h1>
-    //       <p>Your Automagic autoinjector will turn on automatically when you pick it up.</p>
-    //     `,
-    //     actions: [
-    //       {
-    //         label: 'Continue',
-    //         action: () => { this.sliderPage.slideNext() }
-    //       }
-    //     ],
-    //   },
-    //   {
-    //     color: 'var(--color-bg-pastel-mint)',
-    //     asset: 'assets/images/start-dose-2.svg',
-    //     showNavigation: false,
-    //     content: `
-    //       <h1 class="font-heading-1--bold">Connecting...</h1>
-    //     `,
-    //   },
-    //   {
-    //     color: 'var(--color-bg-pastel-mint)',
-    //     asset: 'assets/images/start-dose-3.svg',
-    //     showNavigation: false,
-    //     content: `
-    //       <h1 class="font-heading-1--bold">Connected!</h1>
-    //     `,
-    //     cards: [
-    //       {
-    //         asset: '/assets/images/dose.svg',
-    //         title: 'Theryx®, 80mg',
-    //         description: 'Synthesized in Dayton, OH on 05/04/2023',
-    //         disclamerText: 'Expires 06/24/2024',
-    //       }
-    //     ],
-    //     // button: {
-    //     //   label: 'Continue',
-    //     //   action: () => {
-    //     //     this.showStepTemperature();
-    //     //   }
-    //     // },
-    //   },
-    // ]
+    this.slides = [
+      {
+        header: {
+          color: '--color-bg-pastel-green',
+          template: `
+            <div class="start-dose-ready-to-inject__content">
+              <h1 class="font-heading-1--bold">You’ve got this!</h1>
+              <p>This guide will walk you through every step.</p>
+              <img src="assets/images/start-dose-ready-to-inject-start.svg">
+            </div>
+          `,
+        },
+        content: {
+          showNavigation: false,
+          actions: [
+            {
+              label: 'Postpone',
+              action: () => {
+                this._store.dispatch(new fromSharedStore.BackdropShow({
+                  transition: 'move',
+                  header: true,
+                  template: `
+                    <div class="no-needless-message">
+                      <h1 class="font-heading-1--bold">Postpone gives patients control.</h1>
+                      <p>This Postpone feature is for patients who encounter anxiety at their dose time.</p>
+                      <p>For the purpose of this demo, please <strong>Continue</strong></p>
+                    </div>
+                  `,
+                }));
+              },
+            },
+            {
+              label: 'Continue',
+              action: () => { this.sliderPage.slideNext() }
+            }
+          ],
+        },
+      },
+      {
+        bodyShapeStep: true,
+        header: {
+          color: '--color-bg-pastel-honey-yellow',
+          template: `
+            <div class="start-dose-ready-to-inject__content">
+              <h1 class="font-heading-1--bold">Select injection site.</h1>
+              <svg class="body-shape" onclick="window.startDoseReadyToInject.selectBodyShape(event)" width="350" height="440" viewBox="0 0 350 440" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path style="pointer-events: none;" d="M73.94 295.822C70.0167 251.357 51.381 221.253 42.5535 196.759C-5.50713 46.9708 70.9978 44.1446 94.5377 39.4342C114.645 35.4108 147.993 29.0715 170.061 21.535C199.486 11.4862 258.826 -4.84283 295.607 25.3033C342.464 63.707 320.128 166.759 295.607 267.56C262.879 402.099 198.356 450.461 134.751 425.827C73.94 402.275 78.8442 351.404 73.94 295.822Z" fill="white"/>
+                <mask id="mask0_952_35774" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="2" y="8" width="343" height="425">
+                  <path d="M48 342.5C-55.4401 320.678 51.381 221.253 42.5535 196.759C-5.50709 46.9708 70.9978 44.1446 94.5377 39.4342C114.645 35.4108 147.993 29.0715 170.061 21.535C199.486 11.4862 258.826 -4.84283 295.607 25.3033C332.701 55.7054 326.432 145.423 310.044 231.5C305.731 254.155 356.605 266.555 342.5 293.5C303.5 368 285.235 300.541 282.5 309.5C247 412.5 195.5 448 134.751 425.827C66.8195 401.032 102.596 354.018 48 342.5Z" fill="white"/>
+                </mask>
+                <g style="pointer-events: none;" mask="url(#mask0_952_35774)">
+                  <path d="M115.982 499C116.067 489.64 116.604 469.377 119.029 456.062C121.454 442.747 120.195 428.333 119.887 420.832C119.579 413.331 120.488 406.505 121.904 395.013C123.32 383.521 121.175 375.324 119.394 365.885C117.612 356.446 115.66 328.904 116.997 289.634C118.335 250.371 125.087 230.373 126.918 216.405C128.749 202.436 125.938 153.131 124.071 153.21C122.205 153.289 120.81 156.813 118.707 162.498C116.604 168.183 108.929 187.987 108.042 201.683C107.155 215.378 93.1716 237.257 89.5952 244.75C86.0189 252.244 77.1924 269.816 76.6702 278.53C76.1481 287.244 65.655 303.81 62.2146 311.778C58.7741 319.745 51.4068 319.25 42.9093 319.702C36.3646 320.047 36.9082 314.455 37.6592 311.369C38.1528 309.352 41.2642 299.662 44.1754 293.23C47.0865 286.799 47.0508 283.992 45.2411 282.664C43.4315 281.336 37.6664 285.306 34.9698 286.598C32.2732 287.89 28.3821 287.883 27.2234 285.959C26.0646 284.035 29.6839 282.944 31.8798 282.413C34.0757 281.882 36.6507 279.965 41.1998 275.314C45.749 270.663 48.9963 271.122 55.7914 264.856C62.5865 258.589 67.4146 226.963 70.1612 206.011C72.9079 185.059 81.4626 175.828 83.451 167.25C85.4466 158.673 87.807 146.836 89.9958 139.206C92.1845 131.576 91.2332 122.869 93.5936 104.508C95.954 86.1467 97.1127 75.631 117.133 72.2358C137.154 68.8406 154.463 60.1482 155.522 55.0949C156.581 50.0416 157.503 38.2052 157.503 38.2052C157.503 38.2052 144.457 25.773 143.784 4.83498C143.784 4.83498 135.28 -46.5303 177.695 -46.9969C220.576 -47.4635 211.213 4.83498 211.213 4.83498C210.541 25.773 197.494 38.2052 197.494 38.2052C197.494 38.2052 198.417 50.0488 199.476 55.0949C200.534 60.141 217.844 68.8406 237.864 72.2358C257.885 75.631 259.044 86.1467 261.404 104.508C263.764 122.869 262.813 131.576 265.002 139.206C267.19 146.836 269.551 158.673 271.547 167.25C273.542 175.828 282.09 185.059 284.836 206.011C287.583 226.963 292.411 258.589 299.206 264.856C306.001 271.122 309.249 270.67 313.798 275.314C318.347 279.958 320.915 281.882 323.118 282.413C325.321 282.944 328.94 284.042 327.774 285.959C326.608 287.875 322.724 287.89 320.028 286.598C317.331 285.306 311.566 281.336 309.756 282.664C307.947 283.992 307.911 286.799 310.822 293.23C313.733 299.662 316.845 309.345 317.338 311.369C318.089 314.455 318.633 320.054 312.088 319.702C303.598 319.25 296.231 319.753 292.783 311.778C289.335 303.803 278.849 287.244 278.327 278.53C277.805 269.816 268.979 252.244 265.402 244.75C261.819 237.257 247.842 215.378 246.955 201.683C246.068 187.987 238.394 168.183 236.291 162.498C234.188 156.813 232.793 153.282 230.926 153.21C229.059 153.138 226.248 202.436 228.079 216.405C229.91 230.373 236.663 250.371 238 289.634C239.338 328.897 237.385 356.446 235.604 365.885C233.823 375.324 231.684 383.529 233.093 395.013C234.502 406.498 235.418 413.324 235.11 420.832C234.803 428.34 233.544 442.747 235.969 456.062C238.394 469.377 238.937 489.64 239.016 499L195.699 492.949C195.699 492.949 194.962 455.215 195.935 442.065C196.908 428.915 191.486 418.851 189.233 403.038C186.98 387.218 184.526 345.823 182.459 334.367C180.399 322.911 181.329 308.828 178.711 305.82L177.552 305.088H177.452L176.294 305.82C173.676 308.828 174.605 322.911 172.545 334.367C170.486 345.823 168.032 387.225 165.772 403.038C163.519 418.858 158.097 428.915 159.07 442.065C160.043 455.215 159.306 492.949 159.306 492.949L115.989 499H115.982Z" fill="url(#paint0_linear_952_35774)"/>
+                  <path d="M177.5 47C165.5 47 159 40.3333 157.5 38C157 43.5 157 46.5 155.5 55.5C153.896 65.1266 200.85 63.5985 199.5 55.5C198.5 49.5 197.667 41.6667 197.5 38C195.667 40.3333 189.5 47 177.5 47Z" fill="url(#paint1_linear_952_35774)"/>
+                  <path d="M177.5 18.5V303" stroke="#BD6853" stroke-width="1.4" stroke-linecap="round" stroke-dasharray="3 5"/>
+                </g>
+                <path class="body-shape__top-left" d="M171.868 208.88C170.299 223.186 160.594 230 149.945 230C139.296 230 131.336 219.981 133.299 208.88C135.533 196.227 144.301 186 154.957 186C165.613 186 173.097 197.679 171.868 208.88Z" stroke="#684BAB" stroke-width="4" stroke-miterlimit="10"/>
+                <path class="body-shape__top-right" d="M183.132 208.88C184.701 223.186 194.406 230 205.055 230C215.704 230 223.664 219.981 221.701 208.88C219.467 196.227 210.699 186 200.043 186C189.387 186 181.903 197.679 183.132 208.88Z" stroke="#684BAB" stroke-width="4" stroke-miterlimit="10"/>
+                <path class="body-shape__bottom-left" d="M165.763 335.07C163.947 351.671 152.408 377 140.933 377C129.457 377 122.691 354.637 124.212 335.07C125.508 318.42 131.816 309.402 144.988 310.031C156.449 310.574 167.791 316.52 165.763 335.07Z" stroke="#684BAB" stroke-width="4" stroke-miterlimit="10"/>
+                <path class="body-shape__bottom-right" d="M189.237 335.07C191.053 351.671 202.592 377 214.067 377C225.543 377 232.309 354.637 230.788 335.07C229.492 318.42 223.184 309.402 210.012 310.031C198.551 310.574 187.209 316.52 189.237 335.07Z" stroke="#684BAB" stroke-width="4" stroke-miterlimit="10"/>
+                <path d="M129.24 118.704C129.368 118.896 129.432 119.083 129.432 119.264C129.432 119.509 129.331 119.712 129.128 119.872C128.936 120.032 128.707 120.112 128.44 120.112C128.269 120.112 128.104 120.075 127.944 120C127.795 119.915 127.667 119.792 127.56 119.632L125.432 116.4C125.219 116.059 124.989 115.819 124.744 115.68C124.509 115.541 124.2 115.472 123.816 115.472H122.248V119.056C122.248 119.376 122.157 119.632 121.976 119.824C121.795 120.005 121.549 120.096 121.24 120.096C120.931 120.096 120.68 120.005 120.488 119.824C120.307 119.632 120.216 119.376 120.216 119.056V109.696C120.216 109.387 120.301 109.147 120.472 108.976C120.653 108.805 120.899 108.72 121.208 108.72H125.208C126.488 108.72 127.459 109.008 128.12 109.584C128.792 110.149 129.128 110.971 129.128 112.048C129.128 112.923 128.877 113.643 128.376 114.208C127.885 114.763 127.187 115.12 126.28 115.28C126.589 115.355 126.861 115.488 127.096 115.68C127.331 115.872 127.56 116.139 127.784 116.48L129.24 118.704ZM124.92 113.888C125.699 113.888 126.269 113.744 126.632 113.456C126.995 113.157 127.176 112.704 127.176 112.096C127.176 111.477 126.995 111.029 126.632 110.752C126.269 110.464 125.699 110.32 124.92 110.32H122.232V113.888H124.92ZM132.157 120.096C131.869 120.096 131.629 120.016 131.437 119.856C131.256 119.685 131.165 119.445 131.165 119.136V112.96C131.165 112.651 131.256 112.416 131.437 112.256C131.629 112.096 131.869 112.016 132.157 112.016C132.445 112.016 132.685 112.096 132.877 112.256C133.069 112.416 133.165 112.651 133.165 112.96V119.136C133.165 119.445 133.069 119.685 132.877 119.856C132.685 120.016 132.445 120.096 132.157 120.096ZM132.157 110.592C131.794 110.592 131.506 110.496 131.293 110.304C131.08 110.101 130.973 109.84 130.973 109.52C130.973 109.2 131.08 108.944 131.293 108.752C131.506 108.56 131.794 108.464 132.157 108.464C132.509 108.464 132.792 108.56 133.005 108.752C133.229 108.944 133.341 109.2 133.341 109.52C133.341 109.84 133.234 110.101 133.021 110.304C132.808 110.496 132.52 110.592 132.157 110.592ZM141.852 112.016C142.15 112.016 142.39 112.101 142.572 112.272C142.753 112.443 142.844 112.672 142.844 112.96V119.28C142.844 120.507 142.502 121.435 141.82 122.064C141.137 122.693 140.129 123.008 138.796 123.008C137.633 123.008 136.662 122.789 135.884 122.352C135.489 122.117 135.292 121.835 135.292 121.504C135.292 121.269 135.345 121.083 135.452 120.944C135.569 120.805 135.718 120.736 135.9 120.736C135.996 120.736 136.113 120.757 136.252 120.8C136.39 120.853 136.534 120.912 136.684 120.976C137.068 121.136 137.409 121.259 137.708 121.344C138.017 121.429 138.369 121.472 138.764 121.472C140.161 121.472 140.86 120.789 140.86 119.424V118.4C140.625 118.837 140.284 119.179 139.836 119.424C139.388 119.659 138.876 119.776 138.299 119.776C137.617 119.776 137.009 119.616 136.476 119.296C135.953 118.965 135.542 118.507 135.243 117.92C134.945 117.333 134.796 116.656 134.796 115.888C134.796 115.12 134.94 114.443 135.228 113.856C135.526 113.259 135.942 112.8 136.476 112.48C137.009 112.149 137.617 111.984 138.299 111.984C138.876 111.984 139.388 112.107 139.836 112.352C140.284 112.587 140.625 112.923 140.86 113.36V112.944C140.86 112.667 140.95 112.443 141.132 112.272C141.313 112.101 141.553 112.016 141.852 112.016ZM138.828 118.224C139.468 118.224 139.964 118.016 140.316 117.6C140.678 117.184 140.86 116.613 140.86 115.888C140.86 115.152 140.678 114.576 140.316 114.16C139.964 113.744 139.468 113.536 138.828 113.536C138.198 113.536 137.702 113.744 137.34 114.16C136.977 114.576 136.796 115.152 136.796 115.888C136.796 116.613 136.977 117.184 137.34 117.6C137.702 118.016 138.198 118.224 138.828 118.224ZM149.491 111.984C151.326 111.984 152.243 113.056 152.243 115.2V119.136C152.243 119.435 152.152 119.669 151.971 119.84C151.8 120.011 151.56 120.096 151.251 120.096C150.942 120.096 150.696 120.011 150.515 119.84C150.334 119.669 150.243 119.435 150.243 119.136V115.2C150.243 114.635 150.126 114.224 149.891 113.968C149.667 113.701 149.31 113.568 148.819 113.568C148.243 113.568 147.779 113.749 147.427 114.112C147.086 114.475 146.915 114.96 146.915 115.568V119.136C146.915 119.435 146.824 119.669 146.643 119.84C146.462 120.011 146.216 120.096 145.907 120.096C145.598 120.096 145.352 120.011 145.171 119.84C145 119.669 144.915 119.435 144.915 119.136V109.568C144.915 109.291 145.006 109.067 145.187 108.896C145.379 108.725 145.624 108.64 145.923 108.64C146.222 108.64 146.462 108.72 146.643 108.88C146.824 109.04 146.915 109.259 146.915 109.536V113.264C147.182 112.848 147.534 112.533 147.971 112.32C148.419 112.096 148.926 111.984 149.491 111.984ZM158.338 118.608C158.872 118.64 159.138 118.88 159.138 119.328C159.138 119.584 159.032 119.781 158.818 119.92C158.616 120.048 158.322 120.101 157.938 120.08L157.506 120.048C155.714 119.92 154.818 118.96 154.818 117.168V113.68H154.018C153.73 113.68 153.506 113.616 153.346 113.488C153.197 113.36 153.122 113.173 153.122 112.928C153.122 112.683 153.197 112.496 153.346 112.368C153.506 112.24 153.73 112.176 154.018 112.176H154.818V110.704C154.818 110.416 154.909 110.187 155.09 110.016C155.272 109.845 155.517 109.76 155.826 109.76C156.125 109.76 156.365 109.845 156.546 110.016C156.728 110.187 156.818 110.416 156.818 110.704V112.176H158.178C158.466 112.176 158.685 112.24 158.834 112.368C158.994 112.496 159.074 112.683 159.074 112.928C159.074 113.173 158.994 113.36 158.834 113.488C158.685 113.616 158.466 113.68 158.178 113.68H156.818V117.312C156.818 118.101 157.181 118.523 157.906 118.576L158.338 118.608Z" fill="#BD6853"/>
+                <path d="M200.192 120C199.883 120 199.643 119.915 199.472 119.744C199.301 119.573 199.216 119.339 199.216 119.04V109.664C199.216 109.355 199.307 109.109 199.488 108.928C199.68 108.736 199.931 108.64 200.24 108.64C200.56 108.64 200.811 108.736 200.992 108.928C201.184 109.109 201.28 109.355 201.28 109.664V118.304H205.776C206.416 118.304 206.736 118.587 206.736 119.152C206.736 119.717 206.416 120 205.776 120H200.192ZM214.06 117.856C214.241 117.856 214.385 117.925 214.492 118.064C214.609 118.203 214.668 118.389 214.668 118.624C214.668 118.955 214.471 119.232 214.076 119.456C213.713 119.659 213.303 119.824 212.844 119.952C212.385 120.069 211.948 120.128 211.532 120.128C210.273 120.128 209.276 119.765 208.54 119.04C207.804 118.315 207.436 117.323 207.436 116.064C207.436 115.264 207.596 114.555 207.916 113.936C208.236 113.317 208.684 112.837 209.26 112.496C209.847 112.155 210.508 111.984 211.244 111.984C211.948 111.984 212.561 112.139 213.084 112.448C213.607 112.757 214.012 113.195 214.3 113.76C214.588 114.325 214.732 114.992 214.732 115.76C214.732 116.219 214.529 116.448 214.124 116.448H209.404C209.468 117.184 209.676 117.728 210.028 118.08C210.38 118.421 210.892 118.592 211.564 118.592C211.905 118.592 212.204 118.549 212.46 118.464C212.727 118.379 213.025 118.261 213.356 118.112C213.676 117.941 213.911 117.856 214.06 117.856ZM211.292 113.392C210.748 113.392 210.311 113.563 209.98 113.904C209.66 114.245 209.468 114.736 209.404 115.376H213.02C212.999 114.725 212.839 114.235 212.54 113.904C212.241 113.563 211.825 113.392 211.292 113.392ZM220.273 110.208C219.783 110.24 219.425 110.389 219.201 110.656C218.977 110.923 218.865 111.307 218.865 111.808V112.176H220.225C220.823 112.176 221.121 112.427 221.121 112.928C221.121 113.429 220.823 113.68 220.225 113.68H218.865V119.136C218.865 119.445 218.769 119.68 218.577 119.84C218.396 120 218.161 120.08 217.873 120.08C217.585 120.08 217.345 120 217.153 119.84C216.961 119.68 216.865 119.445 216.865 119.136V113.68H216.065C215.468 113.68 215.169 113.429 215.169 112.928C215.169 112.427 215.468 112.176 216.065 112.176H216.865V112.064C216.865 111.061 217.127 110.277 217.649 109.712C218.183 109.136 218.929 108.811 219.889 108.736L220.305 108.704C220.732 108.672 221.031 108.72 221.201 108.848C221.383 108.965 221.473 109.152 221.473 109.408C221.473 109.867 221.212 110.123 220.689 110.176L220.273 110.208ZM225.682 118.608C226.215 118.64 226.482 118.88 226.482 119.328C226.482 119.584 226.375 119.781 226.162 119.92C225.959 120.048 225.666 120.101 225.282 120.08L224.85 120.048C223.058 119.92 222.162 118.96 222.162 117.168V113.68H221.362C221.074 113.68 220.85 113.616 220.69 113.488C220.541 113.36 220.466 113.173 220.466 112.928C220.466 112.683 220.541 112.496 220.69 112.368C220.85 112.24 221.074 112.176 221.362 112.176H222.162V110.704C222.162 110.416 222.253 110.187 222.434 110.016C222.615 109.845 222.861 109.76 223.17 109.76C223.469 109.76 223.709 109.845 223.89 110.016C224.071 110.187 224.162 110.416 224.162 110.704V112.176H225.522C225.81 112.176 226.029 112.24 226.178 112.368C226.338 112.496 226.418 112.683 226.418 112.928C226.418 113.173 226.338 113.36 226.178 113.488C226.029 113.616 225.81 113.68 225.522 113.68H224.162V117.312C224.162 118.101 224.525 118.523 225.25 118.576L225.682 118.608Z" fill="#BD6853"/>
+                <defs>
+                  <linearGradient id="paint0_linear_952_35774" x1="178" y1="499" x2="193.093" y2="19.475" gradientUnits="userSpaceOnUse">
+                    <stop offset="0.166667" stop-color="#E9926C"/>
+                    <stop offset="0.546875" stop-color="#FFAC81"/>
+                    <stop offset="1" stop-color="#FEB894"/>
+                  </linearGradient>
+                  <linearGradient id="paint1_linear_952_35774" x1="177.494" y1="38" x2="177.494" y2="62.1592" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#D27B66"/>
+                    <stop offset="0.802083" stop-color="#FFB58F"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+              <div class="pro-tip">
+                <ion-icon name="information-circle-outline"></ion-icon>
+                <p><strong>Pro Tip</strong></p>
+                <p>Most people find it easier to start from the one of their thighs.</p>
+              </div>
+            </div>
+          `,
+        },
+        content: {
+          actions: [
+            {
+              label: 'Previous step',
+              action: () => { this.sliderPage.slidePrev() }
+            },
+            {
+              label: 'Next Step',
+              disabled: true,
+            }
+          ],
+        },
+      },
+      {
+        header: {
+          color: '--color-bg-pastel-blue',
+          template: `
+            <div class="start-dose-ready-to-inject__content">
+              <h1 class="font-heading-1--bold">Clean site.</h1>
+              <img src="assets/images/start-dose-ready-to-inject-clean.svg">
+            </div>
+          `,
+        },
+        content: {
+          actions: [
+            {
+              label: 'Previous step',
+              action: () => { this.sliderPage.slidePrev() }
+            },
+            {
+              label: 'Next Step',
+              action: () => { this.sliderPage.slideNext() }
+            }
+          ],
+        },
+      },
+      {
+        header: {
+          color: '--color-bg-pastel-green',
+          template: `
+            <div class="start-dose-ready-to-inject__content">
+              <h1 class="font-heading-1--bold">Uncap injector.</h1>
+              <img src="assets/images/start-dose-ready-to-inject-uncap.gif">
+            </div>
+          `,
+        },
+        content: {
+          actions: [
+            {
+              label: 'Previous step',
+              action: () => { this.sliderPage.slidePrev() }
+            },
+            {
+              label: 'Next Step',
+              action: () => { 
+                this.sliderPage.slideNext();
+              }
+            }
+          ],
+        },
+      },
+      {
+        header: {
+          color: '--color-bg-pastel-beige',
+          template: `
+            <div class="start-dose-ready-to-inject__content">
+              <h1 class="font-heading-1--bold">Almost there...</h1>
+            </div>
+          `,
+          cards: [
+            {
+              type: 'stepper',
+              indicator: '1',
+              title: 'To inject, firmly press and hold down',
+              asset: '/assets/images/start-dose-ready-to-inject-card-1.svg',
+              description: 'On the next screen, press the injector against skin until it <strong>clicks</strong>.  The light will turn <strong>purple</strong> while injecting.',
+            },
+            {
+              type: 'stepper',
+              indicator: '2',
+              title: 'Hold down for 10 seconds',
+              asset: '/assets/images/start-dose-ready-to-inject-card-2.svg',
+              description: 'The injection will take <strong>10 seconds</strong> to complete. Hold down for the entire time.',
+            },
+            {
+              type: 'stepper',
+              indicator: '3',
+              title: 'Green means finished',
+              asset: '/assets/images/start-dose-ready-to-inject-card-3.svg',
+              description: 'The light will turn <strong>green</strong> when the injection is complete and you can safely release.',
+            }
+          ],
+        },
+        content: {
+          actions: [
+            {
+              label: 'Previous step',
+              action: () => { this.sliderPage.slidePrev() }
+            },
+            {
+              label: 'Next Step',
+              action: () => { 
+                this.sliderPage.slideNext();
+                // simulate Waiting for injection process
+                // first, wait for 2seg to set bgColor as purple
+                setTimeout(() => {
+                  this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
+                    color: '--color-bg-pastel-purple'
+                  }));
+                }, 2000);
+  
+                // second, wait for 4segs to set bgColor as lime
+                setTimeout(() => {
+                  this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
+                    color: '--color-bg-pastel-lime'
+                  }));
+                }, 4000);
+  
+                // then, wait for 6segs to go to the next slide
+                setTimeout(() => {
+                  this.sliderPage.slideNext();
+                }, 6000);
+              }
+            }
+          ],
+        },
+      },
+      {
+        header: {
+          color: '--color-bg-pastel-honey-yellow',
+          template: `
+            <div class="start-dose-ready-to-inject__content">
+              <h1 class="font-heading-1--bold">We’re ready for you.</h1>
+              <p>Pinch about an inch of skin at the injection site, then press and hold the injector down to start the dose. The app will detect when you start.</p>
+              <img src="assets/images/start-dose-ready-to-inject-waiting-for-injection.gif">
+              <div class="loader">
+                <h4>Waiting for you to begin injection</h4>
+
+                <p>The Guide will <strong>detect when you inject</strong> and <strong>advance automatically.</strong></p>
+              </div>
+            </div>
+          `,
+        },
+        content: {
+          hide: true,
+        },
+      },
+      {
+        header: {
+          color: '--color-bg-pastel-purple',
+          template: `
+            DOSING ANIMATIONS
+          `,
+        },
+        content: {
+          hide: true,
+        },
+      },
+    ];
   }
 
   ngOnInit() {
+    this.sliderPageConfig$.subscribe(sliderPageConfig => {
+      if (sliderPageConfig) {
+        this.sliderPageConfig = sliderPageConfig;
+      }
+    });
+
     this.homeConfig$.subscribe(homeConfig => {
       if (homeConfig) {
         this.homeConfig = homeConfig;
-
         // if this is the first dose
         if (this.homeConfig.firstTimeDose) {
-          this.slides.unshift({
-            color: 'var(--color-bg-pastel-green)',
-            assetTemplate: `
-              <div class="first-time-dose">
-                <h1 class="font-heading-1--bold">First time user?</h1>
-                <p>This video previews what to expect when self-dosing with AutoMagic.</p>
-                <div class="first-time-dose__video-indicator">
-                  <ion-icon name="play-outline"></ion-icon>
-                  <img src="assets/images/start-dose-first-time-dose.svg">
-                </div>
-                <p>You’ll be guided through the entire dosing process next.</p>
-              </div>
-            `,
-            showNavigation: false,
-            actions: [
-              {
-                label: 'Skip',
-                fill: 'outline',
-                action: () => {
-                  this.sliderPage.slideNext();
-                  this._store.dispatch(new fromSharedStore.BackdropShow({
-                    transition: 'move',
-                    header: true,
-                    template: `
-                      <div class="no-needless-message">
-                        <h1 class="font-heading-1--bold">No needles and no drugs</h1>
-                        <p>This demo unit does not have a needle nor drug substance.</p>
-                        <p>Feel free to act like a real patient and press this against your leg when instructed.</p>
-                        <img src="assets/images/no-needles.svg">
-                      </div>
-                    `,
-                  }));
-                }
-              }
-            ]
-          });
+          this.slides.unshift(
+            {
+              header: {
+                color: '--color-bg-pastel-green',
+                template: `
+                  <div class="start-dose-ready-to-inject__content first-time-dose">
+                    <h1 class="font-heading-1--bold">First time user?</h1>
+                    <p>This video previews what to expect when self-dosing with AutoMagic.</p>
+                    <div class="first-time-dose__video-indicator" onclick="window.startDoseReadyToInject.playVideo()">
+                      <ion-icon name="play-outline"></ion-icon>
+                      <img src="assets/images/start-dose-first-time-dose.svg">
+                    </div>
+                    <p>You’ll be guided through the entire dosing process next.</p>
+                  </div>
+                `,
+                component: null,
+              },
+              content: {
+                showNavigation: false,
+                actions: [
+                  {
+                    label: 'Skip',
+                    fill: 'outline',
+                    action: () => {
+                      this.slides.splice(1, 1);
+                      this.sliderPage.slideNext();
+                      this._store.dispatch(new fromSharedStore.BackdropShow({
+                        transition: 'move',
+                        header: true,
+                        template: `
+                          <div class="no-needless-message">
+                            <h1 class="font-heading-1--bold">No needles and no drugs</h1>
+                            <p>This demo unit does not have a needle nor drug substance.</p>
+                            <p>Feel free to act like a real patient and press this against your leg when instructed.</p>
+                            <img src="assets/images/no-needles.svg">
+                          </div>
+                        `,
+                      }));
+                    }
+                  }
+                ],
+              },
+            },
+            {
+              header: {
+                fullSize: true,
+                color: '--color-bg-pastel-green',
+                template: null,
+                component: 'start-dose-ready-to-inject-video-detail',
+              },
+              content: {
+                showNavigation: false,
+                actions: [
+                  {
+                    label: 'Continue',
+                    fill: 'outline',
+                    action: () => {
+                      this.sliderPage.slideNext();
+                      this._store.dispatch(new fromSharedStore.BackdropShow({
+                        transition: 'move',
+                        header: true,
+                        template: `
+                          <div class="no-needless-message">
+                            <h1 class="font-heading-1--bold">No needles and no drugs</h1>
+                            <p>This demo unit does not have a needle nor drug substance.</p>
+                            <p>Feel free to act like a real patient and press this against your leg when instructed.</p>
+                            <img src="assets/images/no-needles.svg">
+                          </div>
+                        `,
+                      }));
+                    }
+                  }
+                ],
+              },
+            }
+          );
         }
       }
     });
   }
 
-  setFirstTimeConfig() {
-    if (this.homeConfig.firstTimeDose) {
-      const playButton = document.querySelector('.first-time-dose__video-indicator');
-      playButton?.addEventListener('click', () => {
-        // first add a new step and set it as the next one to the 
-        // current sliderPage component
-        this.slides.splice(1, 0, {
-          color: 'var(--color-bg-pastel-green)',
-          assetTemplate: `
-            <div class="first-time-dose">
-              <div #videoWrapper>
-                <video 
-                  #videoTag 
-                  id="first-dose-video"
-                  class="first-time-dose__video" 
-                  src="/assets/videos/first-dose-video.mp4" 
-                  fullscreen="true"
-                ></video>
+  ngAfterViewInit() {
+    window.startDoseReadyToInject = {
+      playVideo: () => {
+        this.sliderPage.slideNext();
+      },
+      selectBodyShape: (event: any) => {
+        let clickOnPath = false;
+        const coords = {
+          x: event.x,
+          y: event.y,
+        };
+
+        console.log('coords ', coords);
+
+        if (coords.x >= 150 && coords.x <= 245) {
+          // top-right
+          if (coords.x >= 200) {
+            if (coords.y >= 335 && coords.y <= 390) {
+              clickOnPath = true;
+              this.selectedBodyPart = 'top-right';
+            }
+          }
+          // top-left
+          else {
+            if (coords.y >= 335 && coords.y <= 390) {
+              clickOnPath = true;
+              this.selectedBodyPart = 'top-left';
+            }
+          }
+        }
+
+        if (coords.x >= 145 && coords.x <= 250) {
+          // bottom-right
+          if (coords.x >= 195) {
+            if (coords.y >= 450 && coords.y <= 510) {
+              clickOnPath = true;
+              this.selectedBodyPart = 'bottom-right';
+            }
+          }
+          // bottom-left
+          else {
+            if (coords.y >= 450 && coords.y <= 510) {
+              clickOnPath = true;
+              this.selectedBodyPart = 'bottom-left';
+            }
+          }
+        }
+
+        this.selectedBodyPart = !clickOnPath ? '' : this.selectedBodyPart;
+
+        this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
+          template: `
+            <div class="start-dose-ready-to-inject__content">
+              <h1 class="font-heading-1--bold">Select injection site.</h1>
+              <svg class="body-shape ${this.selectedBodyPart}-selected" onclick="window.startDoseReadyToInject.selectBodyShape(event)" width="350" height="440" viewBox="0 0 350 440" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path style="pointer-events: none;" d="M73.94 295.822C70.0167 251.357 51.381 221.253 42.5535 196.759C-5.50713 46.9708 70.9978 44.1446 94.5377 39.4342C114.645 35.4108 147.993 29.0715 170.061 21.535C199.486 11.4862 258.826 -4.84283 295.607 25.3033C342.464 63.707 320.128 166.759 295.607 267.56C262.879 402.099 198.356 450.461 134.751 425.827C73.94 402.275 78.8442 351.404 73.94 295.822Z" fill="white"/>
+                <mask id="mask0_952_35774" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="2" y="8" width="343" height="425">
+                  <path d="M48 342.5C-55.4401 320.678 51.381 221.253 42.5535 196.759C-5.50709 46.9708 70.9978 44.1446 94.5377 39.4342C114.645 35.4108 147.993 29.0715 170.061 21.535C199.486 11.4862 258.826 -4.84283 295.607 25.3033C332.701 55.7054 326.432 145.423 310.044 231.5C305.731 254.155 356.605 266.555 342.5 293.5C303.5 368 285.235 300.541 282.5 309.5C247 412.5 195.5 448 134.751 425.827C66.8195 401.032 102.596 354.018 48 342.5Z" fill="white"/>
+                </mask>
+                <g style="pointer-events: none;" mask="url(#mask0_952_35774)">
+                  <path d="M115.982 499C116.067 489.64 116.604 469.377 119.029 456.062C121.454 442.747 120.195 428.333 119.887 420.832C119.579 413.331 120.488 406.505 121.904 395.013C123.32 383.521 121.175 375.324 119.394 365.885C117.612 356.446 115.66 328.904 116.997 289.634C118.335 250.371 125.087 230.373 126.918 216.405C128.749 202.436 125.938 153.131 124.071 153.21C122.205 153.289 120.81 156.813 118.707 162.498C116.604 168.183 108.929 187.987 108.042 201.683C107.155 215.378 93.1716 237.257 89.5952 244.75C86.0189 252.244 77.1924 269.816 76.6702 278.53C76.1481 287.244 65.655 303.81 62.2146 311.778C58.7741 319.745 51.4068 319.25 42.9093 319.702C36.3646 320.047 36.9082 314.455 37.6592 311.369C38.1528 309.352 41.2642 299.662 44.1754 293.23C47.0865 286.799 47.0508 283.992 45.2411 282.664C43.4315 281.336 37.6664 285.306 34.9698 286.598C32.2732 287.89 28.3821 287.883 27.2234 285.959C26.0646 284.035 29.6839 282.944 31.8798 282.413C34.0757 281.882 36.6507 279.965 41.1998 275.314C45.749 270.663 48.9963 271.122 55.7914 264.856C62.5865 258.589 67.4146 226.963 70.1612 206.011C72.9079 185.059 81.4626 175.828 83.451 167.25C85.4466 158.673 87.807 146.836 89.9958 139.206C92.1845 131.576 91.2332 122.869 93.5936 104.508C95.954 86.1467 97.1127 75.631 117.133 72.2358C137.154 68.8406 154.463 60.1482 155.522 55.0949C156.581 50.0416 157.503 38.2052 157.503 38.2052C157.503 38.2052 144.457 25.773 143.784 4.83498C143.784 4.83498 135.28 -46.5303 177.695 -46.9969C220.576 -47.4635 211.213 4.83498 211.213 4.83498C210.541 25.773 197.494 38.2052 197.494 38.2052C197.494 38.2052 198.417 50.0488 199.476 55.0949C200.534 60.141 217.844 68.8406 237.864 72.2358C257.885 75.631 259.044 86.1467 261.404 104.508C263.764 122.869 262.813 131.576 265.002 139.206C267.19 146.836 269.551 158.673 271.547 167.25C273.542 175.828 282.09 185.059 284.836 206.011C287.583 226.963 292.411 258.589 299.206 264.856C306.001 271.122 309.249 270.67 313.798 275.314C318.347 279.958 320.915 281.882 323.118 282.413C325.321 282.944 328.94 284.042 327.774 285.959C326.608 287.875 322.724 287.89 320.028 286.598C317.331 285.306 311.566 281.336 309.756 282.664C307.947 283.992 307.911 286.799 310.822 293.23C313.733 299.662 316.845 309.345 317.338 311.369C318.089 314.455 318.633 320.054 312.088 319.702C303.598 319.25 296.231 319.753 292.783 311.778C289.335 303.803 278.849 287.244 278.327 278.53C277.805 269.816 268.979 252.244 265.402 244.75C261.819 237.257 247.842 215.378 246.955 201.683C246.068 187.987 238.394 168.183 236.291 162.498C234.188 156.813 232.793 153.282 230.926 153.21C229.059 153.138 226.248 202.436 228.079 216.405C229.91 230.373 236.663 250.371 238 289.634C239.338 328.897 237.385 356.446 235.604 365.885C233.823 375.324 231.684 383.529 233.093 395.013C234.502 406.498 235.418 413.324 235.11 420.832C234.803 428.34 233.544 442.747 235.969 456.062C238.394 469.377 238.937 489.64 239.016 499L195.699 492.949C195.699 492.949 194.962 455.215 195.935 442.065C196.908 428.915 191.486 418.851 189.233 403.038C186.98 387.218 184.526 345.823 182.459 334.367C180.399 322.911 181.329 308.828 178.711 305.82L177.552 305.088H177.452L176.294 305.82C173.676 308.828 174.605 322.911 172.545 334.367C170.486 345.823 168.032 387.225 165.772 403.038C163.519 418.858 158.097 428.915 159.07 442.065C160.043 455.215 159.306 492.949 159.306 492.949L115.989 499H115.982Z" fill="url(#paint0_linear_952_35774)"/>
+                  <path d="M177.5 47C165.5 47 159 40.3333 157.5 38C157 43.5 157 46.5 155.5 55.5C153.896 65.1266 200.85 63.5985 199.5 55.5C198.5 49.5 197.667 41.6667 197.5 38C195.667 40.3333 189.5 47 177.5 47Z" fill="url(#paint1_linear_952_35774)"/>
+                  <path d="M177.5 18.5V303" stroke="#BD6853" stroke-width="1.4" stroke-linecap="round" stroke-dasharray="3 5"/>
+                </g>
+                <path class="body-shape__top-left" d="M171.868 208.88C170.299 223.186 160.594 230 149.945 230C139.296 230 131.336 219.981 133.299 208.88C135.533 196.227 144.301 186 154.957 186C165.613 186 173.097 197.679 171.868 208.88Z" stroke="#684BAB" stroke-width="4" stroke-miterlimit="10"/>
+                <path class="body-shape__top-right" d="M183.132 208.88C184.701 223.186 194.406 230 205.055 230C215.704 230 223.664 219.981 221.701 208.88C219.467 196.227 210.699 186 200.043 186C189.387 186 181.903 197.679 183.132 208.88Z" stroke="#684BAB" stroke-width="4" stroke-miterlimit="10"/>
+                <path class="body-shape__bottom-left" d="M165.763 335.07C163.947 351.671 152.408 377 140.933 377C129.457 377 122.691 354.637 124.212 335.07C125.508 318.42 131.816 309.402 144.988 310.031C156.449 310.574 167.791 316.52 165.763 335.07Z" stroke="#684BAB" stroke-width="4" stroke-miterlimit="10"/>
+                <path class="body-shape__bottom-right" d="M189.237 335.07C191.053 351.671 202.592 377 214.067 377C225.543 377 232.309 354.637 230.788 335.07C229.492 318.42 223.184 309.402 210.012 310.031C198.551 310.574 187.209 316.52 189.237 335.07Z" stroke="#684BAB" stroke-width="4" stroke-miterlimit="10"/>
+                <path d="M129.24 118.704C129.368 118.896 129.432 119.083 129.432 119.264C129.432 119.509 129.331 119.712 129.128 119.872C128.936 120.032 128.707 120.112 128.44 120.112C128.269 120.112 128.104 120.075 127.944 120C127.795 119.915 127.667 119.792 127.56 119.632L125.432 116.4C125.219 116.059 124.989 115.819 124.744 115.68C124.509 115.541 124.2 115.472 123.816 115.472H122.248V119.056C122.248 119.376 122.157 119.632 121.976 119.824C121.795 120.005 121.549 120.096 121.24 120.096C120.931 120.096 120.68 120.005 120.488 119.824C120.307 119.632 120.216 119.376 120.216 119.056V109.696C120.216 109.387 120.301 109.147 120.472 108.976C120.653 108.805 120.899 108.72 121.208 108.72H125.208C126.488 108.72 127.459 109.008 128.12 109.584C128.792 110.149 129.128 110.971 129.128 112.048C129.128 112.923 128.877 113.643 128.376 114.208C127.885 114.763 127.187 115.12 126.28 115.28C126.589 115.355 126.861 115.488 127.096 115.68C127.331 115.872 127.56 116.139 127.784 116.48L129.24 118.704ZM124.92 113.888C125.699 113.888 126.269 113.744 126.632 113.456C126.995 113.157 127.176 112.704 127.176 112.096C127.176 111.477 126.995 111.029 126.632 110.752C126.269 110.464 125.699 110.32 124.92 110.32H122.232V113.888H124.92ZM132.157 120.096C131.869 120.096 131.629 120.016 131.437 119.856C131.256 119.685 131.165 119.445 131.165 119.136V112.96C131.165 112.651 131.256 112.416 131.437 112.256C131.629 112.096 131.869 112.016 132.157 112.016C132.445 112.016 132.685 112.096 132.877 112.256C133.069 112.416 133.165 112.651 133.165 112.96V119.136C133.165 119.445 133.069 119.685 132.877 119.856C132.685 120.016 132.445 120.096 132.157 120.096ZM132.157 110.592C131.794 110.592 131.506 110.496 131.293 110.304C131.08 110.101 130.973 109.84 130.973 109.52C130.973 109.2 131.08 108.944 131.293 108.752C131.506 108.56 131.794 108.464 132.157 108.464C132.509 108.464 132.792 108.56 133.005 108.752C133.229 108.944 133.341 109.2 133.341 109.52C133.341 109.84 133.234 110.101 133.021 110.304C132.808 110.496 132.52 110.592 132.157 110.592ZM141.852 112.016C142.15 112.016 142.39 112.101 142.572 112.272C142.753 112.443 142.844 112.672 142.844 112.96V119.28C142.844 120.507 142.502 121.435 141.82 122.064C141.137 122.693 140.129 123.008 138.796 123.008C137.633 123.008 136.662 122.789 135.884 122.352C135.489 122.117 135.292 121.835 135.292 121.504C135.292 121.269 135.345 121.083 135.452 120.944C135.569 120.805 135.718 120.736 135.9 120.736C135.996 120.736 136.113 120.757 136.252 120.8C136.39 120.853 136.534 120.912 136.684 120.976C137.068 121.136 137.409 121.259 137.708 121.344C138.017 121.429 138.369 121.472 138.764 121.472C140.161 121.472 140.86 120.789 140.86 119.424V118.4C140.625 118.837 140.284 119.179 139.836 119.424C139.388 119.659 138.876 119.776 138.299 119.776C137.617 119.776 137.009 119.616 136.476 119.296C135.953 118.965 135.542 118.507 135.243 117.92C134.945 117.333 134.796 116.656 134.796 115.888C134.796 115.12 134.94 114.443 135.228 113.856C135.526 113.259 135.942 112.8 136.476 112.48C137.009 112.149 137.617 111.984 138.299 111.984C138.876 111.984 139.388 112.107 139.836 112.352C140.284 112.587 140.625 112.923 140.86 113.36V112.944C140.86 112.667 140.95 112.443 141.132 112.272C141.313 112.101 141.553 112.016 141.852 112.016ZM138.828 118.224C139.468 118.224 139.964 118.016 140.316 117.6C140.678 117.184 140.86 116.613 140.86 115.888C140.86 115.152 140.678 114.576 140.316 114.16C139.964 113.744 139.468 113.536 138.828 113.536C138.198 113.536 137.702 113.744 137.34 114.16C136.977 114.576 136.796 115.152 136.796 115.888C136.796 116.613 136.977 117.184 137.34 117.6C137.702 118.016 138.198 118.224 138.828 118.224ZM149.491 111.984C151.326 111.984 152.243 113.056 152.243 115.2V119.136C152.243 119.435 152.152 119.669 151.971 119.84C151.8 120.011 151.56 120.096 151.251 120.096C150.942 120.096 150.696 120.011 150.515 119.84C150.334 119.669 150.243 119.435 150.243 119.136V115.2C150.243 114.635 150.126 114.224 149.891 113.968C149.667 113.701 149.31 113.568 148.819 113.568C148.243 113.568 147.779 113.749 147.427 114.112C147.086 114.475 146.915 114.96 146.915 115.568V119.136C146.915 119.435 146.824 119.669 146.643 119.84C146.462 120.011 146.216 120.096 145.907 120.096C145.598 120.096 145.352 120.011 145.171 119.84C145 119.669 144.915 119.435 144.915 119.136V109.568C144.915 109.291 145.006 109.067 145.187 108.896C145.379 108.725 145.624 108.64 145.923 108.64C146.222 108.64 146.462 108.72 146.643 108.88C146.824 109.04 146.915 109.259 146.915 109.536V113.264C147.182 112.848 147.534 112.533 147.971 112.32C148.419 112.096 148.926 111.984 149.491 111.984ZM158.338 118.608C158.872 118.64 159.138 118.88 159.138 119.328C159.138 119.584 159.032 119.781 158.818 119.92C158.616 120.048 158.322 120.101 157.938 120.08L157.506 120.048C155.714 119.92 154.818 118.96 154.818 117.168V113.68H154.018C153.73 113.68 153.506 113.616 153.346 113.488C153.197 113.36 153.122 113.173 153.122 112.928C153.122 112.683 153.197 112.496 153.346 112.368C153.506 112.24 153.73 112.176 154.018 112.176H154.818V110.704C154.818 110.416 154.909 110.187 155.09 110.016C155.272 109.845 155.517 109.76 155.826 109.76C156.125 109.76 156.365 109.845 156.546 110.016C156.728 110.187 156.818 110.416 156.818 110.704V112.176H158.178C158.466 112.176 158.685 112.24 158.834 112.368C158.994 112.496 159.074 112.683 159.074 112.928C159.074 113.173 158.994 113.36 158.834 113.488C158.685 113.616 158.466 113.68 158.178 113.68H156.818V117.312C156.818 118.101 157.181 118.523 157.906 118.576L158.338 118.608Z" fill="#BD6853"/>
+                <path d="M200.192 120C199.883 120 199.643 119.915 199.472 119.744C199.301 119.573 199.216 119.339 199.216 119.04V109.664C199.216 109.355 199.307 109.109 199.488 108.928C199.68 108.736 199.931 108.64 200.24 108.64C200.56 108.64 200.811 108.736 200.992 108.928C201.184 109.109 201.28 109.355 201.28 109.664V118.304H205.776C206.416 118.304 206.736 118.587 206.736 119.152C206.736 119.717 206.416 120 205.776 120H200.192ZM214.06 117.856C214.241 117.856 214.385 117.925 214.492 118.064C214.609 118.203 214.668 118.389 214.668 118.624C214.668 118.955 214.471 119.232 214.076 119.456C213.713 119.659 213.303 119.824 212.844 119.952C212.385 120.069 211.948 120.128 211.532 120.128C210.273 120.128 209.276 119.765 208.54 119.04C207.804 118.315 207.436 117.323 207.436 116.064C207.436 115.264 207.596 114.555 207.916 113.936C208.236 113.317 208.684 112.837 209.26 112.496C209.847 112.155 210.508 111.984 211.244 111.984C211.948 111.984 212.561 112.139 213.084 112.448C213.607 112.757 214.012 113.195 214.3 113.76C214.588 114.325 214.732 114.992 214.732 115.76C214.732 116.219 214.529 116.448 214.124 116.448H209.404C209.468 117.184 209.676 117.728 210.028 118.08C210.38 118.421 210.892 118.592 211.564 118.592C211.905 118.592 212.204 118.549 212.46 118.464C212.727 118.379 213.025 118.261 213.356 118.112C213.676 117.941 213.911 117.856 214.06 117.856ZM211.292 113.392C210.748 113.392 210.311 113.563 209.98 113.904C209.66 114.245 209.468 114.736 209.404 115.376H213.02C212.999 114.725 212.839 114.235 212.54 113.904C212.241 113.563 211.825 113.392 211.292 113.392ZM220.273 110.208C219.783 110.24 219.425 110.389 219.201 110.656C218.977 110.923 218.865 111.307 218.865 111.808V112.176H220.225C220.823 112.176 221.121 112.427 221.121 112.928C221.121 113.429 220.823 113.68 220.225 113.68H218.865V119.136C218.865 119.445 218.769 119.68 218.577 119.84C218.396 120 218.161 120.08 217.873 120.08C217.585 120.08 217.345 120 217.153 119.84C216.961 119.68 216.865 119.445 216.865 119.136V113.68H216.065C215.468 113.68 215.169 113.429 215.169 112.928C215.169 112.427 215.468 112.176 216.065 112.176H216.865V112.064C216.865 111.061 217.127 110.277 217.649 109.712C218.183 109.136 218.929 108.811 219.889 108.736L220.305 108.704C220.732 108.672 221.031 108.72 221.201 108.848C221.383 108.965 221.473 109.152 221.473 109.408C221.473 109.867 221.212 110.123 220.689 110.176L220.273 110.208ZM225.682 118.608C226.215 118.64 226.482 118.88 226.482 119.328C226.482 119.584 226.375 119.781 226.162 119.92C225.959 120.048 225.666 120.101 225.282 120.08L224.85 120.048C223.058 119.92 222.162 118.96 222.162 117.168V113.68H221.362C221.074 113.68 220.85 113.616 220.69 113.488C220.541 113.36 220.466 113.173 220.466 112.928C220.466 112.683 220.541 112.496 220.69 112.368C220.85 112.24 221.074 112.176 221.362 112.176H222.162V110.704C222.162 110.416 222.253 110.187 222.434 110.016C222.615 109.845 222.861 109.76 223.17 109.76C223.469 109.76 223.709 109.845 223.89 110.016C224.071 110.187 224.162 110.416 224.162 110.704V112.176H225.522C225.81 112.176 226.029 112.24 226.178 112.368C226.338 112.496 226.418 112.683 226.418 112.928C226.418 113.173 226.338 113.36 226.178 113.488C226.029 113.616 225.81 113.68 225.522 113.68H224.162V117.312C224.162 118.101 224.525 118.523 225.25 118.576L225.682 118.608Z" fill="#BD6853"/>
+                <defs>
+                  <linearGradient id="paint0_linear_952_35774" x1="178" y1="499" x2="193.093" y2="19.475" gradientUnits="userSpaceOnUse">
+                    <stop offset="0.166667" stop-color="#E9926C"/>
+                    <stop offset="0.546875" stop-color="#FFAC81"/>
+                    <stop offset="1" stop-color="#FEB894"/>
+                  </linearGradient>
+                  <linearGradient id="paint1_linear_952_35774" x1="177.494" y1="38" x2="177.494" y2="62.1592" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#D27B66"/>
+                    <stop offset="0.802083" stop-color="#FFB58F"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+              <div class="pro-tip">
+                <ion-icon name="information-circle-outline"></ion-icon>
+                <p><strong>Pro Tip</strong></p>
+                <p>Most people find it easier to start from the one of their thighs.</p>
               </div>
             </div>
           `,
+        }));
+
+        this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
           actions: [
+            this.sliderPageConfig.content.actions[0],
             {
-              label: 'Continue',
-              fill: 'outline',
-              action: () => {
+              ...this.sliderPageConfig.content.actions[1],
+              disabled: clickOnPath ? null : true,
+              action: clickOnPath ? () => {
                 this.sliderPage.slideNext();
-                // clear video
-              }
+                this._store.dispatch(new fromSharedStore.BackdropShow({
+                  transition: 'move',
+                  fullScreen: true,
+                  header: true,
+                  bgTemplate: 'top-hole',
+                  template: `
+                    <div class="no-need-to-clean-message">
+                      <h1 class="font-heading-1--bold">No need to clean!</h1>
+                      <p>For this demo you will not need to use an alcohol swab.</p>
+                      <ion-button fill="outline" expand="block" color="light" (click)="toggle()">
+                        Got it
+                      </ion-button>
+                    </div>
+                  `,
+                }));
+              } : null,
             }
           ]
-        });
-        // then move the current sliderPage component
-        this.sliderPage.slideNext();
-      });
+        }));
+      },
     }
   }
 }
