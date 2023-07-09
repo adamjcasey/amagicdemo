@@ -241,7 +241,7 @@ export class SharedEffects {
   }, { dispatch: false });
   alertClose$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(fromActions.ActionTypes.AlertHide),
+      ofType(fromActions.ActionTypes.AlertClose),
       withLatestFrom(this._store.pipe(select(fromReducer.getAlertConfig))),
       map(([action, options]) => {
         this._alertOptions = options;
@@ -251,7 +251,6 @@ export class SharedEffects {
         if (!this._animationInProgress) {
           this._animationInProgress = true;
           if (this._alertOptions.mode === 'full') {
-            console.log('hace close in full mode');
             animate(
               `#alert .alert__content`,
               { top: [0, '25%', '50%', '75%', '100%'] },
@@ -266,7 +265,6 @@ export class SharedEffects {
             });
           }
           else {
-            console.log('hace close no full mode');
             // animate(
             //   `#backdrop`,
             //   { opacity: [ 0.8, 0.5, 0 ] }, 

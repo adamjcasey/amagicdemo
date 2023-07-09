@@ -6,7 +6,6 @@ import {
   AfterViewInit,
   ElementRef,
 } from '@angular/core';
-import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
@@ -32,7 +31,6 @@ export class WelcomePage implements OnInit, AfterViewInit {
   public videoPlayer: any;
   public slides: Array<any> = [];
   public welcomeFormGroup: FormGroup;
-  public isIOS: boolean = false;
   @ViewChild('videoWrapper') videoWrapper!: ElementRef;
   @ViewChild('videoTag') videoTag!: ElementRef;
   @ViewChild('sliderPage', { static: false }) sliderPage!: fromSharedComponents.SliderPageComponent;
@@ -42,7 +40,6 @@ export class WelcomePage implements OnInit, AfterViewInit {
     private _formBuilder: FormBuilder,
   ) {
     this.config$ = this._store.select(fromStore.getWelcomeState);
-    this.isIOS = Capacitor.getPlatform() === 'ios';
     this.welcomeFormGroup = this._formBuilder.group({
       pin: ['', [ Validators.required, Validators.minLength(4) ]],
       name: ['', [ Validators.required ]],
@@ -51,96 +48,119 @@ export class WelcomePage implements OnInit, AfterViewInit {
 
     this.slides = [
       {
-        color: 'var(--color-bg-pastel-green)',
-        asset: 'assets/images/welcome-step-1.svg',
-        showNavigation: false,
-        content: `
-          <h1 class="font-heading-1--bold">Welcome to AutoMagic for Theryx.</h1>
-          <p>The AutoMagic connected ecosystem empowers you to make the most of your Theryx prescription</p>
-        `,
-        actions: [
-          {
-            label: 'Get started',
-            action: () => { this.sliderPage.slideNext() }
-          }
-        ],
-      },
-      {
-        color: 'var(--color-bg-pastel-green)',
-        asset: 'assets/images/welcome-step-1.svg',
-        content: `
-          <h1 class="font-heading-1--bold">Let’s get to know each other.</h1>
-        `,
-        form: {
-          group: this.welcomeFormGroup,
-          fields: [
+        header: {
+          color: '--color-bg-pastel-green',
+          asset: 'assets/images/welcome-step-1.svg',
+        },
+        content: {
+          showNavigation: false,
+          template: `
+            <h1 class="font-heading-1--bold">Welcome to AutoMagic for Theryx.</h1>
+            <p>The AutoMagic connected ecosystem empowers you to make the most of your Theryx prescription</p>
+          `,
+          actions: [
             {
-              label: 'What’s your name?',
-              name: 'name',
-              placeholder: 'Name',
-              onInput: (event: any) => {
-                this._store.dispatch(new fromStore.SetData({
-                  name: event.target.value
-                }));
-              },
+              label: 'Get started',
+              action: () => { this.sliderPage.slideNext() }
             }
           ],
         },
-        actions: [
-          {
-            label: 'Continue',
-            action: () => {
-              if (this.welcomeFormGroup.get('name')?.valid) {
-                this.sliderPage.slideNext();
+      },
+      {
+        header: {
+          color: '--color-bg-pastel-green',
+          asset: 'assets/images/welcome-step-1.svg',
+        },
+        content: {
+          template: `
+            <h1 class="font-heading-1--bold">Let’s get to know each other.</h1>
+          `,
+          form: {
+            group: this.welcomeFormGroup,
+            fields: [
+              {
+                label: 'What’s your name?',
+                name: 'name',
+                placeholder: 'Name',
+                onInput: (event: any) => {
+                  this._store.dispatch(new fromStore.SetData({
+                    name: event.target.value
+                  }));
+                },
               }
-              else {
-                this.welcomeFormGroup.get('name')?.markAllAsTouched();
+            ],
+          },
+          actions: [
+            {
+              label: 'Continue',
+              action: () => {
+                if (this.welcomeFormGroup.get('name')?.valid) {
+                  this.sliderPage.slideNext();
+                }
+                else {
+                  this.welcomeFormGroup.get('name')?.markAllAsTouched();
+                }
               }
             }
-          }
-        ],
+          ],
+        },
       },
       {
-        color: 'var(--color-bg-pastel-blue)',
-        asset: 'assets/images/welcome-step-2.svg',
-        content: `
-          <h1 class="font-heading-1--bold">Let's get connected.</h1>
-          <p>To get the most out of your connected autoinjector and enable dose tracking and help with your injection experience, please enable bluetooth.</p>
-        `,
-        actions: [
-          {
-            label: 'Enable Bluetooth',
-            action: () => { this.allowBluetooth() }
-          },
-        ],
+        header: {
+          color: '--color-bg-pastel-blue',
+          asset: 'assets/images/welcome-step-2.svg',
+        },
+        content: {
+          template: `
+            <h1 class="font-heading-1--bold">Let's get connected.</h1>
+            <p>To get the most out of your connected autoinjector and enable dose tracking and help with your injection experience, please enable bluetooth.</p>
+          `,
+          actions: [
+            {
+              label: 'Enable Bluetooth',
+              action: () => { this.allowBluetooth() }
+            },
+          ],
+        },
       },
       {
-        color: 'var(--color-bg-pastel-honey-yellow)',
-        asset: 'assets/images/welcome-step-3.svg',
-        content: `
-          <h1 class="font-heading-1--bold">Allow Notifications.</h1>
-          <p>To help you remember your dose schedule and know when medication is at the right temperature, please <strong>enable notifications.</strong> You can customize notifications in the Settings menu.</p>
-        `,
-        actions: [
-          {
-            label: 'Allow Notifications',
-            action: () => { this.allowNotifications() }
-          },
-        ],
+        header: {
+          color: '--color-bg-pastel-honey-yellow',
+          asset: 'assets/images/welcome-step-3.svg',
+        },
+        content: {
+          template: `
+            <h1 class="font-heading-1--bold">Allow Notifications.</h1>
+            <p>To help you remember your dose schedule and know when medication is at the right temperature, please <strong>enable notifications.</strong> You can customize notifications in the Settings menu.</p>
+          `,
+          actions: [
+            {
+              label: 'Allow Notifications',
+              action: () => { this.allowNotifications() }
+            },
+          ],
+        },
       },
       {
-        color: 'var(--color-bg-pastel-lime)',
-        asset: 'assets/images/welcome-step-4.svg',
-        content: `
-          <h1 class="font-heading-1--bold">You're ready to rock!</h1>
-          <p>The AutoMagic app is configured to harness the power of the AutoMagic autoinjector.</p>
-        `,
-        actions: [
-          {
-            label: 'Continue',
-            action: () => { this.goTo('home') }
-          }
-        ],
+        header: {
+          color: '--color-bg-pastel-lime',
+          asset: 'assets/images/welcome-step-4.svg',
+        },
+        content: {
+          template: `
+            <h1 class="font-heading-1--bold">You're ready to rock!</h1>
+            <p>The AutoMagic app is configured to harness the power of the AutoMagic autoinjector.</p>
+          `,
+          actions: [
+            {
+              label: 'Continue',
+              action: () => { 
+                this._store.dispatch(new fromSharedStore.SliderPageClear());
+                this.goTo('home');
+              }
+            }
+          ],
+        },
       },
     ];
   }
@@ -225,6 +245,8 @@ export class WelcomePage implements OnInit, AfterViewInit {
 
   async allowBluetooth() {
     if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios') {
+      // TODO: make bluetooth integration
+      // skipping bluetooth step
       this.sliderPage.slideNext();
       // await BleClient.initialize();
       // const isEnabled = await BleClient.isEnabled();

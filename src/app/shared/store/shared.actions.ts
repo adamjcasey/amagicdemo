@@ -4,10 +4,13 @@ export enum ActionTypes {
   BackdropShow = '[Backdrop] Show',
   BackdropClose = '[Backdrop] Close',
   BackdropSetConfig = '[Backdrop] Set Config',
+  SliderPageSetHeader = '[SliderPage] Set Header',
+  SliderPageSetHeaderOptions = '[SliderPage] Set Header Options',
   SliderPageSetContent = '[SliderPage] Set Content',
   SliderPageSetContentOptions = '[SliderPage] Set Content Options',
+  SliderPageClear = '[SliderPage] Clear Component',
   AlertShow = '[Alert] Show',
-  AlertHide = '[Alert] Hide',
+  AlertClose = '[Alert] Hide',
   AlertSetConfig = '[Alert] Set Config',
 }
 export class BackdropShow implements Action {
@@ -24,6 +27,16 @@ export class BackdropSetConfig implements Action {
   constructor(public payload: any) {}
 }
 
+export class SliderPageSetHeader implements Action {
+  readonly type = ActionTypes.SliderPageSetHeader;
+
+  constructor(public payload: any) {}
+}
+export class SliderPageSetHeaderOptions implements Action {
+  readonly type = ActionTypes.SliderPageSetHeaderOptions;
+
+  constructor(public payload: any) {}
+}
 export class SliderPageSetContent implements Action {
   readonly type = ActionTypes.SliderPageSetContent;
 
@@ -34,6 +47,9 @@ export class SliderPageSetContentOptions implements Action {
 
   constructor(public payload: any) {}
 }
+export class SliderPageClear implements Action {
+  readonly type = ActionTypes.SliderPageClear;
+}
 
 export class AlertShow implements Action {
   readonly type = ActionTypes.AlertShow;
@@ -41,7 +57,7 @@ export class AlertShow implements Action {
   constructor(public payload: any) {}
 }
 export class AlertClose implements Action {
-  readonly type = ActionTypes.AlertHide;
+  readonly type = ActionTypes.AlertClose;
 }
 export class AlertSetConfig implements Action {
   readonly type = ActionTypes.AlertSetConfig;
@@ -53,8 +69,11 @@ export type ActionsUnion
   = BackdropShow 
   | BackdropClose
   | BackdropSetConfig
+  | SliderPageSetHeader
+  | SliderPageSetHeaderOptions
   | SliderPageSetContent
   | SliderPageSetContentOptions
+  | SliderPageClear
   | AlertShow 
   | AlertClose
   | AlertSetConfig;

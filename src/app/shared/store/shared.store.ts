@@ -16,11 +16,19 @@ export const initialState: SharedState = {
     backButton: null,
   },
   sliderPageConfig: {
+    header: {
+      fullSize: false,
+      color: null,
+      template: null,
+      component: null,
+    },
     content: {
-      isExpanded: false,
+      hide: false,
       bgColor: null,
       template: null,
       component: null,
+      actions: null,
+      isExpanded: false,
       toolbar: null,
     },
   },

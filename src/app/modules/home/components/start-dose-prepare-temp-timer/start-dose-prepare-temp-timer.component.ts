@@ -71,7 +71,8 @@ export class StartDosePrepareTempTimerComponent implements OnInit, AfterViewInit
       // to change the content of the SlidePage and avoid small jumps
       // enable toolbar button but keeping same
       setTimeout(() => {
-        this._store.dispatch(new fromSharedStore.SliderPageSetContent({
+        this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
+          template: null,
           component: 'start-dose-prepare-setup',
           toolbar: {
             actions: [

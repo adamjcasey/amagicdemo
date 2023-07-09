@@ -64,9 +64,9 @@ export class StartDosePrepareWaitingToInjectComponent implements OnInit, AfterVi
     // simulate ending timer
     setTimeout(() => {
       this._store.dispatch(new fromCoreStore.SetRightCornerEl({
-        timer: 5
+        timer: 3
       }));
-    }, 3000);
+    }, 1500);
   }
 
   timerIsEnded() {
@@ -98,6 +98,7 @@ export class StartDosePrepareWaitingToInjectComponent implements OnInit, AfterVi
             fill: 'outline',
             action: () => {
               this._store.dispatch(new fromSharedStore.AlertClose());
+              this._store.dispatch(new fromSharedStore.SliderPageClear());
               this._store.dispatch(new fromCoreStore.Go({
                 path: ['/home/start-dose/ready-to-inject']
               }));
@@ -105,6 +106,6 @@ export class StartDosePrepareWaitingToInjectComponent implements OnInit, AfterVi
           }
         ],
       }));
-    }, 1000);
+    }, 500);
   }
 }

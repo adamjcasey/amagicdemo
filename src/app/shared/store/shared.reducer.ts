@@ -39,21 +39,42 @@ export function SharedReducer(
       };
     }
 
+    case fromActions.ActionTypes.SliderPageSetHeader: {
+      return {
+        ...state,
+        sliderPageConfig: {
+          ...state.sliderPageConfig,
+          header: {
+            ...fromStore.initialState.sliderPageConfig.header,
+            ...action.payload,
+          }
+        }
+      };
+    }
+    case fromActions.ActionTypes.SliderPageSetHeaderOptions: {
+      return {
+        ...state,
+        sliderPageConfig: {
+          ...state.sliderPageConfig,
+          header: {
+            ...state.sliderPageConfig.header,
+            ...action.payload,
+          }
+        }
+      };
+    }
     case fromActions.ActionTypes.SliderPageSetContent: {
       return {
         ...state,
         sliderPageConfig: {
           ...state.sliderPageConfig,
           content: {
-            ...state.sliderPageConfig.content,
+            ...fromStore.initialState.sliderPageConfig.content,
             ...action.payload,
-            template: action.payload?.template ? action.payload?.template : null,
-            component: action.payload?.component ? action.payload?.component : null,
           }
         }
       };
     }
-
     case fromActions.ActionTypes.SliderPageSetContentOptions: {
       return {
         ...state,
@@ -63,6 +84,14 @@ export function SharedReducer(
             ...state.sliderPageConfig.content,
             ...action.payload,
           }
+        }
+      };
+    }
+    case fromActions.ActionTypes.SliderPageClear: {
+      return {
+        ...state,
+        sliderPageConfig: {
+          ...fromStore.initialState.sliderPageConfig
         }
       };
     }
@@ -77,7 +106,7 @@ export function SharedReducer(
         },
       };
     }
-    case fromActions.ActionTypes.AlertHide: {
+    case fromActions.ActionTypes.AlertClose: {
       return {
         ...state,
         alertConfig: {
