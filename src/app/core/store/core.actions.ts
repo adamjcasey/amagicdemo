@@ -5,15 +5,16 @@ export enum ActionTypes {
   Go = '[Router] Go',
   Back = '[Router] Back',
   Forward = '[Router] Forward',
-  Unsuscribe = '[Router] Unsuscribe',
-  Unsuscribed = '[Router] Unsuscribed',
+  SetFullScreen = '[Layout] Set FullScreen',
+  SetRightCornerEl = '[Layout] Set Right Corner Element',
+  ClearRightCornerEl = '[Layout] Clear Right Corner Element',
 }
 
 export class Go implements Action {
   readonly type = ActionTypes.Go;
 
   constructor(public payload: {
-    path: [];
+    path: any[];
     query?: object;
     extras?: NavigationExtras;
   }) {}
@@ -27,21 +28,26 @@ export class Forward implements Action {
   readonly type = ActionTypes.Forward;
 }
 
-export class Unsuscribe implements Action {
-  readonly type = ActionTypes.Unsuscribe;
+export class SetFullScreen implements Action {
+  readonly type = ActionTypes.SetFullScreen;
+
+  constructor(public payload: boolean) {}
+}
+
+export class SetRightCornerEl implements Action {
+  readonly type = ActionTypes.SetRightCornerEl;
 
   constructor(public payload: any) {}
 }
 
-export class Unsuscribed implements Action {
-  readonly type = ActionTypes.Unsuscribed;
-
-  constructor(public payload: any) {}
+export class ClearRightCornerEl implements Action {
+  readonly type = ActionTypes.ClearRightCornerEl;
 }
 
 export type ActionsUnion 
   = Go 
   | Back
   | Forward
-  | Unsuscribe
-  | Unsuscribed;
+  | SetFullScreen
+  | SetRightCornerEl
+  | ClearRightCornerEl;

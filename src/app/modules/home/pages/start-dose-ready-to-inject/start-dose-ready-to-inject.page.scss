@@ -1,0 +1,100 @@
+@import 'src/theme/base/mixins';
+
+.start-dose-ready-to-inject {
+  .start-dose-ready-to-inject__content {
+    &.first-time-dose {
+      p {
+        font-size: var(--font-size-paragraph-l);
+      }
+      
+      .first-time-dose__video-indicator {
+        position: relative;
+    
+        ion-icon {
+          position: absolute;
+          z-index: 50;
+          top: calc(50% - 40px);
+          left: calc(50% - 40px);
+          font-size: 80px;
+        }
+      }
+    }
+
+    .body-shape {
+      width: 100%;
+      height: auto;
+
+      &.top-left-selected {
+        .body-shape__top-left {
+          fill: var(--color-bg-pastel-purple);
+        }
+      }
+
+      &.top-right-selected {
+        .body-shape__top-right {
+          fill: var(--color-bg-pastel-purple);
+        }
+      }
+
+      &.bottom-left-selected {
+        .body-shape__bottom-left {
+          fill: var(--color-bg-pastel-purple);
+        }
+      }
+
+      &.bottom-right-selected {
+        .body-shape__bottom-right {
+          fill: var(--color-bg-pastel-purple);
+        }
+      }
+    }
+
+    .pro-tip {
+      position: relative;
+      padding-left: var(--space-l);
+      text-align: left;
+  
+      ion-icon {
+        position: absolute;
+        top: 0;
+        left: 0;
+        font-size: var(--space-m);
+      }
+
+      p {
+        margin-top: 0;
+        margin-bottom: var(--space-xxxxs);
+        font-size: var(--font-size-paragraph-l);
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+    
+    @keyframes spinner-animation {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .loader {
+      width: 48px;
+      height: 48px;
+      // border: 5px solid rgba(var(--color-primary-dark-blue--rgb), 0.3);
+      border: 5px solid var(--color-primary-dark-blue);
+      border-bottom-color: rgba(var(--color-primary-dark-blue--rgb), 0.3);
+      border-radius: 50%;
+      display: inline-block;
+      box-sizing: border-box;
+      animation: spinner-animation 1s linear infinite;
+    }
+  }
+}
+
+.no-needless-message {
+  text-align: center;
+}

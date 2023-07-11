@@ -79,6 +79,20 @@ export class BackdropComponent implements OnInit {
 
   showSubmenu(step: number) {
     this.sliderMainMenu?.swiperRef.slideTo(step);
+    
+    if (this.sliderMainMenu?.swiperRef.activeIndex > 0) {
+      this._store.dispatch(new fromStore.BackdropSetConfig({
+        backButton: {
+          label: 'Back',
+          action: () => {
+            this.sliderMainMenu?.swiperRef.slideTo(0);
+            this._store.dispatch(new fromStore.BackdropSetConfig({
+              backButton: null,
+            }));
+          }
+        },
+      }));
+    }
   }
 
   sanitizeContent(htmlContent: string): SafeHtml {

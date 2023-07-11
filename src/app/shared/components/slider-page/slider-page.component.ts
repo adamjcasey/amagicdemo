@@ -1,13 +1,14 @@
 import {
   Component,
   ViewChild,
+  ViewChildren,
   ViewEncapsulation,
   OnInit,
   Input,
   Output,
   EventEmitter,
-  AfterContentInit,
   ViewContainerRef,
+  QueryList,
 } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
@@ -29,21 +30,21 @@ import * as fromHomeComponents from '@home/components';
   styleUrls: ['slider-page.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class SliderPageComponent implements OnInit, AfterContentInit {
-  @Input() slides!: Array<any>;
-  @Output() onContentInit = new EventEmitter<any>();
-  @Output() onPrevSlide = new EventEmitter<any>();
-  @Output() onNextSlide = new EventEmitter<any>();
-  @ViewChild('sliderAsset', { static: false }) sliderAsset!: SwiperComponent;
-  @ViewChild('sliderContent', { static: false }) sliderContent!: SwiperComponent;
-  @ViewChild('contentComponent', { read: ViewContainerRef }) contentComponent!: ViewContainerRef;
+export class SliderPageComponent implements OnInit {
   public config$: Observable<any>;
   public config: any;
+  @Input() slides!: Array<any>;
+  @Output() onPrevSlide = new EventEmitter<any>();
+  @Output() onNextSlide = new EventEmitter<any>();
+  @ViewChild('sliderHeader', { static: false }) sliderHeader!: SwiperComponent;
+  @ViewChild('sliderContent', { static: false }) sliderContent!: SwiperComponent;
+  @ViewChildren('componentHeader', { read: ViewContainerRef }) componentsHeader!: QueryList<ViewContainerRef>;
+  @ViewChild('componentContent', { read: ViewContainerRef }) componentContent!: ViewContainerRef;
   public currentSlide: any;
 
   constructor(
     private _store: Store<fromStore.SharedState>,
-    private _sanitizer: DomSanitizer,
+    private _sanitizer: DomSanitizer
   ) {
     this.config$ = this._store.select(fromStore.getSliderPageConfig);
   }
@@ -52,32 +53,113 @@ export class SliderPageComponent implements OnInit, AfterContentInit {
     this.currentSlide = this.slides[0];
     this.config$.subscribe(config => {
       if (config) {
-        this.config = config;
-        if (this.config.content.isExpanded) {
-          if (this.config.content.component !== null) {
-            this._loadComponent(this.config.content.component);
+        if (config.header) {
+          // if the most recent config don't have a configured component
+          // clean up header component element
+          if (config.header.component !== null) {
+            // if the one step back config don't have a configured component
+            // load the component of the most recent config
+            if (this.config?.header?.component === null) {
+              this._loadComponent(config.header?.component, 'header');
+            }
+            else {
+              // If in both configs there is a configured component, 
+              // validate if they are different component, if they 
+              // are different load the component on the most recent config
+              if (config.header.component !== this.config?.header?.component) {
+                this._loadComponent(config.header?.component, 'header');  
+              }
+            }
+          }
+          else {
+            if (this.componentsHeader) {
+              this.componentsHeader.forEach(component => component.clear());
+            }
+          }
+
+          if (config.header.template) {
+            this.currentSlide.header.template = config.header.template;
+          }
+
+          if (config.header.color) {
+            this.currentSlide.header.color = config.header.color;
           }
         }
-        else {
-          this.contentComponent?.clear();
+
+        if (config.content) {
+          if (config.content.isExpanded) {
+            // if the most recent config don't have a configured component
+            // clean up header component element
+            if (config.content?.component !== null) {
+              // if the one step back config don't have a configured component
+              // load the component of the most recent config
+              if (this.config?.content?.component === null) {
+                this._loadComponent(config.content?.component, 'content');
+              }
+              else {
+                // If in both configs there is a configured component, 
+                // validate if they are different component, if they 
+                // are different load the component on the most recent config
+                if (config.content.component !== this.config?.content?.component) {
+                  this._loadComponent(config.content?.component, 'content');  
+                }
+              }
+            }
+            else {
+              // clear content component element if component is null
+              this.componentContent?.clear();
+            }
+          }
+
+          if (config.content.actions) {
+            this.slides[this.sliderContent.swiperRef.activeIndex].actions = config.content.actions;
+          }
         }
+        this.config = config;
       }
     });
   }
 
-  ngAfterContentInit() {
-    this.onContentInit.emit();
+  onSliderInit() {  
+    this.currentSlide = this.slides[0];
+    if (this.currentSlide.header) {
+      this._store.dispatch(new fromStore.SliderPageSetHeaderOptions({
+        ...this.currentSlide.header,
+      }));
+    }
+
+    if (this.currentSlide.content) {
+      this._store.dispatch(new fromStore.SliderPageSetContentOptions({
+        ...this.currentSlide.content,
+      }));
+    }
+  }
+
+  onSlideChange() {
+    this.currentSlide = this.slides[this.sliderContent.swiperRef.activeIndex];
+    if (this.currentSlide.header) {
+      this._store.dispatch(new fromStore.SliderPageSetHeaderOptions({
+        ...this.currentSlide.header,
+      }));
+    }
+
+    if (this.currentSlide.content) {
+      this._store.dispatch(new fromStore.SliderPageSetContentOptions({
+        ...this.currentSlide.content,
+        form: null,
+      }));
+    }
   }
 
   slidePrev() {
     if (this.onPrevSlide.observers.length > 0) {
       this.onPrevSlide.emit({
-        asset: this.sliderAsset.swiperRef,
+        asset: this.sliderHeader.swiperRef,
         content: this.sliderContent.swiperRef,
       })
     }
     else {
-      this.sliderAsset.swiperRef.slidePrev(500);
+      this.sliderHeader.swiperRef.slidePrev(500);
       this.sliderContent.swiperRef.slidePrev(500);
     }
   }
@@ -85,29 +167,29 @@ export class SliderPageComponent implements OnInit, AfterContentInit {
   slideNext() {
     if (this.onNextSlide.observers.length > 0) {
       this.onNextSlide.emit({
-        asset: this.sliderAsset.swiperRef,
+        asset: this.sliderHeader.swiperRef,
         content: this.sliderContent.swiperRef,
       })
     }
     else {
-      this.sliderAsset.swiperRef.slideNext(500);
+      this.sliderHeader.swiperRef.slideNext(500);
       this.sliderContent.swiperRef.slideNext(500);
     }
-  }
-
-  slideChange() {
-    this.currentSlide = this.slides[this.sliderContent.swiperRef.activeIndex];
   }
 
   sanitizeContent(htmlContent: string): SafeHtml {
     return this._sanitizer.bypassSecurityTrustHtml(htmlContent);
   }
 
-  private _loadComponent(component: any) {
+  private _loadComponent(component: any, slot: string) {
+    // clear template before loading a new component
+    const currentSlideIndex = this.sliderContent.swiperRef.activeIndex;
     let componentRef;
+    let element = slot === 'header' ? this.componentsHeader.toArray()[currentSlideIndex] : this.componentContent;
+    element.clear();
     switch(component) {
       case 'welcome-doses-selector':
-        componentRef = this.contentComponent.createComponent(fromWelcomeComponents.WelcomeDosesSelectorComponent);
+        componentRef = element.createComponent(fromWelcomeComponents.WelcomeDosesSelectorComponent);
         if (componentRef.instance instanceof fromWelcomeComponents.WelcomeDosesSelectorComponent) {
           // Listen to the dosesSelected event
           componentRef.instance.onDosesChange.subscribe((doses: number) => {
@@ -118,8 +200,26 @@ export class SliderPageComponent implements OnInit, AfterContentInit {
           });
         }
         break;
-      case 'start-dose-survey':
-        componentRef = this.contentComponent.createComponent(fromHomeComponents.StartDoseSurveyComponent);
+      case 'start-dose-prepare-temp-timer':
+        componentRef = element.createComponent(fromHomeComponents.StartDosePrepareTempTimerComponent);
+        break;
+      case 'start-dose-prepare-setup':
+        componentRef = element.createComponent(fromHomeComponents.StartDosePrepareSetupComponent);
+        break;
+      case 'start-dose-prepare-survey':
+        componentRef = element.createComponent(fromHomeComponents.StartDosePrepareSurveyComponent);
+        break;
+      case 'start-dose-prepare-waiting-to-inject':
+        componentRef = element.createComponent(fromHomeComponents.StartDosePrepareWaitingToInjectComponent);
+        break;
+      case 'start-dose-ready-to-inject-video-detail':
+        componentRef = element.createComponent(fromHomeComponents.StartDoseReadyToInjectVideoDetailComponent);
+        break;
+      case 'start-dose-ready-to-inject-dosing':
+        componentRef = element.createComponent(fromHomeComponents.StartDoseReadyToInjectDosingComponent);
+        break;
+      case 'start-dose-inject-done-progress':
+        componentRef = element.createComponent(fromHomeComponents.StartDoseInjectDoneProgressComponent);
         break;
     }
   }

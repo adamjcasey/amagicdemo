@@ -1,0 +1,30 @@
+<section id="alert" class="alert" [ngClass]="{ 
+  'is-open': config.show, 
+  'is-full-mode': config.mode === 'full', 
+  'is-window-mode': config.mode === 'window', 
+  'is-floating-mode': config.mode === 'floating', 
+}">
+  <div class="alert__content">
+    <div 
+      class="alert__template" 
+      *ngIf="config.template" 
+      [innerHTML]="sanitizeContent(config.template)"
+    ></div>
+
+    <div class="alert__component">
+      <ng-template #contentComponent></ng-template>
+    </div>
+
+    <div class="alert__actions" *ngIf="config.actions">
+      <ion-button 
+        *ngFor="let button of config.actions; let i = index"
+        color="purple" 
+        size="large" 
+        [disabled]="button.disabled ? true : null"
+        (click)="button.action ? button.action($event) : null" 
+        [fill]="i % 2 !== 1 && config.actions.length > 1 ? 'outline': null">
+        {{ button.label }}
+      </ion-button>
+    </div>
+  </div>
+</section>

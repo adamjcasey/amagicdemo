@@ -7,9 +7,24 @@
   'bg-template--top-hole': config.bgTemplate === 'top-hole', 
   'bg-template--bottom-hole': config.bgTemplate === 'bottom-hole', 
 }">
-  <div class="backdrop__wrapper" [ngStyle]="{ 'background-image': 'url(/assets/images/backdrop-' + config.bgTemplate + '.svg)'}">
+  <div 
+    class="backdrop__wrapper" 
+    [style.background-image]="config.bgTemplate 
+      ? 'url(' + '/assets/images/backdrop-' + config.bgTemplate + '.svg' + ')'
+      : null
+    ">
 
     <header class="backdrop__header" *ngIf="config.header">
+      <ion-button 
+        class="back-button" 
+        *ngIf="config.backButton" 
+        (click)="config.backButton?.action($event)" 
+        fill="clear" color="light" size="small">
+
+        <ion-icon name="chevron-back-outline" color="light"></ion-icon>
+        {{ config.backButton?.label }}
+      </ion-button>
+
       <ion-img class="logo" src="/assets/images/backdrop-header-logo.svg"></ion-img>
       <ion-img class="ellipse" src="/assets/images/backdrop-header-ellipse.svg"></ion-img>
     </header>
@@ -38,8 +53,8 @@
           effect="fade" 
           [allowTouchMove]="false">
           <ng-template swiperSlide>
-            <h1 class="font-heading-1--bold">Main Menu</h1>
-            <p>Here you’ll find guidance on resetting, packing, sharing, and giving feedback on the prototype.</p>
+            <h1 class="font-heading-1--bold">Demo Menu</h1>
+            <p>Here you’ll find guidance on resetting, packing, and sharing this demo experience.</p>
             <div class="battery-indicator">
               <p>AutoMagic Injector Battery:</p>
               <ion-icon src="/assets/icons/battery-indicator.svg"></ion-icon>
@@ -49,12 +64,12 @@
             <ion-list lines="full">
               <ion-item (click)="showSubmenu(1)">
                 <ion-icon src="/assets/icons/flag.svg" slot="start" size="large"></ion-icon>
-                <ion-label>I’m all done...</ion-label>
+                <ion-label>I’m all done with the demo</ion-label>
                 <ion-icon name="chevron-forward-outline" slot="end" color="light"></ion-icon>
               </ion-item>
               <ion-item (click)="showSubmenu(2)">
                 <ion-icon src="/assets/icons/time-loader.svg" slot="start" size="large"></ion-icon>
-                <ion-label>Try it again</ion-label>
+                <ion-label>Reset the demo</ion-label>
                 <ion-icon name="chevron-forward-outline" slot="end" color="light"></ion-icon>
               </ion-item>
               <ion-item (click)="showSubmenu(3)">
@@ -91,15 +106,15 @@
           </ng-template>
 
           <ng-template swiperSlide>
-            <h1 class="font-heading-1--bold">Try it again</h1>
+            <h1 class="font-heading-1--bold">Reset the demo</h1>
 
             <div class="buttons-container">
               <ion-button fill="outline" expand="block" color="light">
-                Restart from the beginning
+                Do another injection
               </ion-button>
 
               <ion-button fill="outline" expand="block" color="light">
-                Do another injection
+                Restart from the beginning
               </ion-button>
             </div>
           </ng-template>
@@ -122,8 +137,9 @@
     </div>
 
     <div class="backdrop__fold" (click)="toggle()">
-      <ion-icon *ngIf="!config.show" class="info" src="/assets/icons/info.svg"></ion-icon>
-      <ion-icon *ngIf="config.show" class="close" name="chevron-up-outline"></ion-icon>
+      <ion-img class="background" src="/assets/images/backdrop-fold-bg.svg"></ion-img>
+      <ion-icon class="info" src="/assets/icons/info.svg"></ion-icon>
+      <ion-icon class="close" name="chevron-up-outline"></ion-icon>
     </div>
   </div>
 </section>

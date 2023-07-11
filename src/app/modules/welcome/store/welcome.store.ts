@@ -1,4 +1,5 @@
 export interface WelcomeState {
+  pin?: number;
   name?: string;
   doses?: Array<Date>;
 }

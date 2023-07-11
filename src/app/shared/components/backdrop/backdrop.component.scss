@@ -38,14 +38,26 @@
 
   .backdrop__header {
     grid-row: 1;
+    display: grid;
+    grid-template-rows: max-content auto;
+    grid-template-columns: 1fr 1fr 1fr;
     padding-top: var(--space-xxl);
 
+    .back-button {
+      grid-row: 1;
+      grid-column: 1;
+    }
+
     .logo {
+      grid-row: 1;
+      grid-column: 2;
       width: 135px;
       margin: 0 auto;
     }
 
     .ellipse {
+      grid-row: 2;
+      grid-column: 1 / -1;
       width: 100%;
       margin-top: var(--space-s);
     }
@@ -71,6 +83,10 @@
       p {
         font-size: var(--font-size-paragraph-l);
         font-weight: var(--font-weight-medium);
+      }
+      
+      ion-button {
+        display: inline-block;
       }
     }
     
@@ -176,36 +192,31 @@
   .backdrop__fold {
     position: absolute;
     top: 100%;
-    left: calc(50% - 81px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 162px;
-    height: 106px;
-    border-bottom-left-radius: 81px;
-    border-bottom-right-radius: 81px;
-    background-color: var(--color-black);
-    text-align: center;
-    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.5);
+    left: 50%;
+    transform: translate(-50%, 0%);
 
     ion-icon {
+      position: absolute;
+      top: 15px;
       font-size: 64px;
+      opacity: 0;
+      color: var(--color-white);
+      transition-property: top, opacity;
+      transition-duration: 300ms;
+      transition-delay: 200ms;
+      transition-timing-function: ease-in-out;
 
       &.info {
-        position: relative;
-        top: 10px;
+        left: calc(50% - 32px);
+        opacity: 1;
+        font-size: 64px;
       }
 
       &.close {
-        position: relative;
-        top: 25px;
-        opacity: 0;
-        color: var(--color-white);
-        font-size: 32px;
-        transition-property: top, opacity;
-        transition-duration: 800ms;
-        transition-timing-function: ease-in-out;
-        visibility: hidden;
+        top: 40px;
+        left: calc(50% - 20px);
+        font-size: 40px;
+        pointer-events: none;
       }
     }
   }
@@ -269,19 +280,24 @@
 
     .backdrop__fold {
       ion-icon {
+        transition-delay: 600ms;
+
+        &.info {
+          opacity: 0;
+          pointer-events: none;
+        }
+
         &.close {
-          top: 0;
+          top: 20px;
           opacity: 1;
-          transition-delay: 10s;
-          transition-timing-function: ease-in;
-          visibility: visible;
+          pointer-events: initial;
         }
       }
     }
 
     &.transition-move {
       .backdrop__fold {
-        top: calc(100% - 5px);
+        top: calc(100% - -1px);
       }
     }
   }

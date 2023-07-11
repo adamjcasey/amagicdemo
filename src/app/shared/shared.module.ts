@@ -19,6 +19,9 @@ import * as fromPipes from './pipes';
     fromComponents.components,
     fromPipes.pipes,
   ],
-  exports: [fromComponents.components]
+  exports: [
+    fromComponents.components,
+    fromPipes.pipes,
+  ],
 })
 export class SharedModule {}

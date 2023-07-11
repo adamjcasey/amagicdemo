@@ -44,7 +44,7 @@ export class WelcomeSignUpComponent {
       pin: this.signUpFormGroup.value.code
     }));
 
-    this._store.dispatch(new fromStoreShared.BackdropConfig({
+    this._store.dispatch(new fromStoreShared.BackdropSetConfig({
       fullScreen: false,
       transition: 'move',
       header: true,

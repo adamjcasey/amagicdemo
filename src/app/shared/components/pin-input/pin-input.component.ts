@@ -21,7 +21,7 @@ export class PinInputComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     const digit1 = document.getElementById('digit-1');
-    digit1?.focus();
+    // digit1?.focus();
   }
 
   limitToOneDigit(event: any) {

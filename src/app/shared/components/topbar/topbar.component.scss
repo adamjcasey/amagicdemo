@@ -13,4 +13,23 @@
   ion-icon {
     font-size: 44px;
   }
+
+  .timer {
+    display: flex;
+    align-items: center;
+
+    .timer__label {
+      z-index: 10;
+      margin-right: calc(var(--space-xxs) * -1);
+      padding: var(--space-xxxxs);
+      padding-left: var(--space-xxs);
+      border-top-left-radius: 66px;
+      border-bottom-left-radius: 60px;
+      background-color: var(--color-bg-pastel-beige);
+      color: var(--color-primary-dark-blue);
+      font-size: var(--font-size-paragraph-m);
+      font-weight: var(--font-weight-extrabold);
+      line-height: var(--font-line-height-heading-5);
+    }
+  }
 }

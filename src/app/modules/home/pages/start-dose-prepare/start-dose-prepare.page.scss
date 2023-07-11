@@ -1,6 +1,6 @@
 @import 'src/theme/base/mixins';
 
-.start-dose__instructions {
+.start-dose-prepare__instructions {
   h3 {
     @include paragraph-xl;
     font-weight: var(--font-weight-bold);
@@ -31,17 +31,6 @@
           color: var(--color-text);
         }
       }
-    }
-  }
-
-  .timer {
-    text-align: center;
-
-    p {
-      margin-top: var(--space-xxxs);
-      margin-bottom: var(--space-xxxs);
-      font-size: 4rem;
-      font-weight: var(--font-weight-extra-light);
     }
   }
 

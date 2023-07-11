@@ -1,8 +1,9 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
 
 import * as fromStore from '@home/store';
+import * as fromCoreStore from '@core/store';
 import * as fromSharedStore from '@shared/store';
 
 @Component({
@@ -10,14 +11,17 @@ import * as fromSharedStore from '@shared/store';
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-export class HomePage implements AfterViewInit {
+export class HomePage implements OnInit, AfterViewInit {
+  public homeConfig$!: Observable<any>;
+  public homeConfig: any;
   public heroConfig: any;
   public card: any;
 
   constructor(
-    private _store: Store<fromStore.HomeState>,
-    private _router: Router,
+    private _store: Store<fromCoreStore.CoreState>,
   ) {
+    this.homeConfig$ = this._store.select(fromStore.getHomeConfig);
+
     this.heroConfig = {
       color: 'var(--color-bg-pastel-green)',
       image: '/assets/images/homepage.svg',
@@ -30,7 +34,7 @@ export class HomePage implements AfterViewInit {
         {
           label: 'Start dose',
           action: () => {
-            this.goTo('/home/start-dose');
+            this.goTo('/home/start-dose/prepare');
           }
         }
       ]
@@ -40,7 +44,7 @@ export class HomePage implements AfterViewInit {
       asset: '/assets/images/note.svg',
       title: 'Track your progress',
       description: 'Make a note of your symptoms to see Theryx® at work.',
-      button: {
+      link: {
         label: 'Let’s start',
         action: () => {
           console.log('action home page card');
@@ -49,20 +53,32 @@ export class HomePage implements AfterViewInit {
     }
   }
 
+  ngOnInit() {
+    this.homeConfig$.subscribe(homeConfig => {
+      if (homeConfig) {
+        this.homeConfig = homeConfig;
+      }
+    });
+  }
+
   ngAfterViewInit() {
-    this._store.dispatch(new fromSharedStore.BackdropShow({
-      transition: 'move',
-      fullScreen: true,
-      header: true,
-      bgTemplate: 'top-hole',
-      template: `
-        <h1 class="font-heading-1--bold">Dose Day</h1>
-        <p>For this demo, let's pretend that <br>you're scheduled for your first at-<br>home dose today</p>
-      `,
-    }));
+    if (this.homeConfig.firstTimeDose) {
+      this._store.dispatch(new fromSharedStore.BackdropShow({
+        transition: 'move',
+        fullScreen: true,
+        header: true,
+        bgTemplate: 'top-hole',
+        template: `
+          <h1 class="font-heading-1--bold">Dose Day</h1>
+          <p>For this demo, let's pretend that <br>you're scheduled for your first at-<br>home dose today</p>
+        `,
+      }));
+    }
   }
 
   goTo(path: string) {
-    this._router.navigate([path]);
+    this._store.dispatch(new fromCoreStore.Go({
+      path: [path]
+    }));
   }
 }
