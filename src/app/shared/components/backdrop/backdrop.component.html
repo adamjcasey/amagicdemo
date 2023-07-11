@@ -137,8 +137,9 @@
     </div>
 
     <div class="backdrop__fold" (click)="toggle()">
-      <ion-icon *ngIf="!config.show" class="info" src="/assets/icons/info.svg"></ion-icon>
-      <ion-icon *ngIf="config.show" class="close" name="chevron-up-outline"></ion-icon>
+      <ion-img class="background" src="/assets/images/backdrop-fold-bg.svg"></ion-img>
+      <ion-icon class="info" src="/assets/icons/info.svg"></ion-icon>
+      <ion-icon class="close" name="chevron-up-outline"></ion-icon>
     </div>
   </div>
 </section>
