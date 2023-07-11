@@ -297,7 +297,7 @@
 
     &.transition-move {
       .backdrop__fold {
-        top: calc(100% - 5px);
+        top: calc(100% - -1px);
       }
     }
   }

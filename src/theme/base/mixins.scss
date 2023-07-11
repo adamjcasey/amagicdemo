@@ -75,24 +75,6 @@
   @if $direction == 'bottom' {
     bottom: -100vh;
   }
-}
-
-@mixin overlay-element($direction: 'bottom') {
-  position: absolute;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  opacity: 0;
-  background: rgba(0, 0, 0, 0.2);
-  alert-filter: blur(3px);
-  transition-property: opacity;
-  transition-duration: 200ms;
-  transition-timing-function: ease-in-out;
-  pointer-events: none;
-
-  @if $direction == 'bottom' {
-    bottom: -100vh;
-  }
 
   @if $direction == 'top' {
     top: -100vh;

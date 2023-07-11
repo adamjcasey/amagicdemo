@@ -16,6 +16,10 @@ const routes: Routes = [
     path: 'start-dose/ready-to-inject',
     component: fromPages.StartDoseReadyToInjectPage
   },
+  {
+    path: 'start-dose/inject-done',
+    component: fromPages.StartDoseInjectDonePage
+  },
 ];
 
 @NgModule({

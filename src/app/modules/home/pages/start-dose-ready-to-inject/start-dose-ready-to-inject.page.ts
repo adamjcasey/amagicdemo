@@ -6,7 +6,7 @@ import {
   AfterViewInit,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Observable, last } from 'rxjs';
 
 import * as fromStore from '@home/store';
 import * as fromSharedStore from '@shared/store';
@@ -232,10 +232,10 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                   }));
                 }, 4000);
   
-                // then, wait for 6segs to go to the next slide
+                // then, wait for 6.5segs to go to the next slide
                 setTimeout(() => {
                   this.sliderPage.slideNext();
-                }, 6000);
+                }, 6500);
               }
             }
           ],
@@ -249,11 +249,9 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
               <h1 class="font-heading-1--bold">We’re ready for you.</h1>
               <p>Pinch about an inch of skin at the injection site, then press and hold the injector down to start the dose. The app will detect when you start.</p>
               <img src="assets/images/start-dose-ready-to-inject-waiting-for-injection.gif">
-              <div class="loader">
-                <h4>Waiting for you to begin injection</h4>
-
-                <p>The Guide will <strong>detect when you inject</strong> and <strong>advance automatically.</strong></p>
-              </div>
+              <h4>Waiting for you to begin injection</h4>
+              <div class="loader"></div>
+              <p>The Guide will <strong>detect when you inject</strong> and <strong>advance automatically.</strong></p>
             </div>
           `,
         },
@@ -264,9 +262,8 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
       {
         header: {
           color: '--color-bg-pastel-purple',
-          template: `
-            DOSING ANIMATIONS
-          `,
+          template: null,
+          component: 'start-dose-ready-to-inject-dosing',
         },
         content: {
           hide: true,
@@ -296,7 +293,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                     <h1 class="font-heading-1--bold">First time user?</h1>
                     <p>This video previews what to expect when self-dosing with AutoMagic.</p>
                     <div class="first-time-dose__video-indicator" onclick="window.startDoseReadyToInject.playVideo()">
-                      <ion-icon name="play-outline"></ion-icon>
+                      <ion-icon src="/assets/icons/play.svg"></ion-icon>
                       <img src="assets/images/start-dose-first-time-dose.svg">
                     </div>
                     <p>You’ll be guided through the entire dosing process next.</p>
@@ -345,6 +342,9 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                     fill: 'outline',
                     action: () => {
                       this.sliderPage.slideNext();
+                      this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
+                        fullSize: false,
+                      }));
                       this._store.dispatch(new fromSharedStore.BackdropShow({
                         transition: 'move',
                         header: true,

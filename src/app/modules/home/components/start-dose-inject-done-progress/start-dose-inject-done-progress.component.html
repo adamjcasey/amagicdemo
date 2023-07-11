@@ -1,0 +1,20 @@
+<div class="start-dose-inject-done-progress">
+  <h1 class="font-heading-1--bold">{{ title }}</h1>
+  <ion-img *ngIf="homeConfig?.firstTimeDose" [src]="!doseMarked
+    ? '/assets/images/dose-done--first-time--start.svg'
+    : '/assets/images/dose-done--first-time--end.svg'
+  "></ion-img>
+  <ion-img *ngIf="!homeConfig?.firstTimeDose" [src]="!doseMarked
+    ? '/assets/images/dose-done--start.svg'
+    : '/assets/images/dose-done--end.svg'
+  "></ion-img>
+  <h4>You've taken your first step in your Theryx journey!</h4>
+  <div class="doses">
+    <div class="dose" [ngClass]="{ 'is-marked': dose.marked }" *ngFor="let dose of homeConfig?.doses; let i = index">
+      {{ i + 1 }}
+      <ion-img class="dose__bg" src="/assets/images/ellipse-dose-item.svg"></ion-img>
+      <ion-img class="dose__marker" src="/assets/images/ellipse-dose-item--marked.svg"></ion-img>
+    </div>
+  </div>
+  <p>Clinical testing has shown that most patients see a <strong>70% reduction</strong> in flareups after <strong>dose #6.</strong></p>
+</div>

@@ -52,6 +52,7 @@ export class StartDosePreparePage implements OnInit {
         },
         content: {
           showNavigation: false,
+          actions: null,
           template: `
             <h1 class="font-heading-1--bold">Connecting...</h1>
           `,

@@ -25,6 +25,7 @@ export class BottomToolbarComponent {
       '/welcome',
       '/home/start-dose/prepare',
       '/home/start-dose/ready-to-inject',
+      '/home/start-dose/inject-done',
     ];
 
     this.routerEvents$ = this._router.events.subscribe(
