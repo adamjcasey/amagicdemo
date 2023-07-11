@@ -1,22 +1,18 @@
 import {
   Component,
   ViewChild,
+  ViewChildren,
   ViewEncapsulation,
   OnInit,
   Input,
   Output,
   EventEmitter,
   ViewContainerRef,
+  QueryList,
 } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-
-
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-
-
-
 
 // Swiper Config
 import { SwiperComponent } from 'swiper/angular';
@@ -41,25 +37,16 @@ export class SliderPageComponent implements OnInit {
   @Output() onPrevSlide = new EventEmitter<any>();
   @Output() onNextSlide = new EventEmitter<any>();
   @ViewChild('sliderHeader', { static: false }) sliderHeader!: SwiperComponent;
-  @ViewChild('componentHeader', { read: ViewContainerRef }) componentHeader!: ViewContainerRef;
   @ViewChild('sliderContent', { static: false }) sliderContent!: SwiperComponent;
+  @ViewChildren('componentHeader', { read: ViewContainerRef }) componentsHeader!: QueryList<ViewContainerRef>;
   @ViewChild('componentContent', { read: ViewContainerRef }) componentContent!: ViewContainerRef;
   public currentSlide: any;
 
-  public testFormGroup: FormGroup;
-
   constructor(
     private _store: Store<fromStore.SharedState>,
-    private _sanitizer: DomSanitizer,
-
-
-    private _formBuilder: FormBuilder,
+    private _sanitizer: DomSanitizer
   ) {
     this.config$ = this._store.select(fromStore.getSliderPageConfig);
-
-    this.testFormGroup = this._formBuilder.group({
-      name: ['', [ Validators.required ]],
-    });
   }
 
   ngOnInit() {
@@ -85,7 +72,9 @@ export class SliderPageComponent implements OnInit {
             }
           }
           else {
-            this.componentHeader?.clear();
+            if (this.componentsHeader) {
+              this.componentsHeader.forEach(component => component.clear());
+            }
           }
 
           if (config.header.template) {
@@ -194,9 +183,10 @@ export class SliderPageComponent implements OnInit {
 
   private _loadComponent(component: any, slot: string) {
     // clear template before loading a new component
-    this.componentContent?.clear();
+    const currentSlideIndex = this.sliderContent.swiperRef.activeIndex;
     let componentRef;
-    let element = slot === 'header' ? this.componentHeader : this.componentContent;
+    let element = slot === 'header' ? this.componentsHeader.toArray()[currentSlideIndex] : this.componentContent;
+    element.clear();
     switch(component) {
       case 'welcome-doses-selector':
         componentRef = element.createComponent(fromWelcomeComponents.WelcomeDosesSelectorComponent);
@@ -224,6 +214,12 @@ export class SliderPageComponent implements OnInit {
         break;
       case 'start-dose-ready-to-inject-video-detail':
         componentRef = element.createComponent(fromHomeComponents.StartDoseReadyToInjectVideoDetailComponent);
+        break;
+      case 'start-dose-ready-to-inject-dosing':
+        componentRef = element.createComponent(fromHomeComponents.StartDoseReadyToInjectDosingComponent);
+        break;
+      case 'start-dose-inject-done-progress':
+        componentRef = element.createComponent(fromHomeComponents.StartDoseInjectDoneProgressComponent);
         break;
     }
   }

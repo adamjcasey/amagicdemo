@@ -1,8 +1,13 @@
 @import 'src/theme/base/mixins';
 
+:root {
+  // minimum height for content element to show a row of buttons
+  --slider-page-content-min-size: 100px;
+}
+
 .slider-page {
   display: grid;
-  grid-template-rows: auto max-content;
+  grid-template-rows: minmax(auto, calc(100vh - var(--slider-page-content-min-size)) ) max-content;
   height: 100vh;
   overflow: hidden;
   transition-property: background-color;
@@ -12,35 +17,77 @@
   .slider-page__header {
     grid-row: 1;
     width: 100vw;
-    height: auto;
     box-sizing: border-box;
     padding-top: var(--topbar-size);
     transition-property: height, padding-top;
     transition-duration: 500ms;
     transition-timing-function: ease-in-out;
 
-    &.has-asset {
-      height: 55vh;
+    .content-wrapper {
+      padding-right: var(--space-m);
+      padding-left: var(--space-m);
+      text-align: center;
     }
 
-    &.is-full-size {
-      padding-top: 0;
-    }
+    .cards-wrapper {
+      display: grid;
+      gap: var(--space-s);
+      padding-top: var(--space-s);
+      padding-bottom: var(--space-l);
 
-    &.is-content-expanded {
-      height: 0;
-      padding-top: 0;
-      overflow: hidden;
-      transition-timing-function: ease-in;
+      automagic-card {
+        .card {
+          top: 60px;
+          opacity: 0;
+          transition-property: top, opacity;
+          transition-duration: 400ms;
+          transition-timing-function: ease-in;
+        }
+
+        @for $i from 1 through 9 {
+          &:nth-child(#{$i + 1}) {
+            .card {
+              transition-delay: 500ms + ($i * 800ms);
+            }
+          }
+        }
+      }
     }
 
     .slider-page__header-slide {
       &:not(.swiper-slide-active) {
         opacity: 0 !important;
+        pointer-events: none;
+      }
+
+      &.swiper-slide-active {
+        .cards-wrapper {
+          automagic-card {
+            .card {
+              top: 0;
+              opacity: 1;
+            }
+          }
+        }
       }
 
       .asset-wrapper {
         text-align: center;
+      }
+    }
+
+    &.has-asset {
+      height: 55vh;
+    }
+
+    &.has-template {
+      swiper {
+        height: 100%;
+      }
+
+      .content-wrapper {
+        max-height: calc(100vh - (var(--topbar-size) + 100px));
+        overflow-y: auto;
       }
     }
   }
@@ -55,11 +102,6 @@
 
     &.has-template {
       height: 45vh;
-    }
-
-    &.is-hidden {
-      height: 0;
-      overflow: hidden;
     }
 
     .wrapper-small {
@@ -100,7 +142,7 @@
           grid-template-rows: auto max-content;
           gap: var(--space-xxs);
           max-width: 100vw;
-          padding: var(--space-xxs) var(--space-m) var(--space-m);
+          padding: var(--space-xxxs) var(--space-m) var(--space-m);
           box-sizing: border-box;
           text-align: center;
           overflow-y: scroll;
@@ -225,6 +267,45 @@
           transition-timing-function: ease-in;
         }
       }
+    }
+  }
+
+  &.is-full-size {
+    .slider-page__header {
+      padding-top: 0;
+
+      swiper {
+        height: 100%;
+      }
+      
+      .content-wrapper {
+        padding-right: 0;
+        padding-left: 0;
+      }
+    }
+  }
+
+  &.is-content-expanded {
+    .slider-page__header {
+      height: 0;
+      padding-top: 0;
+      overflow: hidden;
+      transition-timing-function: ease-in;
+    }
+  }
+
+  &.is-content-hidden {
+    grid-template-rows: auto max-content;
+
+    .slider-page__header {
+      .content-wrapper {
+        max-height: 100vh;
+      }
+    }
+
+    .slider-page__content {
+      height: 0;
+      overflow: hidden;
     }
   }
 }

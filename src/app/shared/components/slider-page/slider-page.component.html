@@ -1,17 +1,21 @@
 <ion-content [fullscreen]="true" [scrollY]="false">
   <div 
     class="slider-page" 
-    [style.background-color]="currentSlide.header?.color 
-      ? 'var(' + currentSlide.header.color + ')' 
-      : 'var(--color-white)'">
+    [style.background-color]="config?.header?.color 
+      ? 'var(' + config.header.color + ')' 
+      : 'var(--color-white)'"
+    [ngClass]="{ 
+      'is-content-hidden': config?.content?.hide, 
+      'is-content-expanded': config?.content?.isExpanded, 
+      'is-full-size': config?.header?.fullSize, 
+    }">
 
     <div 
       class="slider-page__header" 
       [ngClass]="{ 
-        'has-asset': currentSlide.header?.asset, 
-        'is-full-size': currentSlide.header?.fullSize, 
-        'has-template': currentSlide.header?.template, 
-        'is-content-expanded': config?.content?.isExpanded, 
+        'has-asset': config?.header?.asset, 
+        'has-template': config?.header?.template, 
+        'has-component': config?.header?.component, 
       }">
 
       <swiper #sliderHeader effect="fade" [allowTouchMove]="false" [autoHeight]="true">
@@ -20,14 +24,20 @@
             <img [src]="slide.header.asset" />
           </div>
 
-          <div 
-            class="template-wrapper" 
-            *ngIf="slide.header?.template" 
-            [innerHTML]="sanitizeContent(slide.header.template)"
-          ></div>
+          <div class="content-wrapper">
+            <div 
+              class="template-wrapper" 
+              *ngIf="slide.header?.template" 
+              [innerHTML]="sanitizeContent(slide.header.template)"
+            ></div>
 
-          <div class="component-wrapper" *ngIf="slide.header.component">
-            <ng-template #componentHeader></ng-template>
+            <div class="cards-wrapper" *ngIf="slide.header?.cards">
+              <automagic-card *ngFor="let card of slide.header.cards" [card]="card"></automagic-card>
+            </div>
+
+            <div class="component-wrapper">
+              <ng-template #componentHeader></ng-template>
+            </div>
           </div>
         </ng-template>
       </swiper>
@@ -36,13 +46,12 @@
     <div 
       class="slider-page__content" 
       [ngClass]="{ 
-        'is-hidden': config.content?.hide,
-        'is-expanded': config.content?.isExpanded,
-        'has-template': config.content?.template || config.content?.form
+        'is-expanded': config?.content?.isExpanded,
+        'has-template': config?.content?.template || config?.content?.form
       }">
 
       <div class="wrapper-small">
-        <div class="wrapper-small__navigation" [ngClass]="{ 'visibility-hidden': config.content?.showNavigation === false }">
+        <div class="wrapper-small__navigation" [ngClass]="{ 'visibility-hidden': config?.content?.showNavigation === false }">
           <div class="swiper-pagination"></div>
         </div>
 
@@ -123,7 +132,7 @@
           </div>
         </div>
 
-        <div class="wrapper-large__toolbar" *ngIf="config.content?.toolbar">
+        <div class="wrapper-large__toolbar" *ngIf="config?.content?.toolbar">
           <div 
             class="wrapper-large__toolbar-template" 
             *ngIf="config.content?.toolbar?.template" 
