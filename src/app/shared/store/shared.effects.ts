@@ -22,6 +22,10 @@ export class SharedEffects {
       tap((payload) => {
         this._backdropOptions = payload;
         if (this._backdropOptions.transition === 'move') {
+          if (!this._backdropOptions.fullScreen) {
+            document.getElementById('backdrop')?.removeAttribute('style');
+          }
+
           animate(
             `#backdrop`,
             { top: '0px' },
@@ -43,9 +47,7 @@ export class SharedEffects {
               `#backdrop`, 
               { opacity: [ 0.5, 0.8, 1 ]},
               { easing: 'ease-in-out', duration: 0.3 }
-            ).finished.then(() => {
-              this._animationInProgress = false;
-            });
+            );
           })
         }
       })
@@ -60,7 +62,7 @@ export class SharedEffects {
         return action;
       }),
       tap(() => {
-        const elementSize = window.innerHeight * 0.75;
+        const element = document.querySelector('#backdrop .backdrop__wrapper') as HTMLElement;
         if (this._backdropOptions.transition === 'move') {
           if (this._backdropOptions.fullScreen) {
             animate(
@@ -80,21 +82,17 @@ export class SharedEffects {
                 mass: 1,
                 velocity: 800,
               }) },
-            ).finished.then(() => {
-              this._animationInProgress = false;
-            });
+            );
           }
           else {
             animate(
               `#backdrop`,
-              { top: `${(elementSize) * -1}px` },
+              { top: `${(element.offsetHeight) * -1}px` },
               {
                 easing: 'ease-in-out',
                 duration: 0.6,
               } 
-            ).finished.then(() => {
-              this._animationInProgress = false;
-            });
+            );
           }
         }
         else {
@@ -105,10 +103,8 @@ export class SharedEffects {
           ).finished.then(() => {
             animate(
               `#backdrop`,
-              { top: `${(elementSize) * -1}px` }, 
-            ).finished.then(() => {
-              this._animationInProgress = false;
-            });
+              { top: `${(element.offsetHeight) * -1}px` }, 
+            );
           })
         }
       })
@@ -124,67 +120,61 @@ export class SharedEffects {
         return action;
       }),
       tap(() => {
-        if (!this._animationInProgress) {
-          const easingConfig = {
-            stiffness: 80,
-            damping: 20,
-            mass: 1,
-            velocity: 800,
-          };
-          if (this._sliderPageContentConfig.content.isExpanded) {
-            animate(
-              `.slider-page__content`, 
-              { height: `${window.innerHeight}px` },
-              { easing: spring(easingConfig) }
-            );
+        const easingConfig = {
+          stiffness: 80,
+          damping: 20,
+          mass: 1,
+          velocity: 800,
+        };
+        if (this._sliderPageContentConfig.content.isExpanded) {
+          animate(
+            `.slider-page__content`, 
+            { height: `${window.innerHeight}px` },
+            { easing: spring(easingConfig) }
+          );
 
-            animate(
-              `.slider-page__content .wrapper-small`, 
-              { opacity: [ 0.75, 0.5, 0 ] },
-              {
-                easing: 'ease-in-out',
-                duration: 0.2,
-              },
-            );
-      
-            animate(
-              `.slider-page__content .wrapper-large`, 
-              { opacity: [ 0, 0.5, 1 ] },
-              {
-                easing: 'ease-in-out',
-                duration: 0.4,
-              },
-            ).finished.then(() => {
-              this._animationInProgress = false;
-            });
-          }
-          else {
-            animate(
-              `.slider-page__content`, 
-              { height: `${window.innerHeight * 0.45}px` },
-              { easing: spring(easingConfig) }
-            );
+          animate(
+            `.slider-page__content .wrapper-small`, 
+            { opacity: [ 0.75, 0.5, 0 ] },
+            {
+              easing: 'ease-in-out',
+              duration: 0.2,
+            },
+          );
+    
+          animate(
+            `.slider-page__content .wrapper-large`, 
+            { opacity: [ 0, 0.5, 1 ] },
+            {
+              easing: 'ease-in-out',
+              duration: 0.4,
+            },
+          );
+        }
+        else {
+          animate(
+            `.slider-page__content`, 
+            { height: `${window.innerHeight * 0.45}px` },
+            { easing: spring(easingConfig) }
+          );
 
-            animate(
-              `.slider-page__content .wrapper-small`, 
-              { opacity: [ 0, 0.25, 0.5, 1 ] },
-              {
-                easing: 'ease-in-out',
-                duration: 0.4,
-              },
-            ).finished.then(() => {
-              this._animationInProgress = false;
-            });
+          animate(
+            `.slider-page__content .wrapper-small`, 
+            { opacity: [ 0, 0.25, 0.5, 1 ] },
+            {
+              easing: 'ease-in-out',
+              duration: 0.4,
+            },
+          );
 
-            animate(
-              `.slider-page__content .wrapper-large`, 
-              { opacity: [ 0.75, 0.5, 0 ] },
-              {
-                easing: 'ease-in-out',
-                duration: 0.2,
-              },
-            );
-          }
+          animate(
+            `.slider-page__content .wrapper-large`, 
+            { opacity: [ 0.75, 0.5, 0 ] },
+            {
+              easing: 'ease-in-out',
+              duration: 0.2,
+            },
+          );
         }
       })
     )
@@ -252,7 +242,6 @@ export class SharedEffects {
   private _backdropOptions: any;
   private _sliderPageContentConfig: any;
   private _alertOptions: any;
-  private _animationInProgress: boolean = false;
 
   constructor(
     private actions$: Actions,

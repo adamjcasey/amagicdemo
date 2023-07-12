@@ -6,6 +6,7 @@ import {
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
+import * as moment from 'moment';
 
 import * as fromStore from '@home/store';
 import * as fromSharedStore from '@shared/store';
@@ -56,130 +57,6 @@ export class StartDoseInjectDonePage implements OnInit {
           ],
         },
       },
-      {
-        header: {
-          color: '--color-bg-pastel-mint',
-          template: `
-            <div class="start-dose-inject-done">
-              <h1 class="font-heading-1--bold">Replace safety cap.</h1>
-              <img src="assets/images/start-dose-inject-done-replace-cap.gif">
-            </div>
-          `,
-        },
-        content: {
-          actions: [
-            {
-              label: 'Got it',
-              action: () => {
-                this._store.dispatch(new fromSharedStore.BackdropShow({
-                  transition: 'move',
-                  fullScreen: true,
-                  header: true,
-                  bgTemplate: 'top-hole',
-                  template: `
-                    <div class="start-dose-inject-done">
-                      <h1 class="font-heading-1--bold">Do not discard!</h1>
-                      <p>We will reuse this connected autoinjector for future demonstrations</p>
-                      <ion-button fill="outline" expand="block" color="light" (click)="toggle()">
-                        Got it
-                      </ion-button>
-                    </div>
-                  `,
-                }));
-                this.sliderPage.slideNext();
-              }
-            }
-          ],
-        },
-      },
-      {
-        header: {
-          color: '--color-bg-pastel-blue',
-          template: `
-            <div class="start-dose-inject-done">
-              <h1 class="font-heading-1--bold">Safely discard injector.</h1>
-              <img src="assets/images/start-dose-inject-done-discard-inject.svg">
-              <div class="pro-tip">
-                <ion-icon name="information-circle-outline"></ion-icon>
-                <p><strong>Pro Tip</strong></p>
-                <p>Discard injector in your sharps “take-back” bin for recycling.</p>
-              </div>
-            </div>
-          `,
-        },
-        content: {
-          actions: [
-            {
-              label: 'Got it',
-              action: () => { 
-                this.sliderPage.slideNext();
-              }
-            }
-          ],
-        },
-      },
-      {
-        header: {
-          color: '--color-bg-pastel-green',
-          template: `
-            <div class="start-dose-inject-done">
-              <h1 class="font-heading-1--bold">Next Dose</h1>
-            </div>
-          `,
-          cards: [
-            {
-              type: 'featured',
-              eyebrow: 'Next Dose:',
-              title: 'January 14th',
-              asset: '/assets/images/start-dose-inject-done-drug.svg',
-              button: {
-                label: 'Edit schedule',
-                fill: 'outline',
-              }
-            },
-            {
-              title: 'Like a smart reminder?',
-              asset: '/assets/images/start-dose-inject-done-notification.svg',
-              description: 'Smart reminders can notify you at the right time and place by using calendar and location data to improve recommendations.',
-            }
-          ],
-        },
-        content: {
-          actions: [
-            {
-              label: 'Set up smart reminders',
-              action: () => { 
-                this._store.dispatch(new fromStore.SetData({
-                  firstTimeDose: this.homeConfig.firstTimeDose ? false : this.homeConfig.firstTimeDose,
-                }));
-                this._store.dispatch(new fromSharedStore.SliderPageClear());
-                this._store.dispatch(new fromCoreStore.Go({
-                  path: ['/home']
-                }));
-
-                setTimeout(() => {
-                  this._store.dispatch(new fromSharedStore.AlertShow({
-                    mode: 'full',
-                    template: `
-                      <img src="assets/images/alert-setup-reminders.svg" />
-                      <h1 class="font-heading-1--bold">Smart reminders saved</h1>
-                      <p>AutoMagic will learn from your selections to improve recommendations.</p>
-                    `,
-                    actions: [
-                      {
-                        label: 'Ok, let’s go!',
-                        action: () => {
-                          this._store.dispatch(new fromSharedStore.AlertClose());
-                        },
-                      }
-                    ],
-                  }));
-                }, 500);
-              }
-            }
-          ],
-        },
-      },
     ];
   }
 
@@ -193,15 +70,203 @@ export class StartDoseInjectDonePage implements OnInit {
     this.homeConfig$.subscribe(homeConfig => {
       if (homeConfig) {
         this.homeConfig = homeConfig;
-        
+
+        if (this.homeConfig.firstTimeDose) {
+          this.slides.push(
+            {
+              header: {
+                color: '--color-bg-pastel-mint',
+                template: `
+                  <div class="start-dose-inject-done">
+                    <h1 class="font-heading-1--bold">Replace safety cap.</h1>
+                    <img src="assets/images/start-dose-inject-done-replace-cap.gif">
+                  </div>
+                `,
+              },
+              content: {
+                showNavigation: false,
+                actions: [
+                  {
+                    label: 'Got it',
+                    action: () => {
+                      this._store.dispatch(new fromSharedStore.BackdropShow({
+                        transition: 'move',
+                        fullScreen: true,
+                        header: true,
+                        bgTemplate: 'top-hole',
+                        template: `
+                        <div class="start-dose-inject-done">
+                            <h1 class="font-heading-1--bold">Do not discard!</h1>
+                            <p>We will reuse this connected autoinjector for future demonstrations</p>
+                            <ion-button fill="outline" expand="block" color="light" (click)="toggle()">
+                              Got it
+                            </ion-button>
+                          </div>
+                        `,
+                      }));
+                      this.sliderPage.slideNext();
+                    }
+                  }
+                ],
+              },
+            },
+            {
+              header: {
+                color: '--color-bg-pastel-blue',
+                template: `
+                  <div class="start-dose-inject-done">
+                    <h1 class="font-heading-1--bold">Safely discard injector.</h1>
+                    <img src="assets/images/start-dose-inject-done-discard-inject.svg">
+                    <div class="pro-tip">
+                      <ion-icon name="information-circle-outline"></ion-icon>
+                      <p><strong>Pro Tip</strong></p>
+                      <p>Discard injector in your sharps “take-back” bin for recycling.</p>
+                    </div>
+                  </div>
+                `,
+              },
+              content: {
+                showNavigation: false,
+                actions: [
+                  {
+                    label: 'Got it',
+                    action: () => { 
+                      this.sliderPage.slideNext();
+                    }
+                  }
+                ],
+              },
+            },
+            {
+              header: {
+                color: '--color-bg-pastel-green',
+                template: `
+                  <div class="start-dose-inject-done">
+                    <h1 class="font-heading-1--bold">Next Dose</h1>
+                  </div>
+                `,
+                cards: [
+                  {
+                    type: 'featured',
+                    eyebrow: 'Next Dose:',
+                    title: 'January 14th',
+                    asset: '/assets/images/start-dose-inject-done-drug.svg',
+                    button: {
+                      label: 'Edit schedule',
+                      fill: 'outline',
+                    }
+                  },
+                  {
+                    title: 'Like a smart reminder?',
+                    asset: '/assets/images/start-dose-inject-done-notification.svg',
+                    description: 'Smart reminders can notify you at the right time and place by using calendar and location data to improve recommendations.',
+                  }
+                ],
+              },
+              content: {
+                showNavigation: false,
+                actions: [
+                  {
+                    label: 'Set up smart reminders',
+                    action: () => {
+                      this._store.dispatch(new fromSharedStore.SliderPageClear());
+                      this._store.dispatch(new fromCoreStore.Go({
+                        path: ['/home']
+                      }));
+      
+                      setTimeout(() => {
+                        this._store.dispatch(new fromSharedStore.AlertShow({
+                          mode: 'full',
+                          template: `
+                            <img src="assets/images/alert-setup-reminders.svg" />
+                            <h1 class="font-heading-1--bold">Smart reminders saved</h1>
+                            <p>AutoMagic will learn from your selections to improve recommendations.</p>
+                          `,
+                          actions: [
+                            {
+                              label: 'Ok, let’s go!',
+                              action: () => {
+                                this._store.dispatch(new fromSharedStore.AlertClose());
+                                this._store.dispatch(new fromStore.SetData({
+                                  firstTimeDose: this.homeConfig.firstTimeDose ? false : this.homeConfig.firstTimeDose
+                                }));
+                              },
+                            }
+                          ],
+                        }));
+                      }, 500);
+                    }
+                  }
+                ],
+              },
+            },
+          );
+        }
+
+        const markedDoses = this.homeConfig?.doses.filter((dose: any) => dose.marked);
+        // if the first one dose was injected, for the demo purpose we fill 
+        // automatically 5 doses to leave the user in the last dose
+        if (markedDoses.length === 1) {
+          setTimeout(() => {
+            this._store.dispatch(new fromStore.SetData({
+              doses: this.homeConfig.doses.map((dose: any, index: number) => {
+                return {
+                  marked: index + 1 < this.homeConfig.doses.length 
+                    ? true 
+                    : false,
+                  date: index + 1 < this.homeConfig.doses.length 
+                    ? moment().add(index, 'week').toString() 
+                    : '',
+                }
+              }),
+            }));
+          }, 5000);
+        }
+
         if (this.homeConfig.doses.length === 6) {
           this.slides.push({
-            header: {
+            content: {
+              isExpanded: true,
               component: 'start-dose-inject-done-report',
+              toolbar: { 
+                actions: [
+                  {
+                    label: 'Cool!',
+                    action: () => {
+                      this.goTo('home');
+                    },
+                  },
+                ]
+              } 
+            }
+          });
+        }
+
+        if (markedDoses.length === 6) {
+          this.slides.push({
+            content: {
+              isExpanded: true,
+              component: 'start-dose-inject-done-report',
+              toolbar: { 
+                actions: [
+                  {
+                    label: 'Cool!',
+                    action: () => {
+                      this.goTo('home');
+                    },
+                  },
+                ]
+              } 
             }
           });
         }
       }
     });
+  }
+
+  goTo(path: string) {
+    this._store.dispatch(new fromCoreStore.Go({
+      path: [path]
+    }));
   }
 }

@@ -5,6 +5,8 @@ import { StartDosePrepareWaitingToInjectComponent } from './start-dose-prepare-w
 import { StartDoseReadyToInjectVideoDetailComponent } from './start-dose-ready-to-inject-video-detail/start-dose-ready-to-inject-video-detail.component';
 import { StartDoseReadyToInjectDosingComponent } from './start-dose-ready-to-inject-dosing/start-dose-ready-to-inject-dosing.component';
 import { StartDoseInjectDoneProgressComponent } from './start-dose-inject-done-progress/start-dose-inject-done-progress.component';
+import { StartDoseInjectDoneReportComponent } from './start-dose-inject-done-report/start-dose-inject-done-report.component';
+import { AddSymptomFormComponent } from './add-symptom-form/add-symptom-form.component';
 
 export const components: any[] = [
   StartDosePrepareTempTimerComponent,
@@ -13,7 +15,9 @@ export const components: any[] = [
   StartDosePrepareWaitingToInjectComponent,
   StartDoseReadyToInjectVideoDetailComponent,
   StartDoseReadyToInjectDosingComponent,
-  StartDoseInjectDoneProgressComponent
+  StartDoseInjectDoneProgressComponent,
+  StartDoseInjectDoneReportComponent,
+  AddSymptomFormComponent,
 ];
 
 export * from './start-dose-prepare-survey/start-dose-prepare-survey.component';
@@ -23,3 +27,5 @@ export * from './start-dose-prepare-waiting-to-inject/start-dose-prepare-waiting
 export * from './start-dose-ready-to-inject-video-detail/start-dose-ready-to-inject-video-detail.component';
 export * from './start-dose-ready-to-inject-dosing/start-dose-ready-to-inject-dosing.component';
 export * from './start-dose-inject-done-progress/start-dose-inject-done-progress.component';
+export * from './start-dose-inject-done-report/start-dose-inject-done-report.component';
+export * from './add-symptom-form/add-symptom-form.component';

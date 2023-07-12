@@ -26,6 +26,7 @@ export class BottomToolbarComponent {
       '/home/start-dose/prepare',
       '/home/start-dose/ready-to-inject',
       '/home/start-dose/inject-done',
+      '/home/add-symptom',
     ];
 
     this.routerEvents$ = this._router.events.subscribe(
@@ -45,7 +46,7 @@ export class BottomToolbarComponent {
     return this.currentRoute.includes(path);
   }
 
-  toggleOpen() {
+  toggle() {
     this.isOpen = !this.isOpen;
 
     if (this.isOpen) {
@@ -96,5 +97,6 @@ export class BottomToolbarComponent {
     this._store.dispatch(new fromCoreStore.Go({
       path: [path]
     }));
+    this.toggle();
   }
 }

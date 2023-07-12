@@ -6,7 +6,7 @@ import {
   AfterViewInit,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable, last } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import * as fromStore from '@home/store';
 import * as fromSharedStore from '@shared/store';
@@ -122,153 +122,12 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
             },
             {
               label: 'Next Step',
-              disabled: true,
-            }
-          ],
-        },
-      },
-      {
-        header: {
-          color: '--color-bg-pastel-blue',
-          template: `
-            <div class="start-dose-ready-to-inject__content">
-              <h1 class="font-heading-1--bold">Clean site.</h1>
-              <img src="assets/images/start-dose-ready-to-inject-clean.svg">
-            </div>
-          `,
-        },
-        content: {
-          actions: [
-            {
-              label: 'Previous step',
-              action: () => { this.sliderPage.slidePrev() }
-            },
-            {
-              label: 'Next Step',
+              // disabled: true,
               action: () => { this.sliderPage.slideNext() }
             }
           ],
         },
-      },
-      {
-        header: {
-          color: '--color-bg-pastel-green',
-          template: `
-            <div class="start-dose-ready-to-inject__content">
-              <h1 class="font-heading-1--bold">Uncap injector.</h1>
-              <img src="assets/images/start-dose-ready-to-inject-uncap.gif">
-            </div>
-          `,
-        },
-        content: {
-          actions: [
-            {
-              label: 'Previous step',
-              action: () => { this.sliderPage.slidePrev() }
-            },
-            {
-              label: 'Next Step',
-              action: () => { 
-                this.sliderPage.slideNext();
-              }
-            }
-          ],
-        },
-      },
-      {
-        header: {
-          color: '--color-bg-pastel-beige',
-          template: `
-            <div class="start-dose-ready-to-inject__content">
-              <h1 class="font-heading-1--bold">Almost there...</h1>
-            </div>
-          `,
-          cards: [
-            {
-              type: 'stepper',
-              indicator: '1',
-              title: 'To inject, firmly press and hold down',
-              asset: '/assets/images/start-dose-ready-to-inject-card-1.svg',
-              description: 'On the next screen, press the injector against skin until it <strong>clicks</strong>.  The light will turn <strong>purple</strong> while injecting.',
-            },
-            {
-              type: 'stepper',
-              indicator: '2',
-              title: 'Hold down for 10 seconds',
-              asset: '/assets/images/start-dose-ready-to-inject-card-2.svg',
-              description: 'The injection will take <strong>10 seconds</strong> to complete. Hold down for the entire time.',
-            },
-            {
-              type: 'stepper',
-              indicator: '3',
-              title: 'Green means finished',
-              asset: '/assets/images/start-dose-ready-to-inject-card-3.svg',
-              description: 'The light will turn <strong>green</strong> when the injection is complete and you can safely release.',
-            }
-          ],
-        },
-        content: {
-          actions: [
-            {
-              label: 'Previous step',
-              action: () => { this.sliderPage.slidePrev() }
-            },
-            {
-              label: 'Next Step',
-              action: () => { 
-                this.sliderPage.slideNext();
-                // simulate Waiting for injection process
-                // first, wait for 2seg to set bgColor as purple
-                setTimeout(() => {
-                  this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
-                    color: '--color-bg-pastel-purple'
-                  }));
-                }, 2000);
-  
-                // second, wait for 4segs to set bgColor as lime
-                setTimeout(() => {
-                  this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
-                    color: '--color-bg-pastel-lime'
-                  }));
-                }, 4000);
-  
-                // then, wait for 6.5segs to go to the next slide
-                setTimeout(() => {
-                  this.sliderPage.slideNext();
-                }, 6500);
-              }
-            }
-          ],
-        },
-      },
-      {
-        header: {
-          color: '--color-bg-pastel-honey-yellow',
-          template: `
-            <div class="start-dose-ready-to-inject__content">
-              <h1 class="font-heading-1--bold">We’re ready for you.</h1>
-              <p>Pinch about an inch of skin at the injection site, then press and hold the injector down to start the dose. The app will detect when you start.</p>
-              <img src="assets/images/start-dose-ready-to-inject-waiting-for-injection.gif">
-              <h4>Waiting for you to begin injection</h4>
-              <div class="loader"></div>
-              <p>The Guide will <strong>detect when you inject</strong> and <strong>advance automatically.</strong></p>
-            </div>
-          `,
-        },
-        content: {
-          hide: true,
-        },
-      },
-      {
-        header: {
-          color: '--color-bg-pastel-purple',
-          template: null,
-          component: 'start-dose-ready-to-inject-dosing',
-        },
-        content: {
-          hide: true,
-        },
-      },
+      }
     ];
   }
 
@@ -363,7 +222,155 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
               },
             }
           );
+
+          this.slides.push(
+            {
+              header: {
+                color: '--color-bg-pastel-blue',
+                template: `
+                  <div class="start-dose-ready-to-inject__content">
+                    <h1 class="font-heading-1--bold">Clean site.</h1>
+                    <img src="assets/images/start-dose-ready-to-inject-clean.svg">
+                  </div>
+                `,
+              },
+              content: {
+                actions: [
+                  {
+                    label: 'Previous step',
+                    action: () => { this.sliderPage.slidePrev() }
+                  },
+                  {
+                    label: 'Next Step',
+                    action: () => { this.sliderPage.slideNext() }
+                  }
+                ],
+              },
+            },
+            {
+              header: {
+                color: '--color-bg-pastel-green',
+                template: `
+                  <div class="start-dose-ready-to-inject__content">
+                    <h1 class="font-heading-1--bold">Uncap injector.</h1>
+                    <img src="assets/images/start-dose-ready-to-inject-uncap.gif">
+                  </div>
+                `,
+              },
+              content: {
+                actions: [
+                  {
+                    label: 'Previous step',
+                    action: () => { this.sliderPage.slidePrev() }
+                  },
+                  {
+                    label: 'Next Step',
+                    action: () => { 
+                      this.sliderPage.slideNext();
+                    }
+                  }
+                ],
+              },
+            },
+            {
+              header: {
+                color: '--color-bg-pastel-beige',
+                template: `
+                  <div class="start-dose-ready-to-inject__content">
+                    <h1 class="font-heading-1--bold">Almost there...</h1>
+                  </div>
+                `,
+                cards: [
+                  {
+                    type: 'stepper',
+                    indicator: '1',
+                    title: 'To inject, firmly press and hold down',
+                    asset: '/assets/images/start-dose-ready-to-inject-card-1.svg',
+                    description: 'On the next screen, press the injector against skin until it <strong>clicks</strong>.  The light will turn <strong>purple</strong> while injecting.',
+                  },
+                  {
+                    type: 'stepper',
+                    indicator: '2',
+                    title: 'Hold down for 10 seconds',
+                    asset: '/assets/images/start-dose-ready-to-inject-card-2.svg',
+                    description: 'The injection will take <strong>10 seconds</strong> to complete. Hold down for the entire time.',
+                  },
+                  {
+                    type: 'stepper',
+                    indicator: '3',
+                    title: 'Green means finished',
+                    asset: '/assets/images/start-dose-ready-to-inject-card-3.svg',
+                    description: 'The light will turn <strong>green</strong> when the injection is complete and you can safely release.',
+                  }
+                ],
+              },
+              content: {
+                actions: [
+                  {
+                    label: 'Previous step',
+                    action: () => { this.sliderPage.slidePrev() }
+                  },
+                  {
+                    label: 'Next Step',
+                    action: () => { 
+                      this.sliderPage.slideNext();
+                      // simulate Waiting for injection process
+                      // first, wait for 2seg to set bgColor as purple
+                      setTimeout(() => {
+                        this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
+                          color: '--color-bg-pastel-purple'
+                        }));
+                      }, 2000);
+        
+                      // second, wait for 4segs to set bgColor as lime
+                      setTimeout(() => {
+                        this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
+                          color: '--color-bg-pastel-lime'
+                        }));
+                      }, 4000);
+        
+                      // then, wait for 6.5segs to go to the next slide
+                      setTimeout(() => {
+                        this.sliderPage.slideNext();
+                      }, 6500);
+                    }
+                  }
+                ],
+              },
+            },
+            {
+              header: {
+                color: '--color-bg-pastel-honey-yellow',
+                template: `
+                  <div class="start-dose-ready-to-inject__content">
+                    <h1 class="font-heading-1--bold">We’re ready for you.</h1>
+                    <p>Pinch about an inch of skin at the injection site, then press and hold the injector down to start the dose. The app will detect when you start.</p>
+                    <img src="assets/images/start-dose-ready-to-inject-waiting-for-injection.gif">
+                    <h4>Waiting for you to begin injection</h4>
+                    <div class="loader"></div>
+                    <p>The Guide will <strong>detect when you inject</strong> and <strong>advance automatically.</strong></p>
+                  </div>
+                `,
+              },
+              content: {
+                hide: true,
+              },
+            },
+          );
         }
+
+        this.slides.push(
+          {
+            header: {
+              color: '--color-bg-pastel-purple',
+              template: null,
+              component: 'start-dose-ready-to-inject-dosing',
+            },
+            content: {
+              hide: true,
+            },
+          },
+        )
       }
     });
   }
@@ -374,6 +381,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
         this.sliderPage.slideNext();
       },
       selectBodyShape: (event: any) => {
+        console.log('selectBodyShape');
         let clickOnPath = false;
         const coords = {
           x: event.x,
@@ -381,18 +389,24 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
         };
 
         console.log('coords ', coords);
-
         if (coords.x >= 150 && coords.x <= 245) {
+          console.log('top part X');
           // top-right
           if (coords.x >= 200) {
+            console.log('top-right part');
             if (coords.y >= 335 && coords.y <= 390) {
+              console.log('top-right part X');
+              console.log('pone top-right');
               clickOnPath = true;
               this.selectedBodyPart = 'top-right';
             }
           }
           // top-left
           else {
+            console.log('top-left part X');
             if (coords.y >= 335 && coords.y <= 390) {
+              console.log('top-left part Y');
+              console.log('pone top-left');
               clickOnPath = true;
               this.selectedBodyPart = 'top-left';
             }
@@ -401,15 +415,22 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
 
         if (coords.x >= 145 && coords.x <= 250) {
           // bottom-right
+          console.log('bottom part X');
           if (coords.x >= 195) {
+            console.log('bottom-right part X');
             if (coords.y >= 450 && coords.y <= 510) {
+              console.log('bottom-right part Y');
+              console.log('pone bottom-right');
               clickOnPath = true;
               this.selectedBodyPart = 'bottom-right';
             }
           }
           // bottom-left
           else {
+            console.log('bottom-left part X');
             if (coords.y >= 450 && coords.y <= 510) {
+              console.log('bottom-left part Y');
+              console.log('pone bottom-left');
               clickOnPath = true;
               this.selectedBodyPart = 'bottom-left';
             }
@@ -417,7 +438,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
         }
 
         this.selectedBodyPart = !clickOnPath ? '' : this.selectedBodyPart;
-
+        console.log('this.selectedBodyPart ', this.selectedBodyPart);
         this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
           template: `
             <div class="start-dose-ready-to-inject__content">
@@ -458,7 +479,6 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
             </div>
           `,
         }));
-
         this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
           actions: [
             this.sliderPageConfig.content.actions[0],

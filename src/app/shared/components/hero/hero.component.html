@@ -7,7 +7,7 @@
         *ngFor="let button of actions; let i = index"
         color="purple" 
         (click)="button.action ? button.action($event) : null" 
-        [fill]="i % 2 !== 1 && actions.length > 1 ? 'outline': null">
+        [fill]="i % 2 === 1 && actions.length > 1 ? 'outline': null">
         {{ button.label }}
       </ion-button>
     </div>

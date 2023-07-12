@@ -5,7 +5,9 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
 
+import * as fromStore from '@home/store';
 import * as fromSharedStore from '@shared/store';
 import * as fromSharedComponents from '@shared/components';
 import * as fromCoreStore from '@core/store';
@@ -17,12 +19,15 @@ import * as fromCoreStore from '@core/store';
   encapsulation: ViewEncapsulation.None
 })
 export class StartDosePreparePage implements OnInit {
+  public homeConfig$!: Observable<any>;
+  public homeConfig: any;
   public slides: Array<any> = [];
   @ViewChild('sliderPage', { static: false }) sliderPage!: fromSharedComponents.SliderPageComponent;
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
   ) {
+    this.homeConfig$ = this._store.select(fromStore.getHomeConfig);
     this.slides = [
       {
         header: {
@@ -89,7 +94,13 @@ export class StartDosePreparePage implements OnInit {
     ]
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.homeConfig$.subscribe(homeConfig => {
+      if (homeConfig) {
+        this.homeConfig = homeConfig;
+      }
+    });
+  }
 
   slideNext(sliders: any) {
     sliders.asset.slideNext(500);
@@ -108,31 +119,53 @@ export class StartDosePreparePage implements OnInit {
   showStepTemperature = () => {
     this._store.dispatch(new fromSharedStore.SliderPageSetContent({
       isExpanded: true,
-      template: `
-        <div class="start-dose-prepare__instructions">
-          <img src="assets/images/drug-cold-temp.svg" />
-          <h1 class="font-heading-1--bold">Theryx® temperature</h1>
+      template: this.homeConfig.firstTimeDose 
+        ? `
+          <div class="start-dose-prepare__instructions">
+            <img src="assets/images/drug-cold-temp.svg" />
+            <h1 class="font-heading-1--bold">Theryx® temperature</h1>
 
-          <div class="temperature-status">
-            <p class="indicator">
-              46°
-              <span>Current</span>
-            </p>
-            <p class="indicator">
-              65°
-              <span>Recommended</span>
-            </p>
+            <div class="temperature-status">
+              <p class="indicator">
+                46°
+                <span>Current</span>
+              </p>
+              <p class="indicator">
+                65°
+                <span>Recommended</span>
+              </p>
+            </div>
+            <h3>Your Theryx® is currently too cold for a comfortable injection.</h3>
+            <p>It's best to let it warm up for a bit to room temperature (65°F) before injecting.</p>
           </div>
-          <h3>Your Theryx® is currently too cold for a comfortable injection.</h3>
-          <p>It's best to let it warm up for a bit to room temperature (65°F) before injecting.</p>
-        </div>
-      `,
+        `
+        : `
+          <div class="start-dose-prepare__instructions">
+            <img src="assets/images/drug-cold-temp.svg" />
+            <h1 class="font-heading-1--bold">Theryx® temperature</h1>
+
+            <div class="temperature-status">
+              <p class="indicator green">
+                68°
+                <span>Current</span>
+              </p>
+            </div>
+            <h3>Theryx® is warm enough for a comfortable injection.</h3>
+            <p>Good job taking it out of the fridge ahead of time!</p>
+          </div>
+        `,
       toolbar: {
         actions: [
           {
             label: 'Proceed',
             action: () => {
-              this.showStepTempTimer();
+              if (this.homeConfig.firstTimeDose) {
+                this.showStepTempTimer();
+              }
+              else {
+                this.sliderPage.slideNext();
+                this.showStepInspect();
+              }
             },
           }
         ],
@@ -199,7 +232,13 @@ export class StartDosePreparePage implements OnInit {
           {
             label: 'Looks good',
             action: () => {
-              this.showStepSurvey();
+              if (this.homeConfig.firstTimeDose) {
+                this.showStepSurvey();
+              }
+              else {
+                this._store.dispatch(new fromSharedStore.SliderPageClear());
+                this.goTo('home/start-dose/ready-to-inject');
+              }
             },
           }
         ],
@@ -248,6 +287,12 @@ export class StartDosePreparePage implements OnInit {
           },
         ],
       }
+    }));
+  }
+
+  goTo(path: string) {
+    this._store.dispatch(new fromCoreStore.Go({
+      path: [path]
     }));
   }
 }

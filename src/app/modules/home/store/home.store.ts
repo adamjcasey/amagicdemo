@@ -1,7 +1,9 @@
 export interface HomeState {
   firstTimeDose: boolean;
   doses: any[];
+  reports: any[];
   survey: any;
+  flareUpsDemoDone: boolean;
 }
 
 export const initialState: HomeState = {
@@ -33,4 +35,6 @@ export const initialState: HomeState = {
     }
   ],
   survey: null,
+  reports: [],
+  flareUpsDemoDone: false,
 }
