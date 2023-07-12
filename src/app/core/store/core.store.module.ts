@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { StoreModule, ActionReducer, MetaReducer, Action } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { storeLogger } from '@shared/services/logger';
 
 import * as fromStore from './core.store';
 import * as fromReducer from './core.reducer';
@@ -22,9 +23,15 @@ export function clearState(reducer: any) {
   }
 }
 
+export function logger(
+  reducer: ActionReducer<fromStore.CoreState>
+): ActionReducer<fromStore.CoreState> {
+  return storeLogger()(reducer);
+}
+
 export const metaReducers: MetaReducer<fromStore.CoreState>[] = 
   !environment.production
-  ? []
+  ? [logger]
   : [];
 metaReducers.push(clearState);
 

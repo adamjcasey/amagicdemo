@@ -22,7 +22,7 @@ export function SharedReducer(
       return {
         ...state,
         backdropConfig: {
-          ...state.backdropConfig, 
+          ...state.backdropConfig,
           show: false,
         },
       };

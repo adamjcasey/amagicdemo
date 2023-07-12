@@ -15,7 +15,7 @@
   </ion-tab-button>
 
   <ion-tab-button>
-    <ion-button (click)="toggleOpen()" fill="solid" shape="circle" color="purple" size="large">
+    <ion-button (click)="toggle()" fill="solid" shape="circle" color="purple" size="large">
       <ion-icon slot="icon-only" [name]="isOpen ? 'close-outline' : 'add-outline'"></ion-icon>
     </ion-button>
   </ion-tab-button>
@@ -38,7 +38,7 @@
       </ion-button>
     </div>
 
-    <div class="cta">
+    <div class="cta" (click)="goTo('/home/add-symptom')">
       <ion-img src="/assets/images/add-symptom.svg"></ion-img>
       <ion-button 
         color="purple">

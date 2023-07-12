@@ -10,7 +10,7 @@
     width: 100vw;
     height: 10vw;
     background-image: url(/assets/images/hero-layer.svg);
-    background-size: contain;
+    background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
   }
@@ -25,6 +25,17 @@
   .hero__template {
     > *:first-child {
         margin-top: 0;
+    }
+  }
+
+  .hero__actions {
+    ion-button {
+      &:last-child {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
     }
   }
 

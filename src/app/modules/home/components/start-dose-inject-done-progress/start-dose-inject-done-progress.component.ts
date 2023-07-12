@@ -33,6 +33,15 @@ export class StartDoseInjectDoneProgressComponent implements OnInit, AfterViewIn
     this.homeConfig$.subscribe(homeConfig => {
       if (homeConfig) {
         this.homeConfig = homeConfig;
+
+        // if this is the first dose
+        if (this.homeConfig.firstTimeDose) {
+          this.title = 'First dose done!';
+        }
+        else {
+          const markedDoses = this.homeConfig?.doses.filter((dose: any) => dose.marked);
+          this.title = `${markedDoses.length} doses done`;
+        }
       }
     });
   }
@@ -46,9 +55,7 @@ export class StartDoseInjectDoneProgressComponent implements OnInit, AfterViewIn
 
   markDoseAsDone() {
     const doses = cloneDeep(this.homeConfig?.doses);
-    // if this is the first dose
     if (this.homeConfig.firstTimeDose) {
-      this.title = 'First dose done!';
       doses[0].marked = true;
       doses[0].date = new Date();
     }
@@ -56,12 +63,11 @@ export class StartDoseInjectDoneProgressComponent implements OnInit, AfterViewIn
       const markedDoses = this.homeConfig?.doses.filter((dose: any) => dose.marked);
       doses[markedDoses.length].marked = true;
       doses[markedDoses.length].date = new Date();
-      this.title = `${markedDoses.length} doses done`;
     }
 
     this.doseMarked = true;
     this._store.dispatch(new fromStore.SetData({
-      doses: doses
+      doses: doses,
     }));
   }
 }

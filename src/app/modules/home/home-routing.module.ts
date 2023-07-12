@@ -20,6 +20,10 @@ const routes: Routes = [
     path: 'start-dose/inject-done',
     component: fromPages.StartDoseInjectDonePage
   },
+  {
+    path: 'add-symptom',
+    component: fromPages.AddSymptomPage
+  },
 ];
 
 @NgModule({

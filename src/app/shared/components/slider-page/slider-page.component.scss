@@ -292,6 +292,18 @@
       overflow: hidden;
       transition-timing-function: ease-in;
     }
+
+    .slider-page__content {
+      height: 100vh;
+      
+      .wrapper-small {
+        opacity: 0;
+      }
+
+      .wrapper-large {
+        opacity: 1;
+      }
+    }
   }
 
   &.is-content-hidden {

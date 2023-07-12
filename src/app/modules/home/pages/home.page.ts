@@ -58,6 +58,37 @@ export class HomePage implements OnInit, AfterViewInit {
       if (homeConfig) {
         this.homeConfig = homeConfig;
       }
+
+      if (!this.homeConfig.firstTimeDose) {
+        // after the firstDose add Review your schedule button
+        if (this.heroConfig.actions.length === 1) {
+          this.heroConfig.template = `
+            <h1 class="font-heading-1--bold">Hi Marissa!</h1>
+            <p>Your Theryx® dose is scheduled for today!</p>
+          `;
+          this.heroConfig.actions.push({
+            label: 'Review your schedule'
+          });
+        }
+
+        if (!this.homeConfig.flareUpsDemoDone) {
+          // Flare Up flow starting
+          setTimeout(() => {
+            this._store.dispatch(new fromSharedStore.BackdropShow({
+              transition: 'move',
+              header: true,
+              template: `
+                <img src="assets/images/flare-up-backdrop-image.svg" />
+                <h1 class="font-heading-1--bold">Pretend you’ve got a flare-up...</h1>
+                <p>To demonstrate the capabilities of a connected ecosystem, we’re going to simulate a symptom flare-up that can be detected by your watch.</p>
+                <ion-button fill="outline" expand="block" color="light" onclick="window.flareUpsFlow.simulateFlareUp()">
+                  Simulate flare-up
+                </ion-button>
+              `,
+            }));
+          }, 600);
+        }
+      }
     });
   }
 
@@ -73,6 +104,30 @@ export class HomePage implements OnInit, AfterViewInit {
           <p>For this demo, let's pretend that <br>you're scheduled for your first at-<br>home dose today</p>
         `,
       }));
+    }
+
+    window.flareUpsFlow = {
+      simulateFlareUp: () => {
+        this._store.dispatch(new fromSharedStore.BackdropClose);
+        this._store.dispatch(new fromSharedStore.AlertShow({
+          mode: 'full',
+          template: `
+            <img src="assets/images/flare-ups-alert-image.svg" />
+            <h1 class="font-heading-1--bold">Experiencing a flare-up?</h1>
+            <p>Your wearable data suggests that you’re experiencing a new symptom. Want to record it?</p>
+          `,
+          actions: [
+            {
+              label: 'Ok, let’s go!',
+              fill: 'outline',
+              action: () => { 
+                this._store.dispatch(new fromSharedStore.AlertClose);
+                this.goTo('home/add-symptom');
+              },
+            }
+          ],
+        }));
+      }
     }
   }
 

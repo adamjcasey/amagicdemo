@@ -76,14 +76,6 @@ export class SliderPageComponent implements OnInit {
               this.componentsHeader.forEach(component => component.clear());
             }
           }
-
-          if (config.header.template) {
-            this.currentSlide.header.template = config.header.template;
-          }
-
-          if (config.header.color) {
-            this.currentSlide.header.color = config.header.color;
-          }
         }
 
         if (config.content) {
@@ -109,10 +101,6 @@ export class SliderPageComponent implements OnInit {
               // clear content component element if component is null
               this.componentContent?.clear();
             }
-          }
-
-          if (config.content.actions) {
-            this.slides[this.sliderContent.swiperRef.activeIndex].actions = config.content.actions;
           }
         }
         this.config = config;
@@ -220,6 +208,12 @@ export class SliderPageComponent implements OnInit {
         break;
       case 'start-dose-inject-done-progress':
         componentRef = element.createComponent(fromHomeComponents.StartDoseInjectDoneProgressComponent);
+        break;
+      case 'start-dose-inject-done-report':
+        componentRef = element.createComponent(fromHomeComponents.StartDoseInjectDoneReportComponent);
+        break;
+      case 'add-symptom-form':
+        componentRef = element.createComponent(fromHomeComponents.AddSymptomFormComponent);
         break;
     }
   }

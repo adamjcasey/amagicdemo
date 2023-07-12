@@ -8,7 +8,7 @@
   left: 0;
   z-index: 100;
   width: 100vw;
-  height: var(--backdrop-size);
+  min-height: var(--backdrop-size);
 
   &::before {
     content: '';
@@ -16,7 +16,7 @@
     bottom: -25vh;
     left: 0;
     width: 100vw;
-    height: 30vh;
+    height: 50vh;
     opacity: 0;
     background: rgba(0, 0, 0, 0.2);
     backdrop-filter: blur(3px);
@@ -79,6 +79,7 @@
 
     .backdrop__template {
       color: var(--color-white);
+      text-align: center;
 
       p {
         font-size: var(--font-size-paragraph-l);
@@ -297,7 +298,7 @@
 
     &.transition-move {
       .backdrop__fold {
-        top: calc(100% - -1px);
+        top: 100%;
       }
     }
   }
