@@ -21,14 +21,84 @@ import * as fromCoreStore from '@core/store';
 export class AddSymptomPage implements OnInit {
   public homeConfig$!: Observable<any>;
   public homeConfig: any;
+  public sliderPageConfig$!: Observable<any>;
+  public sliderPageConfig: any;
+  public slides: Array<any> = [];
+  @ViewChild('sliderPage', { static: false }) sliderPage!: fromSharedComponents.SliderPageComponent;
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
   ) {
     this.homeConfig$ = this._store.select(fromStore.getHomeConfig);
+    this.slides = [
+      {
+        content: {
+          isExpanded: true,
+          template: `
+            <h1 class="font-heading-1--bold">New Symptom</h1>
+          `,
+          component: 'add-symptom-form',
+          toolbar: { 
+            actions: [
+              {
+                label: 'Cancel',
+                action: () => {
+                  this.goTo('home');
+                },
+              },
+              {
+                label: 'Save',
+                // disabled: true,
+                action: () => { 
+                  this.sliderPage.slideNext();
+                }
+              }
+            ]
+          }
+        },
+      },
+      {
+        content: {
+          component: null,
+          template: `
+            <img src="assets/images/drug-settings.svg" />
+            <h1 class="font-heading-1--bold">Symptom Recorded</h1>
+            <p>Your new symptom has been successfully recorded.</p>
+          `,
+          toolbar: { 
+            actions: [
+              {
+                label: 'Edit',
+                action: () => {
+                  this.sliderPage.slidePrev();
+                },
+              },
+              {
+                label: 'Got it',
+                action: () => { 
+                  this._store.dispatch(new fromSharedStore.SliderPageClear());
+                  if (!this.homeConfig.flareUpsDemoDone) {
+                    this._store.dispatch(new fromStore.SetData({
+                      flareUpsDemoDone: true
+                    }));
+                  }
+                  this.goTo('home');
+                }
+              }
+            ]
+          }
+        },
+      },
+    ];
   }
 
   ngOnInit() {
+    this.sliderPageConfig$.subscribe(sliderPageConfig => {
+      if (sliderPageConfig) {
+        this.sliderPageConfig = sliderPageConfig;
+      }
+    });
+
     this.homeConfig$.subscribe(homeConfig => {
       if (homeConfig) {
         this.homeConfig = homeConfig;
