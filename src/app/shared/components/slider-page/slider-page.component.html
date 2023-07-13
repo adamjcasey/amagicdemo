@@ -1,21 +1,22 @@
 <ion-content [fullscreen]="true" [scrollY]="false">
   <div 
+    *ngIf="config$ | async as config"
     class="slider-page" 
-    [style.background-color]="config?.header?.color 
+    [style.background-color]="config.header?.color 
       ? 'var(' + config.header.color + ')' 
       : 'var(--color-white)'"
     [ngClass]="{ 
-      'is-content-hidden': config?.content?.hide, 
-      'is-content-expanded': config?.content?.isExpanded, 
-      'is-full-size': config?.header?.fullSize, 
+      'is-content-hidden': config.content?.hide, 
+      'is-content-expanded': config.content?.isExpanded, 
+      'is-full-size': config.header?.fullSize, 
     }">
 
     <div 
       class="slider-page__header" 
       [ngClass]="{ 
-        'has-asset': config?.header?.asset, 
-        'has-template': config?.header?.template, 
-        'has-component': config?.header?.component, 
+        'has-asset': config.header?.asset, 
+        'has-template': config.header?.template, 
+        'has-component': config.header?.component, 
       }">
 
       <swiper #sliderHeader effect="fade" [allowTouchMove]="false" [autoHeight]="true">
@@ -46,12 +47,12 @@
     <div 
       class="slider-page__content" 
       [ngClass]="{ 
-        'is-expanded': config?.content?.isExpanded,
-        'has-template': config?.content?.template || config?.content?.form
+        'is-expanded': config.content?.isExpanded,
+        'has-template': config.content?.template || config.content?.form
       }">
 
       <div class="wrapper-small">
-        <div class="wrapper-small__navigation" [ngClass]="{ 'visibility-hidden': config?.content?.showNavigation === false }">
+        <div class="wrapper-small__navigation" [ngClass]="{ 'visibility-hidden': config.content?.hideNavigation }">
           <div class="swiper-pagination"></div>
         </div>
 
@@ -93,7 +94,7 @@
               </div>
             </div>
 
-            <div class="actions-wrapper" *ngIf="config?.content?.actions">
+            <div class="actions-wrapper" *ngIf="config.content?.actions">
               <ion-button 
                 *ngFor="let button of config.content.actions; let i = index"
                 color="purple" 
@@ -116,14 +117,14 @@
 
       <div 
         class="wrapper-large" 
-        [style.background-color]="currentSlide.content?.bgColor 
-          ? 'var(' + currentSlide.content.bgColor + ')' 
+        [style.background-color]="config.content?.bgColor 
+          ? 'var(' + config.content.bgColor + ')' 
           : 'var(--color-white)'">
 
         <div class="wrapper-large__content">
           <div 
             class="wrapper-large__template" 
-            *ngIf="config?.content?.template" 
+            *ngIf="config.content?.template" 
             [innerHTML]="sanitizeContent(config.content.template)"
           ></div>
 
@@ -132,7 +133,7 @@
           </div>
         </div>
 
-        <div class="wrapper-large__toolbar" *ngIf="config?.content?.toolbar">
+        <div class="wrapper-large__toolbar" *ngIf="config.content?.toolbar">
           <div 
             class="wrapper-large__toolbar-template" 
             *ngIf="config.content?.toolbar?.template" 
@@ -141,10 +142,10 @@
 
           <div class="wrapper-large__toolbar-actions" *ngIf="config.content?.toolbar?.actions">
             <ion-button 
-              *ngFor="let button of config.content?.toolbar?.actions; let i = index"
+              *ngFor="let button of config.content.toolbar.actions; let i = index" 
               color="purple" 
               size="large" 
-              [disabled]="button.disabled ? true : null"
+              [disabled]="button.disabled ? true : null" 
               (click)="button.action ? button.action($event) : null" 
               [fill]="
                 button.fill 

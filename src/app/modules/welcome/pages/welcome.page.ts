@@ -53,7 +53,7 @@ export class WelcomePage implements OnInit, AfterViewInit {
           asset: 'assets/images/welcome-step-1.svg',
         },
         content: {
-          showNavigation: false,
+          hideNavigation: true,
           template: `
             <h1 class="font-heading-1--bold">Welcome to AutoMagic for Theryx.</h1>
             <p>The AutoMagic connected ecosystem empowers you to make the most of your Theryx prescription</p>

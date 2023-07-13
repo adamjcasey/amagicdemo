@@ -9,8 +9,8 @@
 
   .pin-input__digit {
     @include heading-1;
-    width: 52px;
-    height: 64px;
+    width: 56px;
+    height: 68px;
     box-sizing: border-box;
     padding: var(--space-xxs) var(--space-xs);
     border: 1px solid var(--color-gray);

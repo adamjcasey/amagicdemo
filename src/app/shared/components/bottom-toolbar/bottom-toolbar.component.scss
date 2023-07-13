@@ -8,6 +8,10 @@
   contain: inherit;
   box-shadow: 0px -4px 16px rgba(0, 0, 0, 0.1);
 
+  &.visibility-hidden {
+    display: none;
+  }
+
   ion-tab-button {
     position: relative;
     height: 64px;

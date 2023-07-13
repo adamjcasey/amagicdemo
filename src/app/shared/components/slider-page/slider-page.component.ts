@@ -32,15 +32,17 @@ import * as fromHomeComponents from '@home/components';
 })
 export class SliderPageComponent implements OnInit {
   public config$: Observable<any>;
+  public previousConfig: any;
   public config: any;
+  public prevSlide: any;
+  public currentSlide: any;
   @Input() slides!: Array<any>;
   @Output() onPrevSlide = new EventEmitter<any>();
   @Output() onNextSlide = new EventEmitter<any>();
   @ViewChild('sliderHeader', { static: false }) sliderHeader!: SwiperComponent;
-  @ViewChild('sliderContent', { static: false }) sliderContent!: SwiperComponent;
   @ViewChildren('componentHeader', { read: ViewContainerRef }) componentsHeader!: QueryList<ViewContainerRef>;
+  @ViewChild('sliderContent', { static: false }) sliderContent!: SwiperComponent;
   @ViewChild('componentContent', { read: ViewContainerRef }) componentContent!: ViewContainerRef;
-  public currentSlide: any;
 
   constructor(
     private _store: Store<fromStore.SharedState>,
@@ -53,57 +55,73 @@ export class SliderPageComponent implements OnInit {
     this.currentSlide = this.slides[0];
     this.config$.subscribe(config => {
       if (config) {
-        if (config.header) {
-          // if the most recent config don't have a configured component
-          // clean up header component element
-          if (config.header.component !== null) {
-            // if the one step back config don't have a configured component
-            // load the component of the most recent config
-            if (this.config?.header?.component === null) {
-              this._loadComponent(config.header?.component, 'header');
-            }
-            else {
-              // If in both configs there is a configured component, 
-              // validate if they are different component, if they 
-              // are different load the component on the most recent config
-              if (config.header.component !== this.config?.header?.component) {
-                this._loadComponent(config.header?.component, 'header');  
-              }
+        this.previousConfig = this.config;
+        this.config = config;
+
+        const currentComponentHeader = this.componentsHeader?.toArray()[this.sliderContent.swiperRef.activeIndex];
+        // previous state: check if there is a component in the header
+        if (this.previousConfig?.header?.component) {
+          // current state: check if there is a component in the header
+          if (this.config.header?.component) {
+            // check if the previous and the current components are differents
+            if (this.config.header?.component !== this.previousConfig?.header?.component) {
+              // clear previosly to avoid duplicated components
+              currentComponentHeader.clear();
+              // load component in the header
+              this._loadComponent(
+                currentComponentHeader, 
+                this.config.header.component
+              );
             }
           }
-          else {
-            if (this.componentsHeader) {
-              this.componentsHeader.forEach(component => component.clear());
+        }
+        else {
+          // current state: check if there is a component in the header
+          if (this.config.header?.component) {
+            if (currentComponentHeader) {
+              // clear previosly to avoid duplicated components
+              currentComponentHeader.clear();
+              // load component in the header
+              this._loadComponent(
+                currentComponentHeader, 
+                this.config.header.component
+              );
             }
           }
         }
 
-        if (config.content) {
-          if (config.content.isExpanded) {
-            // if the most recent config don't have a configured component
-            // clean up header component element
-            if (config.content?.component !== null) {
-              // if the one step back config don't have a configured component
-              // load the component of the most recent config
-              if (this.config?.content?.component === null) {
-                this._loadComponent(config.content?.component, 'content');
-              }
-              else {
-                // If in both configs there is a configured component, 
-                // validate if they are different component, if they 
-                // are different load the component on the most recent config
-                if (config.content.component !== this.config?.content?.component) {
-                  this._loadComponent(config.content?.component, 'content');  
-                }
-              }
-            }
-            else {
-              // clear content component element if component is null
-              this.componentContent?.clear();
+        // previous state: check if there is a component in the content
+        if (this.previousConfig?.content?.component) {
+          // current state: check if there is a component in the content
+          if (this.config.content?.component) {
+            // check if the previous and the current components are differents
+            if (this.config.content?.component !== this.previousConfig?.content?.component) {
+              // clear previosly to avoid duplicated components
+              this.componentContent.clear();
+              // load component in the content
+              this._loadComponent(
+                this.componentContent, 
+                this.config.content.component
+              );
             }
           }
+          else {
+            // clear previosly to avoid duplicated components
+            this.componentContent.clear();
+          }
         }
-        this.config = config;
+        else {
+          // current state: check if there is a component in the content
+          if (this.config.content?.component) {
+            // clear previosly to avoid duplicated components
+            this.componentContent?.clear();
+            // load component in the content
+            this._loadComponent(
+              this.componentContent, 
+              this.config.content.component
+            );
+          }
+        }
       }
     });
   }
@@ -111,27 +129,36 @@ export class SliderPageComponent implements OnInit {
   onSliderInit() {  
     this.currentSlide = this.slides[0];
     if (this.currentSlide.header) {
+      // set initial config the header section
       this._store.dispatch(new fromStore.SliderPageSetHeaderOptions({
         ...this.currentSlide.header,
       }));
     }
 
     if (this.currentSlide.content) {
+      // set initial config the content section
+      // set form as null in order to don't include it in the store
+      // if form: FormGroup it's included in the store will be inmutable
       this._store.dispatch(new fromStore.SliderPageSetContentOptions({
         ...this.currentSlide.content,
+        form: null,
       }));
     }
   }
 
   onSlideChange() {
-    this.currentSlide = this.slides[this.sliderContent.swiperRef.activeIndex];
+    const swiperActiveIndex = this.sliderContent.swiperRef.activeIndex;
+    this.currentSlide = this.slides[swiperActiveIndex];
     if (this.currentSlide.header) {
+      // update config for header section based on the currentSlide
       this._store.dispatch(new fromStore.SliderPageSetHeaderOptions({
         ...this.currentSlide.header,
       }));
     }
-
     if (this.currentSlide.content) {
+      // update config for content section based on the currentSlide
+      // set form as null in order to don't include it in the store
+      // if form: FormGroup it's included in the store will be inmutable
       this._store.dispatch(new fromStore.SliderPageSetContentOptions({
         ...this.currentSlide.content,
         form: null,
@@ -169,12 +196,8 @@ export class SliderPageComponent implements OnInit {
     return this._sanitizer.bypassSecurityTrustHtml(htmlContent);
   }
 
-  private _loadComponent(component: any, slot: string) {
-    // clear template before loading a new component
-    const currentSlideIndex = this.sliderContent.swiperRef.activeIndex;
+  private _loadComponent(element: ViewContainerRef, component: any) {
     let componentRef;
-    let element = slot === 'header' ? this.componentsHeader.toArray()[currentSlideIndex] : this.componentContent;
-    element.clear();
     switch(component) {
       case 'welcome-doses-selector':
         componentRef = element.createComponent(fromWelcomeComponents.WelcomeDosesSelectorComponent);

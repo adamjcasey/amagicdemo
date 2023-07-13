@@ -39,14 +39,14 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
           color: '--color-bg-pastel-green',
           template: `
             <div class="start-dose-ready-to-inject__content">
-              <h1 class="font-heading-1--bold">You’ve got this!</h1>
-              <p>This guide will walk you through every step.</p>
+              <h1 class="font-heading-1--bold">Ready to inject?</h1>
+              <p>At this point you’re a pro, want to inject without guidance?</p>
               <img src="assets/images/start-dose-ready-to-inject-start.svg">
             </div>
           `,
         },
         content: {
-          showNavigation: false,
+          hideNavigation: true,
           actions: [
             {
               label: 'Postpone',
@@ -141,241 +141,9 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
     this.homeConfig$.subscribe(homeConfig => {
       if (homeConfig) {
         this.homeConfig = homeConfig;
-        // if this is the first dose
-        if (this.homeConfig.firstTimeDose) {
-          this.slides.unshift(
-            {
-              header: {
-                color: '--color-bg-pastel-green',
-                template: `
-                  <div class="start-dose-ready-to-inject__content first-time-dose">
-                    <h1 class="font-heading-1--bold">First time user?</h1>
-                    <p>This video previews what to expect when self-dosing with AutoMagic.</p>
-                    <div class="first-time-dose__video-indicator" onclick="window.startDoseReadyToInject.playVideo()">
-                      <ion-icon src="/assets/icons/play.svg"></ion-icon>
-                      <img src="assets/images/start-dose-first-time-dose.svg">
-                    </div>
-                    <p>You’ll be guided through the entire dosing process next.</p>
-                  </div>
-                `,
-                component: null,
-              },
-              content: {
-                showNavigation: false,
-                actions: [
-                  {
-                    label: 'Skip',
-                    fill: 'outline',
-                    action: () => {
-                      this.slides.splice(1, 1);
-                      this.sliderPage.slideNext();
-                      this._store.dispatch(new fromSharedStore.BackdropShow({
-                        transition: 'move',
-                        header: true,
-                        template: `
-                          <div class="no-needless-message">
-                            <h1 class="font-heading-1--bold">No needles and no drugs</h1>
-                            <p>This demo unit does not have a needle nor drug substance.</p>
-                            <p>Feel free to act like a real patient and press this against your leg when instructed.</p>
-                            <img src="assets/images/no-needles.svg">
-                          </div>
-                        `,
-                      }));
-                    }
-                  }
-                ],
-              },
-            },
-            {
-              header: {
-                fullSize: true,
-                color: '--color-bg-pastel-green',
-                template: null,
-                component: 'start-dose-ready-to-inject-video-detail',
-              },
-              content: {
-                showNavigation: false,
-                actions: [
-                  {
-                    label: 'Continue',
-                    fill: 'outline',
-                    action: () => {
-                      this.sliderPage.slideNext();
-                      this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
-                        fullSize: false,
-                      }));
-                      this._store.dispatch(new fromSharedStore.BackdropShow({
-                        transition: 'move',
-                        header: true,
-                        template: `
-                          <div class="no-needless-message">
-                            <h1 class="font-heading-1--bold">No needles and no drugs</h1>
-                            <p>This demo unit does not have a needle nor drug substance.</p>
-                            <p>Feel free to act like a real patient and press this against your leg when instructed.</p>
-                            <img src="assets/images/no-needles.svg">
-                          </div>
-                        `,
-                      }));
-                    }
-                  }
-                ],
-              },
-            }
-          );
-
-          this.slides.push(
-            {
-              header: {
-                color: '--color-bg-pastel-blue',
-                template: `
-                  <div class="start-dose-ready-to-inject__content">
-                    <h1 class="font-heading-1--bold">Clean site.</h1>
-                    <img src="assets/images/start-dose-ready-to-inject-clean.svg">
-                  </div>
-                `,
-              },
-              content: {
-                actions: [
-                  {
-                    label: 'Previous step',
-                    action: () => { this.sliderPage.slidePrev() }
-                  },
-                  {
-                    label: 'Next Step',
-                    action: () => { this.sliderPage.slideNext() }
-                  }
-                ],
-              },
-            },
-            {
-              header: {
-                color: '--color-bg-pastel-green',
-                template: `
-                  <div class="start-dose-ready-to-inject__content">
-                    <h1 class="font-heading-1--bold">Uncap injector.</h1>
-                    <img src="assets/images/start-dose-ready-to-inject-uncap.gif">
-                  </div>
-                `,
-              },
-              content: {
-                actions: [
-                  {
-                    label: 'Previous step',
-                    action: () => { this.sliderPage.slidePrev() }
-                  },
-                  {
-                    label: 'Next Step',
-                    action: () => { 
-                      this.sliderPage.slideNext();
-                    }
-                  }
-                ],
-              },
-            },
-            {
-              header: {
-                color: '--color-bg-pastel-beige',
-                template: `
-                  <div class="start-dose-ready-to-inject__content">
-                    <h1 class="font-heading-1--bold">Almost there...</h1>
-                  </div>
-                `,
-                cards: [
-                  {
-                    type: 'stepper',
-                    indicator: '1',
-                    title: 'To inject, firmly press and hold down',
-                    asset: '/assets/images/start-dose-ready-to-inject-card-1.svg',
-                    description: 'On the next screen, press the injector against skin until it <strong>clicks</strong>.  The light will turn <strong>purple</strong> while injecting.',
-                  },
-                  {
-                    type: 'stepper',
-                    indicator: '2',
-                    title: 'Hold down for 10 seconds',
-                    asset: '/assets/images/start-dose-ready-to-inject-card-2.svg',
-                    description: 'The injection will take <strong>10 seconds</strong> to complete. Hold down for the entire time.',
-                  },
-                  {
-                    type: 'stepper',
-                    indicator: '3',
-                    title: 'Green means finished',
-                    asset: '/assets/images/start-dose-ready-to-inject-card-3.svg',
-                    description: 'The light will turn <strong>green</strong> when the injection is complete and you can safely release.',
-                  }
-                ],
-              },
-              content: {
-                actions: [
-                  {
-                    label: 'Previous step',
-                    action: () => { this.sliderPage.slidePrev() }
-                  },
-                  {
-                    label: 'Next Step',
-                    action: () => { 
-                      this.sliderPage.slideNext();
-                      // simulate Waiting for injection process
-                      // first, wait for 2seg to set bgColor as purple
-                      setTimeout(() => {
-                        this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
-                          color: '--color-bg-pastel-purple'
-                        }));
-                      }, 2000);
-        
-                      // second, wait for 4segs to set bgColor as lime
-                      setTimeout(() => {
-                        this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
-                          color: '--color-bg-pastel-lime'
-                        }));
-                      }, 4000);
-        
-                      // then, wait for 6.5segs to go to the next slide
-                      setTimeout(() => {
-                        this.sliderPage.slideNext();
-                      }, 6500);
-                    }
-                  }
-                ],
-              },
-            },
-            {
-              header: {
-                color: '--color-bg-pastel-honey-yellow',
-                template: `
-                  <div class="start-dose-ready-to-inject__content">
-                    <h1 class="font-heading-1--bold">We’re ready for you.</h1>
-                    <p>Pinch about an inch of skin at the injection site, then press and hold the injector down to start the dose. The app will detect when you start.</p>
-                    <img src="assets/images/start-dose-ready-to-inject-waiting-for-injection.gif">
-                    <h4>Waiting for you to begin injection</h4>
-                    <div class="loader"></div>
-                    <p>The Guide will <strong>detect when you inject</strong> and <strong>advance automatically.</strong></p>
-                  </div>
-                `,
-              },
-              content: {
-                hide: true,
-              },
-            },
-          );
-        }
-
-        this.slides.push(
-          {
-            header: {
-              color: '--color-bg-pastel-purple',
-              template: null,
-              component: 'start-dose-ready-to-inject-dosing',
-            },
-            content: {
-              hide: true,
-            },
-          },
-        )
       }
     });
-  }
 
-  ngAfterViewInit() {
     window.startDoseReadyToInject = {
       playVideo: () => {
         this.sliderPage.slideNext();
@@ -496,7 +264,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                     <div class="no-need-to-clean-message">
                       <h1 class="font-heading-1--bold">No need to clean!</h1>
                       <p>For this demo you will not need to use an alcohol swab.</p>
-                      <ion-button fill="outline" expand="block" color="light" (click)="toggle()">
+                      <ion-button fill="outline" expand="block" color="light" onclick="window.backdropComponent.close()">
                         Got it
                       </ion-button>
                     </div>
@@ -508,5 +276,238 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
         }));
       },
     }
+  }
+
+  ngAfterViewInit() {
+    // if this is the first dose
+    if (this.homeConfig.firstTimeDose) {
+      this.slides.unshift(
+        {
+          header: {
+            color: '--color-bg-pastel-green',
+            template: `
+              <div class="start-dose-ready-to-inject__content first-time-dose">
+                <h1 class="font-heading-1--bold">First time user?</h1>
+                <p>This video previews what to expect when self-dosing with AutoMagic.</p>
+                <div class="first-time-dose__video-indicator" onclick="window.startDoseReadyToInject.playVideo()">
+                  <ion-icon src="/assets/icons/play.svg"></ion-icon>
+                  <img src="assets/images/start-dose-first-time-dose.svg">
+                </div>
+                <p>You’ll be guided through the entire dosing process next.</p>
+              </div>
+            `,
+            component: null,
+          },
+          content: {
+            hideNavigation: true,
+            actions: [
+              {
+                label: 'Skip',
+                fill: 'outline',
+                action: () => {
+                  this.slides.splice(1, 1);
+                  this.sliderPage.slideNext();
+                  this._store.dispatch(new fromSharedStore.BackdropShow({
+                    transition: 'move',
+                    header: true,
+                    template: `
+                      <div class="no-needless-message">
+                        <h1 class="font-heading-1--bold">No needles and no drugs</h1>
+                        <p>This demo unit does not have a needle nor drug substance.</p>
+                        <p>Feel free to act like a real patient and press this against your leg when instructed.</p>
+                        <img src="assets/images/no-needles.svg">
+                      </div>
+                    `,
+                  }));
+                }
+              }
+            ],
+          },
+        },
+        {
+          header: {
+            fullSize: true,
+            color: '--color-bg-pastel-green',
+            template: null,
+            component: 'start-dose-ready-to-inject-video-detail',
+          },
+          content: {
+            hideNavigation: true,
+            actions: [
+              {
+                label: 'Continue',
+                fill: 'outline',
+                action: () => {
+                  this.sliderPage.slideNext();
+                  this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
+                    fullSize: false,
+                  }));
+                  this._store.dispatch(new fromSharedStore.BackdropShow({
+                    transition: 'move',
+                    header: true,
+                    template: `
+                      <div class="no-needless-message">
+                        <h1 class="font-heading-1--bold">No needles and no drugs</h1>
+                        <p>This demo unit does not have a needle nor drug substance.</p>
+                        <p>Feel free to act like a real patient and press this against your leg when instructed.</p>
+                        <img src="assets/images/no-needles.svg">
+                      </div>
+                    `,
+                  }));
+                }
+              }
+            ],
+          },
+        }
+      );
+
+      this.slides.push(
+        {
+          header: {
+            color: '--color-bg-pastel-blue',
+            template: `
+              <div class="start-dose-ready-to-inject__content">
+                <h1 class="font-heading-1--bold">Clean site.</h1>
+                <img src="assets/images/start-dose-ready-to-inject-clean.svg">
+              </div>
+            `,
+          },
+          content: {
+            actions: [
+              {
+                label: 'Previous step',
+                action: () => { this.sliderPage.slidePrev() }
+              },
+              {
+                label: 'Next Step',
+                action: () => { this.sliderPage.slideNext() }
+              }
+            ],
+          },
+        },
+        {
+          header: {
+            color: '--color-bg-pastel-green',
+            template: `
+              <div class="start-dose-ready-to-inject__content">
+                <h1 class="font-heading-1--bold">Uncap injector.</h1>
+                <img src="assets/images/start-dose-ready-to-inject-uncap.gif">
+              </div>
+            `,
+          },
+          content: {
+            actions: [
+              {
+                label: 'Previous step',
+                action: () => { this.sliderPage.slidePrev() }
+              },
+              {
+                label: 'Next Step',
+                action: () => { 
+                  this.sliderPage.slideNext();
+                }
+              }
+            ],
+          },
+        },
+        {
+          header: {
+            color: '--color-bg-pastel-beige',
+            template: `
+              <div class="start-dose-ready-to-inject__content">
+                <h1 class="font-heading-1--bold">Almost there...</h1>
+              </div>
+            `,
+            cards: [
+              {
+                type: 'stepper',
+                indicator: '1',
+                title: 'To inject, firmly press and hold down',
+                asset: '/assets/images/start-dose-ready-to-inject-card-1.svg',
+                description: 'On the next screen, press the injector against skin until it <strong>clicks</strong>.  The light will turn <strong>purple</strong> while injecting.',
+              },
+              {
+                type: 'stepper',
+                indicator: '2',
+                title: 'Hold down for 10 seconds',
+                asset: '/assets/images/start-dose-ready-to-inject-card-2.svg',
+                description: 'The injection will take <strong>10 seconds</strong> to complete. Hold down for the entire time.',
+              },
+              {
+                type: 'stepper',
+                indicator: '3',
+                title: 'Green means finished',
+                asset: '/assets/images/start-dose-ready-to-inject-card-3.svg',
+                description: 'The light will turn <strong>green</strong> when the injection is complete and you can safely release.',
+              }
+            ],
+          },
+          content: {
+            actions: [
+              {
+                label: 'Previous step',
+                action: () => { this.sliderPage.slidePrev() }
+              },
+              {
+                label: 'Next Step',
+                action: () => { 
+                  this.sliderPage.slideNext();
+                  // simulate Waiting for injection process
+                  // first, wait for 2seg to set bgColor as purple
+                  setTimeout(() => {
+                    this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
+                      color: '--color-bg-pastel-purple'
+                    }));
+                  }, 2000);
+    
+                  // second, wait for 4segs to set bgColor as lime
+                  setTimeout(() => {
+                    this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
+                      color: '--color-bg-pastel-lime'
+                    }));
+                  }, 4000);
+    
+                  // then, wait for 6.5segs to go to the next slide
+                  setTimeout(() => {
+                    this.sliderPage.slideNext();
+                  }, 6500);
+                }
+              }
+            ],
+          },
+        },
+        {
+          header: {
+            color: '--color-bg-pastel-honey-yellow',
+            template: `
+              <div class="start-dose-ready-to-inject__content">
+                <h1 class="font-heading-1--bold">We’re ready for you.</h1>
+                <p>Pinch about an inch of skin at the injection site, then press and hold the injector down to start the dose. The app will detect when you start.</p>
+                <img src="assets/images/start-dose-ready-to-inject-waiting-for-injection.gif">
+                <h4>Waiting for you to begin injection</h4>
+                <div class="loader"></div>
+                <p>The Guide will <strong>detect when you inject</strong> and <strong>advance automatically.</strong></p>
+              </div>
+            `,
+          },
+          content: {
+            hide: true,
+          },
+        },
+      );
+    }
+
+    this.slides.push(
+      {
+        header: {
+          color: '--color-bg-pastel-purple',
+          template: null,
+          component: 'start-dose-ready-to-inject-dosing',
+        },
+        content: {
+          hide: true,
+        },
+      },
+    )
   }
 }

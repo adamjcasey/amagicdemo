@@ -39,7 +39,7 @@ export class StartDoseInjectDonePage implements OnInit {
           component: 'start-dose-inject-done-progress',
         },
         content: {
-          showNavigation: false,
+          hideNavigation: true,
           actions: [
             {
               label: 'Add dose notes',
@@ -84,7 +84,7 @@ export class StartDoseInjectDonePage implements OnInit {
                 `,
               },
               content: {
-                showNavigation: false,
+                hideNavigation: true,
                 actions: [
                   {
                     label: 'Got it',
@@ -98,7 +98,7 @@ export class StartDoseInjectDonePage implements OnInit {
                         <div class="start-dose-inject-done">
                             <h1 class="font-heading-1--bold">Do not discard!</h1>
                             <p>We will reuse this connected autoinjector for future demonstrations</p>
-                            <ion-button fill="outline" expand="block" color="light" (click)="toggle()">
+                            <ion-button fill="outline" expand="block" color="light" onclick="window.backdropComponent.close()">
                               Got it
                             </ion-button>
                           </div>
@@ -126,7 +126,7 @@ export class StartDoseInjectDonePage implements OnInit {
                 `,
               },
               content: {
-                showNavigation: false,
+                hideNavigation: true,
                 actions: [
                   {
                     label: 'Got it',
@@ -164,7 +164,7 @@ export class StartDoseInjectDonePage implements OnInit {
                 ],
               },
               content: {
-                showNavigation: false,
+                hideNavigation: true,
                 actions: [
                   {
                     label: 'Set up smart reminders',
