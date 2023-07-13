@@ -1,6 +1,7 @@
 <ion-content [fullscreen]="true">
   <section class="home-page">
     <automagic-hero 
+      *ngIf="heroConfig"
       [color]="heroConfig.color" 
       [image]="heroConfig.image" 
       [template]="heroConfig.template" 
