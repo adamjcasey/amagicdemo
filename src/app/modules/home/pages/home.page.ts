@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
+import * as moment from 'moment';
 
 import * as fromStore from '@home/store';
 import * as fromCoreStore from '@core/store';
@@ -70,10 +71,9 @@ export class HomePage implements OnInit, AfterViewInit {
     this.homeConfig$.subscribe(homeConfig => {
       if (homeConfig) {
         this.homeConfig = homeConfig;
-
         if (!this.homeConfig.firstTimeDose) {
           this.heroConfig.template = `
-            <h1 class="font-heading-1--bold">Hi ${name}!</h1>
+            <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
             <p>Your Theryx® dose is scheduled for today!</p>
           `;
           // after the firstDose add Review your schedule button
@@ -99,6 +99,20 @@ export class HomePage implements OnInit, AfterViewInit {
                 `,
               }));
             }, 600);
+          }
+        }
+
+        if (this.heroConfig.doses) {
+          const markedDoses = this.heroConfig.doses.filter((dose: any) => dose.marked);
+          if (markedDoses.length > 0) {
+            const unmarkedDose = this.heroConfig.doses.filter((dose: any) => dose.marked)[0];
+            const nextDoseDate = moment(unmarkedDose.date);
+            const nextDoseDateFormated = nextDoseDate.format('D MMMM YYYY');
+            this.heroConfig.template = `
+              <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
+              <h5>Welcome to wellness on your schedule.</h5>
+              <p>Your next Theryx® dose is scheduled for <stong>${nextDoseDateFormated}</stong></p>
+            `;
           }
         }
       }

@@ -48,7 +48,7 @@ export class AddSymptomPage implements OnInit {
               },
               {
                 label: 'Save',
-                // disabled: true,
+                disabled: true,
                 action: () => { 
                   this.sliderPage.slideNext();
                 }

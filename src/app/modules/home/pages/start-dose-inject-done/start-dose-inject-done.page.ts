@@ -44,19 +44,35 @@ export class StartDoseInjectDonePage implements OnInit {
             {
               label: 'Add dose notes',
               action: () => {
-                // go to add dose notes form
+                this.sliderPage.slideNext();
               },
             },
             {
               label: 'Done',
               action: () => { 
-                this.sliderPage.slideNext();
-                
+                this.sliderPage.slideTo(2);
               }
             }
           ],
         },
       },
+      {
+        content: {
+          isExpanded: true,
+          component: 'start-dose-inject-dose-notes',
+          toolbar: { 
+            actions: [
+              {
+                label: 'Cool!',
+                // disabled: true,
+                action: () => {
+                  this.sliderPage.slideNext();
+                },
+              },
+            ]
+          } 
+        }
+      }
     ];
   }
 
@@ -204,7 +220,7 @@ export class StartDoseInjectDonePage implements OnInit {
         }
 
         const markedDoses = this.homeConfig?.doses.filter((dose: any) => dose.marked);
-        // if the first one dose was injected, for the demo purpose we fill 
+        // if the first one dose was injected, for the demo purpose we'll fill 
         // automatically 5 doses to leave the user in the last dose
         if (markedDoses.length === 1) {
           setTimeout(() => {

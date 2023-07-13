@@ -1,12 +1,58 @@
-<form [formGroup]="addSymptomFormGroup" autocomplete="off">
-  <!-- Rate Field with icons / field: feelingOverall -->
-  <!-- Textfield Custom notes / field: customNote -->
-  <!-- Checkboxes Symptoms / field: symptoms -->
-  <ion-button fill="clear" color="purple">
+<form class="add-symptom-form" [formGroup]="addSymptomFormGroup" autocomplete="off">
+  <automagic-rating-field 
+    [label]="'How are you feeling overall?'"
+    [value]="1"
+    [showIcons]="true"
+    (onChage)="ratingFieldUpdate($event, 'feelingOverall')"
+  ></automagic-rating-field>
+
+  <!-- <div class="field-wrapper">
+    <p class="field-description">Add a custom note or select the symptoms below that apply:</p>
+    <ion-input 
+      color="purple" 
+      fill="outline" 
+      mode="md" 
+      placeholder="Type or dictate a note here..." 
+      formControlName="customNote"
+    ></ion-input>
+  </div> -->
+
+  <div class="field-wrapper">
+    <p class="field-label">Symptoms</p>
+    <div class="field-checkboxes">
+      <ion-checkbox 
+        [checked]="symptom.marked"
+        labelPlacement="end"
+        *ngFor="let symptom of symptoms; let i = index" 
+        (click)="markSymptom($event, i)">
+        {{ symptom.label }}
+      </ion-checkbox>
+    </div>
+  </div>
+
+  <ion-button class="add-photo-cta" fill="clear" color="purple" size="small">
     <ion-icon slot="start" src="/assets/icons/add-photo.svg"></ion-icon>
     Add photo
   </ion-button>
-  <!-- Rate Field with words / field: severity -->
-  <!-- Rate Field with words / field: energyLevels -->
-  <!-- Rate Field with words / field: sleepQuality -->
+
+  <automagic-rating-field 
+    [label]="'How are your symptoms?'"
+    [value]="1"
+    [rates]="['Very Severe', 'Absent']"
+    (onChage)="ratingFieldUpdate($event, 'severity')"
+  ></automagic-rating-field>
+
+  <automagic-rating-field 
+    [label]="'How are your energy levels?'" 
+    [value]="1" 
+    [rates]="['Low', 'High']" 
+    (onChage)="ratingFieldUpdate($event, 'energyLevels')"
+  ></automagic-rating-field>
+
+  <automagic-rating-field 
+    [label]="'How is your sleep quality?'" 
+    [value]="1" 
+    [rates]="['Not good', 'Good']" 
+    (onChage)="ratingFieldUpdate($event, 'sleepQuality')"
+  ></automagic-rating-field>
 </form>

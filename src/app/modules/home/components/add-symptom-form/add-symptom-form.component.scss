@@ -1,14 +1,7 @@
 @import 'src/theme/base/mixins';
 
-.start-dose-prepare__instructions {
-  text-align: center;
-
-  .timer {
-    p {
-      margin-top: var(--space-xxxs);
-      margin-bottom: var(--space-xxxs);
-      font-size: 4rem;
-      font-weight: var(--font-weight-extra-light);
-    }
+.add-symptom-form {
+  .add-photo-cta {
+    margin-bottom: var(--space-m);
   }
 }

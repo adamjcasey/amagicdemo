@@ -1,0 +1,17 @@
+@import 'src/theme/base/mixins';
+
+.start-dose-inject-dose-notes {
+  padding-bottom: var(--space-m);
+  text-align: center;
+
+  h3 {
+    margin-top: var(--space-xl);
+    margin-bottom: var(--space-l);
+    font-weight: var(--font-weight-bold);
+  }
+
+  .add-photo-cta {
+    margin-bottom: var(--space-m);
+    text-align: left;
+  }
+}

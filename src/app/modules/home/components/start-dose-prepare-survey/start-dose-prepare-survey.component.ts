@@ -2,13 +2,14 @@ import {
   Component,
   ViewEncapsulation, 
   OnInit,
-  ViewChild,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import * as fromStore from '../../store';
 import * as fromCoreStore from '@core/store';
+import * as fromSharedStore from '@shared/store';
 
 @Component({
   selector: 'automagic-start-dose-prepare-survey',
@@ -17,20 +18,34 @@ import * as fromCoreStore from '@core/store';
   encapsulation: ViewEncapsulation.None
 })
 export class StartDosePrepareSurveyComponent implements OnInit {
-  public pageData$!: Observable<any>;
-  public pageData: any;
+  public sliderPageConfig$!: Observable<any>;
+  public sliderPageConfig: any;
+  public homeConfig$!: Observable<any>;
+  public homeConfig: any;
+  public surveyFormGroup: FormGroup;
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
+    private _formBuilder: FormBuilder,
   ) {
-    this.pageData$ = this._store.select(fromStore.getHomeConfig);
+    this.sliderPageConfig$ = this._store.select(fromSharedStore.getSliderPageConfig);
+    this.homeConfig$ = this._store.select(fromStore.getHomeConfig);
+    this.surveyFormGroup = this._formBuilder.group({
+      overall: ['', [Validators.required]],
+      symptoms: ['', [Validators.required]],
+      energyLevel: ['', [Validators.required]],
+    });
   }
 
   ngOnInit() {
-    this.pageData$.subscribe(pageData => {
-      if (pageData) {
-        this.pageData = pageData;
+    this.homeConfig$.subscribe(homeConfig => {
+      if (homeConfig) {
+        this.homeConfig = homeConfig;
       }
     });
+  }
+
+  ratingFieldUpdate(event: any, field: string) {
+    this.surveyFormGroup.get(field)?.setValue(event);
   }
 }

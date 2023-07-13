@@ -1,0 +1,49 @@
+<form class="start-dose-inject-dose-notes" [formGroup]="doseNotesFormGroup" autocomplete="off">
+  <h1 class="font-heading-1--bold">Dose Notes</h1>
+  <p>Consistent injection records can help your HCP and give insight into your progress over time.</p>
+  <h3>Injection experience</h3>
+
+  <automagic-rating-field 
+    [value]="1"
+    [rates]="['Very Painful', 'Less Painful']"
+    (onChage)="ratingFieldUpdate($event, 'painful')"
+  ></automagic-rating-field>  
+
+  <automagic-rating-field 
+    [label]="'How are your energy levels?'" 
+    [value]="1" 
+    [rates]="['Anxious', 'Calm']" 
+    (onChage)="ratingFieldUpdate($event, 'mood')"
+  ></automagic-rating-field>
+
+  <div class="field-wrapper">
+    <p class="field-label">Reactions</p>
+    <div class="field-checkboxes">
+      <ion-checkbox 
+        [checked]="reaction.marked"
+        labelPlacement="end"
+        *ngFor="let reaction of reactions; let i = index" 
+        (click)="markReaction($event, i)">
+        {{ reaction.label }}
+      </ion-checkbox>
+    </div>
+  </div>
+
+  <div class="add-photo-cta">
+    <ion-button fill="clear" color="purple" size="small">
+      <ion-icon slot="start" src="/assets/icons/add-photo.svg"></ion-icon>
+      Add photo
+    </ion-button>
+  </div>
+
+  <div class="field-wrapper">
+    <p class="field-label">Note</p>
+    <ion-input 
+      color="purple" 
+      fill="outline" 
+      mode="md" 
+      placeholder="Type or dictate a note here..." 
+      formControlName="note"
+    ></ion-input>
+  </div>
+</form>
