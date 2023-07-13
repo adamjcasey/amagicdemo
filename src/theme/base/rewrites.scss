@@ -70,3 +70,20 @@ ion-input {
     }
   }
 }
+
+ion-checkbox {
+  --size: 32px;
+  --checkbox-background-checked: var(--color-white);
+  --checkmark-color: var(--color-primary-purple);
+  --checkmark-width: 2px;
+  font-weight: var(--font-weight-regular);
+}
+
+ion-checkbox::part(container) {
+  border-radius: 8px;
+  border: 2px solid var(--color-gray);
+}
+
+.checkbox-wrapper {
+  flex-direction: row-reverse;
+}
