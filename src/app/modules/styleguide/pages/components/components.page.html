@@ -2,6 +2,24 @@
   <section class="components-page">
     <ion-button color="purple" [routerLink]="['/styleguide']">Go to Styleguide</ion-button>
 
+    <h2>Rating Field</h2>
+    <form [formGroup]="testFormGroup" autocomplete="off">
+      <automagic-rating-field 
+        [name]="'name'"
+        [label]="'How are your symptoms?'"
+        [value]="1"
+        [showIcons]="true"
+        [rates]="['Very Severe', 'Absent']"
+      ></automagic-rating-field>
+
+      <automagic-rating-field 
+        [name]="'name'"
+        [label]="'How are your symptoms?'"
+        [value]="1"
+        [rates]="['Very Severe', 'Absent']"
+      ></automagic-rating-field>
+    </form>
+
     <h2>Buttons</h2>
     <ion-button>Default</ion-button>
     <ion-button [disabled]="true">Default Disabled</ion-button>

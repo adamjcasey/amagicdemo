@@ -1,10 +1,12 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
+import * as moment from 'moment';
 
 import * as fromStore from '@home/store';
 import * as fromCoreStore from '@core/store';
 import * as fromSharedStore from '@shared/store';
+import * as fromWelcomeStore from '@welcome/store';
 
 @Component({
   selector: 'automagic-home',
@@ -12,34 +14,19 @@ import * as fromSharedStore from '@shared/store';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit, AfterViewInit {
+  public welcomeState$!: Observable<any>;
+  public welcomeState: any;
   public homeConfig$!: Observable<any>;
   public homeConfig: any;
   public heroConfig: any;
   public card: any;
+  public name: string = '';
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
   ) {
+    this.welcomeState$ = this._store.select(fromWelcomeStore.getWelcomeState);
     this.homeConfig$ = this._store.select(fromStore.getHomeConfig);
-
-    this.heroConfig = {
-      color: 'var(--color-bg-pastel-green)',
-      image: '/assets/images/homepage.svg',
-      template: `
-        <h1 class="font-heading-1--bold">Hi Marissa!</h1>
-        <h5>Welcome to wellness on your schedule.</h5>
-        <p>Ready to start your Theryx® injections?<br> Your first guided injection will take about <strong>10 minutes.</strong></p>
-      `,
-      actions: [
-        {
-          label: 'Start dose',
-          action: () => {
-            this.goTo('/home/start-dose/prepare');
-          }
-        }
-      ]
-    }
-
     this.card = {
       asset: '/assets/images/note.svg',
       title: 'Track your progress',
@@ -54,13 +41,39 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    this.welcomeState$.subscribe(welcomeState => {
+      if (welcomeState) {
+        this.welcomeState = welcomeState;
+        this.name = this.welcomeState.name;
+
+        if (this.name !== '') {
+          this.heroConfig = {
+            color: 'var(--color-bg-pastel-green)',
+            image: '/assets/images/homepage.svg',
+            template: `
+              <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
+              <h5>Welcome to wellness on your schedule.</h5>
+              <p>Ready to start your Theryx® injections?<br> Your first guided injection will take about <strong>10 minutes.</strong></p>
+            `,
+            actions: [
+              {
+                label: 'Start dose',
+                action: () => {
+                  this.goTo('/home/start-dose/prepare');
+                }
+              }
+            ]
+          }
+        }
+      }
+    });
+
     this.homeConfig$.subscribe(homeConfig => {
       if (homeConfig) {
         this.homeConfig = homeConfig;
-
         if (!this.homeConfig.firstTimeDose) {
           this.heroConfig.template = `
-            <h1 class="font-heading-1--bold">Hi Marissa!</h1>
+            <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
             <p>Your Theryx® dose is scheduled for today!</p>
           `;
           // after the firstDose add Review your schedule button
@@ -86,6 +99,20 @@ export class HomePage implements OnInit, AfterViewInit {
                 `,
               }));
             }, 600);
+          }
+        }
+
+        if (this.heroConfig.doses) {
+          const markedDoses = this.heroConfig.doses.filter((dose: any) => dose.marked);
+          if (markedDoses.length > 0) {
+            const unmarkedDose = this.heroConfig.doses.filter((dose: any) => dose.marked)[0];
+            const nextDoseDate = moment(unmarkedDose.date);
+            const nextDoseDateFormated = nextDoseDate.format('D MMMM YYYY');
+            this.heroConfig.template = `
+              <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
+              <h5>Welcome to wellness on your schedule.</h5>
+              <p>Your next Theryx® dose is scheduled for <stong>${nextDoseDateFormated}</stong></p>
+            `;
           }
         }
       }

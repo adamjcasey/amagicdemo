@@ -20,6 +20,7 @@ export class AddSymptomFormComponent implements OnInit {
   public sliderPageConfig$!: Observable<any>;
   public sliderPageConfig: any;
   public addSymptomFormGroup: FormGroup;
+  public symptoms: any[];
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
@@ -27,13 +28,39 @@ export class AddSymptomFormComponent implements OnInit {
   ) {
     this.sliderPageConfig$ = this._store.select(fromSharedStore.getSliderPageConfig);
     this.addSymptomFormGroup = this._formBuilder.group({
-      feelingOverall: ['', [Validators.required]],
-      customNote: ['', [Validators.required]],
+      feelingOverall: [1, [Validators.required]],
+      customNote: ['', ''],
       symptoms: ['', [Validators.required]],
-      severity: ['', [Validators.required]],
-      energyLevels: ['', [Validators.required]],
-      sleepQuality: ['', [Validators.required]],
+      severity: [1, [Validators.required]],
+      energyLevels: [1, [Validators.required]],
+      sleepQuality: [1, [Validators.required]],
     });
+    this.symptoms = [
+      {
+        marked: false,
+        label: 'Bloating'
+      },
+      {
+        marked: false,
+        label: 'Cramps'
+      },
+      {
+        marked: false,
+        label: 'Nausea'
+      },
+      {
+        marked: false,
+        label: 'Indigestion'
+      },
+      {
+        marked: false,
+        label: 'Acid Reflux'
+      },
+      {
+        marked: false,
+        label: 'Diarrhea'
+      },
+    ];
   }
 
   ngOnInit() {
@@ -76,5 +103,17 @@ export class AddSymptomFormComponent implements OnInit {
         }
       }
     });
+  }
+
+  markSymptom(event: any, index: number) {
+    event.preventDefault();
+    this.symptoms[index].marked = !this.symptoms[index].marked;
+    this.addSymptomFormGroup.patchValue({
+      symptoms: this.symptoms,
+    });
+  }
+
+  ratingFieldUpdate(event: any, field: string) {
+    this.addSymptomFormGroup.get(field)?.setValue(event);
   }
 }

@@ -1,10 +1,15 @@
 .field {
   &-wrapper {
     text-align: left;
+    margin-bottom: var(--space-m);
+
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 
   &-label {
-    @include paragraph-s;
+    @include paragraph-l;
     display: inline-block;
     margin-top: 0;
     font-weight: var(--font-weight-bold);
@@ -19,6 +24,16 @@
         position: absolute;
         right: calc(var(--space-xxxs) * -1);
         color: var(--ion-color-salmon);
+      }
+    }
+  }
+
+  &-checkboxes {
+    column-count: 2;
+
+    ion-checkbox {
+      &:nth-child(n+2) {
+        margin-top: var(--space-xxxs);
       }
     }
   }

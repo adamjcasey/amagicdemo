@@ -3,6 +3,7 @@ import { BackdropComponent } from './backdrop/backdrop.component';
 import { BottomToolbarComponent } from './bottom-toolbar/bottom-toolbar.component';
 import { CardComponent } from './card/card.component';
 import { PinInputComponent } from './pin-input/pin-input.component';
+import { RatingFieldComponent } from './rating-field/rating-field.component';
 import { DatepickerComponent } from './datepicker/datepicker.component';
 import { HeroComponent } from './hero/hero.component';
 import { SliderPageComponent } from './slider-page/slider-page.component';
@@ -14,6 +15,7 @@ export const components: any[] = [
   BottomToolbarComponent,
   CardComponent,
   PinInputComponent,
+  RatingFieldComponent,
   DatepickerComponent,
   HeroComponent,
   SliderPageComponent,
@@ -29,3 +31,4 @@ export * from './datepicker/datepicker.component';
 export * from './hero/hero.component';
 export * from './slider-page/slider-page.component';
 export * from './alert/alert.component';
+export * from './rating-field/rating-field.component';

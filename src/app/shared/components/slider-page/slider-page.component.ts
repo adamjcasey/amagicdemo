@@ -192,6 +192,11 @@ export class SliderPageComponent implements OnInit {
     }
   }
 
+  slideTo(index: number) {
+    this.sliderHeader.swiperRef.slideTo(index);
+    this.sliderContent.swiperRef.slideNext(index);
+  }
+
   sanitizeContent(htmlContent: string): SafeHtml {
     return this._sanitizer.bypassSecurityTrustHtml(htmlContent);
   }
@@ -231,6 +236,9 @@ export class SliderPageComponent implements OnInit {
         break;
       case 'start-dose-inject-done-progress':
         componentRef = element.createComponent(fromHomeComponents.StartDoseInjectDoneProgressComponent);
+        break;
+      case 'start-dose-inject-dose-notes':
+        componentRef = element.createComponent(fromHomeComponents.StartDoseInjectDoseNotesFormComponent);
         break;
       case 'start-dose-inject-done-report':
         componentRef = element.createComponent(fromHomeComponents.StartDoseInjectDoneReportComponent);
