@@ -6,7 +6,7 @@
   .hero__layer {
     position: absolute;
     left: 0;
-    bottom: -2px;
+    bottom: 0;
     width: 100vw;
     height: 10vw;
     background-image: url(/assets/images/hero-layer.svg);
@@ -15,10 +15,9 @@
     background-repeat: no-repeat;
   }
 
-  .hero__template,
-  .hero__actions {
-    padding-right: var(--space-s);
-    padding-left: var(--space-s);
+  .hero__content {
+    padding-right: var(--space-m);
+    padding-left: var(--space-m);
     text-align: center;
   }
 
@@ -30,7 +29,7 @@
 
   .hero__actions {
     ion-button {
-      &:last-child {
+      &:nth-child(2) {
         position: absolute;
         bottom: 0;
         left: 50%;

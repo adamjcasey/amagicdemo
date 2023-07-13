@@ -61,7 +61,7 @@ export class StartDosePrepareTempTimerComponent implements OnInit, AfterViewInit
         template: `
           <h1 class="font-heading-1--bold">No need to wait!</h1>
           <p>For this demo we’ve sped up the<br> warming time.</p>
-          <ion-button fill="outline" expand="block" color="light" (click)="toggle()">
+          <ion-button fill="outline" expand="block" color="light" onclick="window.backdropComponent.close()">
             Got it
           </ion-button>
         `,
@@ -84,7 +84,7 @@ export class StartDosePrepareTempTimerComponent implements OnInit, AfterViewInit
           }
         }));
       }, 500);
-    }, 3000);
+    }, 1500);
   }
 
   startTimer() {

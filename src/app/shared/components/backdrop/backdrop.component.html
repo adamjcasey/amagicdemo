@@ -18,7 +18,7 @@
       <ion-button 
         class="back-button" 
         *ngIf="config.backButton" 
-        (click)="config.backButton?.action($event)" 
+        (click)="config.backButton.action ? config.backButton?.action($event) : showSubmenu(0)" 
         fill="clear" color="light" size="small">
 
         <ion-icon name="chevron-back-outline" color="light"></ion-icon>

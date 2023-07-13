@@ -63,6 +63,12 @@ export class BackdropComponent implements OnInit {
         }
       }
     });
+
+    window.backdropComponent = {
+      close: () => {
+        this._store.dispatch(new fromStore.BackdropClose());
+      },
+    }
   }
 
   toggle() {

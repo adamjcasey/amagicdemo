@@ -35,7 +35,7 @@ export class StartDosePreparePage implements OnInit {
           asset: 'assets/images/start-dose-prepare-1.svg',
         },
         content: {
-          showNavigation: false,
+          hideNavigation: true,
           template: `
             <h1 class="font-heading-1--bold">Take the autoinjector out of the box.</h1>
             <p>Your Automagic autoinjector will turn on automatically when you pick it up.</p>
@@ -56,7 +56,7 @@ export class StartDosePreparePage implements OnInit {
           asset: 'assets/images/start-dose-prepare-2.svg',
         },
         content: {
-          showNavigation: false,
+          hideNavigation: true,
           actions: null,
           template: `
             <h1 class="font-heading-1--bold">Connecting...</h1>
@@ -69,7 +69,7 @@ export class StartDosePreparePage implements OnInit {
           asset: 'assets/images/start-dose-prepare-3.svg',
         },
         content: {
-          showNavigation: false,
+          hideNavigation: true,
           template: `
             <h1 class="font-heading-1--bold">Connected!</h1>
           `,

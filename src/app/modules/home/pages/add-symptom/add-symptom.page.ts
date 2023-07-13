@@ -93,12 +93,6 @@ export class AddSymptomPage implements OnInit {
   }
 
   ngOnInit() {
-    this.sliderPageConfig$.subscribe(sliderPageConfig => {
-      if (sliderPageConfig) {
-        this.sliderPageConfig = sliderPageConfig;
-      }
-    });
-
     this.homeConfig$.subscribe(homeConfig => {
       if (homeConfig) {
         this.homeConfig = homeConfig;
