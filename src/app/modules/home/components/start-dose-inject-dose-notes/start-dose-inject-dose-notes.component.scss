@@ -13,5 +13,9 @@
   .add-photo-cta {
     margin-bottom: var(--space-m);
     text-align: left;
+
+    ion-button {
+      --padding-start: var(--space-xxxs);
+    }
   }
 }
