@@ -6,7 +6,6 @@ import {
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import * as moment from 'moment';
 
 import * as fromStore from '@home/store';
 import * as fromSharedStore from '@shared/store';
