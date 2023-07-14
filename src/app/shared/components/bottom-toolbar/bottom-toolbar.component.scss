@@ -28,8 +28,8 @@
       content: '';
       position: absolute;
       top: 0;
-      left: 0;
-      width: 100%;
+      left: calc(50% - 22px);
+      width: 44px;
       height: 0;
       background-color: var(--color-primary-purple);
       border-radius: 2px;
