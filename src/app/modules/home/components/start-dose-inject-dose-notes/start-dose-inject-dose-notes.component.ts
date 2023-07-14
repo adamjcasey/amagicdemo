@@ -31,7 +31,7 @@ export class StartDoseInjectDoseNotesFormComponent implements OnInit {
       painful: ['', [Validators.required]],
       mood: ['', [Validators.required]],
       reactions: ['', [Validators.required]],
-      note: ['', [Validators.required]],
+      note: ['', ''],
     });
 
     this.reactions = [

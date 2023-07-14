@@ -50,7 +50,7 @@ export class StartDoseInjectDonePage implements OnInit {
             {
               label: 'Done',
               action: () => { 
-                this.sliderPage.slideTo(2);
+                this.finishStep();
               }
             }
           ],
@@ -66,7 +66,7 @@ export class StartDoseInjectDonePage implements OnInit {
                 label: 'Cool!',
                 // disabled: true,
                 action: () => {
-                  this.sliderPage.slideNext();
+                  this.finishStep();
                 },
               },
             ]
@@ -278,6 +278,35 @@ export class StartDoseInjectDonePage implements OnInit {
         }
       }
     });
+  }
+
+  finishStep() {
+    this._store.dispatch(new fromSharedStore.SliderPageClear());
+    this.goTo('home');
+
+    if (this.homeConfig.firstTimeDose) {
+      setTimeout(() => {
+        this._store.dispatch(new fromSharedStore.AlertShow({
+          mode: 'full',
+          template: `
+            <img src="assets/images/alert-setup-reminders.svg" />
+            <h1 class="font-heading-1--bold">Smart reminders saved</h1>
+            <p>AutoMagic will learn from your selections to improve recommendations.</p>
+          `,
+          actions: [
+            {
+              label: 'Ok, let’s go!',
+              action: () => {
+                this._store.dispatch(new fromSharedStore.AlertClose());
+                this._store.dispatch(new fromStore.SetData({
+                  firstTimeDose: this.homeConfig.firstTimeDose ? false : this.homeConfig.firstTimeDose
+                }));
+              },
+            }
+          ],
+        }));
+      }, 500);
+    }
   }
 
   goTo(path: string) {
