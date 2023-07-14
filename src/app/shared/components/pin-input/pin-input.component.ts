@@ -14,8 +14,10 @@ import {
   encapsulation: ViewEncapsulation.None
 })
 export class PinInputComponent implements AfterViewInit {
-  @Output() pinChange = new EventEmitter<number>();
+  @Output() onChange = new EventEmitter<string>();
+  @Output() onError = new EventEmitter<boolean>();
   @Input() error!: any;
+  @Input() allowedCodes!: string[];
 
   constructor() {}
 
@@ -51,7 +53,25 @@ export class PinInputComponent implements AfterViewInit {
     const digit2 = (document.getElementById('digit-2') as HTMLInputElement);
     const digit3 = (document.getElementById('digit-3') as HTMLInputElement);
     const digit4 = (document.getElementById('digit-4') as HTMLInputElement);
-    this.pinChange.emit(Number(`${digit1?.value}${digit2?.value}${digit3?.value}${digit4?.value}`));
+    const output = `${digit1?.value}${digit2?.value}${digit3?.value}${digit4?.value}`;
+    if (this.allowedCodes) {
+      if (output.length === 4) {
+        if (!this.allowedCodes.includes(output)) {
+          this.error = 'Invalid digital code';
+          this.onError.emit(true);
+        }
+        else {
+          this.error = null;
+          this.onError.emit(false);
+        }
+      }
+      else {
+        this.error = null;
+        this.onError.emit(false);
+      }
+    }
+
+    this.onChange.emit(output);
   }
 
 }

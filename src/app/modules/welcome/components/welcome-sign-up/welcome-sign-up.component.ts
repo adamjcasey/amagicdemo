@@ -18,25 +18,36 @@ import * as fromStoreShared from '@shared/store';
 export class WelcomeSignUpComponent {
   public signUpFormGroup: FormGroup;
   public pinInvalid: boolean = false;
+  public allowedCodes: string[];
 
   constructor(
     private _store: Store<fromStore.WelcomeState>,
     private _formBuilder: FormBuilder,
   ) {
+    this.allowedCodes = [
+      '7897',
+      '1022',
+      '0511',
+      '5272',
+      '3572',
+    ];
     this.signUpFormGroup = this._formBuilder.group({
       code: ['', [
         Validators.required,
         Validators.pattern(/([0-9]{4})/),
         Validators.minLength(4),
-        Validators.maxLength(4),
       ]]
     });
   }
 
-  getPinCode(code: number) {
+  getPinCode(code: string) {
     this.signUpFormGroup.patchValue({
       code: code
     });
+  }
+
+  getPinError(error: boolean) {
+    this.pinInvalid = error;
   }
 
   registerUser() {
