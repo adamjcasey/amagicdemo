@@ -2,6 +2,7 @@
   'is-rendered': card.renderClass,
   'card--stepper': card.type === 'stepper',
   'card--featured': card.type === 'featured',
+  'card--simple': card.type === 'simple',
 }">
   <div class="card__indicator" *ngIf="card.type === 'stepper'">
     {{ card.indicator }}

@@ -1,5 +1,17 @@
-<ion-content [fullscreen]="true" class="ion-padding">
+<ion-content [fullscreen]="true">
   <section class="resources-page">
-    <h1>ResourcesPage</h1>
+    <h1 class="font-heading-1--bold">Resources</h1>
+
+    <ion-grid>
+      <ion-row class="ion-align-items-start">
+        <ion-col size="6"><automagic-card *ngFor="let card of cards_left" [card]="card"></automagic-card></ion-col>
+        <ion-col size="6"><automagic-card *ngFor="let card of cards_right" [card]="card"></automagic-card></ion-col>
+      </ion-row>
+    </ion-grid>
+
+    
+    <automagic-backdrop></automagic-backdrop>
+
+
   </section>
 </ion-content>

@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import * as fromPages from './pages';
 import { ResourcesRoutingModule } from './resources-routing.module';
+import { SharedModule } from '@shared/shared.module';
 
 @NgModule({
   imports: [
@@ -12,8 +13,11 @@ import { ResourcesRoutingModule } from './resources-routing.module';
     FormsModule,
     ReactiveFormsModule,
     IonicModule,
-    ResourcesRoutingModule
+    ResourcesRoutingModule,
+    SharedModule
   ],
-  declarations: [fromPages.pages]
+  declarations: [
+    fromPages.pages
+  ]
 })
 export class ResourcesModule {}
