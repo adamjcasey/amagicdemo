@@ -8,7 +8,7 @@
     {{ card.indicator }}
   </div>
 
-  <div class="card__wrapper">
+  <div class="card__wrapper" (click)="card.action && card.action()">
     <h5 class="card__title" *ngIf="card.title && card.type === 'stepper'">
       {{ card.title }}
     </h5>
