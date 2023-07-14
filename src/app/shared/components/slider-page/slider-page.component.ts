@@ -194,7 +194,7 @@ export class SliderPageComponent implements OnInit {
 
   slideTo(index: number) {
     this.sliderHeader.swiperRef.slideTo(index);
-    this.sliderContent.swiperRef.slideNext(index);
+    this.sliderContent.swiperRef.slideTo(index);
   }
 
   sanitizeContent(htmlContent: string): SafeHtml {

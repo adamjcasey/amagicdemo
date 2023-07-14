@@ -44,6 +44,7 @@ export class AddSymptomPage implements OnInit {
                 label: 'Cancel',
                 action: () => {
                   this.goTo('home');
+                  this._store.dispatch(new fromSharedStore.SliderPageClear());
                 },
               },
               {

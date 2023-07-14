@@ -45,7 +45,6 @@ export class HomePage implements OnInit, AfterViewInit {
       if (welcomeState) {
         this.welcomeState = welcomeState;
         this.name = this.welcomeState.name;
-
         if (this.name !== '') {
           this.heroConfig = {
             color: 'var(--color-bg-pastel-green)',
@@ -72,17 +71,54 @@ export class HomePage implements OnInit, AfterViewInit {
       if (homeConfig) {
         this.homeConfig = homeConfig;
         if (!this.homeConfig.firstTimeDose) {
-          this.heroConfig.template = `
-            <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
-            <p>Your Theryx® dose is scheduled for today!</p>
-          `;
-          // after the firstDose add Review your schedule button
-          // if (this.heroConfig.actions.length === 1) {
-            // this.heroConfig.actions.push({
-            //   label: 'Review your schedule'
-            // });
-          // }
-  
+          if (this.homeConfig.doses) {
+            const markedDoses = this.homeConfig.doses.filter((dose: any) => dose.marked);
+            if (markedDoses.length) {
+              const unmarkedDoses = this.homeConfig.doses.filter((dose: any) => dose.marked);
+              console.log('unmarkedDoses ', unmarkedDoses);
+              const nextDoseDate = moment(unmarkedDoses[0].date);
+              console.log('nextDose ', unmarkedDoses[0]);
+              console.log('nextDoseDate ', nextDoseDate.format('DD/MM/YYYY'));
+              // if the next dose if is today, the message change
+              if (nextDoseDate.format('DD/MM/YYYY') === moment().format('DD/MM/YYYY')) {
+                console.log('nextDose is today');
+                this.heroConfig.template = `
+                  <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
+                  <p> Your Theryx® dose is scheduled for today!</p>
+                `;
+              }
+              // if not show the next dose scheduled date
+              else {
+                console.log('nextDose no is today');
+                const nextDoseDateFormated = nextDoseDate.format('D MMMM YYYY');
+                this.heroConfig.template = `
+                  <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
+                  <h5>Welcome to wellness on your schedule.</h5>
+                  <p>Your next Theryx® dose is scheduled for<br> <stong>${nextDoseDateFormated}</stong></p>
+                `;
+              }
+
+              // if the first one dose was injected, for the demo purpose we'll fill 
+              // automatically 5 doses to leave the user in the last dose
+              if (markedDoses.length === 1) {
+                console.log('hay una dose marked');
+                console.log('va a poner las 5 stars');
+                this._store.dispatch(new fromStore.SetData({
+                  doses: this.homeConfig.doses.map((dose: any, index: number) => {
+                    return {
+                      marked: index + 1 < this.homeConfig.doses.length 
+                        ? true 
+                        : false,
+                      date: index + 1 < this.homeConfig.doses.length 
+                        ? moment().add(index, 'week').toString() 
+                        : '',
+                    }
+                  }),
+                }));
+              }
+            }
+          }
+
           if (!this.homeConfig.flareUpsDemoDone) {
             // Flare Up flow starting
             setTimeout(() => {
@@ -99,20 +135,6 @@ export class HomePage implements OnInit, AfterViewInit {
                 `,
               }));
             }, 600);
-          }
-        }
-
-        if (this.heroConfig.doses) {
-          const markedDoses = this.heroConfig.doses.filter((dose: any) => dose.marked);
-          if (markedDoses.length > 0) {
-            const unmarkedDose = this.heroConfig.doses.filter((dose: any) => dose.marked)[0];
-            const nextDoseDate = moment(unmarkedDose.date);
-            const nextDoseDateFormated = nextDoseDate.format('D MMMM YYYY');
-            this.heroConfig.template = `
-              <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
-              <h5>Welcome to wellness on your schedule.</h5>
-              <p>Your next Theryx® dose is scheduled for <stong>${nextDoseDateFormated}</stong></p>
-            `;
           }
         }
       }
