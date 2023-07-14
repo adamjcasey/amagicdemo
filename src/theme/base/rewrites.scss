@@ -87,3 +87,9 @@ ion-checkbox::part(container) {
 .checkbox-wrapper {
   flex-direction: row-reverse;
 }
+
+ion-icon {
+  &.icon-medium {
+    font-size: var(--font-size-heading-3);
+  }
+}
