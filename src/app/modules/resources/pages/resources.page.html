@@ -1,5 +1,5 @@
 <ion-content [fullscreen]="true" class="resources-page">
-  <section class="resources-page">
+  <section class="resources-page-section">
     <h1 class="font-heading-1--bold">Resources</h1>
 
     <ion-grid>
@@ -8,9 +8,10 @@
         <ion-col size="6"><automagic-card *ngFor="let card of cards_right" [card]="card"></automagic-card></ion-col>
       </ion-row>
     </ion-grid>
+    
 
     
-    <automagic-backdrop></automagic-backdrop>
+    <!-- <automagic-backdrop></automagic-backdrop> -->
 
 
   </section>
