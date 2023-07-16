@@ -148,15 +148,6 @@ export class HomePage implements OnInit, AfterViewInit {
         fullScreen: true,
         header: true,
         bgTemplate: 'top-hole',
-        backButton: {
-          label: 'Menu',
-          action: () => {
-            this._store.dispatch(new fromSharedStore.BackdropShow({
-              template: null,
-              component: null,
-            }));
-          }
-        },
         template: `
           <h1 class="font-heading-1--bold">Dose Day</h1>
           <p>For this demo, let's pretend that <br>you're scheduled for your first at-<br>home dose today</p>
