@@ -55,23 +55,25 @@ export class BackdropComponent implements OnInit {
           }
 
           if (!this.isContentEmpty()) {
-            this.backButton = {
-              label: 'Menu',
-              action: () => {
-                if (this.config.fullScreen) {
-                  this.animateFullScreenToDefault();
-                }
+            if (this.config.showBackButton) {
+              this.backButton = {
+                label: 'Menu',
+                action: () => {
+                  if (this.config.fullScreen) {
+                    this.animateFullScreenToDefault();
+                  }
 
-                this.backButton = null;
-                this.contentComponent?.clear();
-                this._store.dispatch(new fromStore.BackdropSetConfig({
-                  transition: 'move',
-                  header: true,
-                  bgTemplate: this.config.bgTemplate ? null : null,
-                  fullScreen: this.config.fullScreen ? false : null,
-                  template: null,
-                  component: null,
-                }));
+                  this.backButton = null;
+                  this.contentComponent?.clear();
+                  this._store.dispatch(new fromStore.BackdropSetConfig({
+                    transition: 'move',
+                    header: true,
+                    bgTemplate: this.config.bgTemplate ? null : null,
+                    fullScreen: this.config.fullScreen ? false : null,
+                    template: null,
+                    component: null,
+                  }));
+                }
               }
             }
           }
@@ -112,13 +114,15 @@ export class BackdropComponent implements OnInit {
     this.sliderMainMenu?.swiperRef.slideTo(step);
     
     if (this.sliderMainMenu?.swiperRef.activeIndex > 0) {
-      this.backButton = {
-        label: 'Back',
-        action: () => {
-          this.sliderMainMenu.swiperRef.slideTo(0);
-          this.backButton = null;
-        }
-      };
+      if (this.config.showBackButton) {
+        this.backButton = {
+          label: 'Back',
+          action: () => {
+            this.sliderMainMenu.swiperRef.slideTo(0);
+            this.backButton = null;
+          }
+        };
+      }
     }
   }
 
