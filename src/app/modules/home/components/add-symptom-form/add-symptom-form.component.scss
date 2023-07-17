@@ -1,6 +1,8 @@
 @import 'src/theme/base/mixins';
 
 .add-symptom-form {
+  padding-bottom: var(--space-xxl);
+
   .add-photo-cta {
     margin-bottom: var(--space-m);
 

@@ -1,10 +1,12 @@
 <form class="add-symptom-form" [formGroup]="addSymptomFormGroup" autocomplete="off">
-  <automagic-rating-field 
-    [label]="'How are you feeling overall?'"
-    [value]="1"
-    [showIcons]="true"
-    (onChage)="ratingFieldUpdate($event, 'feelingOverall')"
-  ></automagic-rating-field>
+  <div class="field-wrapper">
+    <automagic-rating-field 
+      [label]="'How are you feeling overall?'"
+      [value]="1"
+      [showIcons]="true"
+      (onChage)="ratingFieldUpdate($event, 'feelingOverall')"
+    ></automagic-rating-field>
+  </div>
 
   <!-- <div class="field-wrapper">
     <p class="field-description">Add a custom note or select the symptoms below that apply:</p>
@@ -28,33 +30,39 @@
         {{ symptom.label }}
       </ion-checkbox>
     </div>
+
+    <div class="add-photo-cta">
+      <ion-button fill="clear" color="purple" size="small">
+        <ion-icon slot="start" src="/assets/icons/add-photo.svg"></ion-icon>
+        Add photo
+      </ion-button>
+    </div>
   </div>
 
-  <div class="add-photo-cta">
-    <ion-button fill="clear" color="purple" size="small">
-      <ion-icon slot="start" src="/assets/icons/add-photo.svg"></ion-icon>
-      Add photo
-    </ion-button>
+  <div class="field-wrapper">
+    <automagic-rating-field 
+      [label]="'How are your symptoms?'"
+      [value]="1"
+      [rates]="['Very Severe', 'Absent']"
+      (onChage)="ratingFieldUpdate($event, 'severity')"
+    ></automagic-rating-field>
   </div>
 
-  <automagic-rating-field 
-    [label]="'How are your symptoms?'"
-    [value]="1"
-    [rates]="['Very Severe', 'Absent']"
-    (onChage)="ratingFieldUpdate($event, 'severity')"
-  ></automagic-rating-field>
+  <div class="field-wrapper">
+    <automagic-rating-field 
+      [label]="'How are your energy levels?'" 
+      [value]="1" 
+      [rates]="['Low', 'High']" 
+      (onChage)="ratingFieldUpdate($event, 'energyLevels')"
+    ></automagic-rating-field>
+  </div>
 
-  <automagic-rating-field 
-    [label]="'How are your energy levels?'" 
-    [value]="1" 
-    [rates]="['Low', 'High']" 
-    (onChage)="ratingFieldUpdate($event, 'energyLevels')"
-  ></automagic-rating-field>
-
-  <automagic-rating-field 
-    [label]="'How is your sleep quality?'" 
-    [value]="1" 
-    [rates]="['Not good', 'Good']" 
-    (onChage)="ratingFieldUpdate($event, 'sleepQuality')"
-  ></automagic-rating-field>
+  <div class="field-wrapper">
+    <automagic-rating-field 
+      [label]="'How is your sleep quality?'" 
+      [value]="1" 
+      [rates]="['Not good', 'Good']" 
+      (onChage)="ratingFieldUpdate($event, 'sleepQuality')"
+    ></automagic-rating-field>
+  </div>
 </form>
