@@ -164,6 +164,10 @@
           max-width: 150px;
           margin-top: var(--space-xxs);
         }
+
+        .card__description {
+          @include paragraph-s;
+        }
       }
     }
   }
