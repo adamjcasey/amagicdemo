@@ -2,10 +2,11 @@ import {
   Component,
   ViewEncapsulation, 
   OnInit,
+  OnDestroy,
   ViewChild,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
 
 import * as fromStore from '@home/store';
 import * as fromSharedStore from '@shared/store';
@@ -18,11 +19,12 @@ import * as fromCoreStore from '@core/store';
   styleUrls: ['start-dose-prepare.page.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class StartDosePreparePage implements OnInit {
+export class StartDosePreparePage implements OnInit, OnDestroy {
   public homeConfig$!: Observable<any>;
   public homeConfig: any;
   public slides: Array<any> = [];
   @ViewChild('sliderPage', { static: false }) sliderPage!: fromSharedComponents.SliderPageComponent;
+  private _ngUnsubscribe: Subject<void> = new Subject<void>();
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
@@ -95,11 +97,33 @@ export class StartDosePreparePage implements OnInit {
   }
 
   ngOnInit() {
-    this.homeConfig$.subscribe(homeConfig => {
-      if (homeConfig) {
-        this.homeConfig = homeConfig;
-      }
+    this.homeConfig$
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(homeConfig => {
+        if (homeConfig) {
+          this.homeConfig = homeConfig;
+          const markedDoses = this.homeConfig.doses.filter((dose: any) => dose.marked);
+          if (markedDoses.length === 1) {
+            this._store.dispatch(new fromStore.SetData({
+              // if the first one dose was injected, for the demo purpose we'll fill 
+              // automatically 5 doses to leave the user in the last dose
+              doses: this.homeConfig.doses.map((dose: any, index: number) => {
+                return {
+                  ...dose,
+                  marked: index + 1 < this.homeConfig.doses.length 
+                    ? true 
+                    : false,
+                }
+              }),
+            }));
+          }
+        }
     });
+  }
+
+  ngOnDestroy() {
+    this._ngUnsubscribe.next();
+    this._ngUnsubscribe.complete();
   }
 
   slideNext(sliders: any) {

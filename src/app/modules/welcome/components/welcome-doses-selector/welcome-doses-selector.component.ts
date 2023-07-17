@@ -20,14 +20,14 @@ export class WelcomeDosesSelectorComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
-    this.defaultDoses.push(...[
+    this.defaultDoses.push(
       new Date(moment.now()),
       new Date(moment().add(1, 'week').calendar()),
       new Date(moment().add(2, 'week').calendar()),
       new Date(moment().add(3, 'week').calendar()),
       new Date(moment().add(6, 'week').calendar()),
       new Date(moment().add(9, 'week').calendar()),
-    ]);
+    );
     this.onDosesChange.emit(this.defaultDoses);
   }
 }

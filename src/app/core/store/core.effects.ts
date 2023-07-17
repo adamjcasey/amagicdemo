@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { NavController } from '@ionic/angular';
 import { Location } from '@angular/common';
 import { createEffect, Actions, ofType } from '@ngrx/effects';
 import { tap, map } from 'rxjs/operators';
@@ -13,7 +14,7 @@ export class CoreEffects {
       ofType(fromActions.ActionTypes.Go),
       map((action: fromActions.Go) => action.payload),
       tap(({ path, query: queryParams, extras }) => {
-        this._router.navigate(path, { queryParams, ...extras })
+        this._router.navigate(path, { queryParams, ...extras, replaceUrl: true });
       })
     )
   }, { dispatch: false });
@@ -37,6 +38,7 @@ export class CoreEffects {
   constructor(
     private actions$: Actions,
     private _router: Router,
-    private _location: Location
+    private _location: Location,
+    private _navCtrl: NavController
   ) {}
 }
