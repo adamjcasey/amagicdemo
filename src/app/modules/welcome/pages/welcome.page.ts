@@ -5,12 +5,12 @@ import {
   OnInit,
   AfterViewInit,
   ElementRef,
+  OnDestroy,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
 import { Capacitor } from '@capacitor/core';
-import { CapacitorVideoPlayer } from 'capacitor-video-player';
 import { BleClient } from '@capacitor-community/bluetooth-le';
 import { PushNotifications } from '@capacitor/push-notifications';
 
@@ -18,6 +18,7 @@ import * as fromStore from '../store';
 import * as fromCoreStore from '@core/store';
 import * as fromSharedStore from '@shared/store';
 import * as fromSharedComponents from '@shared/components';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'automagic-welcome',
@@ -25,7 +26,7 @@ import * as fromSharedComponents from '@shared/components';
   styleUrls: ['welcome.page.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class WelcomePage implements OnInit, AfterViewInit {
+export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
   public config$: Observable<any>;
   public config: any;
   public videoPlayer: any;
@@ -34,6 +35,7 @@ export class WelcomePage implements OnInit, AfterViewInit {
   @ViewChild('videoWrapper') videoWrapper!: ElementRef;
   @ViewChild('videoTag') videoTag!: ElementRef;
   @ViewChild('sliderPage', { static: false }) sliderPage!: fromSharedComponents.SliderPageComponent;
+  private _ngUnsubscribe: Subject<void> = new Subject<void>();
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
@@ -154,7 +156,7 @@ export class WelcomePage implements OnInit, AfterViewInit {
           actions: [
             {
               label: 'Continue',
-              action: () => { 
+              action: () => {
                 this._store.dispatch(new fromSharedStore.SliderPageClear());
                 this.goTo('home');
               }
@@ -166,66 +168,70 @@ export class WelcomePage implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.config$.subscribe(config => {
-      if (config) {
-        this.config = config;
-        if (this.config?.doses.length > 0) {
-          this.welcomeFormGroup.patchValue({
-            doses: this.config.doses
-          });
+    this.config$
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(config => {
+        if (config) {
+          this.config = config;
+          if (this.config?.doses.length > 0) {
+            this.welcomeFormGroup.patchValue({
+              doses: this.config.doses
+            });
+          }
         }
-      }
-    });
+      });
   }
 
   ngAfterViewInit() {
     this.playVideoIntro();
   }
 
-  async playVideoIntro() {
-    this._store.dispatch(new fromCoreStore.SetFullScreen(true));
+  ngOnDestroy() {
+    this._ngUnsubscribe.next();
+    this._ngUnsubscribe.complete();
+  }
 
+  async playVideoIntro() {
+    // set full screen option for global layout
+    this._store.dispatch(new fromCoreStore.SetFullScreen(true));
     const endHandler = () => {
+      // turn off full screen option for global layout
       this._store.dispatch(new fromCoreStore.SetFullScreen(false));
+      // show pin asking screen
       this._store.dispatch(new fromSharedStore.BackdropShow({
         transition: 'fade',
         fullScreen: true,
         header: false,
+        showBackButton: false,
         component: 'welcome-sign-up',
       }));
 
       // holding a moment to hide the video and do match with the opening of Backdrop
       setTimeout(() => {
         this.videoWrapper.nativeElement.classList.add('is-ended');
-      }, 800);
+      }, 400);
+    };
+
+    const videoElement = this.videoTag.nativeElement;
+    // set muted in web for security policies of the browsers
+    if (Capacitor.getPlatform() === 'web') {
+      videoElement.muted = true;
     }
 
-    if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios') {
-      this.videoPlayer = CapacitorVideoPlayer;
-      await this.videoPlayer.initPlayer({ 
-        mode: 'fullscreen', 
-        url: 'public/assets/videos/welcome.mp4', 
-        showControls: false, 
-        playerId: 'welcome-video-intro', 
-        width: window.innerWidth, 
-        height: window.innerHeight, 
-        bkmodeEnabled: false,
-      });
-      // TODO: refactor, use end video event to run endHandler functionality.
-      // ALERT: the following line breaks the application.
-      // this.videoPlayer.addListener('jeepCapVideoPlayerEnded', () => endHandler(), true);
-      // TEMPORARY: hold on 3.6s to run ended preprocess, is the duration of the video.
-      setTimeout(() => {
-        endHandler();
-      }, 3600);
-    }
-    else {
-      const videoElement = this.videoTag.nativeElement;
-      videoElement.muted = true;
-      videoElement.play();
+    // play video intro
+    videoElement.play();
+
+    // only in production is mandatory watch all the video
+    if (environment.production) {
       videoElement.onended = () => {
         endHandler();
       }
+    }
+    else {
+      setTimeout(() => {
+        videoElement.pause();
+        endHandler();
+      }, 1000);
     }
   }
 

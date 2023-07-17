@@ -20,7 +20,7 @@ export class StartDoseInjectDoseNotesFormComponent implements OnInit {
   public sliderPageConfig$!: Observable<any>;
   public sliderPageConfig: any;
   public doseNotesFormGroup: FormGroup;
-  public reactions: any[];
+  public symptoms: any[];
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
@@ -30,11 +30,11 @@ export class StartDoseInjectDoseNotesFormComponent implements OnInit {
     this.doseNotesFormGroup = this._formBuilder.group({
       painful: ['', [Validators.required]],
       mood: ['', [Validators.required]],
-      reactions: ['', [Validators.required]],
+      symptoms: ['', [Validators.required]],
       note: ['', ''],
     });
 
-    this.reactions = [
+    this.symptoms = [
       {
         marked: false,
         label: 'Redness'
@@ -58,9 +58,9 @@ export class StartDoseInjectDoseNotesFormComponent implements OnInit {
 
   markReaction(event: any, index: number) {
     event.preventDefault();
-    this.reactions[index].marked = !this.reactions[index].marked;
+    this.symptoms[index].marked = !this.symptoms[index].marked;
     this.doseNotesFormGroup.patchValue({
-      reactions: this.reactions,
+      symptoms: this.symptoms,
     });
   }
 

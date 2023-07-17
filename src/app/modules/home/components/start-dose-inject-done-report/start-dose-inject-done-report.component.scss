@@ -1,5 +1,16 @@
 @import 'src/theme/base/mixins';
 
 .start-dose-inject-done-report {
-  
+  text-align: center;
+
+  p {
+    @include paragraph-l;
+  }
+
+  ion-img {
+    &.ratings {
+      max-width: 270px;
+      margin: var(--space-m) auto;
+    }
+  }
 }

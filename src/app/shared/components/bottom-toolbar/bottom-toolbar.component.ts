@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router, NavigationEnd, Event as NavigationEvent } from '@angular/router';
+import { Router, Event as RoutingEvent, NavigationEnd, NavigationStart } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { animate, spring  } from 'motion';
 
@@ -30,11 +30,11 @@ export class BottomToolbarComponent {
     ];
 
     this.routerEvents$ = this._router.events.subscribe(
-      (event: NavigationEvent) => {
+      (event: RoutingEvent) => {
         if (event instanceof NavigationEnd) {
           this.currentRoute = event.urlAfterRedirects;
         }
-      }
+      },
     );
   }
 
@@ -48,7 +48,7 @@ export class BottomToolbarComponent {
 
   toggle() {
     this.isOpen = !this.isOpen;
-
+    const element = document.getElementById('bottom-toolbar');
     if (this.isOpen) {
       animate(
         `#bottom-toolbar`,
@@ -59,37 +59,23 @@ export class BottomToolbarComponent {
           mass: 1,
           velocity: 800,
         }) }
-      );
-
-      animate(
-        `#bottom-toolbar .bottom-toolbar__content .cta`, 
-        { 
-          opacity: [ 0, 0.5, 0.8, 1 ],
-          top: '0px',
-        },
-        { easing: 'ease-in-out', duration: 0.3, delay: 0.45 }
-      );
+      ).finished.then(() => {
+        element?.classList.add('is-open');
+      });
     }
     else {
       animate(
-        `#bottom-toolbar .bottom-toolbar__content .cta`, 
-        { 
-          opacity: [ 0.8, 0.5, 0 ],
-          top: '25px',
-        },
-        { easing: 'ease-in-out', duration: 0.3 }
+        `#bottom-toolbar`,
+        { height: '64px' },
+        { easing: spring({
+          stiffness: 80,
+          damping: 20,
+          mass: 1,
+          velocity: 800,
+        }) }
       ).finished.then(() => {
-        animate(
-          `#bottom-toolbar`,
-          { height: '64px' },
-          { easing: spring({
-            stiffness: 80,
-            damping: 20,
-            mass: 1,
-            velocity: 800,
-          }) }
-        )
-      })
+        element?.classList.remove('is-open');
+      });;
     }
   }
 

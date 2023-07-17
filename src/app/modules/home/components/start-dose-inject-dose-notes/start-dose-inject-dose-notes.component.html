@@ -1,28 +1,27 @@
 <form class="start-dose-inject-dose-notes" [formGroup]="doseNotesFormGroup" autocomplete="off">
-  <h1 class="font-heading-1--bold">Dose Notes</h1>
-  <p>Consistent injection records can help your HCP and give insight into your progress over time.</p>
-  <h3>Injection experience</h3>
+  <h1 class="font-heading-1--bold">New Dose Note</h1>
+  <p>Recording details about your doses can help your HCP and give insight into your progress over time.</p>
+  <h3>Injection reaction</h3>
 
   <automagic-rating-field 
     [value]="1"
-    [rates]="['Very Painful', 'Less Painful']"
+    [rates]="['Painful', 'Painless']"
     (onChage)="ratingFieldUpdate($event, 'painful')"
   ></automagic-rating-field>  
 
   <automagic-rating-field 
-    [label]="'How are your energy levels?'" 
     [value]="1" 
     [rates]="['Anxious', 'Calm']" 
     (onChage)="ratingFieldUpdate($event, 'mood')"
   ></automagic-rating-field>
 
   <div class="field-wrapper">
-    <p class="field-label">Reactions</p>
+    <p class="field-label">Symptoms</p>
     <div class="field-checkboxes">
       <ion-checkbox 
         [checked]="reaction.marked"
         labelPlacement="end"
-        *ngFor="let reaction of reactions; let i = index" 
+        *ngFor="let reaction of symptoms; let i = index" 
         (click)="markReaction($event, i)">
         {{ reaction.label }}
       </ion-checkbox>

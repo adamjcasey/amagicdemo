@@ -48,12 +48,18 @@
       class="slider-page__content" 
       [ngClass]="{ 
         'is-expanded': config.content?.isExpanded,
-        'has-template': config.content?.template || config.content?.form
+        'has-template': config.content?.template || config.content?.form,
       }">
 
       <div class="wrapper-small">
         <div class="wrapper-small__navigation" [ngClass]="{ 'visibility-hidden': config.content?.hideNavigation }">
           <div class="swiper-pagination"></div>
+        </div>
+
+        <div class="wrapper-small__timeline" *ngIf="config.content?.timeline">
+          <div class="timeline-bar-progress value-{{ config.content.timeline.percentage }}"></div>
+          <div class="timeline-start">{{ config.content.timeline.progress }}</div>
+          <div class="timeline-end">{{ config.content.timeline.duration }}</div>
         </div>
 
         <swiper 

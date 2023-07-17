@@ -67,7 +67,7 @@ export class StartDosePrepareTempTimerComponent implements OnInit, AfterViewInit
         `,
       }));
 
-      // slow delay of 500ms around 70% of the duration of Backdrop showing animation
+      // slow delay of 800ms around 70% of the duration of Backdrop showing animation
       // to change the content of the SlidePage and avoid small jumps
       // enable toolbar button but keeping same
       setTimeout(() => {
@@ -83,7 +83,7 @@ export class StartDosePrepareTempTimerComponent implements OnInit, AfterViewInit
             ]
           }
         }));
-      }, 500);
+      }, 800);
     }, 1500);
   }
 

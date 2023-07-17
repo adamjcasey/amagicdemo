@@ -1,11 +1,11 @@
 <ion-content [fullscreen]="true" [scrollY]="false">
-  <div #videoWrapper class="welcome-page__video-wrapper" slot="fixed">
+  <div #videoWrapper class="welcome-page__video-wrapper">
     <video 
       #videoTag 
       id="welcome-video-intro"
       class="welcome-page__video-intro" 
       src="/assets/videos/welcome.mp4" 
-      fullscreen="true"
+      playsinline
     ></video>
   </div>
 
