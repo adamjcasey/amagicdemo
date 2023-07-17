@@ -1,8 +1,10 @@
-
 .bottom-toolbar {
-  align-items: flex-start;
+  --item-size: 64px;
+
   position: relative;
-  height: 64px;
+  align-items: flex-start;
+  height: var(--item-size);
+  padding-bottom: var(--space-l);
   background-color: transparent;
   border: none;
   contain: inherit;
@@ -14,7 +16,7 @@
 
   ion-tab-button {
     position: relative;
-    height: 64px;
+    height: var(--item-size);
     background-color: transparent;
     color: var(--color-gray-dark);
     font-size: var(--font-size-paragraph-xs);
@@ -47,7 +49,7 @@
 
   .bottom-toolbar__content {
     position: absolute;
-    top: 60px;
+    top: calc(var(--item-size) + var(--space-l));
     left: 0;
     display: flex;
     justify-content: center;
@@ -67,6 +69,12 @@
       ion-button {
         margin-top: var(--space-xxs);
       }
+    }
+  }
+
+  &.is-open {
+    .bottom-toolbar__content {
+      top: var(--item-size);
     }
   }
 }

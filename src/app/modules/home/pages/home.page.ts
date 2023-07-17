@@ -108,23 +108,71 @@ export class HomePage implements OnInit, AfterViewInit {
               //     ],
               //   }));
               // }, 500);
-              
-              if (!this.homeConfig.flareUpsDemoDone) {
-                // Flare Up flow starting
+
+              if (!this.homeConfig.timeTravelingDemoDone) {
                 setTimeout(() => {
                   this._store.dispatch(new fromSharedStore.BackdropShow({
                     transition: 'move',
                     header: true,
                     template: `
-                      <img src="assets/images/flare-up-backdrop-image.svg" />
-                      <h1 class="font-heading-1--bold">Pretend you’ve got a flare-up...</h1>
-                      <p>To demonstrate the capabilities of a connected ecosystem, we’re going to simulate a symptom flare-up that can be detected by your watch.</p>
-                      <ion-button fill="outline" expand="block" color="light" onclick="window.flareUpsFlow.simulateFlareUp()">
-                        Simulate flare-up
-                      </ion-button>
+                      <div class="time-traveling">
+                        <video 
+                          id="time-traveling-video"
+                          src="/assets/videos/time-traveling.mp4" 
+                          autoplay
+                          muted
+                          playsinline
+                        ></video>
+                      </div>
                     `,
+                    onClose: () => {
+                      setTimeout(() => {
+                        this._store.dispatch(new fromStore.SetData({
+                          timeTravelingDemoDone: true,
+                        }));
+                      }, 600);
+                    }
                   }));
                 }, 600);
+              }
+              else {
+                if (!this.homeConfig.flareUpsDemoDone) {
+                  // Flare Up flow starting
+                  setTimeout(() => {
+                    this._store.dispatch(new fromSharedStore.BackdropShow({
+                      transition: 'move',
+                      header: true,
+                      template: `
+                        <img src="assets/images/flare-up-backdrop-image.svg" />
+                        <h1 class="font-heading-1--bold">Pretend you’ve got a flare-up...</h1>
+                        <p>To demonstrate the capabilities of a connected ecosystem, we’re going to simulate a symptom flare-up that can be detected by your watch.</p>
+                        <ion-button fill="outline" expand="block" color="light" onclick="window.backdropComponent.close()">
+                          Simulate flare-up
+                        </ion-button>
+                      `,
+                      onClose: () => {
+                        this._store.dispatch(new fromSharedStore.AlertShow({
+                          mode: 'full',
+                          template: `
+                            <img src="assets/images/flare-ups-alert-image.svg" />
+                            <h1 class="font-heading-1--bold">Experiencing a flare-up?</h1>
+                            <p>Your wearable data suggests that you’re experiencing a new symptom. Want to record it?</p>
+                          `,
+                          actions: [
+                            {
+                              label: 'Ok, let’s go!',
+                              fill: 'outline',
+                              action: () => { 
+                                this._store.dispatch(new fromSharedStore.AlertClose);
+                                this.goTo('home/add-symptom');
+                              },
+                            }
+                          ],
+                        }));
+                      }
+                    }));
+                  }, 600);
+                }
               }
             }
 
@@ -171,30 +219,6 @@ export class HomePage implements OnInit, AfterViewInit {
           <p>For this demo, let's pretend that <br>you're scheduled for your first at-<br>home dose today</p>
         `,
       }));
-    }
-
-    window.flareUpsFlow = {
-      simulateFlareUp: () => {
-        this._store.dispatch(new fromSharedStore.BackdropClose);
-        this._store.dispatch(new fromSharedStore.AlertShow({
-          mode: 'full',
-          template: `
-            <img src="assets/images/flare-ups-alert-image.svg" />
-            <h1 class="font-heading-1--bold">Experiencing a flare-up?</h1>
-            <p>Your wearable data suggests that you’re experiencing a new symptom. Want to record it?</p>
-          `,
-          actions: [
-            {
-              label: 'Ok, let’s go!',
-              fill: 'outline',
-              action: () => { 
-                this._store.dispatch(new fromSharedStore.AlertClose);
-                this.goTo('home/add-symptom');
-              },
-            }
-          ],
-        }));
-      }
     }
   }
 

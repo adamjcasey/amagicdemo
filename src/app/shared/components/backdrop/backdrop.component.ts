@@ -79,14 +79,17 @@ export class BackdropComponent implements OnInit {
           }
         }
         else {
-          this.contentComponent?.clear();
-          if (this.isContentEmpty()) {
-            this.goToSubmenu(0);
-          }
+          // wait until close totally backdrop
+          setTimeout(() => {
+            this.contentComponent?.clear();
+            if (this.isContentEmpty()) {
+              this.goToSubmenu(0);
+            }
 
-          if (typeof this.config.onClose === 'function') {
-            this.config.onClose();
-          }
+            if (typeof this.config.onClose === 'function') {
+              this.config.onClose();
+            }
+          }, 800);
         }
       }
     });

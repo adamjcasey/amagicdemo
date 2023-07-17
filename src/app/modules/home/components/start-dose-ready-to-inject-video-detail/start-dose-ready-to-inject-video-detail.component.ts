@@ -41,28 +41,33 @@ export class StartDoseReadyToInjectVideoDetailComponent implements OnInit, After
     }
 
     videoElement.ontimeupdate = () => {
-      const totalLength = videoElement.duration % 60;   
-      const percentageCompleted = Math.round((videoElement.currentTime / totalLength) * 100);
-      const duration = moment.duration(Math.floor(videoElement.duration), 's').asSeconds();
-      const progress = moment.duration(Math.floor(videoElement.currentTime), 's').asSeconds();
-      const currentTime = Math.floor(videoElement.currentTime);
-      const timeline = {
-        progress: `00:${currentTime < 10 ? '0' + currentTime : currentTime}`,
-        duration: `00:${duration - progress}`,
-        percentage: percentageCompleted,
-      }
-
-      this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
-        timeline: timeline,
-      }));
+      this.setTimeline();
     }; 
 
     videoElement.onpause = () => {
       this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
         timeline: null,
       }));
-    }; 
+    };
 
-    videoElement.play(); 
+    videoElement.play();
+  }
+
+  setTimeline () {
+    const videoElement = this.videoTag.nativeElement;
+    const totalLength = videoElement.duration % 60;   
+    const percentageCompleted = Math.round((videoElement.currentTime / totalLength) * 100);
+    const duration = moment.duration(Math.floor(videoElement.duration), 's').asSeconds();
+    const progress = moment.duration(Math.floor(videoElement.currentTime), 's').asSeconds();
+    const currentTime = Math.floor(videoElement.currentTime);
+    const timeline = {
+      progress: `00:${currentTime < 10 ? '0' + currentTime : currentTime}`,
+      duration: `00:${duration - progress}`,
+      percentage: percentageCompleted,
+    }
+
+    this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
+      timeline: timeline,
+    }));
   }
 }

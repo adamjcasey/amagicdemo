@@ -38,7 +38,6 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    console.log('StartDoseReadyToInjectPage / ngOnInit');
     this.sliderPageConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe(sliderPageConfig => {

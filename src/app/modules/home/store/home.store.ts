@@ -3,6 +3,7 @@ export interface HomeState {
   doses: any[];
   reports: any[];
   survey: any;
+  timeTravelingDemoDone: boolean;
   flareUpsDemoDone: boolean;
 }
 
@@ -36,5 +37,6 @@ export const initialState: HomeState = {
   ],
   survey: null,
   reports: [],
+  timeTravelingDemoDone: false,
   flareUpsDemoDone: false,
 }

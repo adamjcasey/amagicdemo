@@ -48,7 +48,7 @@ export class BottomToolbarComponent {
 
   toggle() {
     this.isOpen = !this.isOpen;
-
+    const element = document.getElementById('bottom-toolbar');
     if (this.isOpen) {
       animate(
         `#bottom-toolbar`,
@@ -59,7 +59,9 @@ export class BottomToolbarComponent {
           mass: 1,
           velocity: 800,
         }) }
-      );
+      ).finished.then(() => {
+        element?.classList.add('is-open');
+      });
     }
     else {
       animate(
@@ -71,7 +73,9 @@ export class BottomToolbarComponent {
           mass: 1,
           velocity: 800,
         }) }
-      );
+      ).finished.then(() => {
+        element?.classList.remove('is-open');
+      });;
     }
   }
 
