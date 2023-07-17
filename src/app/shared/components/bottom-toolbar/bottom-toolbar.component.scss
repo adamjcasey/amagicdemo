@@ -47,17 +47,15 @@
 
   .bottom-toolbar__content {
     position: absolute;
-    bottom: 35px;
+    top: 60px;
     left: 0;
     display: flex;
     justify-content: center;
     gap: var(--space-xxs);
     width: 100%;
+    overflow: hidden;
 
     .cta {
-      position: relative;
-      top: 25px;
-      opacity: 0;
       text-align: center;
 
       ion-img {
