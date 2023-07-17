@@ -38,6 +38,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    console.log('StartDoseReadyToInjectPage / ngOnInit');
     this.sliderPageConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe(sliderPageConfig => {
@@ -414,6 +415,10 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                 label: 'Continue',
                 fill: 'outline',
                 action: () => {
+                  // stop generating of timeline pausing the video
+                  const videoElement = document.getElementById('first-dose-video') as HTMLMediaElement;
+                  videoElement.pause();
+                  
                   this.sliderPage.slideNext();
                   this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
                     fullSize: false,

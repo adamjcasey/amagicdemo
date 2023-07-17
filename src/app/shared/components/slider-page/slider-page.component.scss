@@ -133,6 +133,61 @@
           }
         }
       }
+
+      .wrapper-small__timeline {
+        display: grid;
+        grid-template-rows: 1fr 1fr;
+        grid-template-columns: 1fr 1fr;
+        padding: var(--space-xs) var(--space-s) 0;
+
+        .timeline-bar-progress {
+          grid-row: 1;
+          grid-column: 1 / -1;
+          position: relative;
+          height: var(--space-xxxs);
+          border-radius: 4px;
+          background-color: var(--color-gray-light);
+          overflow: hidden;
+
+          &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            height: 100%;
+            background-color: var(--color-primary-purple);
+            transition-property: width;
+            transition-duration: 400ms;
+            transition-timing-function: ease;
+          }
+
+          @for $i from 1 through 100 {
+            &.value-#{$i} {
+              &:before {
+                width: #{$i} + '%';
+              }
+            }
+          }
+        }
+
+        .timeline-start,
+        .timeline-end {
+          grid-row: 2;
+          font-size: var(--font-size-paragraph-xs);
+          line-height: var(--font-line-height-paragraph-x);
+          font-weight: var(--font-weight-bold);
+        }
+
+        .timeline-start {
+          grid-column: 1;
+        }
+
+        .timeline-end {
+          grid-column: 2;
+          text-align: right;
+        }
+      }
   
       swiper {
         grid-row: 2;
