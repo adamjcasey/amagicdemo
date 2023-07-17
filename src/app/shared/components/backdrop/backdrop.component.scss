@@ -162,9 +162,11 @@
           ion-list {
             --ion-item-background: transparent;
 
-
-
             ion-item {
+              height: 48px;
+              margin-top: var(--space-xxxs);
+              margin-bottom: var(--space-xxxs);
+
               &:last-child {
                 --border-width: 0;
               }
