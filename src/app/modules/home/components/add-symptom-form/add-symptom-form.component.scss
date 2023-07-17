@@ -3,5 +3,9 @@
 .add-symptom-form {
   .add-photo-cta {
     margin-bottom: var(--space-m);
+
+    ion-button {
+      --padding-start: var(--space-xxxs);
+    }
   }
 }
