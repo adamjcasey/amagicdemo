@@ -8,13 +8,11 @@ import {
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { SwiperComponent } from 'swiper/angular';
 
 // Swiper Config
 import SwiperCore, { EffectFade } from 'swiper';
 SwiperCore.use([EffectFade]);
 
-import { WelcomeSignUpComponent, WelcomeDosesSelectorComponent } from '@welcome/components';
 import * as fromStore from '@shared/store';
 
 @Component({

@@ -46,6 +46,7 @@
     .back-button {
       grid-row: 1;
       grid-column: 1;
+      height: 45px;
     }
 
     .logo {
@@ -123,6 +124,13 @@
       }
     }
 
+    .time-traveling {
+      video {
+        width: 100%;
+        height: auto;
+      }
+    }
+
     .main-menu {
       display: flex;
       align-items: center;
@@ -161,9 +169,11 @@
           ion-list {
             --ion-item-background: transparent;
 
-
-
             ion-item {
+              height: 48px;
+              margin-top: var(--space-xxxs);
+              margin-bottom: var(--space-xxxs);
+
               &:last-child {
                 --border-width: 0;
               }

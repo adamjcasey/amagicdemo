@@ -16,15 +16,25 @@ import * as fromCoreStore from '@core/store';
   encapsulation: ViewEncapsulation.None
 })
 export class StartDoseInjectDoneReportComponent implements OnInit {
-  public title: string = 'Verifying...';
   public homeConfig$!: Observable<any>;
   public homeConfig: any;
-  public doseMarked: boolean = false;
+  public card: any;
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
   ) {
     this.homeConfig$ = this._store.select(fromStore.getHomeConfig);
+    this.card = {
+      asset: '/assets/images/sleep-guide.svg',
+      title: 'Sleep guide',
+      description: 'The dip in week 6 may be because you were traveling with lower sleep quality',
+      link: {
+        label: 'Go to Guide',
+        action: () => {
+          console.log('Go to Guide Card');
+        }
+      },
+    }
   }
 
   ngOnInit() {

@@ -1,8 +1,10 @@
-
 .bottom-toolbar {
-  align-items: flex-start;
+  --item-size: 64px;
+
   position: relative;
-  height: 64px;
+  align-items: flex-start;
+  height: var(--item-size);
+  padding-bottom: var(--space-l);
   background-color: transparent;
   border: none;
   contain: inherit;
@@ -14,7 +16,7 @@
 
   ion-tab-button {
     position: relative;
-    height: 64px;
+    height: var(--item-size);
     background-color: transparent;
     color: var(--color-gray-dark);
     font-size: var(--font-size-paragraph-xs);
@@ -28,8 +30,8 @@
       content: '';
       position: absolute;
       top: 0;
-      left: 0;
-      width: 100%;
+      left: calc(50% - 22px);
+      width: 44px;
       height: 0;
       background-color: var(--color-primary-purple);
       border-radius: 2px;
@@ -47,17 +49,15 @@
 
   .bottom-toolbar__content {
     position: absolute;
-    bottom: 35px;
+    top: calc(var(--item-size) + var(--space-l));
     left: 0;
     display: flex;
     justify-content: center;
     gap: var(--space-xxs);
     width: 100%;
+    overflow: hidden;
 
     .cta {
-      position: relative;
-      top: 25px;
-      opacity: 0;
       text-align: center;
 
       ion-img {
@@ -69,6 +69,12 @@
       ion-button {
         margin-top: var(--space-xxs);
       }
+    }
+  }
+
+  &.is-open {
+    .bottom-toolbar__content {
+      top: var(--item-size);
     }
   }
 }

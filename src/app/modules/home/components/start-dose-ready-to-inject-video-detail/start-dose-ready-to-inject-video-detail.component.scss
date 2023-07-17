@@ -1,7 +1,8 @@
 @import 'src/theme/base/mixins';
 
 .first-time-dose__video-detail {
-  height: calc(100vh - var(--slider-page-content-min-size));
+  width: 100vw;
+  height: calc(100vh - calc(var(--slider-page-content-min-size) + 48px));
 
   video {
     width: 100%;

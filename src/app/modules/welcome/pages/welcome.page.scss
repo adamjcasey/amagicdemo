@@ -9,17 +9,18 @@
   background-color: var(--color-black);
   opacity: 1;
   transition-property: opacity;
-  transition-duration: 250ms;
+  transition-duration: 800ms;
   transition-timing-function: ease-in-out;
+  pointer-events: none;
 
   &.is-ended {
     opacity: 0;
-    pointer-events: none;
   }
 
   video {
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: cover;
   }
 }
 

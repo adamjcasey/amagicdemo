@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
 
 // Swiper Config
 import { SwiperComponent } from 'swiper/angular';
@@ -22,6 +22,7 @@ SwiperCore.use([Pagination, EffectFade]);
 import * as fromStore from '@shared/store';
 import * as fromWelcomeStore from '@welcome/store';
 import * as fromWelcomeComponents from '@welcome/components';
+import * as fromHomeStore from '@home/store';
 import * as fromHomeComponents from '@home/components';
 
 @Component({
@@ -32,6 +33,8 @@ import * as fromHomeComponents from '@home/components';
 })
 export class SliderPageComponent implements OnInit {
   public config$: Observable<any>;
+  public homeConfig$: Observable<any>;
+  public homeConfig: any;
   public previousConfig: any;
   public config: any;
   public prevSlide: any;
@@ -43,61 +46,82 @@ export class SliderPageComponent implements OnInit {
   @ViewChildren('componentHeader', { read: ViewContainerRef }) componentsHeader!: QueryList<ViewContainerRef>;
   @ViewChild('sliderContent', { static: false }) sliderContent!: SwiperComponent;
   @ViewChild('componentContent', { read: ViewContainerRef }) componentContent!: ViewContainerRef;
+  private _ngUnsubscribe: Subject<void> = new Subject<void>();
 
   constructor(
     private _store: Store<fromStore.SharedState>,
     private _sanitizer: DomSanitizer
   ) {
     this.config$ = this._store.select(fromStore.getSliderPageConfig);
+    this.homeConfig$ = this._store.select(fromHomeStore.getHomeConfig);
   }
 
   ngOnInit() {
     this.currentSlide = this.slides[0];
-    this.config$.subscribe(config => {
-      if (config) {
-        this.previousConfig = this.config;
-        this.config = config;
+    this.config$
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(config => {
+        if (config) {
+          this.previousConfig = this.config;
+          this.config = config;
 
-        const currentComponentHeader = this.componentsHeader?.toArray()[this.sliderContent.swiperRef.activeIndex];
-        // previous state: check if there is a component in the header
-        if (this.previousConfig?.header?.component) {
-          // current state: check if there is a component in the header
-          if (this.config.header?.component) {
-            // check if the previous and the current components are differents
-            if (this.config.header?.component !== this.previousConfig?.header?.component) {
-              // clear previosly to avoid duplicated components
-              currentComponentHeader.clear();
-              // load component in the header
-              this._loadComponent(
-                currentComponentHeader, 
-                this.config.header.component
-              );
+          const currentComponentHeader = this.componentsHeader?.toArray()[this.sliderContent.swiperRef.activeIndex];
+          // previous state: check if there is a component in the header
+          if (this.previousConfig?.header?.component) {
+            // current state: check if there is a component in the header
+            if (this.config.header?.component) {
+              // check if the previous and the current components are differents
+              if (this.config.header?.component !== this.previousConfig?.header?.component) {
+                // clear previosly to avoid duplicated components
+                currentComponentHeader.clear();
+                // load component in the header
+                this._loadComponent(
+                  currentComponentHeader, 
+                  this.config.header.component
+                );
+              }
             }
           }
-        }
-        else {
-          // current state: check if there is a component in the header
-          if (this.config.header?.component) {
-            if (currentComponentHeader) {
-              // clear previosly to avoid duplicated components
-              currentComponentHeader.clear();
-              // load component in the header
-              this._loadComponent(
-                currentComponentHeader, 
-                this.config.header.component
-              );
+          else {
+            // current state: check if there is a component in the header
+            if (this.config.header?.component) {
+              if (currentComponentHeader) {
+                // clear previosly to avoid duplicated components
+                currentComponentHeader.clear();
+                // load component in the header
+                this._loadComponent(
+                  currentComponentHeader, 
+                  this.config.header.component
+                );
+              }
             }
           }
-        }
 
-        // previous state: check if there is a component in the content
-        if (this.previousConfig?.content?.component) {
-          // current state: check if there is a component in the content
-          if (this.config.content?.component) {
-            // check if the previous and the current components are differents
-            if (this.config.content?.component !== this.previousConfig?.content?.component) {
+          // previous state: check if there is a component in the content
+          if (this.previousConfig?.content?.component) {
+            // current state: check if there is a component in the content
+            if (this.config.content?.component) {
+              // check if the previous and the current components are differents
+              if (this.config.content?.component !== this.previousConfig?.content?.component) {
+                // clear previosly to avoid duplicated components
+                this.componentContent.clear();
+                // load component in the content
+                this._loadComponent(
+                  this.componentContent, 
+                  this.config.content.component
+                );
+              }
+            }
+            else {
               // clear previosly to avoid duplicated components
               this.componentContent.clear();
+            }
+          }
+          else {
+            // current state: check if there is a component in the content
+            if (this.config.content?.component) {
+              // clear previosly to avoid duplicated components
+              this.componentContent?.clear();
               // load component in the content
               this._loadComponent(
                 this.componentContent, 
@@ -105,25 +129,21 @@ export class SliderPageComponent implements OnInit {
               );
             }
           }
-          else {
-            // clear previosly to avoid duplicated components
-            this.componentContent.clear();
-          }
         }
-        else {
-          // current state: check if there is a component in the content
-          if (this.config.content?.component) {
-            // clear previosly to avoid duplicated components
-            this.componentContent?.clear();
-            // load component in the content
-            this._loadComponent(
-              this.componentContent, 
-              this.config.content.component
-            );
-          }
+      });
+
+    this.homeConfig$
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(homeConfig => {
+        if (homeConfig) {
+          this.homeConfig = homeConfig;
         }
-      }
-    });
+      });
+  }
+
+  ngOnDestroy() {
+    this._ngUnsubscribe.next();
+    this._ngUnsubscribe.complete();
   }
 
   onSliderInit() {  
@@ -194,7 +214,7 @@ export class SliderPageComponent implements OnInit {
 
   slideTo(index: number) {
     this.sliderHeader.swiperRef.slideTo(index);
-    this.sliderContent.swiperRef.slideNext(index);
+    this.sliderContent.swiperRef.slideTo(index);
   }
 
   sanitizeContent(htmlContent: string): SafeHtml {
@@ -208,10 +228,18 @@ export class SliderPageComponent implements OnInit {
         componentRef = element.createComponent(fromWelcomeComponents.WelcomeDosesSelectorComponent);
         if (componentRef.instance instanceof fromWelcomeComponents.WelcomeDosesSelectorComponent) {
           // Listen to the dosesSelected event
-          componentRef.instance.onDosesChange.subscribe((doses: number) => {
+          componentRef.instance.onDosesChange.subscribe((doses: Date[]) => {
             // Handle the event in the parent component
             this._store.dispatch(new fromWelcomeStore.SetData({
               doses: doses,
+            }));
+            this._store.dispatch(new fromHomeStore.SetData({
+              doses: this.homeConfig.doses.map((dose: any, index: number) => {
+                return {
+                  ...dose,
+                  date: doses[index]
+                }
+              }),
             }));
           });
         }
