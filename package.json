@@ -34,7 +34,6 @@
     "@ngrx/router-store": "^16.0.0",
     "@ngrx/store": "^16.0.0",
     "@ngrx/store-devtools": "^16.0.0",
-    "capacitor-video-player": "^5.0.1",
     "ionicons": "^7.0.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",

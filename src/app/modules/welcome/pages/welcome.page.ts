@@ -212,27 +212,15 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
       }, 400);
     };
 
+    // setup and playing the video
     const videoElement = this.videoTag.nativeElement;
-    // set muted in web for security policies of the browsers
     if (Capacitor.getPlatform() === 'web') {
       videoElement.muted = true;
     }
-
-    // play video intro
+    videoElement.onended = () => {
+      endHandler();
+    }
     videoElement.play();
-
-    // only in production is mandatory watch all the video
-    if (environment.production) {
-      videoElement.onended = () => {
-        endHandler();
-      }
-    }
-    else {
-      setTimeout(() => {
-        videoElement.pause();
-        endHandler();
-      }, 1000);
-    }
   }
 
   slideNext(sliders: any) {
