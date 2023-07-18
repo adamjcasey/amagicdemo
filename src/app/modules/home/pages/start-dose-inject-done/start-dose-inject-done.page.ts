@@ -70,7 +70,13 @@ export class StartDoseInjectDonePage implements OnInit {
           toolbar: { 
             actions: [
               {
-                label: 'Cool!',
+                label: 'Skip',
+                action: (event: any) => {
+                  event.target.nextElementSibling.click();
+                },
+              },
+              {
+                label: 'Proceed',
                 // disabled: true,
                 action: () => {
                   if (this.homeConfig.firstTimeDose) {
