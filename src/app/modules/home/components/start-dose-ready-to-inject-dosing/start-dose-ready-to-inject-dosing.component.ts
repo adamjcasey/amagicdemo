@@ -1,9 +1,11 @@
 import { 
   AfterViewInit,
   Component,
+  OnInit,
   ViewEncapsulation, 
 } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
 import * as moment from 'moment';
 
 import * as fromStore from '@home/store';
@@ -16,19 +18,39 @@ import * as fromSharedStore from '@shared/store';
   styleUrls: ['start-dose-ready-to-inject-dosing.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class StartDoseReadyToInjectDosingComponent implements AfterViewInit {
+export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewInit {
   public title: string = 'Starting...';
+  public homeConfig$!: Observable<any>;
+  public homeConfig: any;
   public totalTime: number = 10; // 10 seconds
+  public nextDose: any;
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
-  ) {}
+  ) {
+    this.homeConfig$ = this._store.select(fromStore.getHomeConfig);
+  }
+
+  ngOnInit(): void {
+    this.homeConfig$.subscribe(homeConfig => {
+      if (homeConfig) {
+        this.homeConfig = homeConfig;
+        if (this.homeConfig.firstTimeDose) {
+          this.nextDose = this.homeConfig.doses[1];
+        }
+        else {
+          const markedDoses = this.homeConfig?.doses.filter((dose: any) => dose.marked);
+          this.nextDose = this.homeConfig.doses[markedDoses];
+        }
+      }
+    });
+  }
 
   ngAfterViewInit() {
     // hold on to start the dose
     setTimeout(() => {
       this.startDose();
-    }, 1500);
+    }, 500);
   }
 
   startDose() {
@@ -43,15 +65,32 @@ export class StartDoseReadyToInjectDosingComponent implements AfterViewInit {
 
         // hold on 1s to show the alert
         setTimeout(() => {
-          this._store.dispatch(new fromSharedStore.AlertShow({
-            mode: 'window',
-            template: `
+          let template;
+          if (this.nextDose) {
+            const dateNextDose = moment(this.nextDose.date);
+            dateNextDose.set('hour', moment().get('hour'));
+            dateNextDose.set('minute', moment().get('minute'));
+            template = `
               <img src="assets/images/dose-delivered.svg" />
               <h1 class="font-heading-1--bold">Full dose delivered!</h1>
               <h3>Theryx®, 80mg</h3>
               <p>Dose Completed:</p>
-              <p>${moment().format('D MMM YYYY, H:m a')}</p>
-            `,
+              <p>${dateNextDose.format('D MMM YYYY, H:m a')}</p>
+            `;
+          }
+          else {
+            template = `
+              <img src="assets/images/dose-delivered.svg" />
+              <h1 class="font-heading-1--bold">Full dose delivered!</h1>
+              <h3>Theryx®, 80mg</h3>
+              <p>Dose Completed:</p>
+              <p>This is your 6 Dose</p>
+            `;
+          }
+            
+          this._store.dispatch(new fromSharedStore.AlertShow({
+            mode: 'window',
+            template: template,
             actions: [
               {
                 label: 'Ok, let’s go!',

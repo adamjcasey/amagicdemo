@@ -13,8 +13,6 @@
       ? 'url(' + '/assets/images/backdrop-' + config.bgTemplate + '.svg' + ')'
       : null
     ">
-
-    <!-- (click)="config.backButton?.action($event)"  -->
     <header class="backdrop__header" *ngIf="config.header">
       <div class="back-button" *ngIf="backButton">
         <ion-button 
@@ -48,11 +46,13 @@
         (click)="toggle()" 
       ></ion-icon>
 
-      <div class="main-menu" *ngIf="isContentEmpty()">
+      <div class="main-menu" *ngIf="getType() === 'menu-main'">
         <swiper 
           #sliderMainMenu 
           effect="fade" 
-          [allowTouchMove]="false">
+          [allowTouchMove]="false"
+          (swiper)="onMenuInit()"
+          (slideChange)="onMenuChange()">
           <ng-template swiperSlide>
             <h1 class="font-heading-1--bold">Demo Menu</h1>
             <p>Here you’ll find guidance on resetting, packing, and sharing this demo experience.</p>
@@ -128,6 +128,33 @@
               </ion-button>
             </div>
           </ng-template>
+        </swiper>
+      </div>
+
+      <div class="hightlights-menu" *ngIf="getType() === 'hightlights-menu'">
+        <swiper 
+          #sliderHighlights 
+          effect="fade" 
+          [allowTouchMove]="false" 
+          (swiper)="onHighlightsInit()" 
+          (slideChange)="onHighlightsChange()"
+          [autoHeight]="true">
+          <ng-template swiperSlide>
+            <h1 class="font-heading-1--bold">Highlights Tour</h1>
+            <div class="cards-container masonry-layout">
+              <automagic-card *ngFor="let section of config.hightlights; let i = index" [card]="section" (click)="goToSubmenu(i + 1)"></automagic-card>
+            </div>
+          </ng-template>
+          
+          <ng-container *ngFor="let section of config.hightlights; let i = index">
+            <ng-template swiperSlide *ngIf="section.detail" class="hightlights-menu__slide">
+              <div 
+                class="highlights__detail" 
+                [innerHTML]="sanitizeContent(section.detail)" 
+                style="color: white;">
+              </div>
+            </ng-template>
+          </ng-container>
         </swiper>
       </div>
     </div>

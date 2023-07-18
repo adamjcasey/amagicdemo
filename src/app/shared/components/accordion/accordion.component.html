@@ -1,0 +1,54 @@
+<div class="accordion" [ngClass]="{
+  'accordion--task': config.type === 'task',
+  'accordion--task-checked': config.check,
+  'accordion--dose-report': config.type === 'dose-report',
+  'accordion--contact': config.type === 'contact',
+  'accordion--is-closed': config.close,
+}">
+  <header 
+    class="accordion__tab"
+    [style.background-color]="config.tabColor
+      ? 'var(' + config.tabColor + ')' 
+      : 'var(--color-white)'"
+    (click)="toggle()">
+
+    <ng-container *ngIf="config.type === 'task'">
+      <div class="check" (click)="taskCheck($event)">
+        <ion-icon name="checkmark-circle" *ngIf="config.check"></ion-icon>
+      </div>
+    </ng-container>
+
+    <ion-img class="avatar" *ngIf="config.type === 'contact'" [src]="config.asset"></ion-img>
+    <div class="title-wrapper">
+      <h5 class="title">{{ config.title }}</h5>
+      <p class="position" *ngIf="config.position">{{ config.position }}</p>
+    </div>
+    <ion-icon class="icon" name="chevron-forward"></ion-icon>
+  </header>
+
+  <div class="accordion__wrapper">
+    <div class="accordion__subheader" *ngIf="config.type === 'dose-report'">
+      <div class="dose">Dose {{ config.numberDose }}</div>
+      <div class="time">{{ config.time }}</div>
+    </div>
+
+    <div class="accordion__content" *ngIf="config.type !== 'contact'">
+      <div class="description" *ngIf="config.description" [innerHTML]="sanitizeContent(config.description)"></div>
+      <ion-img class="asset" [src]="config.asset"></ion-img>
+    </div>
+
+    <div class="accordion__actions" *ngIf="config.type === 'contact'">
+      <div class="action" *ngIf="config.email">
+        <ion-icon src="/assets/icons/accordion-action-mail.svg"></ion-icon>
+      </div>
+
+      <div class="action" *ngIf="config.video">
+        <ion-icon src="/assets/icons/accordion-action-video.svg"></ion-icon>
+      </div>
+
+      <div class="action" *ngIf="config.phone">
+        <ion-icon src="/assets/icons/accordion-action-phone.svg"></ion-icon>
+      </div>
+    </div>
+  </div>
+</div>

@@ -8,6 +8,7 @@ import {
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
+import { animate, spring } from 'motion';
 import { SwiperComponent } from 'swiper/angular';
 
 // Swiper Config
@@ -16,7 +17,7 @@ SwiperCore.use([EffectFade]);
 
 import { WelcomeSignUpComponent } from '@welcome/components';
 import * as fromStore from '@shared/store';
-import { animate, spring } from 'motion';
+import * as fromSharedServices from '@shared/services';
 
 @Component({
   selector: 'automagic-backdrop',
@@ -29,17 +30,31 @@ export class BackdropComponent implements OnInit {
   public config: any;
   public backButton!: any;
   @ViewChild('sliderMainMenu', { static: false }) sliderMainMenu!: SwiperComponent;
+  @ViewChild('sliderHighlights', { static: false }) sliderHighlights!: SwiperComponent;
   @ViewChild('contentComponent', { read: ViewContainerRef }) contentComponent!: ViewContainerRef;
 
   constructor(
     private _store: Store<fromStore.SharedState>,
     private _sanitizer: DomSanitizer,
+    private _utils: fromSharedServices.UtilsService
   ) {
     this.config$ = this._store.select(fromStore.getBackdropConfig);
   }
 
-  isContentEmpty(): boolean {
-    return !this.config.template && !this.config.component;
+  getType(): string {
+    let type = '';
+    if (this.config.hightlights) {
+      type = 'hightlights-menu';
+    }
+    else {
+      if (!this.config.template && !this.config.component) {
+        type = 'menu-main';
+      }
+      else {
+        type = 'dinamic';
+      }
+    }
+    return type;
   }
 
   ngOnInit() {
@@ -54,27 +69,9 @@ export class BackdropComponent implements OnInit {
             this.contentComponent?.clear();
           }
 
-          if (!this.isContentEmpty()) {
+          if (this.getType() === 'dinamic') {
             if (this.config.showBackButton) {
-              this.backButton = {
-                label: 'Menu',
-                action: () => {
-                  if (this.config.fullScreen) {
-                    this.animateFullScreenToDefault();
-                  }
-
-                  this.backButton = null;
-                  this.contentComponent?.clear();
-                  this._store.dispatch(new fromStore.BackdropSetConfig({
-                    transition: 'move',
-                    header: true,
-                    bgTemplate: this.config.bgTemplate ? null : null,
-                    fullScreen: this.config.fullScreen ? false : null,
-                    template: null,
-                    component: null,
-                  }));
-                }
-              }
+              this.goBackToMenu();
             }
           }
         }
@@ -82,7 +79,7 @@ export class BackdropComponent implements OnInit {
           // wait until close totally backdrop
           setTimeout(() => {
             this.contentComponent?.clear();
-            if (this.isContentEmpty()) {
+            if (this.getType()) {
               this.goToSubmenu(0);
             }
 
@@ -113,11 +110,16 @@ export class BackdropComponent implements OnInit {
     }
   }
 
-  goToSubmenu(step: number) {
-    this.sliderMainMenu?.swiperRef.slideTo(step);
-    
-    if (this.sliderMainMenu?.swiperRef.activeIndex > 0) {
+  onMenuInit() {
+    if (this.config.showBackButton) {
+      this.backButton = null;
+    }
+  }
+
+  onMenuChange() {
+    if (this.sliderMainMenu.swiperRef.activeIndex > 0) {
       if (this.config.showBackButton) {
+        console.log('pone back onMenuChange');
         this.backButton = {
           label: 'Back',
           action: () => {
@@ -126,6 +128,67 @@ export class BackdropComponent implements OnInit {
           }
         };
       }
+    }
+  }
+
+  goBackToMenu() {
+    this.backButton = {
+      label: 'Menu',
+      action: () => {
+        if (this.config.fullScreen) {
+          this.animateFullScreenToDefault();
+        }
+
+        this.backButton = null;
+        this.contentComponent?.clear();
+        this._store.dispatch(new fromStore.BackdropSetConfig({
+          transition: 'move',
+          header: true,
+          bgTemplate: this.config.bgTemplate ? null : null,
+          fullScreen: this.config.fullScreen ? false : null,
+          template: null,
+          component: null,
+          hightlights: null,
+        }));
+      }
+    }
+  }
+
+  onHighlightsInit() {
+    if (this.config.showBackButton) {
+      this.goBackToMenu();
+    }
+
+    const wrapper = this.sliderHighlights.swiperRef.slides[0].querySelector('.masonry-layout');
+    if (wrapper) {
+      this._utils.createMasonryLayout(wrapper);
+    }
+  }
+
+  onHighlightsChange() {
+    const activeIndex = this.sliderHighlights.swiperRef.activeIndex;
+    if (activeIndex > 0) {
+      if (this.config.showBackButton) {
+        this.backButton = {
+          label: 'Back',
+          action: () => {
+            this.sliderHighlights.swiperRef.slideTo(0);
+          }
+        };
+      }
+    }
+    else if (activeIndex === 0) {
+      this.goBackToMenu();
+    }
+  }
+
+  goToSubmenu(step: number) {
+    if (this.sliderMainMenu) {
+      this.sliderMainMenu?.swiperRef.slideTo(step);
+    }
+
+    if (this.sliderHighlights) {
+      this.sliderHighlights?.swiperRef.slideTo(step);
     }
   }
 
@@ -144,6 +207,26 @@ export class BackdropComponent implements OnInit {
           `${window.innerHeight * 0.75}px`
         ], 
         opacity: this.config.transition === 'fade' ? 1 : ''
+      },
+      { easing: spring({
+        stiffness: 100,
+        damping: 15,
+        mass: 1,
+        velocity: 800,
+      }) }
+    );
+  }
+
+  animateDefaultToFullScreen() {
+    animate(
+      "#backdrop",
+      {
+        height: [
+          `${window.innerHeight * 0.75}px`,
+          `${window.innerHeight * 0.8}px`,
+          `${window.innerHeight * 0.9}px`,
+          `${window.innerHeight}px`
+        ],
       },
       { easing: spring({
         stiffness: 100,

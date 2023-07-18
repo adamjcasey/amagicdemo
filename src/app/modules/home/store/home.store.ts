@@ -5,6 +5,7 @@ export interface HomeState {
   survey: any;
   timeTravelingDemoDone: boolean;
   flareUpsDemoDone: boolean;
+  allCompletedDoses: boolean;
 }
 
 export const initialState: HomeState = {
@@ -13,30 +14,37 @@ export const initialState: HomeState = {
     {
       marked: false,
       date: '',
+      bodyPart: '',
     },
     {
       marked: false,
       date: '',
+      bodyPart: '',
     },
     {
       marked: false,
       date: '',
+      bodyPart: '',
     },
     {
       marked: false,
       date: '',
+      bodyPart: '',
     },
     {
       marked: false,
       date: '',
+      bodyPart: '',
     },
     {
       marked: false,
       date: '',
+      bodyPart: '',
     }
   ],
   survey: null,
   reports: [],
   timeTravelingDemoDone: false,
   flareUpsDemoDone: false,
+  allCompletedDoses: false,
 }

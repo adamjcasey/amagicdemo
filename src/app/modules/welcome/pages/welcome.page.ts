@@ -52,7 +52,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
       {
         header: {
           color: '--color-bg-pastel-green',
-          asset: 'assets/images/welcome-step-1.svg',
+          asset: '/assets/images/welcome-step-1.svg',
         },
         content: {
           hideNavigation: true,
@@ -71,7 +71,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
       {
         header: {
           color: '--color-bg-pastel-green',
-          asset: 'assets/images/welcome-step-1.svg',
+          asset: '/assets/images/welcome-step-1.svg',
         },
         content: {
           template: `
@@ -110,7 +110,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
       {
         header: {
           color: '--color-bg-pastel-blue',
-          asset: 'assets/images/welcome-step-2.svg',
+          asset: '/assets/images/welcome-step-2.svg',
         },
         content: {
           template: `
@@ -128,7 +128,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
       {
         header: {
           color: '--color-bg-pastel-honey-yellow',
-          asset: 'assets/images/welcome-step-3.svg',
+          asset: '/assets/images/welcome-step-3.svg',
         },
         content: {
           template: `
@@ -146,7 +146,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
       {
         header: {
           color: '--color-bg-pastel-lime',
-          asset: 'assets/images/welcome-step-4.svg',
+          asset: '/assets/images/welcome-step-4.svg',
         },
         content: {
           template: `

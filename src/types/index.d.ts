@@ -5,5 +5,6 @@ declare global {
     startDoseReadyToInject: any;
     flareUpsFlow: any;
     backdropComponent: any;
+    homepage: any;
   }
 }

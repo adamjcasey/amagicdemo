@@ -1,3 +1,5 @@
+@import 'src/theme/base/mixins';
+
 :root {
   --backdrop-size: 75vh;
 }
@@ -91,6 +93,19 @@
       ion-button {
         display: inline-block;
       }
+
+      .buttons-container {
+        margin-top: var(--space-l);
+
+        ion-button {
+          display: block;
+          margin-bottom: var(--space-m);
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+      }
     }
     
     .pin-input {
@@ -133,9 +148,9 @@
       }
     }
 
-    .main-menu {
+    .main-menu,
+    .hightlights-menu {
       display: flex;
-      align-items: center;
       width: calc(100vw - 60px);
       color: var(--color-white);
 
@@ -146,7 +161,28 @@
           &:not(.swiper-slide-active) {
             opacity: 0 !important;
           }
+        }
+      }
 
+      .buttons-container {
+        margin-top: var(--space-l);
+
+        ion-button {
+          display: block;
+          margin-bottom: var(--space-m);
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+      }
+    }
+
+    .main-menu {
+      align-items: center;
+
+      swiper {
+        .swiper-slide {
           .battery-indicator {
             position: relative;
 
@@ -186,15 +222,284 @@
               font-weight: var(--font-weight-extrabold);
             }
           }
+        }
+      }
+    }
 
-          .buttons-container {
-            margin-top: var(--space-l);
+    .hightlights-menu {
+      h1 {
+        margin-top: 0;
+        color: var(--color-white);
+      }
 
-            ion-button {
-              margin-bottom: var(--space-m);
+      .cards-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-auto-rows: var(--space-xxs);
+        gap: var(--space-s);
+        max-height: calc(100vh - 290px);
+        padding-right: var(--space-xxs);
+        overflow-y: auto;
 
-              &:last-child {
-                margin-bottom: 0;
+        automagic-card {
+          &:nth-child(odd) {
+            grid-column: 1;
+          }
+
+          &:nth-child(even) {
+            grid-column: 2;
+          }
+        }
+
+        .card {
+          // height: 100%;
+
+          .card__wrapper {
+            // height: 100%;
+            padding: 0;
+            background-color: transparent;
+            border: none;
+          }
+
+          .card__content {
+            gap: 0;
+            // height: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+          }
+          
+          .card__image {
+            width: 100%;
+            height: 134px;
+            background-color: var(--color-bg-dark-gray-blue);
+
+            ion-img {
+              display: block;
+              margin: 0 auto;
+            }
+          }
+
+          .card__text {
+            flex: 1 1 0;
+            padding: var(--space-xxs);
+            background-color: var(--color-bg-dark-gray-blue-dark);
+          }
+
+          .card__title {
+            @include heading-5;
+          }
+
+          .card__description {
+            @include paragraph-s;
+            margin-top: var(--space-xxs);
+          }
+        }
+      }
+
+      .highlights__detail {
+        max-height: calc(100vh - 240px);
+        padding-right: var(--space-xxs);
+        overflow-y: auto;
+        color: var(--color-white);
+
+        h1 {
+          margin-bottom: var(--space-xxl);
+        }
+
+        .highlights__detail-section {
+          margin-bottom: var(--space-xxxl);
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+
+          &.color-salmon {
+            h2 {
+              color: var(--color-bg-dark-light-salmon);
+            }
+            
+            .box-wrapper {
+              .indicator {
+                background-color: var(--color-bg-dark-light-salmon);
+              }
+
+              .eyebrow {
+                color: var(--color-bg-dark-light-salmon);
+
+                &::before,
+                &::after {
+                  background-color: var(--color-bg-dark-light-salmon);
+                }
+              }
+            }
+          }
+
+          &.color-honey-yellow {
+            h2 {
+              color: var(--color-bg-dark-light-honey-yellow);
+            }
+
+            .box-wrapper {
+              .indicator {
+                background-color: var(--color-bg-dark-light-honey-yellow);
+              }
+
+              .eyebrow {
+                color: var(--color-bg-dark-light-honey-yellow);
+
+                &::before,
+                &::after {
+                  background-color: var(--color-bg-dark-light-honey-yellow);
+                }
+              }
+            }
+          }
+
+          &.color-green {
+            h2 {
+              color: var(--color-bg-dark-light-gren);
+            }
+
+            .box-wrapper {
+              .indicator {
+                background-color: var(--color-bg-dark-light-green);
+              }
+
+              .eyebrow {
+                color: var(--color-bg-dark-light-green);
+
+                &::before,
+                &::after {
+                  background-color: var(--color-bg-dark-light-green);
+                }
+              }
+            }
+          }
+
+          &.color-tiffany-blue {
+            h2 {
+              color: var(--color-bg-dark-light-tiffany-blue);
+            }
+
+            .box-wrapper {
+              .indicator {
+                background-color: var(--color-bg-dark-light-tiffany-blue);
+              }
+
+              .eyebrow {
+                color: var(--color-bg-dark-light-tiffany-blue);
+
+                &::before,
+                &::after {
+                  background-color: var(--color-bg-dark-light-tiffany-blue);
+                }
+              }
+            }
+          }
+
+          &.color-blue {
+            h2 {
+              color: var(--color-bg-dark-light-blue);
+            }
+
+            .box-wrapper {
+              .indicator {
+                background-color: var(--color-bg-dark-light-blue);
+              }
+
+              .eyebrow {
+                color: var(--color-bg-dark-light-blue);
+
+                &::before,
+                &::after {
+                  background-color: var(--color-bg-dark-light-blue);
+                }
+              }
+            }
+          }
+
+          &.color-purple {
+            h2 {
+              color: var(--color-bg-dark-light-purple);
+            }
+
+            .box-wrapper {
+              .indicator {
+                background-color: var(--color-bg-dark-light-purple);
+              }
+
+              .eyebrow {
+                color: var(--color-bg-dark-light-purple);
+
+                &::before,
+                &::after {
+                  background-color: var(--color-bg-dark-light-purple);
+                }
+              }
+            }
+          }
+        }
+
+        ion-img {
+          height: 180px;
+          margin-bottom: var(--space-xl);
+        }
+
+        .box-wrapper {
+          position: relative;
+          margin-bottom: var(--space-xxl);
+          padding: var(--space-xl) var(--space-xs) var(--space-s);
+          background-color: var(--color-bg-dark-gray-blue);
+          border-radius: 12px;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+
+          .indicator {
+            @include heading-3;
+            position: absolute;
+            top: -44px;
+            left: calc(50% - 24px);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            color: var(--color-text);
+            font-weight: var(--font-weight-bold);
+            line-height: 48px;
+            text-align: center;
+          }
+
+          h3 {
+            @include heading-5;
+            margin-top: 0;
+            margin-bottom: var(--space-xxs);
+            font-weight: var(--font-weight-bold);
+          }
+
+          p {
+            text-align: left;
+
+            &.eyebrow {
+              @include paragraph-xs;
+              margin-bottom: var(--space-xxs);
+              text-transform: uppercase;
+              text-align: center;
+  
+              &::before,
+              &::after {
+                content: '';
+                width: 16px;
+                height: 1px;
+                padding-top: var(--space-xxxs);
+              }
+  
+              &::before {
+                margin-right: var(--space-xxs);
+              }
+  
+              &::after {
+                margin-left: var(--space-xxs);
               }
             }
           }

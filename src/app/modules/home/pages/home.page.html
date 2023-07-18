@@ -9,8 +9,33 @@
     ></automagic-hero>
 
     <div class="ion-padding">
-      <h5 class="home-page__subtitle"> Set up your dosing regimen and track your progress</h5>
-      <automagic-card [card]="card"></automagic-card>
+      <ng-container *ngIf="!homeConfig.allCompletedDoses">
+        <h5 class="home-page__subtitle">Set up your dosing regimen and track your progress</h5>
+        <automagic-card [card]="card"></automagic-card>
+      </ng-container>
+
+      <ng-container *ngIf="homeConfig.allCompletedDoses">
+        <div class="home-page__section" *ngIf="onBoardingTasks">
+          <h3>
+            Onboarding Tasks<div class="tasks-counter">{{ completedTasks }}</div>
+          </h3>
+          <automagic-accordion 
+            *ngFor="let task of onBoardingTasks; let i = index"
+            [config]="task" 
+            (onTaskCheck)="onTaskCheck($event, i)"
+          ></automagic-accordion>
+        </div>
+
+        <div class="home-page__section" *ngIf="activityHighlights">
+          <h3>Your Activity Highlights</h3>
+          <automagic-accordion [config]="activity" *ngFor="let activity of activityHighlights"></automagic-accordion>
+        </div>
+
+        <div class="home-page__section" *ngIf="careTeam">
+          <h3>Your Care Team</h3>
+          <automagic-accordion [config]="contact" *ngFor="let contact of careTeam"></automagic-accordion>
+        </div>
+      </ng-container>
     </div>
   </section>
 </ion-content>

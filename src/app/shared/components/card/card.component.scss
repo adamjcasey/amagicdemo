@@ -95,7 +95,7 @@
     }
 
     .card__text {
-      font-size: var(--font-size-paragraph-xs);
+      @include paragraph-s;
     }
   }
 
@@ -163,10 +163,6 @@
         .card__title {
           max-width: 150px;
           margin-top: var(--space-xxs);
-        }
-
-        .card__description {
-          @include paragraph-s;
         }
       }
     }
