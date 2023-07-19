@@ -131,8 +131,11 @@
       text-align: left;
 
       .card__title {
-        font-size: var(--font-size-heading-3);
-        line-height: var(--font-line-height-heading-3);
+        @include heading-5;
+      }
+
+      .card__description {
+        @include paragraph-s;
       }
 
       ion-button {

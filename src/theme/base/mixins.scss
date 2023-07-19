@@ -94,3 +94,10 @@
     bottom: 0;
   }
 }
+
+@mixin masonry-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: var(--space-xxs);
+  gap: calc(var(--space-s) - 5px);
+}

@@ -1,21 +1,18 @@
-.resources-page {
+@import 'src/theme/base/mixins';
+
+.resources-page__wrapper {
   --background: var(--color-bg-pastel-beige);
 }
 
-.resources-page-section {
-  margin-top: 70px;
+.resources-page {
+  padding-top: var(--topbar-size);
 
   h1 {
     text-align: center;
   }
-  
-  ion-col {
-    display: flex;
-    text-align: center;
-    flex-direction: column;
-  }
+}
 
-  automagic-card {
-    margin-bottom: 10px;
-  }
+.resources-page__container {
+  @include masonry-layout;
+  gap: calc(var(--space-xs) - 5px);
 }
