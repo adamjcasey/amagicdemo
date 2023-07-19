@@ -31,7 +31,7 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
     this.homeConfig$ = this._store.select(fromStore.getHomeConfig);
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.homeConfig$.subscribe(homeConfig => {
       if (homeConfig) {
         this.homeConfig = homeConfig;

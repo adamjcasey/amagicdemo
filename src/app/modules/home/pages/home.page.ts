@@ -301,7 +301,6 @@ export class HomePage implements OnInit, AfterViewInit {
               }
 
               const lastMarkedDose = markedDoses[markedDoses.length - 1];
-              console.log('lastMarkedDose ', lastMarkedDose);
               this.activityHighlights = [
                 {
                   type: 'dose-report',
@@ -348,7 +347,6 @@ export class HomePage implements OnInit, AfterViewInit {
           );
         }
 
-        console.log('showHighlightsTour');
         this._store.dispatch(new fromSharedStore.BackdropSetConfig({
           fullScreen: true,
           template: null,
@@ -563,7 +561,6 @@ export class HomePage implements OnInit, AfterViewInit {
         }));
       },
       startExploring: () => {
-        console.log('startExploring');
         this._store.dispatch(new fromSharedStore.BackdropClose);
         this._store.dispatch(new fromStore.SetData({
           allCompletedDoses: true

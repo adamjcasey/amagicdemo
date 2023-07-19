@@ -18,7 +18,6 @@ import * as fromStore from '../store';
 import * as fromCoreStore from '@core/store';
 import * as fromSharedStore from '@shared/store';
 import * as fromSharedComponents from '@shared/components';
-import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'automagic-welcome',
@@ -214,12 +213,14 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
 
     // setup and playing the video
     const videoElement = this.videoTag.nativeElement;
-    if (Capacitor.getPlatform() === 'web') {
-      videoElement.muted = true;
-    }
     videoElement.onended = () => {
       endHandler();
     }
+
+    if (Capacitor.getPlatform() === 'web') {
+      videoElement.muted = true;
+    }
+
     videoElement.play();
   }
 

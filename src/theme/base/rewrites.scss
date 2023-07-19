@@ -36,6 +36,10 @@ ion-button {
       --color: var(--color-gray-medium);
     }
   }
+
+  &.is-hidden {
+    display: none;
+  }
 }
 
 ion-input {

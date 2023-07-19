@@ -222,7 +222,8 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
 
     window.startDoseReadyToInject = {
       playVideo: () => {
-        this.sliderPage.slideNext();
+        const continueButtonOnSliderPage = document.querySelector('.slider-page .wrapper-small .swiper-slide-active .actions-wrapper ion-button.is-hidden') as HTMLElement;
+        continueButtonOnSliderPage?.click();
       },
       selectBodyShape: (event: any) => {
         console.log('selectBodyShape');
@@ -372,7 +373,6 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                 <p>You’ll be guided through the entire dosing process next.</p>
               </div>
             `,
-            component: null,
           },
           content: {
             hideNavigation: true,
@@ -381,8 +381,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                 label: 'Skip',
                 fill: 'outline',
                 action: () => {
-                  this.slides.splice(1, 1);
-                  this.sliderPage.slideNext();
+                  this.sliderPage.slideTo(2);
                   this._store.dispatch(new fromSharedStore.BackdropShow({
                     transition: 'move',
                     header: true,
@@ -396,6 +395,14 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                     `,
                   }));
                 }
+              },
+              {
+                label: 'Continue',
+                fill: 'outline',
+                hidden: true,
+                action: () => {
+                  this.sliderPage.slideNext();
+                }
               }
             ],
           },
@@ -405,7 +412,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
             fullSize: true,
             color: '--color-bg-pastel-green',
             template: null,
-            component: 'start-dose-ready-to-inject-video-detail',
+            component: 'start-dose-ready-to-inject-video',
           },
           content: {
             hideNavigation: true,
@@ -414,13 +421,19 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                 label: 'Continue',
                 fill: 'outline',
                 action: () => {
-                  // stop generating of timeline pausing the video
-                  const videoElement = document.getElementById('first-dose-video') as HTMLMediaElement;
-                  videoElement.pause();
-                  
+                  const videoElement = document.getElementById('start-dose-ready-to-inject-video') as HTMLMediaElement;
+                  // pausing the video if it's ended
+                  if (!videoElement.ended) {
+                    videoElement.pause();
+                  }
+
                   this.sliderPage.slideNext();
                   this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
                     fullSize: false,
+                  }));
+                  // remove timeline 
+                  this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
+                    timeline: null,
                   }));
                   this._store.dispatch(new fromSharedStore.BackdropShow({
                     transition: 'move',

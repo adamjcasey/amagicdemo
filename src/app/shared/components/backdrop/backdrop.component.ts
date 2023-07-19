@@ -93,7 +93,8 @@ export class BackdropComponent implements OnInit {
 
     window.backdropComponent = {
       close: () => {
-        this._store.dispatch(new fromStore.BackdropClose());
+        const backdropFold = document.querySelector('#backdrop .backdrop__fold') as HTMLElement;
+        backdropFold.click();
       },
     }
   }
@@ -119,7 +120,6 @@ export class BackdropComponent implements OnInit {
   onMenuChange() {
     if (this.sliderMainMenu.swiperRef.activeIndex > 0) {
       if (this.config.showBackButton) {
-        console.log('pone back onMenuChange');
         this.backButton = {
           label: 'Back',
           action: () => {
