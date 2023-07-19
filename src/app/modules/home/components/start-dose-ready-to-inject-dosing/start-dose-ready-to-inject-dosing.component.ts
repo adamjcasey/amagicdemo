@@ -65,32 +65,35 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
 
         // hold on 1s to show the alert
         setTimeout(() => {
-          let template;
-          if (this.nextDose) {
-            const dateNextDose = moment(this.nextDose.date);
+          let nextDoseDateFormatted;
+          const markedDoses = this.homeConfig.doses.filter((dose: any) => dose.marked);
+          const unMarkedDoses = this.homeConfig.doses.filter((dose: any) => !dose.marked);
+          if (markedDoses.length === 0) {
+            const dateNextDose = moment(unMarkedDoses[1].date);
             dateNextDose.set('hour', moment().get('hour'));
             dateNextDose.set('minute', moment().get('minute'));
-            template = `
-              <img src="assets/images/dose-delivered.svg" />
-              <h1 class="font-heading-1--bold">Full dose delivered!</h1>
-              <h3>Theryx®, 80mg</h3>
-              <p>Dose Completed:</p>
-              <p>${dateNextDose.format('D MMM YYYY, H:m a')}</p>
-            `;
+            nextDoseDateFormatted = dateNextDose.format('D MMMM YYYY H:m A');
           }
-          else {
-            template = `
-              <img src="assets/images/dose-delivered.svg" />
-              <h1 class="font-heading-1--bold">Full dose delivered!</h1>
-              <h3>Theryx®, 80mg</h3>
-              <p>Dose Completed:</p>
-              <p>This is your 6 Dose</p>
-            `;
+
+          if (markedDoses.length === 5) {
+            const lastDose = unMarkedDoses[0];
+            const lastDoseDate = moment(lastDose.date);
+            lastDoseDate.set('hour', moment().get('hour'));
+            lastDoseDate.set('minute', moment().get('minute'));
+            lastDoseDate.add(2, 'weeks');
+            nextDoseDateFormatted = lastDoseDate.format('D MMMM YYYY H:m A');
           }
+          
             
           this._store.dispatch(new fromSharedStore.AlertShow({
             mode: 'window',
-            template: template,
+            template: `
+              <img src="assets/images/dose-delivered.svg" />
+              <h1 class="font-heading-1--bold">Full dose delivered!</h1>
+              <h3>Theryx®, 80mg</h3>
+              <p>Dose Completed:</p>
+              <p>${nextDoseDateFormatted}</p>
+            `,
             actions: [
               {
                 label: 'Ok, let’s go!',

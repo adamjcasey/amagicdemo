@@ -206,7 +206,14 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                 actions: [
                   {
                     label: 'Previous step',
-                    action: () => { this.sliderPage.slidePrev() }
+                    action: () => { 
+                      if (this.homeConfig?.firstTimeDose) {
+                        this.sliderPage.slideTo(2);
+                      }
+                      else {
+                        this.sliderPage.slideTo(0);
+                      }
+                    }
                   },
                   {
                     label: 'Next Step',
@@ -382,18 +389,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                 fill: 'outline',
                 action: () => {
                   this.sliderPage.slideTo(2);
-                  this._store.dispatch(new fromSharedStore.BackdropShow({
-                    transition: 'move',
-                    header: true,
-                    template: `
-                      <div class="no-needless-message">
-                        <h1 class="font-heading-1--bold">No needles and no drugs</h1>
-                        <p>This demo unit does not have a needle nor drug substance.</p>
-                        <p>Feel free to act like a real patient and press this against your leg when instructed.</p>
-                        <img src="assets/images/no-needles.svg">
-                      </div>
-                    `,
-                  }));
+                  this.showNoNeedlessMessage();
                 }
               },
               {
@@ -426,8 +422,6 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                   if (!videoElement.ended) {
                     videoElement.pause();
                   }
-
-                  this.sliderPage.slideNext();
                   this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
                     fullSize: false,
                   }));
@@ -435,18 +429,9 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                   this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
                     timeline: null,
                   }));
-                  this._store.dispatch(new fromSharedStore.BackdropShow({
-                    transition: 'move',
-                    header: true,
-                    template: `
-                      <div class="no-needless-message">
-                        <h1 class="font-heading-1--bold">No needles and no drugs</h1>
-                        <p>This demo unit does not have a needle nor drug substance.</p>
-                        <p>Feel free to act like a real patient and press this against your leg when instructed.</p>
-                        <img src="assets/images/no-needles.svg">
-                      </div>
-                    `,
-                  }));
+
+                  this.sliderPage.slideNext();
+                  this.showNoNeedlessMessage();
                 }
               }
             ],
@@ -607,5 +592,20 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
   ngOnDestroy() {
     this._ngUnsubscribe.next();
     this._ngUnsubscribe.complete();
+  }
+
+  showNoNeedlessMessage() {
+    this._store.dispatch(new fromSharedStore.BackdropShow({
+      transition: 'move',
+      header: true,
+      template: `
+        <div class="no-needless-message">
+          <h1 class="font-heading-1--bold">No needles and no drugs</h1>
+          <p>This demo unit does not have a needle nor drug substance.</p>
+          <p>Feel free to act like a real patient and press this against your leg when instructed.</p>
+          <img src="assets/images/no-needles.svg">
+        </div>
+      `,
+    }));
   }
 }

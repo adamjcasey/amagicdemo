@@ -148,6 +148,19 @@
       }
     }
 
+    .buttons-container {
+      margin-top: var(--space-l);
+
+      ion-button {
+        display: block;
+        margin-bottom: var(--space-m);
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+
     .main-menu,
     .hightlights-menu {
       display: flex;
@@ -160,19 +173,6 @@
 
           &:not(.swiper-slide-active) {
             opacity: 0 !important;
-          }
-        }
-      }
-
-      .buttons-container {
-        margin-top: var(--space-l);
-
-        ion-button {
-          display: block;
-          margin-bottom: var(--space-m);
-
-          &:last-child {
-            margin-bottom: 0;
           }
         }
       }

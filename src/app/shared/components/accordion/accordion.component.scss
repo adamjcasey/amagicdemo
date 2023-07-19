@@ -123,6 +123,10 @@ automagic-accordion {
     .accordion__content {
       flex-direction: row-reverse;
       justify-content: space-between;
+
+      .description {
+        width: 60%;
+      }
     }
   }
 

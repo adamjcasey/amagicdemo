@@ -3,7 +3,8 @@ import {
   OnInit,
   ViewChild,
   ViewEncapsulation,
-  ViewContainerRef
+  ViewContainerRef,
+  AfterViewInit
 } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
@@ -18,6 +19,7 @@ SwiperCore.use([EffectFade]);
 import { WelcomeSignUpComponent } from '@welcome/components';
 import * as fromStore from '@shared/store';
 import * as fromSharedServices from '@shared/services';
+import * as fromHomeComponents from '@home/components';
 
 @Component({
   selector: 'automagic-backdrop',
@@ -25,10 +27,11 @@ import * as fromSharedServices from '@shared/services';
   styleUrls: ['backdrop.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class BackdropComponent implements OnInit {
+export class BackdropComponent implements OnInit, AfterViewInit {
   public config$: Observable<any>;
   public config: any;
   public backButton!: any;
+  public initialized: boolean = false;
   @ViewChild('sliderMainMenu', { static: false }) sliderMainMenu!: SwiperComponent;
   @ViewChild('sliderHighlights', { static: false }) sliderHighlights!: SwiperComponent;
   @ViewChild('contentComponent', { read: ViewContainerRef }) contentComponent!: ViewContainerRef;
@@ -77,16 +80,14 @@ export class BackdropComponent implements OnInit {
         }
         else {
           // wait until close totally backdrop
-          setTimeout(() => {
-            this.contentComponent?.clear();
-            if (this.getType()) {
-              this.goToSubmenu(0);
-            }
-
-            if (typeof this.config.onClose === 'function') {
-              this.config.onClose();
-            }
-          }, 800);
+          if (this.initialized) {
+            setTimeout(() => {
+              this.contentComponent?.clear();
+              if (this.getType() === 'main-menu') {
+                this.goToSubmenu(0);
+              }
+            }, 800);
+          }
         }
       }
     });
@@ -97,6 +98,10 @@ export class BackdropComponent implements OnInit {
         backdropFold.click();
       },
     }
+  }
+  
+  ngAfterViewInit() {
+    this.initialized = true;
   }
 
   toggle() {
@@ -140,6 +145,7 @@ export class BackdropComponent implements OnInit {
         }
 
         this.backButton = null;
+        console.log('hace clear in gobackmenu');
         this.contentComponent?.clear();
         this._store.dispatch(new fromStore.BackdropSetConfig({
           transition: 'move',
@@ -242,6 +248,9 @@ export class BackdropComponent implements OnInit {
     switch(component) {
       case 'welcome-sign-up':
         this.contentComponent.createComponent(WelcomeSignUpComponent);
+        break;
+      case 'highlights-menu':
+        this.contentComponent.createComponent(fromHomeComponents.HighlightsMenuComponent);
         break;
     }
   }

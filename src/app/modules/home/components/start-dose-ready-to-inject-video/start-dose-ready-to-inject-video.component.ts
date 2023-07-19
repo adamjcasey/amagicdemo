@@ -39,7 +39,9 @@ export class StartDoseReadyToInjectVideoComponent implements OnInit, AfterViewIn
     }
 
     videoElement.ontimeupdate = () => {
-      this.setTimeline();
+      if (!videoElement.paused) {
+        this.setTimeline();
+      }
     }; 
 
     videoElement.play();

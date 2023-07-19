@@ -82,7 +82,11 @@ export class SharedEffects {
                 mass: 1,
                 velocity: 800,
               }) },
-            );
+            ).finished.then(() => {
+              if (typeof this._backdropOptions.onClose === 'function') {
+                this._backdropOptions.onClose();
+              }
+            });
           }
           else {
             animate(
@@ -92,7 +96,11 @@ export class SharedEffects {
                 easing: 'ease-in-out',
                 duration: 0.6,
               } 
-            );
+            ).finished.then(() => {
+              if (typeof this._backdropOptions.onClose === 'function') {
+                this._backdropOptions.onClose();
+              }
+            });
           }
         }
         else {
@@ -105,6 +113,10 @@ export class SharedEffects {
               `#backdrop`,
               { top: `${(element.offsetHeight) * -1}px` }, 
             );
+
+            if (typeof this._backdropOptions.onClose === 'function') {
+              this._backdropOptions.onClose();
+            }
           })
         }
       })
@@ -233,6 +245,9 @@ export class SharedEffects {
             }) },
           ).finished.then(() => {
             document.querySelector('#alert .alert__content')?.removeAttribute('style');
+            if (typeof this._alertOptions.onClose === 'function') {
+              this._alertOptions.onClose();
+            }
           });
         }
       })

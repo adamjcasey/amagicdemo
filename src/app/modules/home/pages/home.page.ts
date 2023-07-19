@@ -2,12 +2,10 @@ import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, Subject, takeUntil } from 'rxjs';
 import * as moment from 'moment';
-import { animate, spring } from 'motion';
 
 import * as fromStore from '@home/store';
 import * as fromCoreStore from '@core/store';
 import * as fromSharedStore from '@shared/store';
-import * as fromSharedServices from '@shared/services';
 import * as fromWelcomeStore from '@welcome/store';
 import { environment } from 'src/environments/environment';
 
@@ -22,6 +20,7 @@ export class HomePage implements OnInit, AfterViewInit {
   public backdropConfig: any;
   public homeConfig$!: Observable<any>;
   public homeConfig: any;
+  public initialized: boolean = false;
   public heroConfig: any;
   public card: any;
   public name: string = '';
@@ -37,6 +36,26 @@ export class HomePage implements OnInit, AfterViewInit {
     this.welcomeState$ = this._store.select(fromWelcomeStore.getWelcomeState);
     this.backdropConfig$ = this._store.select(fromSharedStore.getBackdropConfig);
     this.homeConfig$ = this._store.select(fromStore.getHomeConfig);
+  }
+
+  ngOnInit() {
+    this.heroConfig = {
+      color: '--color-bg-pastel-green',
+      image: '/assets/images/homepage.svg',
+      template: `
+        <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
+        <h5>Welcome to wellness on your schedule.</h5>
+        <p>Ready to start your Theryx® injections?<br> Your first guided injection will take about <strong>10 minutes.</strong></p>
+      `,
+      actions: [
+        {
+          label: 'Start dose',
+          action: () => {
+            this.goTo('/home/start-dose/prepare');
+          }
+        }
+      ]
+    }
     this.card = {
       asset: '/assets/images/note.svg',
       title: 'Track your progress',
@@ -112,9 +131,7 @@ export class HomePage implements OnInit, AfterViewInit {
         phone: '#',
       }
     ];
-  }
 
-  ngOnInit() {
     this.welcomeState$
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe(welcomeState => {
@@ -127,23 +144,11 @@ export class HomePage implements OnInit, AfterViewInit {
           }
 
           if (this.name !== '') {
-            this.heroConfig = {
-              color: '--color-bg-pastel-green',
-              image: '/assets/images/homepage.svg',
-              template: `
-                <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
-                <h5>Welcome to wellness on your schedule.</h5>
-                <p>Ready to start your Theryx® injections?<br> Your first guided injection will take about <strong>10 minutes.</strong></p>
-              `,
-              actions: [
-                {
-                  label: 'Start dose',
-                  action: () => {
-                    this.goTo('/home/start-dose/prepare');
-                  }
-                }
-              ]
-            }
+            this.heroConfig.template = `
+              <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
+              <h5>Welcome to wellness on your schedule.</h5>
+              <p>Ready to start your Theryx® injections?<br> Your first guided injection will take about <strong>10 minutes.</strong></p>
+            `;
           }
         }
       });
@@ -163,7 +168,13 @@ export class HomePage implements OnInit, AfterViewInit {
           this.homeConfig = homeConfig;
           if (this.homeConfig.doses) {
             const markedDoses = this.homeConfig.doses.filter((dose: any) => dose.marked);
+            // user has completed the first dose
             if (markedDoses.length === 1) {
+              this.heroConfig.template = `
+                <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
+                <p> Your Theryx® dose is scheduled for today!</p>
+              `;
+
               // TODO: move this logic to be exec after saving the 
               // Settings Page > Setup Reminders
               // setTimeout(() => {
@@ -187,70 +198,17 @@ export class HomePage implements OnInit, AfterViewInit {
               //     ],
               //   }));
               // }, 500);
-
+              const delayBetweenFlows = 600;
               if (!this.homeConfig.timeTravelingDemoDone) {
                 setTimeout(() => {
-                  this._store.dispatch(new fromSharedStore.BackdropShow({
-                    transition: 'move',
-                    header: true,
-                    template: `
-                      <div class="time-traveling">
-                        <video 
-                          id="time-traveling-video"
-                          src="/assets/videos/time-traveling.mp4" 
-                          autoplay
-                          muted
-                          playsinline
-                        ></video>
-                      </div>
-                    `,
-                    onClose: () => {
-                      setTimeout(() => {
-                        this._store.dispatch(new fromStore.SetData({
-                          timeTravelingDemoDone: true,
-                        }));
-                      }, 600);
-                    }
-                  }));
-                }, 600);
+                  this.startTimeTravelingSimulation();
+                }, delayBetweenFlows);
               }
               else {
                 if (!this.homeConfig.flareUpsDemoDone) {
-                  // Flare Up flow starting
                   setTimeout(() => {
-                    this._store.dispatch(new fromSharedStore.BackdropShow({
-                      transition: 'move',
-                      header: true,
-                      template: `
-                        <img src="assets/images/flare-up-backdrop-image.svg" />
-                        <h1 class="font-heading-1--bold">Pretend you’ve got a flare-up...</h1>
-                        <p>To demonstrate the capabilities of a connected ecosystem, we’re going to simulate a symptom flare-up that can be detected by your watch.</p>
-                        <ion-button fill="outline" expand="block" color="light" onclick="window.backdropComponent.close()">
-                          Simulate flare-up
-                        </ion-button>
-                      `,
-                      onClose: () => {
-                        this._store.dispatch(new fromSharedStore.AlertShow({
-                          mode: 'full',
-                          template: `
-                            <img src="assets/images/flare-ups-alert-image.svg" />
-                            <h1 class="font-heading-1--bold">Experiencing a flare-up?</h1>
-                            <p>Your wearable data suggests that you’re experiencing a new symptom. Want to record it?</p>
-                          `,
-                          actions: [
-                            {
-                              label: 'Ok, let’s go!',
-                              fill: 'outline',
-                              action: () => { 
-                                this._store.dispatch(new fromSharedStore.AlertClose);
-                                this.goTo('home/add-symptom');
-                              },
-                            }
-                          ],
-                        }));
-                      }
-                    }));
-                  }, 600);
+                    this.startFlareUpsFlow();
+                  }, delayBetweenFlows);
                 }
                 else {
                   setTimeout(() => {
@@ -267,39 +225,14 @@ export class HomePage implements OnInit, AfterViewInit {
                         // TODO: Highlight Start Dose button in homepage
                       }
                     }));
-                  }, 600);
+                  }, delayBetweenFlows);
                 }
               }
             }
 
-            if (markedDoses.length >= 1) {
-              const unmarkedDoses = this.homeConfig.doses.filter((dose: any) => !dose.marked);
-              if (unmarkedDoses.length > 0) {
-                const nextDoseDate = moment(unmarkedDoses[0].date);
-                // if the next dose if is today, the message change
-                if (nextDoseDate.format('DD/MM/YYYY') === moment().format('DD/MM/YYYY')) {
-                  this.heroConfig.template = `
-                    <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
-                    <p> Your Theryx® dose is scheduled for today!</p>
-                  `;
-                }
-                // if not show the next dose scheduled date
-                else {
-                  const nextDoseDateFormated = nextDoseDate.format('D MMMM YYYY');
-                  this.heroConfig.template = `
-                    <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
-                    <h5>Welcome to wellness on your schedule.</h5>
-                    <p>Your next Theryx® dose is scheduled for<br> <stong>${nextDoseDateFormated}</stong></p>
-                  `;
-                }
-              }
-
-              if (markedDoses.length === 6) {
-                if (!this.homeConfig.allCompletedDoses) {
-                  this.finishDemoGuide();
-                }
-              }
-
+            // user has completed 1 or more doses
+            if (markedDoses.length > 1) {
+              // get last dose injected data to be showed on Dose report widget
               const lastMarkedDose = markedDoses[markedDoses.length - 1];
               this.activityHighlights = [
                 {
@@ -317,259 +250,37 @@ export class HomePage implements OnInit, AfterViewInit {
                   asset: '/assets/images/activity-highlights-your-progress.svg'
                 },
               ];
+
+              // if the next dose if is today, the message change
+              // const nextDoseDate = unmarkedDoses.length ? moment(unmarkedDoses[0].date) : null;
+              // if (nextDoseDate.format('DD/MM/YYYY') === moment().format('DD/MM/YYYY')) {
+              
+              // user has completed 6 doses
+              if (markedDoses.length === 6) {
+                if (!this.homeConfig.allCompletedDoses) {
+                  this.startFinishGuidedDemoFlow();
+                }
+
+                // show the following dose in two weeks since last dose date
+                const lastDose = markedDoses[markedDoses.length - 1];
+                const lastDoseDate = moment(lastDose.date);
+                lastDoseDate.set('hour', moment().get('hour'));
+                lastDoseDate.set('minute', moment().get('minute'));
+                lastDoseDate.add(2, 'weeks');
+                const lastDoseDateFormatted = lastDoseDate.format('D MMMM YYYY');
+                this.heroConfig.template = `
+                  <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
+                  <p>Your next Theryx® dose is scheduled for<br> <stong>${lastDoseDateFormatted}</stong></p>
+                `;
+              }
             }
           }
         }
       });
-
-    window.homepage = {
-      showHighlightsTour: () => {
-        if (!this.backdropConfig.fullScreen) {
-          // animation to pass from default to fullScreen in backdrop component
-          animate(
-            "#backdrop",
-            {
-              height: [
-                `${window.innerHeight * 0.5}px`,
-                `${window.innerHeight * 0.6}px`,
-                `${window.innerHeight * 0.7}px`,
-                `${window.innerHeight * 0.8}px`,
-                `${window.innerHeight * 0.9}px`,
-                `${window.innerHeight}px`
-              ],
-            },
-            { easing: spring({
-              stiffness: 100,
-              damping: 15,
-              mass: 1,
-              velocity: 800,
-            }) }
-          );
-        }
-
-        this._store.dispatch(new fromSharedStore.BackdropSetConfig({
-          fullScreen: true,
-          template: null,
-          component: null,
-          hightlights: [
-            {
-              type: 'simple',
-              asset: '/assets/images/highlights-1.svg',
-              title: 'Takeda Benefits',
-              description: 'Explore how this connected vision creates improved Patient, Trust, Reputation, and Business opportunities.',
-              detail: `
-                <h1 class="font-heading-1--bold">Takeda Benefits</h1>
-                <div class="highlights__detail-section color-salmon">
-                  <h2>Patient-centric approach</h2>
-                  <ion-img src="/assets/images/take-benefits-1.svg"></ion-img>
-              
-                  <div class="box-wrapper">
-                    <p class="indicator">1</p>
-                    <h3>Supporting the holistic treatment experience</h3>
-                    <p class="eyebrow">Patient</p>
-                    <p>Supporting the holistic treatment experience at all stages of the journey (patient centricity goes beyond
-                      providing a treatment/drug).</p>
-                  </div>
-              
-                  <div class="box-wrapper">
-                    <p class="indicator">2</p>
-                    <h3>Improving and Verifying Patient Outcomes</h3>
-                      <p class="eyebrow">Patient</p>
-                      <p>Improving patient patient outcomes by ensuring a full dose every time. </p>
-                  </div>
-              
-                  <div class="box-wrapper">
-                    <p class="indicator">3</p>
-                    <h3>Real world patient data informs the business</h3>
-                    <p class="eyebrow">Patient</p>
-                    <p>Better understanding of the patient population with increased direct feedback and real-world data.</p>
-                  </div>
-              
-                  <div class="box-wrapper">
-                    <p class="indicator">4</p>
-                    <h3>Increased patient access</h3>
-                    <p class="eyebrow">Patient</p>
-                    <p>Increased patient access to therapies through at-home, confident dosing.</p>
-                  </div>
-                </div>
-              
-                <div class="highlights__detail-section color-honey-yellow">
-                  <h2>We collect, analyze, and act on real-world data</h2>
-                  <ion-img src="/assets/images/take-benefits-2.svg"></ion-img>
-              
-                  <div class="box-wrapper">
-                    <p class="indicator">1</p>
-                    <h3>Strategic roadmap</h3>
-                    <p class="eyebrow">Business</p>
-                    <p>Informing our strategic roadmap to help leadership make data-driven decisions.</p>
-                  </div>
-              
-                  <div class="box-wrapper">
-                    <p class="indicator">2</p>
-                    <h3>Iterative refinement</h3>
-                    <p class="eyebrow">Reputation</p>
-                    <p>Collecting data that helps us iteratively refine our therapies, technologies, delivery systems, and the patient
-                      experience.</p>
-                  </div>
-              
-                  <div class="box-wrapper">
-                    <p class="indicator">3</p>
-                    <h3>Privacy center</h3>
-                    <p class="eyebrow">Trust</p>
-                    <p>Making our patients comfortable and enthused about sharing data with us in a privacy-centric and liability
-                      minimizing manner; gathering more and richer longitudinal patient data.</p>
-                  </div>
-                </div>
-              
-                <div class="highlights__detail-section color-green">
-                  <h2>Prepared for Value-Based Care</h2>
-                  <ion-img src="/assets/images/take-benefits-3.svg"></ion-img>
-              
-                  <div class="box-wrapper">
-                    <p class="indicator">1</p>
-                    <h3>Actionable data</h3>
-                    <p class="eyebrow">Business</p>
-                    <p>Collecting comprehensive, nuanced, and actionable data to meet requirements.</p>
-                  </div>
-              
-                  <div class="box-wrapper">
-                    <p class="indicator">2</p>
-                    <h3>Patient protection</h3>
-                      <p class="eyebrow">Reputation</p>
-                      <p>Gathering data in a responsible way that protects patients.</p>
-                  </div>
-              
-                  <div class="box-wrapper">
-                    <p class="indicator">3</p>
-                    <h3>Improved delivery experience</h3>
-                    <p class="eyebrow">Trust</p>
-                    <p>Demonstrating that an improved delivery experience improves adherence when negotiating with delivery partners.
-                    </p>
-                  </div>
-                </div>
-              
-                <div class="highlights__detail-section color-tiffany-blue">
-                  <h2>Takeda is a bioTECH innovation leader</h2>
-                  <ion-img src="/assets/images/take-benefits-4.svg"></ion-img>
-              
-                  <div class="box-wrapper">
-                    <p class="indicator">1</p>
-                    <h3>Consumer tech quality</h3>
-                    <p class="eyebrow">Reputation</p>
-                    <p>Helping Takeda exceed consumer and competitive tech with seamless experiences.</p>
-                  </div>
-              
-                  <div class="box-wrapper">
-                    <p class="indicator">2</p>
-                    <h3>Digital-forward company</h3>
-                      <p class="eyebrow">Reputation</p>
-                      <p>Evolving Takeda into a digital forward company that delivers on the tech in biotech.</p>
-                  </div>
-              
-                  <div class="box-wrapper">
-                    <p class="indicator">3</p>
-                    <h3>Sustainability</h3>
-                    <p class="eyebrow">Reputation</p>
-                    <p>Promoting sustainability across the full lifecycle of drug delivery including packaging with thoughtful materials and user guidance.</p>
-                  </div>
-                </div>
-              
-                <div class="highlights__detail-section color-blue">
-                  <h2>Clinical trials enhancement</h2>
-                  <ion-img src="/assets/images/take-benefits-5.svg"></ion-img>
-              
-                  <div class="box-wrapper">
-                    <p class="indicator">1</p>
-                    <h3>Expanding the pool of patients</h3>
-                    <p class="eyebrow">Patient</p>
-                    <p>Enabling hybrid and decentralized clinical trials, expanding the pool of patients able to access care and participate.</p>
-                  </div>
-              
-                  <div class="box-wrapper">
-                    <p class="indicator">2</p>
-                    <h3>Clinical trial integrity</h3>
-                      <p class="eyebrow">Trust</p>
-                      <p>Improving clinical trial integrity through patient adherence to trial protocols and regimens.</p>
-                  </div>
-              
-                  <div class="box-wrapper">
-                    <p class="indicator">3</p>
-                    <h3>Patient reported outcomes (PROs)</h3>
-                    <p class="eyebrow">Reputation</p>
-                    <p>Improving the collection of patient reported outcomes (PROs) – including longitudinal and supplementary health data.</p>
-                  </div>
-              
-                  <div class="box-wrapper">
-                    <p class="indicator">4</p>
-                    <h3>Post-market surveillance</h3>
-                    <p class="eyebrow">Business</p>
-                    <p>Continuing longitudinal data collection for post-market surveillance, beyond clinical trials.</p>
-                  </div>
-                </div>
-              
-                <div class="highlights__detail-section color-purple">
-                  <h2>Increasing loyalty to Takeda's offerings in a world of future therapies</h2>
-                  <ion-img src="/assets/images/take-benefits-6.svg"></ion-img>
-              
-                  <div class="box-wrapper">
-                    <p class="indicator">1</p>
-                    <h3>Improving the injectable experience</h3>
-                    <p class="eyebrow">Business</p>
-                    <p>To compete against other delivery methods and lower cost biosimilars.</p>
-                  </div>
-              
-                  <div class="box-wrapper">
-                    <p class="indicator">2</p>
-                    <h3>Consumer-electronics ecosystem</h3>
-                    <p class="eyebrow">Business</p>
-                    <p>Creating a consumer-electronics ecosystem around the patient’s treatment.</p>
-                  </div>
-                </div>
-              `,
-            },
-            {
-              type: 'simple',
-              asset: '/assets/images/highlights-2.svg',
-              title: 'Safer than ever',
-              description: 'Increasing Takeda’s ability to ensure drug authenticity and integrity while mitigating user error.',
-            },
-            {
-              type: 'simple',
-              asset: '/assets/images/highlights-3.svg',
-              title: 'Integrations with EMR / AppleHealth',
-              description: 'API based integrations with pharmacy, EMR, and Apple Health data.',
-            },
-            {
-              type: 'simple',
-              asset: '/assets/images/highlights-4.svg',
-              title: 'Coordinating the healthcare ecosystem',
-              description: 'Connecting patients to their care team and support network.',
-            },
-            {
-              type: 'simple',
-              asset: '/assets/images/highlights-5.svg',
-              title: 'Helping build the habit',
-              description: 'Encouraging proactive disease management by making  tracking easy and intuitive.',
-            },
-            {
-              type: 'simple',
-              asset: '/assets/images/highlights-6.svg',
-              title: 'Patient Resources and Support',
-              description: 'Connecting patients to community , education, and other resources for holistic support.',
-            },
-          ],
-        }));
-      },
-      startExploring: () => {
-        this._store.dispatch(new fromSharedStore.BackdropClose);
-        this._store.dispatch(new fromStore.SetData({
-          allCompletedDoses: true
-        }));
-      },
-    }
   }
 
   ngAfterViewInit() {
+    this.initialized = true;
     if (this.homeConfig.firstTimeDose) {
       this._store.dispatch(new fromSharedStore.BackdropShow({
         transition: 'move',
@@ -589,32 +300,81 @@ export class HomePage implements OnInit, AfterViewInit {
     this._ngUnsubscribe.complete();
   }
 
-  finishDemoGuide() {
-    const template = `
-      <h1 class="font-heading-1--bold">That’s it for the guided portion of the demo!</h1>
-      <p>This  app has many more features and benefits to check out.</p>
-      <div class="buttons-container">
-        <ion-button fill="outline" expand="block" color="light" onclick="window.homepage.showHighlightsTour()">
-          Just show me the highlights
+  startFlareUpsFlow() {
+    this._store.dispatch(new fromSharedStore.BackdropShow({
+      transition: 'move',
+      header: true,
+      template: `
+        <img src="assets/images/flare-up-backdrop-image.svg" />
+        <h1 class="font-heading-1--bold">Pretend you’ve got a flare-up...</h1>
+        <p>To demonstrate the capabilities of a connected ecosystem, we’re going to simulate a symptom flare-up that can be detected by your watch.</p>
+        <ion-button fill="outline" expand="block" color="light" onclick="window.backdropComponent.close()">
+          Simulate flare-up
         </ion-button>
+      `,
+      onClose: () => {
+        this._store.dispatch(new fromSharedStore.AlertShow({
+          mode: 'full',
+          template: `
+            <img src="assets/images/flare-ups-alert-image.svg" />
+            <h1 class="font-heading-1--bold">Experiencing a flare-up?</h1>
+            <p>Your wearable data suggests that you’re experiencing a new symptom. Want to record it?</p>
+          `,
+          actions: [
+            {
+              label: 'Ok, let’s go!',
+              fill: 'outline',
+              action: () => { 
+                this._store.dispatch(new fromSharedStore.AlertClose);
+              },
+            }
+          ],
+          onClose: () => {
+            this.goTo('home/add-symptom');
+          }
+        }));
+      }
+    }));
+  }
 
-        <ion-button fill="outline" expand="block" color="light" onclick="window.homepage.startExploring()">
-          Let me explore like I’m a user
-        </ion-button>
-      </div>
-    `;
+  startTimeTravelingSimulation() {
+    this._store.dispatch(new fromSharedStore.BackdropShow({
+      transition: 'move',
+      header: true,
+      template: `
+        <div class="time-traveling">
+          <video 
+            id="time-traveling-video"
+            src="/assets/videos/time-traveling.mp4" 
+            autoplay
+            muted
+            playsinline
+          ></video>
+        </div>
+      `,
+      onClose: () => {
+        setTimeout(() => {
+          this._store.dispatch(new fromStore.SetData({
+            timeTravelingDemoDone: true,
+          }));
+        }, 600);
+      }
+    }));
+  }
+
+  startFinishGuidedDemoFlow() {
+    const configMessage = {
+      transition: 'move',
+      header: true,
+      component: 'highlights-menu',
+      template: null,
+    }
 
     if (this.backdropConfig.show) {
-      this._store.dispatch(new fromSharedStore.BackdropSetConfig({
-        template: template,
-      }));    
+      this._store.dispatch(new fromSharedStore.BackdropSetConfig(configMessage));    
     }
     else {
-      this._store.dispatch(new fromSharedStore.BackdropShow({
-        transition: 'move',
-        header: true,
-        template: template,
-      }));    
+      this._store.dispatch(new fromSharedStore.BackdropShow(configMessage));
     }   
   }
 

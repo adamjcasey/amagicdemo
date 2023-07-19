@@ -266,6 +266,24 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
           `,
           actions: [
             {
+              label: 'Previous',
+              action: () => {
+                this._store.dispatch(new fromSharedStore.SliderPageSetContent({
+                  isExpanded: false,
+                  template: `
+                    <h1 class="font-heading-1--bold">Allow Notifications.</h1>
+                    <p>To help you remember your dose schedule and know when medication is at the right temperature, please <strong>enable notifications.</strong> You can customize notifications in the Settings menu.</p>
+                  `,
+                  actions: [
+                    {
+                      label: 'Allow Notifications',
+                      action: () => { this.allowNotifications() }
+                    },
+                  ],
+                }));
+              },
+            },
+            {
               label: 'Proceed',
               action: () => {
                 if (this.welcomeFormGroup.get('doses')?.valid) {
@@ -275,7 +293,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
                   this.sliderPage.slideNext();
                 }
               },
-            }
+            },
           ],
         }
       }));
