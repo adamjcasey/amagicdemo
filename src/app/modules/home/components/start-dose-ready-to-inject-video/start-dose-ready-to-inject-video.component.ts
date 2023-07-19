@@ -29,7 +29,8 @@ export class StartDoseReadyToInjectVideoComponent implements OnInit, AfterViewIn
 
   ngOnInit() {}
 
-  ngAfterViewInit() {this.playVideo();
+  ngAfterViewInit() {
+    this.playVideo();
   }
 
   async playVideo() {
