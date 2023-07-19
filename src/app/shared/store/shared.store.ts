@@ -14,6 +14,7 @@ export const initialState: SharedState = {
     template: null,
     component: null,
     showBackButton: true,
+    hightlights: null,
   },
   sliderPageConfig: {
     header: {

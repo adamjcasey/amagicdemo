@@ -1,4 +1,5 @@
 import { 
+  AfterViewInit,
   Component, 
   Input, 
   ViewEncapsulation 
@@ -10,12 +11,16 @@ import {
   styleUrls: ['hero.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class HeroComponent {
+export class HeroComponent implements AfterViewInit {
   @Input() color: string = '';
   @Input() image: string = '';
   @Input() template!: string;
   @Input() actions: any[] = [];
+  public initialized: boolean = false;
 
   constructor() {}
 
+  ngAfterViewInit() {
+    this.initialized = true;
+  }
 }

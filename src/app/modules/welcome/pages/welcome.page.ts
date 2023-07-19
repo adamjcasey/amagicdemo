@@ -18,7 +18,6 @@ import * as fromStore from '../store';
 import * as fromCoreStore from '@core/store';
 import * as fromSharedStore from '@shared/store';
 import * as fromSharedComponents from '@shared/components';
-import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'automagic-welcome',
@@ -52,7 +51,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
       {
         header: {
           color: '--color-bg-pastel-green',
-          asset: 'assets/images/welcome-step-1.svg',
+          asset: '/assets/images/welcome-step-1.svg',
         },
         content: {
           hideNavigation: true,
@@ -71,7 +70,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
       {
         header: {
           color: '--color-bg-pastel-green',
-          asset: 'assets/images/welcome-step-1.svg',
+          asset: '/assets/images/welcome-step-1.svg',
         },
         content: {
           template: `
@@ -110,7 +109,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
       {
         header: {
           color: '--color-bg-pastel-blue',
-          asset: 'assets/images/welcome-step-2.svg',
+          asset: '/assets/images/welcome-step-2.svg',
         },
         content: {
           template: `
@@ -128,7 +127,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
       {
         header: {
           color: '--color-bg-pastel-honey-yellow',
-          asset: 'assets/images/welcome-step-3.svg',
+          asset: '/assets/images/welcome-step-3.svg',
         },
         content: {
           template: `
@@ -146,7 +145,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
       {
         header: {
           color: '--color-bg-pastel-lime',
-          asset: 'assets/images/welcome-step-4.svg',
+          asset: '/assets/images/welcome-step-4.svg',
         },
         content: {
           template: `
@@ -212,27 +211,17 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
       }, 400);
     };
 
+    // setup and playing the video
     const videoElement = this.videoTag.nativeElement;
-    // set muted in web for security policies of the browsers
+    videoElement.onended = () => {
+      endHandler();
+    }
+
     if (Capacitor.getPlatform() === 'web') {
       videoElement.muted = true;
     }
 
-    // play video intro
     videoElement.play();
-
-    // only in production is mandatory watch all the video
-    if (environment.production) {
-      videoElement.onended = () => {
-        endHandler();
-      }
-    }
-    else {
-      setTimeout(() => {
-        videoElement.pause();
-        endHandler();
-      }, 1000);
-    }
   }
 
   slideNext(sliders: any) {
@@ -277,6 +266,24 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
           `,
           actions: [
             {
+              label: 'Previous',
+              action: () => {
+                this._store.dispatch(new fromSharedStore.SliderPageSetContent({
+                  isExpanded: false,
+                  template: `
+                    <h1 class="font-heading-1--bold">Allow Notifications.</h1>
+                    <p>To help you remember your dose schedule and know when medication is at the right temperature, please <strong>enable notifications.</strong> You can customize notifications in the Settings menu.</p>
+                  `,
+                  actions: [
+                    {
+                      label: 'Allow Notifications',
+                      action: () => { this.allowNotifications() }
+                    },
+                  ],
+                }));
+              },
+            },
+            {
               label: 'Proceed',
               action: () => {
                 if (this.welcomeFormGroup.get('doses')?.valid) {
@@ -286,7 +293,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
                   this.sliderPage.slideNext();
                 }
               },
-            }
+            },
           ],
         }
       }));

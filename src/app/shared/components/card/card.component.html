@@ -2,13 +2,14 @@
   'is-rendered': card.renderClass,
   'card--stepper': card.type === 'stepper',
   'card--featured': card.type === 'featured',
+  'card--simple': card.type === 'simple',
   'card--guide-step': card.type === 'guide-step',
 }">
   <div class="card__indicator" *ngIf="card.type === 'stepper'">
     {{ card.indicator }}
   </div>
 
-  <div class="card__wrapper">
+  <div class="card__wrapper" (click)="card.action && card.action()">
     <h5 class="card__title" *ngIf="card.title && card.type === 'stepper'">
       {{ card.title }}
     </h5>

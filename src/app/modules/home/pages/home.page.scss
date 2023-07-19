@@ -1,3 +1,5 @@
+@import 'src/theme/base/mixins';
+
 .home-page {
   padding-bottom: var(--space-l);
 
@@ -5,5 +7,32 @@
     max-width: 270px;
     margin: var(--space-s) auto var(--space-xs);
     text-align: center;
+  }
+
+  .home-page__section {
+    margin-bottom: var(--space-xl);
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    h3 {
+      display: flex;
+      align-items: center;
+      margin-bottom: var(--space-m);
+      font-weight: var(--font-weight-bold);
+
+      .tasks-counter {
+        @include heading-5;
+        width: 28px;
+        height: 28px;
+        margin-left: var(--space-xxs);
+        background-color: var(--color-primary-salmon);
+        border-radius: 50%;
+        color: var(--color-white);
+        line-height: 30px;
+        text-align: center;
+      }
+    }
   }
 }

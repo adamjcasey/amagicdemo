@@ -105,6 +105,7 @@
                 *ngFor="let button of config.content.actions; let i = index"
                 color="purple" 
                 size="large" 
+                [ngClass]="{ 'is-hidden': button.hidden }"
                 [disabled]="button.disabled ? true : null" 
                 (click)="button.action ? button.action($event) : null" 
                 [fill]="

@@ -34,7 +34,7 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
       {
         header: {
           color: '--color-bg-pastel-purple',
-          asset: 'assets/images/start-dose-prepare-1.svg',
+          asset: '/assets/images/start-dose-prepare-1.svg',
         },
         content: {
           hideNavigation: true,
@@ -55,7 +55,7 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
       {
         header: {
           color: '--color-bg-pastel-mint',
-          asset: 'assets/images/start-dose-prepare-2.svg',
+          asset: '/assets/images/start-dose-prepare-2.svg',
         },
         content: {
           hideNavigation: true,
@@ -68,7 +68,7 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
       {
         header: {
           color: '--color-bg-pastel-mint',
-          asset: 'assets/images/start-dose-prepare-3.svg',
+          asset: '/assets/images/start-dose-prepare-3.svg',
         },
         content: {
           hideNavigation: true,

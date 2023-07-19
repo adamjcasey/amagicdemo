@@ -62,7 +62,6 @@ export class StartDoseInjectDoneProgressComponent implements OnInit, AfterViewIn
     else {
       const markedDoses = this.homeConfig?.doses.filter((dose: any) => dose.marked);
       doses[markedDoses.length].marked = true;
-      doses[markedDoses.length].date = new Date();
     }
 
     this.doseMarked = true;

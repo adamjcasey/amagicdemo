@@ -14,15 +14,14 @@ import * as fromCoreStore from '@core/store';
 import * as fromSharedStore from '@shared/store';
 
 @Component({
-  selector: 'automagic-start-dose-ready-to-inject-video-detail',
-  templateUrl: 'start-dose-ready-to-inject-video-detail.component.html',
-  styleUrls: ['start-dose-ready-to-inject-video-detail.component.scss'],
+  selector: 'automagic-start-dose-ready-to-inject-video',
+  templateUrl: 'start-dose-ready-to-inject-video.component.html',
+  styleUrls: ['start-dose-ready-to-inject-video.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class StartDoseReadyToInjectVideoDetailComponent implements OnInit, AfterViewInit {
-  public videoPlayer: any;
-  @ViewChild('videoDetailWrapper') videoWrapper!: ElementRef;
-  @ViewChild('videoDetailTag') videoTag!: ElementRef;
+export class StartDoseReadyToInjectVideoComponent implements OnInit, AfterViewInit {
+  @ViewChild('videoWrapper') videoWrapper!: ElementRef;
+  @ViewChild('videoTag') videoTag!: ElementRef;
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
@@ -41,14 +40,10 @@ export class StartDoseReadyToInjectVideoDetailComponent implements OnInit, After
     }
 
     videoElement.ontimeupdate = () => {
-      this.setTimeline();
+      if (!videoElement.paused) {
+        this.setTimeline();
+      }
     }; 
-
-    videoElement.onpause = () => {
-      this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
-        timeline: null,
-      }));
-    };
 
     videoElement.play();
   }

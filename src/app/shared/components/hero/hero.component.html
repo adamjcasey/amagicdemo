@@ -1,4 +1,10 @@
-<div class="hero" [ngStyle]="{ 'background-color': color }">
+<div 
+  [hidden]="!initialized"
+  class="hero" 
+  [style.background-color]="color
+    ? 'var(' + color + ')' 
+    : 'var(--color-white)'">
+
   <div class="hero__layer"></div>
   <div class="hero__content">
     <div *ngIf="template" class="hero__template" [innerHTML]="template"></div>

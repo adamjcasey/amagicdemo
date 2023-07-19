@@ -70,7 +70,13 @@ export class StartDoseInjectDonePage implements OnInit {
           toolbar: { 
             actions: [
               {
-                label: 'Cool!',
+                label: 'Skip',
+                action: (event: any) => {
+                  event.target.nextElementSibling.click();
+                },
+              },
+              {
+                label: 'Proceed',
                 // disabled: true,
                 action: () => {
                   if (this.homeConfig.firstTimeDose) {
@@ -233,7 +239,6 @@ export class StartDoseInjectDonePage implements OnInit {
           const markedDoses = this.homeConfig?.doses.filter((dose: any) => dose.marked);
           // if the user has completed the 6 doses we will show the Dose report
           if (markedDoses.length === 6) {
-            console.log('InjectDonePage has 6 marked doses pone report');
             if (this.slides.length === 2) {
               this.slides.push({
                 content: {

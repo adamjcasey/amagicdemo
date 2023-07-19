@@ -8,6 +8,7 @@ import { DatepickerComponent } from './datepicker/datepicker.component';
 import { HeroComponent } from './hero/hero.component';
 import { SliderPageComponent } from './slider-page/slider-page.component';
 import { AlertComponent } from './alert/alert.component';
+import { AccordionComponent } from './accordion/accordion.component';
 
 export const components: any[] = [
   TopBarComponent,
@@ -19,7 +20,8 @@ export const components: any[] = [
   DatepickerComponent,
   HeroComponent,
   SliderPageComponent,
-  AlertComponent
+  AlertComponent,
+  AccordionComponent
 ];
 
 export * from './topbar/topbar.component';
@@ -32,3 +34,4 @@ export * from './hero/hero.component';
 export * from './slider-page/slider-page.component';
 export * from './alert/alert.component';
 export * from './rating-field/rating-field.component';
+export * from './accordion/accordion.component';

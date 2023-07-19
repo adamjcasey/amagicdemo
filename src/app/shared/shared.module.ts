@@ -6,6 +6,7 @@ import { SwiperModule } from 'swiper/angular';
 
 import * as fromComponents from './components';
 import * as fromPipes from './pipes';
+import * as fromServices from './services';
 
 @NgModule({
   imports: [
@@ -22,6 +23,9 @@ import * as fromPipes from './pipes';
   exports: [
     fromComponents.components,
     fromPipes.pipes,
+  ],
+  providers: [
+    fromServices.services
   ],
 })
 export class SharedModule {}

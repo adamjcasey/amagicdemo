@@ -1,5 +1,9 @@
-<ion-content [fullscreen]="true" class="ion-padding">
+<ion-content [fullscreen]="true" class="resources-page__wrapper ion-padding">
   <section class="resources-page">
-    <h1>ResourcesPage</h1>
+    <h1 class="font-heading-1--bold">Resources</h1>
+
+    <div class="resources-page__container">
+      <automagic-card *ngFor="let card of cards" [card]="card"></automagic-card>
+    </div>
   </section>
 </ion-content>

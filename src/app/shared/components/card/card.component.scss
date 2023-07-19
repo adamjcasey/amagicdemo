@@ -95,7 +95,7 @@
     }
 
     .card__text {
-      font-size: var(--font-size-paragraph-xs);
+      @include paragraph-s;
     }
   }
 
@@ -112,6 +112,30 @@
       .card__title {
         font-size: var(--font-size-heading-3);
         line-height: var(--font-line-height-heading-3);
+      }
+
+      ion-button {
+        margin-top: var(--space-s);
+      }
+    }
+  }
+
+  &.card--simple {
+    .card__content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .card__text {
+      text-align: left;
+
+      .card__title {
+        @include heading-5;
+      }
+
+      .card__description {
+        @include paragraph-s;
       }
 
       ion-button {
