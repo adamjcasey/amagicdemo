@@ -6,6 +6,7 @@ import {
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, Subject, takeUntil } from 'rxjs';
+import * as moment from 'moment';
 
 import * as fromStore from '@home/store';
 import * as fromSharedStore from '@shared/store';
@@ -116,9 +117,10 @@ export class StartDoseInjectDonePage implements OnInit {
         if (homeConfig) {
           this.homeConfig = homeConfig;
 
-          // if this is the first dose of the user include extra instruction slides
+          // if this is the first dose to be injected, add extra instructions (slides)
           if (this.homeConfig.firstTimeDose) {
             if (this.slides.length === 2) {
+              const nextDose = this.homeConfig.doses[1];
               this.slides.push(
                 {
                   header: {
@@ -143,10 +145,10 @@ export class StartDoseInjectDonePage implements OnInit {
                             header: true,
                             bgTemplate: 'top-hole',
                             template: `
-                            <div class="start-dose-inject-done">
+                              <div class="start-dose-inject-done">
                                 <h1 class="font-heading-1--bold">Do not discard!</h1>
                                 <p>We will reuse this connected autoinjector for future demonstrations</p>
-                                <ion-button fill="outline" expand="block" color="light" onclick="window.backdropComponent.close()">
+                                <ion-button fill="outline" expand="block" color="light" class="close-action">
                                   Got it
                                 </ion-button>
                               </div>
@@ -197,7 +199,7 @@ export class StartDoseInjectDonePage implements OnInit {
                       {
                         type: 'featured',
                         eyebrow: 'Next Dose:',
-                        title: 'January 14th',
+                        title: moment(nextDose.date).format('MMMM Do'),
                         asset: '/assets/images/start-dose-inject-done-drug.svg',
                         button: {
                           label: 'Edit schedule',

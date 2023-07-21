@@ -71,10 +71,12 @@ export class WelcomeSignUpComponent {
     }));
 
     animate(
-      "#backdrop",
+      '#backdrop .backdrop__wrapper',
       { height: [
         `${window.innerHeight}px`,
+        `${window.innerHeight * 0.95}px`,
         `${window.innerHeight * 0.9}px`,
+        `${window.innerHeight * 0.85}px`,
         `${window.innerHeight * 0.8}px`,
         `${window.innerHeight * 0.75}px`
       ] },

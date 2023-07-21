@@ -28,8 +28,8 @@
           <div class="content-wrapper">
             <div 
               class="template-wrapper" 
-              *ngIf="slide.header?.template" 
-              [innerHTML]="sanitizeContent(slide.header.template)"
+              *ngIf="config.header?.template || slide.header?.template" 
+              [innerHTML]="sanitizeContent(config.header?.template ? config.header?.template : slide.header?.template)"
             ></div>
 
             <div class="cards-wrapper" *ngIf="slide.header?.cards">

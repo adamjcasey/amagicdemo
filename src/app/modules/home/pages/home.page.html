@@ -21,7 +21,7 @@
           <automagic-accordion 
             *ngFor="let task of onBoardingTasks; let i = index"
             [config]="task" 
-            (onTaskCheck)="onTaskCheck($event, i)"
+            (onTaskComplete)="onTaskComplete($event, i)"
           ></automagic-accordion>
         </div>
 

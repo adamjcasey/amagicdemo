@@ -259,6 +259,9 @@ export class SliderPageComponent implements OnInit {
       case 'start-dose-ready-to-inject-video':
         componentRef = element.createComponent(fromHomeComponents.StartDoseReadyToInjectVideoComponent);
         break;
+      case 'start-dose-ready-to-inject-body-part-selector':
+        componentRef = element.createComponent(fromHomeComponents.StartDoseReadyToInjectBodyPartSelectorComponent);
+        break;
       case 'start-dose-ready-to-inject-dosing':
         componentRef = element.createComponent(fromHomeComponents.StartDoseReadyToInjectDosingComponent);
         break;

@@ -15,19 +15,22 @@
     class="datepicker" 
     [ngClass]="{ 
       'is-continuous': continuous, 
+      'max-view-1': monthsPerView === 1, 
     }">
-    <div *ngIf="!continuous" class="datepicker__controls">
-      <ion-button>
-        <ion-icon slot="chevron-back-outline" name="star"></ion-icon>
-      </ion-button>
-      <ion-button>
-        <ion-icon slot="chevron-forward-outline" name="star"></ion-icon>
-      </ion-button>
-    </div>
     <table *ngFor="let month of months; let i = index" class="month {{ i === 0 ? 'is-active' : null }}">
       <tbody>
         <tr class="month__title">
-          <td colspan="7">{{ month.name }} {{ month.year }}</td>
+          <td colspan="1" class="prev-month" *ngIf="!continuous || (continuous && monthsPerView !== 'auto')">
+            <ion-button (click)="prevMonth()" fill="clear">
+              <ion-icon slot="icon-only" name="chevron-back"></ion-icon>
+            </ion-button>
+          </td>
+          <td [attr.colspan]="!continuous || (continuous && monthsPerView !== 'auto') ? 5 : 7">{{ month.name }} {{ month.year }}</td>
+          <td colspan="1" class="next-month" *ngIf="!continuous || (continuous && monthsPerView !== 'auto')">
+            <ion-button (click)="nextMonth()" fill="clear" fill="clear">
+              <ion-icon slot="icon-only" name="chevron-forward"></ion-icon>
+            </ion-button>
+          </td>
         </tr>
         <tr class="month__weekdays">
           <td *ngFor="let day of weekdays">{{ day | ellipsis: 3 : false }}</td>

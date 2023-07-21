@@ -2,9 +2,6 @@
 
 .datepicker {
   max-height: 375px;
-  padding-right: var(--space-xxs);
-  padding-bottom: var(--space-m);
-  padding-left: var(--space-xxs);
   overflow-y: auto;
 
   .month {
@@ -17,9 +14,20 @@
     .month__title {
       td {
         @include heading-5;
-        color: var(--color-gray-dark);
         font-weight: var(--font-weight-medium);
         text-align: center;
+      }
+
+      .prev-month,
+      .next-month {
+        ion-button {
+          --padding-end: 0;
+          --padding-start: 0;
+        }
+
+        ion-icon {
+          color: var(--color-gray-dark);
+        }
       }
     }
   
@@ -43,7 +51,6 @@
       td {
         padding-top: calc(var(--space-xxxxs) / 2);
         padding-bottom: calc(var(--space-xxxxs)  / 2);
-        color: var(--color-primary-dark-blue);
 
         span {
           display: block;
@@ -92,6 +99,24 @@
     .month {
       &:not(.is-active) {
         display: none;
+      }
+    }
+  }
+  
+  &.is-continuous {
+    &.max-view-1 {
+      .month {
+        position: absolute;
+        opacity: 0;
+
+        &:not(.is-active) {
+          pointer-events: none;
+        }
+
+        &.is-active {
+          position: initial;
+          opacity: 1;
+        }
       }
     }
   }

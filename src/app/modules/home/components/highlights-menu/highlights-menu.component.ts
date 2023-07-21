@@ -48,7 +48,7 @@ export class HighlightsMenuComponent implements OnInit, OnDestroy {
     if (!this.backdropConfig.fullScreen) {
       // animation to pass from default to fullScreen in backdrop component
       animate(
-        "#backdrop",
+        '#backdrop .backdrop__content',
         {
           height: [
             `${window.innerHeight * 0.5}px`,
@@ -56,7 +56,7 @@ export class HighlightsMenuComponent implements OnInit, OnDestroy {
             `${window.innerHeight * 0.7}px`,
             `${window.innerHeight * 0.8}px`,
             `${window.innerHeight * 0.9}px`,
-            `${window.innerHeight}px`
+            `${(window.innerHeight - 162 )}px`
           ],
         },
         { easing: spring({
@@ -72,7 +72,7 @@ export class HighlightsMenuComponent implements OnInit, OnDestroy {
       fullScreen: true,
       template: null,
       component: null,
-      hightlights: [
+      highlights: [
         {
           type: 'simple',
           asset: '/assets/images/highlights-1.svg',

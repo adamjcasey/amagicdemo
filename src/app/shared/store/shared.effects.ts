@@ -35,7 +35,11 @@ export class SharedEffects {
               mass: 1,
               velocity: 800,
             }) }
-          );
+          ).finished.then(() => {
+            if (typeof this._backdropOptions.onOpen === 'function') {
+              this._backdropOptions.onOpen();
+            }
+          });
         }
         else {
           animate(
@@ -47,7 +51,11 @@ export class SharedEffects {
               `#backdrop`, 
               { opacity: [ 0.5, 0.8, 1 ]},
               { easing: 'ease-in-out', duration: 0.3 }
-            );
+            ).finished.then(() => {
+              if (typeof this._backdropOptions.onOpen === 'function') {
+                this._backdropOptions.onOpen();
+              }
+            });
           })
         }
       })
@@ -97,6 +105,7 @@ export class SharedEffects {
                 duration: 0.6,
               } 
             ).finished.then(() => {
+              element.removeAttribute('height');
               if (typeof this._backdropOptions.onClose === 'function') {
                 this._backdropOptions.onClose();
               }
@@ -109,6 +118,7 @@ export class SharedEffects {
             { opacity: [ 0.8, 0.5, 0 ] }, 
             { duration: 1 }
           ).finished.then(() => {
+            element.removeAttribute('height');
             animate(
               `#backdrop`,
               { top: `${(element.offsetHeight) * -1}px` }, 
@@ -219,7 +229,11 @@ export class SharedEffects {
               mass: 1,
               velocity: 800,
             }) }
-          );
+          ).finished.then(() => {
+            if (typeof this._alertOptions.onShow === 'function') {
+              this._alertOptions.onShow();
+            }
+          });
         }
       })
     )

@@ -1,9 +1,10 @@
 <div class="accordion" [ngClass]="{
   'accordion--task': config.type === 'task',
-  'accordion--task-checked': config.check,
+  'accordion--task-checked': config.completed,
   'accordion--dose-report': config.type === 'dose-report',
   'accordion--contact': config.type === 'contact',
   'accordion--is-closed': config.close,
+  'accordion--dynamic-content': !config.description && !config.asset,
 }">
   <header 
     class="accordion__tab"
@@ -14,7 +15,7 @@
 
     <ng-container *ngIf="config.type === 'task'">
       <div class="check" (click)="taskCheck($event)">
-        <ion-icon name="checkmark-circle" *ngIf="config.check"></ion-icon>
+        <ion-icon name="checkmark-circle" *ngIf="config.completed"></ion-icon>
       </div>
     </ng-container>
 
@@ -34,7 +35,22 @@
 
     <div class="accordion__content" *ngIf="config.type !== 'contact'">
       <div class="description" *ngIf="config.description" [innerHTML]="sanitizeContent(config.description)"></div>
-      <ion-img class="asset" [src]="config.asset"></ion-img>
+      <ion-img class="asset" *ngIf="config.asset" [src]="config.asset"></ion-img>
+
+      <ng-container *ngIf="config.component?.type === 'datepicker'">
+        <automagic-datepicker 
+          [multiple]="config.component?.multiple"
+          [continuous]="config.component?.continuous"
+          [monthsPerView]="config.component?.monthsPerView"
+          [selectedDates]="config.component?.selectedDates"
+          [disabled]="config.component?.disabled"
+        ></automagic-datepicker>
+      </ng-container>
+  
+      <div class="template" 
+        *ngIf="config.template" 
+        [innerHTML]="sanitizeContent(config.template)"
+      ></div>
     </div>
 
     <div class="accordion__actions" *ngIf="config.type === 'contact'">

@@ -3,7 +3,7 @@ import {
   Input, 
   Output,
   EventEmitter, 
-  ViewEncapsulation 
+  ViewEncapsulation, 
 } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
@@ -25,17 +25,16 @@ export class AccordionComponent {
     if (typeof this.config.close === 'undefined') {
       this.config.close = false;
     }
-
     this.config.close = !this.config.close;
   }
 
   taskCheck(event: any) {
     event.preventDefault();
     event.stopImmediatePropagation();
-    if (typeof this.config.check === 'undefined') {
-      this.config.check = false;
+    if (typeof this.config.completed === 'undefined') {
+      this.config.completed = false;
     }
-    this.onTaskCheck.emit(!this.config.check);
+    this.onTaskCheck.emit(!this.config.completed);
   }
 
   sanitizeContent(htmlContent: string): SafeHtml {

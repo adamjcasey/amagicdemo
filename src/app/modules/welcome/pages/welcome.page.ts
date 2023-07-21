@@ -154,6 +154,12 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
           `,
           actions: [
             {
+              label: 'Previous',
+              action: () => { 
+                this.sliderPage.slidePrev();
+              }
+            },
+            {
               label: 'Continue',
               action: () => {
                 this._store.dispatch(new fromSharedStore.SliderPageClear());
@@ -190,7 +196,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
     this._ngUnsubscribe.complete();
   }
 
-  async playVideoIntro() {
+  playVideoIntro() {
     // set full screen option for global layout
     this._store.dispatch(new fromCoreStore.SetFullScreen(true));
     const endHandler = () => {
@@ -201,6 +207,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
         transition: 'fade',
         fullScreen: true,
         header: false,
+        contenCentered: true,
         showBackButton: false,
         component: 'welcome-sign-up',
       }));
@@ -226,13 +233,11 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
 
   slideNext(sliders: any) {
     const currentSlide = sliders.content.activeIndex;
-    if (currentSlide > 1) {
-      if (currentSlide === 2) {
-        sliders.asset.slideTo(2);
-      }
-      else {
-        sliders.asset.slideNext(500);
-      }
+    if (currentSlide === 1) {
+      sliders.asset.slideTo(2);
+    }
+    else {
+      sliders.asset.slideNext(500);
     }
 
     sliders.content.slideNext(500);

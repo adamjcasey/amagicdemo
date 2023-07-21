@@ -20,6 +20,7 @@ import * as moment from 'moment';
 export class DatepickerComponent implements OnInit {
   @Input() labelInput?: string = 'Label Datepicker';
   @Input() continuous?: boolean = false;
+  @Input() monthsPerView?: any = 'auto';
   @Input() multiple?: boolean = false;
   @Input() disabled?: boolean = false;
   @Input() selectedDates: Date[] = [];
@@ -144,4 +145,17 @@ export class DatepickerComponent implements OnInit {
     }
   }
 
+  prevMonth() {
+    const currentMonth = this.datePickerList.nativeElement.querySelector('table.month.is-active');
+    currentMonth.classList.remove('is-active');
+    const prevMonth = currentMonth.previousElementSibling;
+    prevMonth.classList.remove('is-active');
+  }
+
+  nextMonth() {
+    const currentMonth = this.datePickerList.nativeElement.querySelector('table.month.is-active');
+    currentMonth.classList.remove('is-active');
+    const nextMonth = currentMonth.nextElementSibling;
+    nextMonth.classList.remove('is-active');
+  }
 }

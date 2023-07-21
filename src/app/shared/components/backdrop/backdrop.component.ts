@@ -4,7 +4,8 @@ import {
   ViewChild,
   ViewEncapsulation,
   ViewContainerRef,
-  AfterViewInit
+  AfterViewInit,
+  Renderer2
 } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
@@ -39,15 +40,16 @@ export class BackdropComponent implements OnInit, AfterViewInit {
   constructor(
     private _store: Store<fromStore.SharedState>,
     private _sanitizer: DomSanitizer,
-    private _utils: fromSharedServices.UtilsService
+    private _utils: fromSharedServices.UtilsService,
+    private _renderer: Renderer2,
   ) {
     this.config$ = this._store.select(fromStore.getBackdropConfig);
   }
 
   getType(): string {
     let type = '';
-    if (this.config.hightlights) {
-      type = 'hightlights-menu';
+    if (this.config.highlights) {
+      type = 'highlights-menu';
     }
     else {
       if (!this.config.template && !this.config.component) {
@@ -64,6 +66,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
     this.config$.subscribe(config => {
       if (config) {
         this.config = config;
+        console.log('backdrop config subscribe');
         if (this.config.show) {
           if (this.config.component !== null) {
             this._loadComponent(this.config.component);
@@ -75,6 +78,23 @@ export class BackdropComponent implements OnInit, AfterViewInit {
           if (this.getType() === 'dinamic') {
             if (this.config.showBackButton) {
               this.goBackToMenu();
+            }
+          }
+
+          if (this.config.template) {
+            if (this.config.template.includes('close-action')) {
+              const controller = setInterval(() => {
+                const closeAction = document.querySelector('#backdrop .backdrop__template .close-action');
+                console.log('closeAction ', closeAction);
+                if (closeAction) {
+                  // this._renderer.listen(closeAction, 'click', (this.toggle).bind(this));
+                  // this._renderer.listen(closeAction, 'click', (this.toggle).bind(this));
+                  closeAction.addEventListener('click', () => {
+                    console.log('click in close action');
+                  });
+                  clearInterval(controller);
+                }
+              }, 500);
             }
           }
         }
@@ -105,6 +125,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
   }
 
   toggle() {
+    console.log('BackdropComponent -> toggle');
     if (!this.config.show) {
       this._store.dispatch(new fromStore.BackdropShow({
         transition: 'move',
@@ -145,7 +166,6 @@ export class BackdropComponent implements OnInit, AfterViewInit {
         }
 
         this.backButton = null;
-        console.log('hace clear in gobackmenu');
         this.contentComponent?.clear();
         this._store.dispatch(new fromStore.BackdropSetConfig({
           transition: 'move',
@@ -154,7 +174,6 @@ export class BackdropComponent implements OnInit, AfterViewInit {
           fullScreen: this.config.fullScreen ? false : null,
           template: null,
           component: null,
-          hightlights: null,
         }));
       }
     }
@@ -162,7 +181,22 @@ export class BackdropComponent implements OnInit, AfterViewInit {
 
   onHighlightsInit() {
     if (this.config.showBackButton) {
-      this.goBackToMenu();
+      this.backButton = {
+        label: 'Back',
+        action: () => {
+          if (this.config.fullScreen) {
+            this.animateFullScreenToDefault();
+          }
+
+          this._store.dispatch(new fromStore.BackdropSetConfig({
+            transition: 'move',
+            header: true,
+            fullScreen: false,
+            component: 'highlights-menu',
+            highlights: null,
+          }));
+        }
+      };
     }
 
     const wrapper = this.sliderHighlights.swiperRef.slides[0].querySelector('.masonry-layout');
@@ -173,6 +207,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
 
   onHighlightsChange() {
     const activeIndex = this.sliderHighlights.swiperRef.activeIndex;
+    console.log('activeIndex ', activeIndex);
     if (activeIndex > 0) {
       if (this.config.showBackButton) {
         this.backButton = {
@@ -184,7 +219,22 @@ export class BackdropComponent implements OnInit, AfterViewInit {
       }
     }
     else if (activeIndex === 0) {
-      this.goBackToMenu();
+      this.backButton = {
+        label: 'Back',
+        action: () => {
+          if (this.config.fullScreen) {
+            this.animateFullScreenToDefault();
+          }
+
+          this._store.dispatch(new fromStore.BackdropSetConfig({
+            transition: 'move',
+            header: true,
+            fullScreen: false,
+            component: 'highlights-menu',
+            highlights: null,
+          }));
+        }
+      };
     }
   }
 
@@ -203,8 +253,18 @@ export class BackdropComponent implements OnInit, AfterViewInit {
   }
 
   animateFullScreenToDefault() {
+    console.log('animateFullScreenToDefault');
     animate(
-      "#backdrop",
+      '#backdrop',
+      { opacity: this.config.transition === 'fade' ? 1 : '' },
+      {
+        easing: 'ease-in-out',
+        duration: 0.2,
+      },
+    );
+
+    animate(
+      '#backdrop .backdrop__content',
       {
         height: [
           `${window.innerHeight}px`,
@@ -224,8 +284,9 @@ export class BackdropComponent implements OnInit, AfterViewInit {
   }
 
   animateDefaultToFullScreen() {
+    console.log('animateDefaultToFullScreen');
     animate(
-      "#backdrop",
+      '#backdrop .backdrop__content',
       {
         height: [
           `${window.innerHeight * 0.75}px`,
