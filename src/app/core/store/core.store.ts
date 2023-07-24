@@ -9,9 +9,11 @@ export interface CoreState {
 export interface LayoutState {
   fullScreen: boolean;
   rightCornerEl: any,
+  shownBottomToolbar: boolean;
 }
 
 export const initialState: LayoutState = {
   fullScreen: false,
   rightCornerEl: null,
+  shownBottomToolbar: true,
 }

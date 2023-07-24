@@ -2,6 +2,7 @@ export interface SharedState {
   backdropConfig?: any;
   sliderPageConfig?: any;
   alertConfig?: any;
+  bottomToolbarConfig?: any;
 }
 
 export const initialState: SharedState = {
@@ -39,5 +40,8 @@ export const initialState: SharedState = {
     mode: 'move',
     template: null,
     component: null,
+  },
+  bottomToolbarConfig: {
+    show: true,
   },
 }

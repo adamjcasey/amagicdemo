@@ -1,0 +1,34 @@
+<section class="calendar-doses">
+  <h1 class="font-heading-1--bold">Calendar</h1>
+  <div class="calendar-doses__wrapper">
+    <automagic-datepicker 
+      [selectedDates]="selectedDates" 
+      [continuous]="true" 
+      [monthsPerView]="1" 
+      [disabled]="true"
+    ></automagic-datepicker>
+
+    <div class="calendar-widget">
+      <p class="indicators">
+        <span class="today">Today</span>
+        <span class="next-dose">Next Dose</span>
+        <span class="reminder">Reminder</span>
+        <span class="flare-ups">Flare-ups</span>
+      </p>
+    </div>
+
+    <ion-button fill="outline" expand="block" color="purple" (click)="onEditSchedule()">
+      Edit Schedule
+    </ion-button>
+  </div>
+
+  <div class="calendar-doses__next-reminder">
+    <h5>Next Dose Reminder</h5>
+    <ion-datetime-button datetime="datetime"></ion-datetime-button>
+    <ion-modal [keepContentsMounted]="true">
+      <ng-template>
+        <ion-datetime id="datetime"></ion-datetime>
+      </ng-template>
+    </ion-modal>
+  </div>
+</section>

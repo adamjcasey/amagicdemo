@@ -362,17 +362,25 @@
   }
 
   &.is-content-hidden {
-    grid-template-rows: auto max-content;
+    // grid-template-rows: auto max-content;
 
     .slider-page__header {
-      .content-wrapper {
-        max-height: 100vh;
-      }
+      max-height: calc(100vh - 104px);
+      overflow-y: auto;
     }
 
     .slider-page__content {
       height: 0;
       overflow: hidden;
+    }
+  }
+}
+
+#main.is-shown-bottom-toolbar {
+  .slider-page {
+    .slider-page__header {
+      max-height: calc(100vh - 96px);
+      overflow-y: auto;
     }
   }
 }

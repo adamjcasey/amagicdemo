@@ -39,6 +39,18 @@
         <ng-template #contentComponent></ng-template>
       </div>
 
+      <div class="backdrop__actions" *ngIf="config.buttons">
+        <ion-button 
+          *ngFor="let button of config.buttons; let i = index"
+          color="purple" 
+          size="large" 
+          [disabled]="button.disabled ? true : null"
+          (click)="button.action ? button.action($event) : null" 
+          [fill]="i % 2 !== 1 && config.actions.length > 1 ? 'outline': null">
+          {{ button.label }}
+        </ion-button>
+      </div>
+
       <ion-icon 
         class="close" 
         name="chevron-up-outline" 

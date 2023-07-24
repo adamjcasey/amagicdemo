@@ -1,0 +1,89 @@
+@import 'src/theme/base/mixins';
+
+.your-progress {
+  &::ng-deep .hero {
+    padding-bottom: var(--space-xxl);
+  }
+
+  .your-progress__states {
+    position: relative;
+    z-index: 50;
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-xxxs);
+    margin-top: -50px;
+
+    .state {
+      text-align: center;
+
+      .icon {
+        display: flex;
+        justify-content: center;
+        width: 80px;
+        height: 80px;
+        padding: 15px;
+        box-shadow: 0px 0px 16px 0px #0000001A;
+        background-color: var(--color-white);
+        border: 1px solid var(--color-gray-light);
+        border-radius: 12px;
+      }
+
+      p {
+        @include paragraph-s;
+        font-weight: var(--font-weight-bold);
+      }
+
+      &:nth-child(1) {
+        &.is-active {
+          .icon {
+            border-color: var(--color-primary-salmon);
+            border-width: 2px;
+          }
+        }
+      }
+
+      &:nth-child(2) {
+        &.is-active {
+          .icon {
+            border-color: var(--color-primary-honey-yellow);
+            border-width: 2px;
+          }
+        }
+      }
+
+      &:nth-child(3) {
+        &.is-active {
+          .icon {
+            border-color: var(--color-primary-blue);
+            border-width: 2px;
+          }
+        }
+      }
+
+      &:nth-child(4) {
+        &.is-active {
+          .icon {
+            border-color: var(--color-primary-purple);
+            border-width: 2px;
+          }
+        }
+      }
+    }
+  }
+
+  .your-progress__content {
+    h5 {
+      margin-top: 0;
+      text-align: center;
+    }
+  }
+
+  automagic-card {
+    display: block;
+    margin-bottom: var(--space-m);
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}

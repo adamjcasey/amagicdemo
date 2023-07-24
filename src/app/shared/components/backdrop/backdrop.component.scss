@@ -565,21 +565,19 @@
 
   &.is-full-screen {
     top: -100vh;
-    // min-height: 100vh;
-    // height: 100vh !important;
 
     &::before {
       display: none;
     }
 
     .backdrop__wrapper {
-      height: 100vh;
+      min-height: 100vh;
     }
   }
 
   &:not(.is-full-screen) {
     .backdrop__content {
-      max-height: calc(55vh + 40px);
+      max-height: 100%;
       overflow-y: auto;
     }
   }

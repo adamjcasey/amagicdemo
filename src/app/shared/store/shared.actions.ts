@@ -12,6 +12,7 @@ export enum ActionTypes {
   AlertShow = '[Alert] Show',
   AlertClose = '[Alert] Hide',
   AlertSetConfig = '[Alert] Set Config',
+  BottomToolbarHide = '[BottomToolbar] Hide',
 }
 export class BackdropShow implements Action {
   readonly type = ActionTypes.BackdropShow;
@@ -65,6 +66,12 @@ export class AlertSetConfig implements Action {
   constructor(public payload: any) {}
 }
 
+export class BottomToolbarHide implements Action {
+  readonly type = ActionTypes.BottomToolbarHide;
+  
+  constructor(public payload: boolean) {}
+}
+
 export type ActionsUnion 
   = BackdropShow 
   | BackdropClose
@@ -76,4 +83,5 @@ export type ActionsUnion
   | SliderPageClear
   | AlertShow 
   | AlertClose
-  | AlertSetConfig;
+  | AlertSetConfig
+  | BottomToolbarHide;

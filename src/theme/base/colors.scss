@@ -52,4 +52,11 @@
 
   /** font colors **/
   --color-text: #0A1414;
+
+  /** **/
+  --rating-field-level-1: var(--color-primary-salmon);
+  --rating-field-level-2: #FF9955;
+  --rating-field-level-3: #FFB852;
+  --rating-field-level-4: #E4D960;
+  --rating-field-level-5: var(--color-primary-green);
 }

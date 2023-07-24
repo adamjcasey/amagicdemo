@@ -11,24 +11,26 @@
     [style.background-color]="config.tabColor
       ? 'var(' + config.tabColor + ')' 
       : 'var(--color-white)'"
-    (click)="toggle()">
+      [ngClass]="{
+        'no-bg': !config.tabColor
+      }">
 
     <ng-container *ngIf="config.type === 'task'">
-      <div class="check" (click)="taskCheck($event)">
+      <div class="check" (click)="onTaskCheck($event)">
         <ion-icon name="checkmark-circle" *ngIf="config.completed"></ion-icon>
       </div>
     </ng-container>
 
     <ion-img class="avatar" *ngIf="config.type === 'contact'" [src]="config.asset"></ion-img>
     <div class="title-wrapper">
-      <h5 class="title">{{ config.title }}</h5>
+      <h5 class="title" [innerHTML]="config.title"></h5>
       <p class="position" *ngIf="config.position">{{ config.position }}</p>
     </div>
     <ion-icon class="icon" name="chevron-forward"></ion-icon>
   </header>
 
-  <div class="accordion__wrapper">
-    <div class="accordion__subheader" *ngIf="config.type === 'dose-report'">
+  <div class="accordion__wrapper" (click)="config.onClick ? config.onClick() : null">
+    <div class="accordion__subheader" *ngIf="config.type === 'dose-report' && (config.numberDose || config.time)">
       <div class="dose">Dose {{ config.numberDose }}</div>
       <div class="time">{{ config.time }}</div>
     </div>
@@ -46,12 +48,12 @@
           [disabled]="config.component?.disabled"
         ></automagic-datepicker>
       </ng-container>
-  
-      <div class="template" 
-        *ngIf="config.template" 
-        [innerHTML]="sanitizeContent(config.template)"
-      ></div>
     </div>
+
+    <div class="template" 
+      *ngIf="config.template" 
+      [innerHTML]="sanitizeContent(config.template)"
+    ></div>
 
     <div class="accordion__actions" *ngIf="config.type === 'contact'">
       <div class="action" *ngIf="config.email">

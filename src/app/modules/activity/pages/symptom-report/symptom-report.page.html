@@ -1,0 +1,21 @@
+<ion-content [fullscreen]="true" class="symptom-report__wrapper ion-padding">
+  <section class="symptom-report">
+    <h1 class="font-heading-1--bold">
+      Symptom Report 
+      <ion-button fill="clear" class="no-padding">
+        <ion-icon size="large" slot="icon-only" src="/assets/icons/download.svg"></ion-icon>
+      </ion-button>
+    </h1>
+
+    <p class="intro">We’ve picked out the key details about your symptoms for you</p>
+
+    <ion-button fill="outline" expand="block" color="purple" class="symptom-report__filters-cta">
+      <ion-icon slot="start" src="/assets/icons/filters.svg"></ion-icon>
+      Filters
+    </ion-button>
+
+    <div class="symptom-report__content">
+      <automagic-accordion [config]="report" *ngFor="let report of symptomReports"></automagic-accordion>
+    </div>
+  </section>
+</ion-content>

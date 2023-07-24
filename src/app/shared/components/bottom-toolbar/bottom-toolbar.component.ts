@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router, Event as RoutingEvent, NavigationEnd, NavigationStart } from '@angular/router';
+import { Router, Event as RoutingEvent, NavigationEnd } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { animate, spring  } from 'motion';
 
@@ -33,6 +33,7 @@ export class BottomToolbarComponent {
       (event: RoutingEvent) => {
         if (event instanceof NavigationEnd) {
           this.currentRoute = event.urlAfterRedirects;
+          this._store.dispatch(new fromCoreStore.HideBottomToolbar(true));
         }
       },
     );

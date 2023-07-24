@@ -46,6 +46,14 @@ automagic-accordion {
         margin: 0;
       }
 
+      .title {
+        span {
+          @include paragraph-m;
+          margin-left: 10px;
+          color: var(--color-gray-dark);
+        }
+      }
+
       .position {
         @include paragraph-s;
       }
@@ -57,6 +65,20 @@ automagic-accordion {
       transition-property: transform;
       transition-duration: 200ms;
       transition-timing-function: ease-in-out;
+    }
+
+    &.no-bg {
+      position: relative;
+
+      &::after {
+        content: '';
+        position: absolute;
+        left: var(--space-xs);
+        bottom: 0;
+        width: calc(100% - var(--space-l));
+        height: 2px;
+        background-color: var(--color-gray-light);
+      }
     }
   }
 
@@ -99,14 +121,18 @@ automagic-accordion {
         margin: 0 auto;
       }
 
+      .template {
+        width: 100%;
+      }
+
       automagic-datepicker {
         display: block;
         width: 100%;
       }
-  
+      
       .calendar-widget {
         text-align: center;
-
+      
         .indicators {
           span {
             @include paragraph-s;
@@ -116,26 +142,26 @@ automagic-accordion {
             gap: var(--space-xxxs);
             white-space: nowrap;
             margin: var(--space-xxxxs) var(--space-xxs);
-    
+      
             &::before {
               content: '';
               width: 12px;
               height: 12px;
             }
-    
+      
             &.today,
             &.next-dose {
               &::before {
                 border-radius: 2px;
               }
             }
-    
+      
             &.today {
               &::before {
                 background-color: var(--color-primary-purple);
               }
             }
-    
+      
             &.next-dose {
               &::before {
                 background-color: var(--color-bg-pastel-purple);
@@ -149,22 +175,22 @@ automagic-accordion {
                 height: 8px;
               }
             }
-    
+      
             &.reminder {
               &::before {
                 border-radius: 50%;
                 background-color: var(--color-primary-purple);
               }
             }
-    
+      
             &.flare-ups {
               position: relative;
-    
+      
               &::before {
                 background-color: var(--color-primary-salmon);
                 border-radius: 50%;
               }
-    
+      
               &::after {
                 content: '';
                 position: absolute;
@@ -178,10 +204,6 @@ automagic-accordion {
             }
           }
         }
-      }
-
-      .template {
-        width: 100%;
       }
     }
   }
@@ -210,6 +232,7 @@ automagic-accordion {
     .accordion__content {
       flex-direction: row-reverse;
       justify-content: space-between;
+      margin-bottom: var(--space-m);
 
       .description {
         @include paragraph-m;
@@ -275,6 +298,59 @@ automagic-accordion {
   &.accordion--dynamic-content {
     .accordion__content {
       flex-direction: column;
+    }
+  }
+
+  .symptom-report-widget {
+    h4 {
+      margin-bottom: var(--space-m);
+      text-align: center;
+
+      span {
+        @include paragraph-m;
+        color: var(--color-gray-dark);
+      }
+    }
+
+    .row-field {
+      margin-bottom: var(--space-xs);
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      h5 {
+        margin-top: 0;
+        margin-bottom: var(--space-xxxs);
+      }
+
+      p {
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+
+      &.severity {
+        p {
+          display: flex;
+          align-items: center;
+          gap: var(--space-xxxs);
+
+          &::before {
+            content: '';
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+          }
+
+          @for $i from 1 through 5 {
+            &.level-#{$i} {
+              &::before {
+                background-color: var((--rating-field-level-) + $i);
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

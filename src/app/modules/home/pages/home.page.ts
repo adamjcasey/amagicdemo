@@ -35,7 +35,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     private _store: Store<fromCoreStore.CoreState>,
     private _utils: fromServicesShared.UtilsService
   ) {
-    this.welcomeState$ = this._store.select(fromWelcomeStore.getWelcomeState);
+    this.welcomeState$ = this._store.select(fromWelcomeStore.getWelcomeConfig);
     this.backdropConfig$ = this._store.select(fromSharedStore.getBackdropConfig);
     this.homeConfig$ = this._store.select(fromStore.getHomeConfig);
 
@@ -232,8 +232,8 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
                       title: 'Dose Report',
                       numberDose: this.homeConfig.doses.findIndex((dose: any) => dose.date === lastMarkedDose.date) + 1,
                       time: moment(lastMarkedDose.date).format('MMM D, H:m A'),
-                      asset: `assets/images/activity-highlights-dose-report-${lastMarkedDose.bodyPartInjected.toLowerCase().replace(' ', '-')}.svg`,
-                      description: `This time you injected your <strong>${this._utils.humanizeBodyPartInjected(lastMarkedDose.bodyPartInjected)}<strong>`,
+                      asset: `assets/images/activity-highlights-dose-report-${lastMarkedDose.bodyPart.toLowerCase().replace(' ', '-')}.svg`,
+                      description: `This time you injected your <strong>${this._utils.humanizeBodyPartInjected(lastMarkedDose.bodyPart)}<strong>`,
                     },
                     {
                       tabColor: '--color-bg-pastel-honey-yellow',
@@ -293,7 +293,6 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     this.initialized = true;
-    // this.startFinishGuidedDemoFlow();
     if (this.homeConfig.firstTimeDose) {
       this._store.dispatch(new fromSharedStore.BackdropShow({
         transition: 'move',
@@ -387,22 +386,15 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   startFinishGuidedDemoFlow() {
-    const configMessage = {
+    this._store.dispatch(new fromSharedStore.BackdropShow({
       transition: 'move',
       header: true,
       component: 'highlights-menu',
       template: null,
-    }
-
-    if (this.backdropConfig.show) {
-      this._store.dispatch(new fromSharedStore.BackdropSetConfig(configMessage));    
-    }
-    else {
-      this._store.dispatch(new fromSharedStore.BackdropShow(configMessage));
-    }   
+    }));
   }
 
-  onTaskComplete(value: any, index: number) {
+  onTaskChange(value: any, index: number) {
     this.onBoardingTasks[index].completed = value;
     if (value) {
       this.completedTasks = this.completedTasks - 1;
@@ -410,6 +402,10 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     else {
       this.completedTasks = this.completedTasks + 1;
     }
+    
+    this._store.dispatch(new fromStore.SetData({
+      onBoardingTasks: this.onBoardingTasks
+    }));
   }
 
   goTo(path: string) {

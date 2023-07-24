@@ -61,10 +61,15 @@ export class StartDosePrepareTempTimerComponent implements OnInit, AfterViewInit
         template: `
           <h1 class="font-heading-1--bold">No need to wait!</h1>
           <p>For this demo we’ve sped up the<br> warming time.</p>
-          <ion-button fill="outline" expand="block" color="light" onclick="window.backdropComponent.close()">
-            Got it
-          </ion-button>
         `,
+        buttons: [
+          {
+            label: 'Got it',
+            action: () => {
+              this._store.dispatch(new fromSharedStore.BackdropClose());
+            },
+          }
+        ]
       }));
 
       // slow delay of 800ms around 70% of the duration of Backdrop showing animation
@@ -75,7 +80,7 @@ export class StartDosePrepareTempTimerComponent implements OnInit, AfterViewInit
           template: null,
           component: 'start-dose-prepare-setup',
           toolbar: {
-            actions: [
+            actions: [ 
               {
                 ...this.sliderPageConfig.content.toolbar.actions[0],
                 disabled: false,

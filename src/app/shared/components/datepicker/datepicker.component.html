@@ -1,14 +1,29 @@
 <div class="datepicker__wrapper">
-  <div *ngIf="!continuous" class="datepicker__input">
-    <ion-input 
-      #datePickerInput 
-      color="purple" 
-      fill="outline" 
-      mode="md" 
-      label="{{ labelInput }}" 
-      labelPlacement="floating" 
-      (click)="openPicker()" 
-    ></ion-input>
+  <div *ngIf="!continuous" class="datepicker__input" (click)="toggleDatepickerModal()">
+    <div class="field-wrapper">
+      <p class="field-label" *ngIf="labelInput">{{ labelInput }}</p>
+      <ion-input 
+        color="purple" 
+        fill="outline" 
+        mode="md" 
+        [value]="value ? formatValue(value) : null"
+        [placeholder]="labelPlaceholder ? labelPlaceholder : null">
+      </ion-input>
+      <ion-icon slot="end" src="/assets/icons/date-range.svg"></ion-icon>
+    </div>
+    <ion-modal #modal id="modal-datepicker" [keepContentsMounted]="true">
+      <ng-template>
+        <automagic-datepicker [continuous]="true" [monthsPerView]="1" (dateSelected)="setValuePickerInModal($event)"></automagic-datepicker>
+        <div class="buttons-container">
+          <ion-button 
+            color="purple" 
+            size="small" 
+            (click)="toggleDatepickerModal()">
+            Save
+          </ion-button>
+        </div>
+      </ng-template>
+    </ion-modal>
   </div>
   <div 
     #datePickerList 
@@ -21,7 +36,7 @@
       <tbody>
         <tr class="month__title">
           <td colspan="1" class="prev-month" *ngIf="!continuous || (continuous && monthsPerView !== 'auto')">
-            <ion-button (click)="prevMonth()" fill="clear">
+            <ion-button (click)="prevMonth()" fill="clear" [disabled]="isFirstMonth">
               <ion-icon slot="icon-only" name="chevron-back"></ion-icon>
             </ion-button>
           </td>

@@ -15,6 +15,8 @@ export class LayoutPage implements OnInit {
   public config: any;
   public backdropConfig$: Observable<any>;
   public backdropConfig: any;
+  public bottomToolbarConfig$: Observable<any>;
+  public bottomToolbarConfig: any;
   @ViewChild('main') wrapper!: ElementRef;
 
   constructor(
@@ -22,6 +24,7 @@ export class LayoutPage implements OnInit {
   ) {
     this.config$ = this._store.select(fromStore.getLayoutConfig);
     this.backdropConfig$ = this._store.select(fromSharedStore.getBackdropConfig);
+    this.bottomToolbarConfig$ = this._store.select(fromSharedStore.getBottomToolbarConfig);
   }
 
   ngOnInit() {
@@ -34,6 +37,12 @@ export class LayoutPage implements OnInit {
     this.backdropConfig$.subscribe(backdropConfig => {
       if (backdropConfig) {
         this.backdropConfig = backdropConfig;
+      }
+    });
+
+    this.bottomToolbarConfig$.subscribe(bottomToolbarConfig => {
+      if (bottomToolbarConfig) {
+        this.bottomToolbarConfig = bottomToolbarConfig;
       }
     });
   }

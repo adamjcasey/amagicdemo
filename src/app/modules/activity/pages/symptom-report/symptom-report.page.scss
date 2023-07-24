@@ -1,0 +1,28 @@
+.symptom-report__wrapper {
+  --background: var(--color-bg-pastel-tiffany-blue);
+}
+
+.symptom-report {
+  h1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xxxs);
+    margin-bottom: var(--space-m);
+    padding-top: var(--topbar-size);
+
+    ion-icon {
+      width: var(--space-xl);
+      height: var(--space-xl);
+    }
+  }
+
+  .intro {
+    text-align: center;
+  }
+
+  .symptom-report__filters-cta {
+    margin-top: var(--space-xl);
+    margin-bottom: var(--space-m);
+  }
+}

@@ -7,6 +7,7 @@ ion-button {
   --padding-end: 32px;
   --padding-start: 32px;
   --border-radius: 24px;
+  --border-width: 2px;
   height: 48px;
   margin-top: 0;
   margin-bottom: 0;
@@ -39,6 +40,11 @@ ion-button {
 
   &.is-hidden {
     display: none;
+  }
+
+  &.no-padding {
+    --padding-end: 10px;
+    --padding-start: 10px;
   }
 }
 
@@ -96,6 +102,68 @@ ion-checkbox::part(container) {
 
 ion-icon {
   &.icon-medium {
-    font-size: var(--font-size-heading-3);
+    font-size: var(--font-size-heading-3) !important;
+  }
+}
+
+ion-datetime-button {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-xs);
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    z-index: 50;
+    width: var(--space-m);
+    height: var(--space-m);
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+  }
+
+  &::before {
+    top: 12px;
+    left: calc(50% - 40px);
+    background-image: url(/assets/icons/date-range.svg);
+  }
+
+  &::after {
+    top: 11px;
+    right: 8px;
+    background-image: url(/assets/icons/date-time.svg);
+  }
+
+  &::part(native) {
+    @include paragraph-m;
+    position: relative;
+    width: 50%;
+    margin: 0;
+    padding-top: var(--space-xxs);
+    padding-right: calc(var(--space-m) + var(--space-xxs));
+    padding-bottom: var(--space-xxs);
+    background-color: var(--color-white);
+    border: 1px solid var(--color-gray-medium);
+    text-align: left;
+  }  
+}
+
+ion-modal#modal-datepicker {
+  --width: fit-content;
+  --min-width: 250px;
+  --height: fit-content;
+  --border-radius: 6px;
+  --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
+
+  .ion-page {
+    padding: var(--space-s);
+  }
+
+  .buttons-container {
+    margin-top: var(--space-xxs);
+    text-align: right;
   }
 }

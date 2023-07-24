@@ -6,8 +6,10 @@ import {
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
+import * as moment from 'moment';
 
 import * as fromCoreStore from '@core/store';
+import * as fromActivityStore from '@activity/store';
 import * as fromSharedStore from '@shared/store';
 
 @Component({
@@ -19,17 +21,22 @@ import * as fromSharedStore from '@shared/store';
 export class AddSymptomFormComponent implements OnInit {
   public sliderPageConfig$!: Observable<any>;
   public sliderPageConfig: any;
+  public activityConfig$!: Observable<any>;
+  public reportSelected: any;
   public addSymptomFormGroup: FormGroup;
   public symptoms: any[];
+  public editView: boolean = false;
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
     private _formBuilder: FormBuilder,
   ) {
     this.sliderPageConfig$ = this._store.select(fromSharedStore.getSliderPageConfig);
+    this.activityConfig$ = this._store.select(fromActivityStore.getActivityConfig);
     this.addSymptomFormGroup = this._formBuilder.group({
+      date: ['', ''],
       feelingOverall: [1, [Validators.required]],
-      customNote: ['', ''],
+      notes: ['', ''],
       symptoms: ['', [Validators.required]],
       severity: [1, [Validators.required]],
       energyLevels: [1, [Validators.required]],
@@ -70,9 +77,36 @@ export class AddSymptomFormComponent implements OnInit {
       }
     });
 
+    this.activityConfig$.subscribe(activityConfig => {
+      if (activityConfig) {
+        if (activityConfig.symptomReportSelected) {
+          this.reportSelected = activityConfig.symptomReportSelected;
+          this.addSymptomFormGroup.patchValue({
+            ...this.reportSelected,
+          });
+          this.editView = true;
+          this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
+            toolbar: null,
+          }));
+        }
+        else {
+          this.reportSelected = null;
+          this.editView = false;
+        }
+      }
+    });
+
     this.addSymptomFormGroup.valueChanges.subscribe(() => {
       const actions = this.sliderPageConfig.content.toolbar.actions;
       if (this.addSymptomFormGroup.valid) {
+        // this._store.dispatch(new fromActivityStore.SetData({
+        //   symptomReportSelected: this.addSymptomFormGroup.value,
+        // }));
+
+        this.addSymptomFormGroup.patchValue({
+          date: new Date(),
+        });
+
         if ((actions[1].disabled)) {
           this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
             toolbar: {
@@ -115,5 +149,9 @@ export class AddSymptomFormComponent implements OnInit {
 
   ratingFieldUpdate(event: any, field: string) {
     this.addSymptomFormGroup.get(field)?.setValue(event);
+  }
+
+  formatReportDate(date: Date) {
+    return moment(date).format('MMM D, H:m A');
   }
 }

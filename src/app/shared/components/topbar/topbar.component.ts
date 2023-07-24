@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { Router, Event as RoutingEvent, NavigationEnd } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 
-import * as fromStore from '../../store';
+import * as fromStore from '@shared/store';
 import * as fromCoreStore from '@core/store';
+import * as fromActivityStore from '@activity/store';
 
 @Component({
   selector: 'automagic-topbar',
@@ -13,11 +15,33 @@ import * as fromCoreStore from '@core/store';
 export class TopBarComponent implements OnInit {
   public layoutConfig$!: Observable<any>;
   public layoutConfig: any;
+  public activityConfig$!: Observable<any>;
+  public activityConfig: any;
+  public routerEvents$;
+  public activityScope: boolean = false;
+  public currentRoute: string = '';
 
   constructor(
     private _store: Store<fromStore.SharedState>,
+    private _router: Router,
   ) {
     this.layoutConfig$ = this._store.select(fromCoreStore.getLayoutConfig);
+    this.activityConfig$ = this._store.select(fromActivityStore.getActivityConfig);
+    this.routerEvents$ = this._router.events.subscribe(
+      (event: RoutingEvent) => {
+        if (event instanceof NavigationEnd) {
+          this.currentRoute = event.urlAfterRedirects;
+          if (this.currentRoute.includes('home/add-symptom')) {
+            if (this.activityConfig.symptomReportSelected) {
+              this.activityScope = true;
+            }
+          }
+          else {
+            this.activityScope = this.currentRoute.includes('activity/');
+          }
+        }
+      },
+    );
   }
 
   ngOnInit() {
@@ -26,5 +50,43 @@ export class TopBarComponent implements OnInit {
         this.layoutConfig = layoutConfig;
       }
     });
+
+    this.activityConfig$.subscribe(activityConfig => {
+      if (activityConfig) {
+        this.activityConfig = activityConfig;
+      }
+    });
+  }
+
+  leftElementAction() {
+    if (this.activityScope) {
+      if (
+        this.currentRoute.includes('activity/calendar') ||
+        this.currentRoute.includes('activity/dose-report') ||
+        this.currentRoute.includes('activity/your-progress') ||
+        this.currentRoute.includes('activity/symptom-report')
+      ) {
+        this.goTo('activity');
+      }
+
+      if (this.currentRoute.includes('activity/dose-report-detail')) {
+        this.goTo('activity/dose-report');
+      }
+
+      if (this.currentRoute.includes('home/add-symptom')) {
+        if (this.activityConfig.symptomReportSelected) {
+          this.goTo('activity/symptom-report');
+        }
+      }
+    }
+    else {
+      // this.goTo('profile');
+    }
+  }
+
+  goTo(path: string) {
+    this._store.dispatch(new fromCoreStore.Go({
+      path: [path]
+    }));
   }
 }

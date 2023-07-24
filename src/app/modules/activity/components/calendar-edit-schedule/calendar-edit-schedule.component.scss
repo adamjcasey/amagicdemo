@@ -1,0 +1,100 @@
+.calendar-edit-schedule {
+  h1 {
+    text-align: center;
+  }
+
+  .calendar-edit-schedule__actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-s);
+  }
+
+  .calendar-edit-schedule__schedule {
+    .schedule-row {
+      position: relative;
+
+      &::before,
+      &::after {
+        content: '';
+        position: absolute;
+      }
+
+      &::before {
+        top: 26px;
+        left: 10px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 3px solid var(--color-primary-green);
+      }
+
+      &::after {
+        top: 44px;
+        left: 18px;
+        height: 52px;
+        border: 1px dashed var(--color-primary-green);
+      }
+      
+      &.dose {
+        display: grid;
+        grid-template-columns: max-content auto max-content;
+        align-items: center;
+        gap: var(--space-xs);
+        padding-top: var(--space-xxs);
+        padding-bottom: var(--space-xxs);
+        padding-left: 45px;
+
+        .dose-label {
+          grid-column: 1;
+          font-weight: var(--font-weight-semibold);
+        }
+
+        .dose-picker {
+          grid-column: 2;
+        }
+  
+        .dose-delete {
+          grid-column: 3;
+
+          ion-icon {
+            font-size: var(--space-xxl);
+          }
+        }
+
+        &.is-marked {
+          &::before {
+            background-color: var(--color-primary-green);
+          }
+
+          &::after {
+            border-style: solid;
+          }
+        }
+      }
+
+      &:first-child {
+        &::before {
+          display: none;
+        }
+
+        &::after {
+          top: 40px;
+          height: 30px;
+        }
+
+        ion-icon {
+          font-size: 32px;
+        }
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+
+        &::after {
+          display: none;
+        }
+      }
+    }
+  }
+}

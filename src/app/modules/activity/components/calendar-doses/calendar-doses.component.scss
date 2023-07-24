@@ -1,0 +1,109 @@
+@import 'src/theme/base/mixins';
+
+.activity-page--calendar-doses__wrapper {
+  --background: var(--color-bg-pastel-purple);
+}
+
+.calendar-doses {
+  h1 {
+    margin-bottom: var(--space-m);
+  } 
+}
+
+.calendar-doses__wrapper {
+  padding: var(--space-m);
+  background-color: var(--color-white);
+  border-radius: 12px;
+
+  automagic-datepicker {
+    display: block;
+    width: 100%;
+  }
+  
+  .calendar-widget {
+    text-align: center;
+  
+    .indicators {
+      span {
+        @include paragraph-s;
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-xxxs);
+        white-space: nowrap;
+        margin: var(--space-xxxxs) var(--space-xxs);
+  
+        &::before {
+          content: '';
+          width: 12px;
+          height: 12px;
+        }
+  
+        &.today,
+        &.next-dose {
+          &::before {
+            border-radius: 2px;
+          }
+        }
+  
+        &.today {
+          &::before {
+            background-color: var(--color-primary-purple);
+          }
+        }
+  
+        &.next-dose {
+          &::before {
+            background-color: var(--color-bg-pastel-purple);
+          }
+        }
+        
+        &.reminder,
+        &.flare-ups {
+          &::before {
+            width: 8px;
+            height: 8px;
+          }
+        }
+  
+        &.reminder {
+          &::before {
+            border-radius: 50%;
+            background-color: var(--color-primary-purple);
+          }
+        }
+  
+        &.flare-ups {
+          position: relative;
+  
+          &::before {
+            background-color: var(--color-primary-salmon);
+            border-radius: 50%;
+          }
+  
+          &::after {
+            content: '';
+            position: absolute;
+            z-index: 10;
+            top: calc(50% - 2px);
+            left: 2px;
+            width: 4px;
+            height: 4px;
+            background-color: var(--color-white);
+          }
+        }
+      }
+    }
+  }
+}
+
+.calendar-doses__next-reminder {
+  margin-top: var(--space-l);
+  padding-bottom: calc(var(--space-xxl) * 1.5);
+
+  h5 {
+    margin-top: 0;
+    margin-bottom: var(--space-xs);
+    text-align: left;
+  }
+}

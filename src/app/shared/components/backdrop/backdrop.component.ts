@@ -66,7 +66,6 @@ export class BackdropComponent implements OnInit, AfterViewInit {
     this.config$.subscribe(config => {
       if (config) {
         this.config = config;
-        console.log('backdrop config subscribe');
         if (this.config.show) {
           if (this.config.component !== null) {
             this._loadComponent(this.config.component);
@@ -85,10 +84,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
             if (this.config.template.includes('close-action')) {
               const controller = setInterval(() => {
                 const closeAction = document.querySelector('#backdrop .backdrop__template .close-action');
-                console.log('closeAction ', closeAction);
                 if (closeAction) {
-                  // this._renderer.listen(closeAction, 'click', (this.toggle).bind(this));
-                  // this._renderer.listen(closeAction, 'click', (this.toggle).bind(this));
                   closeAction.addEventListener('click', () => {
                     console.log('click in close action');
                   });
@@ -125,7 +121,6 @@ export class BackdropComponent implements OnInit, AfterViewInit {
   }
 
   toggle() {
-    console.log('BackdropComponent -> toggle');
     if (!this.config.show) {
       this._store.dispatch(new fromStore.BackdropShow({
         transition: 'move',
@@ -154,6 +149,16 @@ export class BackdropComponent implements OnInit, AfterViewInit {
           }
         };
       }
+    }
+  }
+
+  goToSubmenu(step: number) {
+    if (this.sliderMainMenu) {
+      this.sliderMainMenu?.swiperRef.slideTo(step);
+    }
+
+    if (this.sliderHighlights) {
+      this.sliderHighlights?.swiperRef.slideTo(step);
     }
   }
 
@@ -207,7 +212,6 @@ export class BackdropComponent implements OnInit, AfterViewInit {
 
   onHighlightsChange() {
     const activeIndex = this.sliderHighlights.swiperRef.activeIndex;
-    console.log('activeIndex ', activeIndex);
     if (activeIndex > 0) {
       if (this.config.showBackButton) {
         this.backButton = {
@@ -238,22 +242,11 @@ export class BackdropComponent implements OnInit, AfterViewInit {
     }
   }
 
-  goToSubmenu(step: number) {
-    if (this.sliderMainMenu) {
-      this.sliderMainMenu?.swiperRef.slideTo(step);
-    }
-
-    if (this.sliderHighlights) {
-      this.sliderHighlights?.swiperRef.slideTo(step);
-    }
-  }
-
   sanitizeContent(htmlContent: string): SafeHtml {
     return this._sanitizer.bypassSecurityTrustHtml(htmlContent);
   }
 
   animateFullScreenToDefault() {
-    console.log('animateFullScreenToDefault');
     animate(
       '#backdrop',
       { opacity: this.config.transition === 'fade' ? 1 : '' },
@@ -268,9 +261,11 @@ export class BackdropComponent implements OnInit, AfterViewInit {
       {
         height: [
           `${window.innerHeight}px`,
-          `${window.innerHeight * 0.9}px`,
-          `${window.innerHeight * 0.8}px`,
-          `${window.innerHeight * 0.75}px`
+          `${(window.innerHeight) * 0.9}px`,
+          `${(window.innerHeight) * 0.8}px`,
+          `${(window.innerHeight) * 0.7}px`,
+          `${(window.innerHeight) * 0.6}px`,
+          `${(window.innerHeight) * 0.5}px`,
         ], 
         opacity: this.config.transition === 'fade' ? 1 : ''
       },
@@ -284,7 +279,6 @@ export class BackdropComponent implements OnInit, AfterViewInit {
   }
 
   animateDefaultToFullScreen() {
-    console.log('animateDefaultToFullScreen');
     animate(
       '#backdrop .backdrop__content',
       {

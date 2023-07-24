@@ -171,3 +171,16 @@
     }
   }
 }
+
+.card {
+  &.card--no-image {
+    .card__content {
+      grid-template-columns: auto;
+    }
+
+
+    .card__text {
+      grid-column: 1;
+    }
+  }
+}

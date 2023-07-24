@@ -1,5 +1,27 @@
 @import 'src/theme/base/mixins';
 
+.datepicker__input {
+  position: relative;
+
+  .field-wrapper {
+    margin-bottom: 0;
+  }
+
+  ion-input {
+    --padding-end: var(--space-xl) !important;
+    min-height: 48px !important;
+    pointer-events: none;
+  }
+
+  ion-icon {
+    position: absolute;
+    top: 12px;
+    right: 10px;
+    z-index: 50;
+    font-size: var(--font-size-heading-3);
+  }
+}
+
 .datepicker {
   max-height: 375px;
   overflow-y: auto;
@@ -69,24 +91,20 @@
             border-radius: 5px;
           }
         }
+
+        &.is-selected {
+          font-weight: var(--font-weight-bold);
+
+          span {
+            background-color: var(--color-bg-pastel-purple);
+          }
+        }
   
         &.is-today {
           color: var(--color-white);
 
           span {
             background-color: var(--color-primary-purple);
-          }
-
-          &.is-selected {
-            color: var(--color-gray-dark);
-          }
-        }
-  
-        &.is-selected {
-          font-weight: var(--font-weight-bold);
-
-          span {
-            background-color: var(--color-bg-pastel-purple);
           }
         }
       }
@@ -108,6 +126,7 @@
       .month {
         position: absolute;
         opacity: 0;
+        margin-top: 0;
 
         &:not(.is-active) {
           pointer-events: none;

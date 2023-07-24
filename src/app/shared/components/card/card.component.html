@@ -4,6 +4,7 @@
   'card--featured': card.type === 'featured',
   'card--simple': card.type === 'simple',
   'card--guide-step': card.type === 'guide-step',
+  'card--no-image': !card.asset,
 }">
   <div class="card__indicator" *ngIf="card.type === 'stepper'">
     {{ card.indicator }}
@@ -15,7 +16,7 @@
     </h5>
 
     <div class="card__content">
-      <figure class="card__image">
+      <figure class="card__image" *ngIf="card.asset">
         <ion-img src="{{ card.asset }}"></ion-img>
       </figure>
     
@@ -28,8 +29,16 @@
         <div class="card__description" *ngIf="card.description" [innerHTML]="card.description"></div>
         <div class="card__disclaimer" *ngIf="card.disclamerText" [innerHTML]="card.disclamerText"></div>
         <a class="card__link" *ngIf="card.link" (click)="card.link.action()">{{ card.link.label }}</a>
-        <ion-button class="card__button" *ngIf="card.button" [fill]="card.button.fill" color="purple" (click)="card.button.action()">{{ card.button.label }}</ion-button>
+        <!-- <ion-button class="card__button" *ngIf="card.button" [fill]="card.button.fill" color="purple" (click)="card.button.action()">
+          <ion-icon [src]="card.button.icon" slot="start"></ion-icon>
+          {{ card.button.label }}
+        </ion-button> -->
       </div>
+
+      <ion-button class="card__button" *ngIf="card.button" [fill]="card.button.fill" color="purple" (click)="card.button.action()">
+        <ion-icon [src]="card.button.icon" slot="start"></ion-icon>
+        {{ card.button.label }}
+      </ion-button>
     </div>
   </div>
 </div>

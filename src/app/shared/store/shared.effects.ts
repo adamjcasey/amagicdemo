@@ -70,20 +70,13 @@ export class SharedEffects {
         return action;
       }),
       tap(() => {
-        const element = document.querySelector('#backdrop .backdrop__wrapper') as HTMLElement;
+        const wrapper = document.querySelector('#backdrop .backdrop__wrapper') as HTMLElement;
+        const content = document.querySelector('#backdrop .backdrop__content') as HTMLElement;
         if (this._backdropOptions.transition === 'move') {
           if (this._backdropOptions.fullScreen) {
             animate(
               `#backdrop`,
-              {
-                top: `${(window.innerHeight) * -1}px`,
-                height: [
-                  `${window.innerHeight}px`,
-                  `${window.innerHeight * 0.9}px`,
-                  `${window.innerHeight * 0.8}px`,
-                  `${window.innerHeight * 0.75}px`
-                ] 
-              },
+              { top: `${(window.innerHeight) * -1}px` },
               { easing: spring({
                 stiffness: 80,
                 damping: 20,
@@ -95,17 +88,35 @@ export class SharedEffects {
                 this._backdropOptions.onClose();
               }
             });
+
+            animate(
+              `#backdrop .backdrop__content`,
+              { height: [
+                `${window.innerHeight}px`,
+                `${window.innerHeight * 0.9}px`,
+                `${window.innerHeight * 0.8}px`,
+                `${window.innerHeight * 0.75}px`
+              ] },
+              { easing: spring({
+                stiffness: 80,
+                damping: 20,
+                mass: 1,
+                velocity: 800,
+              }) },
+            );
           }
           else {
             animate(
               `#backdrop`,
-              { top: `${(element.offsetHeight) * -1}px` },
+              { top: `${(wrapper.offsetHeight) * -1}px` },
               {
                 easing: 'ease-in-out',
                 duration: 0.6,
               } 
             ).finished.then(() => {
-              element.removeAttribute('height');
+              // clean-up height style inline set in previous animations
+              content.style.removeProperty('height');
+
               if (typeof this._backdropOptions.onClose === 'function') {
                 this._backdropOptions.onClose();
               }
@@ -118,11 +129,13 @@ export class SharedEffects {
             { opacity: [ 0.8, 0.5, 0 ] }, 
             { duration: 1 }
           ).finished.then(() => {
-            element.removeAttribute('height');
             animate(
               `#backdrop`,
-              { top: `${(element.offsetHeight) * -1}px` }, 
+              { top: `${(wrapper.offsetHeight) * -1}px` }, 
             );
+
+            // clean-up height style inline set in previous animations
+            content.style.removeProperty('height');
 
             if (typeof this._backdropOptions.onClose === 'function') {
               this._backdropOptions.onClose();
@@ -264,6 +277,70 @@ export class SharedEffects {
             }
           });
         }
+      })
+    )
+  }, { dispatch: false });
+
+  bottomToolbarShow$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(fromActions.ActionTypes.BottomToolbarHide),
+      map((action: fromActions.BottomToolbarHide) => action.payload),
+      tap((show) => {
+        const element = document.getElementById('bottom-toolbar') as HTMLElement;
+        if (!show) {
+          if (element.style.getPropertyValue('display') === 'none') {
+            element.style.removeProperty('display');
+          }
+
+          animate(
+            '#bottom-toolbar',
+            { y: [
+              `${(element?.clientHeight + 30)}px`,
+              `${(element?.clientHeight * 0.9)}px`,
+              `${(element?.clientHeight * 0.75)}px`,
+              `${(element?.clientHeight * 0.5)}px`,
+              `${(element?.clientHeight * 0.25)}px`,
+              `0px`,
+            ] },
+            { easing: spring({
+              stiffness: 80,
+              damping: 20,
+              mass: 1,
+              velocity: 800,
+            }) }
+          );
+        }
+        else {
+          animate(
+            '#bottom-toolbar',
+            { y: [
+              '0px', 
+              '25%', 
+              '50%', 
+              '75%', 
+              `${(element?.clientHeight + 30)}px`,
+            ] },
+            { easing: spring({
+              stiffness: 80,
+              damping: 20,
+              mass: 1,
+              velocity: 800,
+            }) },
+          ).finished.then(() => {
+            element.style.display = 'none';
+          });
+        }
+      })
+    )
+  }, { dispatch: false });
+  bottomToolbarHide$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(fromActions.ActionTypes.BottomToolbarHide),
+      tap(() => {
+        const element = document.getElementById('bottom-toolbar') as HTMLElement;
+        
+
+        
       })
     )
   }, { dispatch: false });

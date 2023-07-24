@@ -1,0 +1,31 @@
+<ion-content [fullscreen]="true" class="dose-report-detail__wrapper ion-padding">
+  <section class="dose-report-detail">
+    <h1 class="font-heading-1--bold">Dose {{ doseReportSelected.numberDose }}</h1>
+    <ion-img class="body-shape" src="assets/images/activity-highlights-dose-report-{{ preprocessInjectionImage() }}.svg"></ion-img>
+    
+    <p>This time you injected your <strong>{{ preprocessDescriptionImage() }}</strong></p>
+
+    <ion-img class="graph" src="/assets/images/activity-page-dose-report-widget.svg"></ion-img>
+
+    <div class="section">
+      <h5>Injection reaction photos</h5>
+    </div>
+
+    <div class="section">
+      <h5>Reactions</h5>
+      <p>Itching, swelling.</p>
+    </div>
+
+    <div class="section">
+      <h5>Notes</h5>
+      <div class="field-wrapper field--required">
+        <ion-input 
+          color="purple" 
+          fill="outline" 
+          mode="md" 
+          placeholder="Note text"
+        ></ion-input>
+      </div>
+    </div>
+  </section>
+</ion-content>

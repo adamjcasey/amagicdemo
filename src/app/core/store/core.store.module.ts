@@ -12,6 +12,7 @@ import { environment } from 'src/environments/environment';
 import { SharedStoreModule } from '@shared/store';
 import { WelcomeStoreModule } from '@welcome/store';
 import { HomeStoreModule } from '@home/store';
+import { ActivityStoreModule } from '@activity/store';
 
 
 export function clearState(reducer: any) {
@@ -48,6 +49,7 @@ metaReducers.push(clearState);
     SharedStoreModule,
     WelcomeStoreModule,
     HomeStoreModule,
+    ActivityStoreModule,
   ],
 })
 export class CoreStoreModule {}

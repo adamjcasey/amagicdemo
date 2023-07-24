@@ -1,0 +1,40 @@
+<ion-content [fullscreen]="true" class="your-progress__wrapper">
+  <section class="your-progress">
+    <automagic-hero 
+      [color]="heroConfig.color" 
+      [template]="heroConfig.template"
+    ></automagic-hero>
+
+    <div class="your-progress__states ion-padding">
+      <div class="state is-active">
+        <div class="icon">
+          <ion-img src="/assets/images/your-progress-state-flare-up.svg"></ion-img>
+        </div>
+        <p>Flare-ups</p>
+      </div>
+      <div class="state">
+        <div class="icon">
+          <ion-img src="/assets/images/your-progress-state-energy-levels.svg"></ion-img>
+        </div>
+        <p>Energy levels</p>
+      </div>
+      <div class="state">
+        <div class="icon">
+          <ion-img src="/assets/images/your-progress-state-injection-reactions.svg"></ion-img>
+        </div>
+        <p>Injection reactions</p>
+      </div>
+      <div class="state">
+        <div class="icon">
+          <ion-img src="/assets/images/your-progress-state-sleep-quality.svg"></ion-img>
+        </div>
+        <p>Sleep quality</p>
+      </div>
+    </div>
+
+    <div class="your-progress__content ion-padding">
+      <h5>Weekly self-reported flare-up </h5>
+      <automagic-card [card]="card" *ngFor="let card of cards; let i = index"></automagic-card>
+    </div>
+  </section>
+</ion-content>

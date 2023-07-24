@@ -1,6 +1,9 @@
 <div 
   [hidden]="!initialized"
   class="hero" 
+  [ngClass]="{
+    'only-title': template && !image
+  }"
   [style.background-color]="color
     ? 'var(' + color + ')' 
     : 'var(--color-white)'">
@@ -18,5 +21,5 @@
       </ion-button>
     </div>
   </div>
-  <ion-img class="hero__image" src="{{ image }}"></ion-img>
+  <ion-img class="hero__image" *ngIf="image" src="{{ image }}"></ion-img>
 </div>

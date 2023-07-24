@@ -42,4 +42,8 @@
     max-width: 280px;
     margin: 0 auto;
   }
+
+  &.only-title {
+    padding-bottom: var(--space-l);
+  }
 }

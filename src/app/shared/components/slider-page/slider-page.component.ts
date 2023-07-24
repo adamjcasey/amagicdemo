@@ -24,6 +24,7 @@ import * as fromWelcomeStore from '@welcome/store';
 import * as fromWelcomeComponents from '@welcome/components';
 import * as fromHomeStore from '@home/store';
 import * as fromHomeComponents from '@home/components';
+import * as fromActivityComponents from '@activity/components';
 
 @Component({
   selector: 'automagic-slider-page',
@@ -276,6 +277,14 @@ export class SliderPageComponent implements OnInit {
         break;
       case 'add-symptom-form':
         componentRef = element.createComponent(fromHomeComponents.AddSymptomFormComponent);
+        break;
+      case 'calendar-doses':
+        console.log('calendar-dose');
+        componentRef = element.createComponent(fromActivityComponents.CalendarDosesComponent);
+        break;
+      case 'calendar-edit-schedule':
+        console.log('calendar-edit-schedule');
+        componentRef = element.createComponent(fromActivityComponents.CalendarEditScheduleComponent);
         break;
     }
   }

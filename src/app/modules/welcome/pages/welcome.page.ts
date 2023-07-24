@@ -40,7 +40,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
     private _store: Store<fromCoreStore.CoreState>,
     private _formBuilder: FormBuilder,
   ) {
-    this.config$ = this._store.select(fromStore.getWelcomeState);
+    this.config$ = this._store.select(fromStore.getWelcomeConfig);
     this.welcomeFormGroup = this._formBuilder.group({
       pin: ['', [ Validators.required, Validators.minLength(4) ]],
       name: ['', [ Validators.required ]],
