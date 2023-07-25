@@ -79,7 +79,6 @@ export class ActivityPage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this._store.dispatch(new fromSharedStore.SliderPageClear());
-
     this.activityConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe(activityConfig => {

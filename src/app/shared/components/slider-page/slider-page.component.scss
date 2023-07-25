@@ -84,11 +84,6 @@
       swiper {
         height: 100%;
       }
-
-      .content-wrapper {
-        max-height: calc(100vh - (var(--topbar-size) + 100px));
-        overflow-y: auto;
-      }
     }
   }
 
@@ -362,10 +357,10 @@
   }
 
   &.is-content-hidden {
-    // grid-template-rows: auto max-content;
+    grid-template-rows: auto max-content;
 
     .slider-page__header {
-      max-height: calc(100vh - 104px);
+      max-height: 88vh;
       overflow-y: auto;
     }
 

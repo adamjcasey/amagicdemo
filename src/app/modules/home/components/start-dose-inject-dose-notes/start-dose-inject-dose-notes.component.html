@@ -19,11 +19,11 @@
     <p class="field-label">Symptoms</p>
     <div class="field-checkboxes">
       <ion-checkbox 
-        [checked]="reaction.marked"
+        [checked]="doseNotesFormGroup.get('symptoms')?.value.includes(reaction)"
         labelPlacement="end"
         *ngFor="let reaction of symptoms; let i = index" 
         (click)="markReaction($event, i)">
-        {{ reaction.label }}
+        {{ reaction }}
       </ion-checkbox>
     </div>
   </div>

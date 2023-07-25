@@ -97,43 +97,44 @@ export class AddSymptomFormComponent implements OnInit {
     });
 
     this.addSymptomFormGroup.valueChanges.subscribe(() => {
-      const actions = this.sliderPageConfig.content.toolbar.actions;
-      if (this.addSymptomFormGroup.valid) {
-        // this._store.dispatch(new fromActivityStore.SetData({
-        //   symptomReportSelected: this.addSymptomFormGroup.value,
-        // }));
+      if (this.sliderPageConfig.content.toolbar) {
+        const actions = this.sliderPageConfig.content.toolbar.actions;
+        if (this.addSymptomFormGroup.valid) {
+          this.addSymptomFormGroup.patchValue({
+            date: new Date(),
+          });
 
-        this.addSymptomFormGroup.patchValue({
-          date: new Date(),
-        });
-
-        if ((actions[1].disabled)) {
-          this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
-            toolbar: {
-              actions: [
-                actions[0],
-                {
-                  ...actions[1],
-                  disabled: false,
-                }
-              ]
-            }
-          }));
+          if ((actions[1].disabled)) {
+            this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
+              toolbar: {
+                actions: [
+                  actions[0],
+                  {
+                    ...actions[1],
+                    disabled: false,
+                  }
+                ]
+              }
+            }));
+          }
         }
-      }
-      else {
-        if (!actions[1].disabled) {
-          this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
-            toolbar: {
-              actions: [
-                actions[0],
-                {
-                  ...actions[1],
-                  disabled: true,
+        else {
+          if (this.sliderPageConfig.content.toolbar) {
+            const actions = this.sliderPageConfig.content.toolbar.actions;
+            if (!actions[1].disabled) {
+              this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
+                toolbar: {
+                  actions: [
+                    actions[0],
+                    {
+                      ...actions[1],
+                      disabled: true,
+                    }
+                  ]
                 }
-              ]
+              }));
             }
-          }));
+          }
         }
       }
     });

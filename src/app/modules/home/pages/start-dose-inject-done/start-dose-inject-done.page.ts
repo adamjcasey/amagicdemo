@@ -148,11 +148,16 @@ export class StartDoseInjectDonePage implements OnInit {
                               <div class="start-dose-inject-done">
                                 <h1 class="font-heading-1--bold">Do not discard!</h1>
                                 <p>We will reuse this connected autoinjector for future demonstrations</p>
-                                <ion-button fill="outline" expand="block" color="light" class="close-action">
-                                  Got it
-                                </ion-button>
                               </div>
                             `,
+                            buttons: [
+                              {
+                                label: 'Got it',
+                                action: () => {
+                                  this._store.dispatch(new fromSharedStore.BackdropClose());
+                                },
+                              }
+                            ]
                           }));
                           this.sliderPage.slideNext();
                         }

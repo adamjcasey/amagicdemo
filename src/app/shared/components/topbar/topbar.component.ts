@@ -76,6 +76,7 @@ export class TopBarComponent implements OnInit {
       if (this.currentRoute.includes('home/add-symptom')) {
         if (this.activityConfig.symptomReportSelected) {
           this.goTo('activity/symptom-report');
+          this._store.dispatch(new fromStore.SliderPageClear());
         }
       }
     }

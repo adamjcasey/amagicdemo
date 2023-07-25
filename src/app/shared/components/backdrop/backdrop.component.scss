@@ -10,7 +10,6 @@
   left: 0;
   z-index: 100;
   width: 100vw;
-  // min-height: var(--backdrop-size);
 
   &::before {
     content: '';
@@ -33,18 +32,19 @@
     z-index: 100;
     display: grid;
     grid-template-rows: max-content auto;
-    // width: 100%;
-    // height: 100%;
     min-height: var(--backdrop-size);
     background-color: var(--color-black);
   }
 
   .backdrop__header {
+    position: inherit;
+    z-index: 50;
     grid-row: 1;
     display: grid;
     grid-template-rows: max-content auto;
     grid-template-columns: 1fr 1fr 1fr;
     padding-top: var(--space-xxl);
+    background-color: var(--color-black);
 
     .back-button {
       grid-row: 1;
@@ -65,26 +65,24 @@
       width: 100%;
       margin-top: var(--space-s);
     }
-
-    + .backdrop__content {
-      padding-top: var(--space-s);
-    }
   }
 
   .backdrop__content {
     grid-row: 2;
     position: relative;
     display: flex;
-    // justify-content: center;
-    // align-items: center;
     flex-direction: column;
     width: 100%;
     max-width: calc(300px + (var(--space-m) * 2) );
-    min-height: 55vh;
-    max-height: 100%;
+    min-height: calc(55vh + (var(--space-xxxxl) * 2.8));
+    max-height: max-content;
     overflow-y: auto;
-    margin: 0 auto;
-    padding: var(--space-xxl) var(--space-m) var(--space-s);
+    margin-top: calc((var(--space-xxxxl) * 2.8) * -1);
+    margin-right: auto;
+    margin-left: auto;
+    padding-top: calc(var(--space-xxxxl) * 2.8);
+    padding-right: var(--space-l);
+    padding-left: var(--space-l);
 
     > * {
       width: 100%;
@@ -115,6 +113,14 @@
           }
         }
       }
+    }
+
+    .backdrop__actions {
+      display: flex;
+      gap: var(--space-xxs);
+      justify-content: center;
+      align-items: center;
+      margin-bottom: var(--space-l);
     }
 
     .pin-input {
@@ -182,7 +188,7 @@
         border-bottom: 1px solid var(--color-gray-dark);
 
         &:last-child {
-          padding-bottom: 0;
+          margin-bottom: 0;
           border-bottom: none;
         }
 
@@ -207,7 +213,6 @@
     .main-menu,
     .highlights-menu {
       display: flex;
-      // width: calc(100vw - 60px);
       color: var(--color-white);
 
       swiper {
@@ -230,6 +235,7 @@
             position: relative;
 
             p {
+              margin-bottom: 0;
               font-weight: var(--font-weight-bold);
             }
 
@@ -275,7 +281,6 @@
 
     .highlights-menu {
       h1 {
-        margin-top: 0;
         margin-bottom: var(--space-l);
         color: var(--color-white);
       }
@@ -573,12 +578,9 @@
     .backdrop__wrapper {
       min-height: 100vh;
     }
-  }
 
-  &:not(.is-full-screen) {
     .backdrop__content {
-      max-height: 100%;
-      overflow-y: auto;
+      min-height: calc(80vh + (var(--space-xxxxl) * 2.8));
     }
   }
 
@@ -595,12 +597,10 @@
       background-position: center center;
       background-size: cover;
       text-align: center;
-    }
 
-    .backdrop__content {
       .close {
         position: absolute;
-        left: 0;
+        left: calc(50% - 22.5px);
         color: var(--color-white);
         font-size: 45px;
       }
@@ -609,8 +609,11 @@
     &.bg-template--top-hole {
       .backdrop__content {
         justify-content: flex-end;
-        padding-bottom: 20vh;
+        padding-bottom: 15vh;
+        min-height: 100vh;
+      }
 
+      .backdrop__wrapper {
         .close {
           bottom: 5vh;
         }
@@ -620,11 +623,11 @@
     &.bg-template--bottom-hole {
       .backdrop__content {
         justify-content: flex-start;
-        padding-top: 10vh;
+        margin-top: calc(var(--space-xxxxl) * 2.2 * -1);
+      }
 
-        .close {
-          bottom: 40vh;
-        }
+      .close {
+        bottom: 40vh;
       }
     }
   }
