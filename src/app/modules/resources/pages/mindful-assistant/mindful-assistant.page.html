@@ -1,13 +1,17 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>mindful-assistant</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">mindful-assistant</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <section class="mindful-assistant">
+    <automagic-hero 
+      *ngIf="heroConfig"
+      [color]="heroConfig.color" 
+      [image]="heroConfig.image" 
+      [template]="heroConfig.template" 
+      [actions]="heroConfig.actions"
+      [icon]="heroConfig.icon"
+    ></automagic-hero>
+    <p>Looks like you might be stressed about your injection. <strong>Need some help?</strong></p>
+    <div class="mindful-options">
+        <automagic-card *ngFor="let card of cards" [card]="card"></automagic-card>
+    </div>
+    <automagic-card [card]="exit_card"></automagic-card>
+  </section>
 </ion-content>

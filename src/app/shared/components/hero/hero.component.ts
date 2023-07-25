@@ -15,6 +15,7 @@ export class HeroComponent {
   @Input() image: string = '';
   @Input() template!: string;
   @Input() actions: any[] = [];
+  @Input() icon: string = '';
 
   constructor() {}
 

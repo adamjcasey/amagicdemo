@@ -42,4 +42,19 @@
     max-width: 280px;
     margin: 0 auto;
   }
+
+  .hero__icon {
+    position: absolute;
+    bottom: -64px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.hero__no-image {
+  padding-bottom: var( --space-l);
+}
+
+.hero__has-icon {
+  overflow: visible;
 }

@@ -3,6 +3,7 @@
   'card--stepper': card.type === 'stepper',
   'card--featured': card.type === 'featured',
   'card--simple': card.type === 'simple',
+  'card--mindful': card.type === 'mindful',
 }">
   <div class="card__indicator" *ngIf="card.type === 'stepper'">
     {{ card.indicator }}
@@ -23,7 +24,7 @@
         <h5 class="card__title" *ngIf="card.title && card.type !== 'stepper'">{{ card.title }}</h5>
         <div class="card__description" *ngIf="card.description" [innerHTML]="card.description"></div>
         <div class="card__disclaimer" *ngIf="card.disclamerText" [innerHTML]="card.disclamerText"></div>
-        <a class="card__link" *ngIf="card.link" (click)="card.link.action()">{{ card.link.label }}</a>
+        <a class="card__link" *ngIf="card.link" [ngClass]="{'card__link_salmon': card.link.color && card.link.color === 'salmon'}" (click)="card.link.action()">{{ card.link.label }}</a>
         <ion-button class="card__button" *ngIf="card.button" [fill]="card.button.fill" color="purple" (click)="card.button.action()">{{ card.button.label }}</ion-button>
       </div>
     </div>

@@ -1,4 +1,5 @@
-<div class="hero" [ngStyle]="{ 'background-color': color }">
+<div class="hero" [ngStyle]="{ 'background-color': color }" 
+    [ngClass]="{'hero__no-image': !image, 'hero__has-icon': icon}">
   <div class="hero__layer"></div>
   <div class="hero__content">
     <div *ngIf="template" class="hero__template" [innerHTML]="template"></div>
@@ -12,5 +13,6 @@
       </ion-button>
     </div>
   </div>
-  <ion-img class="hero__image" src="{{ image }}"></ion-img>
+  <ion-img *ngIf="image" class="hero__image" src="{{ image }}"></ion-img>  
+  <ion-img *ngIf="icon" class="hero__icon" src="{{ icon }}"></ion-img>
 </div>

@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
+import * as fromCoreStore from '@core/store';
 
 @Component({
   selector: 'automagic-resources',
@@ -9,8 +11,11 @@ export class ResourcesPage {
 
   public cards_left: Array<any> = [];
   public cards_right: Array<any> = [];
+  
 
-  constructor() {
+  constructor(
+      private _store: Store<fromCoreStore.CoreState>
+    ) {
     this.cards_left = [
       {
         type: 'simple',
@@ -18,7 +23,7 @@ export class ResourcesPage {
         asset: '/assets/images/resources-entry-care-team.svg',
         description: 'Connect to your health care providers for holistic care.',
         action: () => {
-          console.log('action go to Care Team');
+          this.goTo('/resources/your-care-team');
         }
       },
       {
@@ -27,7 +32,7 @@ export class ResourcesPage {
         asset: '/assets/images/resources-entry-education.svg',
         description: 'Stay up-to-date and learn more about your condition and treatment.',
         action: () => {
-          console.log('action go to Education');
+          this.goTo('/resources/education');
         }
       },      
       {
@@ -36,7 +41,7 @@ export class ResourcesPage {
         asset: '/assets/images/resources-entry-one-path.svg',
         description: 'Chat with your patient support manager (PSM).',
         action: () => {
-          console.log('action go to OnePath');
+          this.goTo('/resources/one-path');
         }
       },
     ];
@@ -48,7 +53,7 @@ export class ResourcesPage {
         asset: '/assets/images/resources-entry-community-feed.svg',
         description: 'Connect to a larger community of fellow patients to learn tips and tricks.',
         action: () => {
-          console.log('action go to Community Feed');
+          this.goTo('/resources/community-feed');
         }
       },
       {
@@ -57,10 +62,15 @@ export class ResourcesPage {
         asset: '/assets/images/resources-entry-mindful-assistant.svg',
         description: 'Use Headspace to help navigate the stress and anxiety of chronic conditions.',
         action: () => {
-          console.log('action go to Mindful Assistant');
+          this.goTo('/resources/mindful-assistant');
         }
       },      
 
     ];
+  }
+  goTo(path: string) {
+    this._store.dispatch(new fromCoreStore.Go({
+      path: [path]
+    }));
   }
 }
