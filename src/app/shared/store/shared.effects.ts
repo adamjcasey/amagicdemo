@@ -76,7 +76,7 @@ export class SharedEffects {
           if (this._backdropOptions.fullScreen) {
             animate(
               `#backdrop`,
-              { top: `${(window.innerHeight) * -1}px` },
+              { top: `${(wrapper.clientHeight) * -1}px` },
               { easing: spring({
                 stiffness: 80,
                 damping: 20,
@@ -131,7 +131,7 @@ export class SharedEffects {
           ).finished.then(() => {
             animate(
               `#backdrop`,
-              { top: `${(wrapper.offsetHeight) * -1}px` }, 
+              { top: `${(wrapper.clientHeight) * -1}px` }, 
             );
 
             // clean-up height style inline set in previous animations
@@ -281,36 +281,13 @@ export class SharedEffects {
     )
   }, { dispatch: false });
 
-  bottomToolbarShow$ = createEffect(() => {
+  bottomToolbarHide$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(fromActions.ActionTypes.BottomToolbarHide),
       map((action: fromActions.BottomToolbarHide) => action.payload),
-      tap((show) => {
+      tap((hide) => {
         const element = document.getElementById('bottom-toolbar') as HTMLElement;
-        if (!show) {
-          if (element.style.getPropertyValue('display') === 'none') {
-            element.style.removeProperty('display');
-          }
-
-          animate(
-            '#bottom-toolbar',
-            { y: [
-              `${(element?.clientHeight + 30)}px`,
-              `${(element?.clientHeight * 0.9)}px`,
-              `${(element?.clientHeight * 0.75)}px`,
-              `${(element?.clientHeight * 0.5)}px`,
-              `${(element?.clientHeight * 0.25)}px`,
-              `0px`,
-            ] },
-            { easing: spring({
-              stiffness: 80,
-              damping: 20,
-              mass: 1,
-              velocity: 800,
-            }) }
-          );
-        }
-        else {
+        if (hide) {
           animate(
             '#bottom-toolbar',
             { y: [
@@ -330,17 +307,29 @@ export class SharedEffects {
             element.style.display = 'none';
           });
         }
-      })
-    )
-  }, { dispatch: false });
-  bottomToolbarHide$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(fromActions.ActionTypes.BottomToolbarHide),
-      tap(() => {
-        const element = document.getElementById('bottom-toolbar') as HTMLElement;
-        
-
-        
+        else {
+          if (element.style.getPropertyValue('display') === 'none') {
+            element.style.removeProperty('display');
+          }
+          
+          animate(
+            '#bottom-toolbar',
+            { y: [
+              `${(element?.clientHeight + 30)}px`,
+              `${(element?.clientHeight * 0.9)}px`,
+              `${(element?.clientHeight * 0.75)}px`,
+              `${(element?.clientHeight * 0.5)}px`,
+              `${(element?.clientHeight * 0.25)}px`,
+              `0px`,
+            ] },
+            { easing: spring({
+              stiffness: 80,
+              damping: 20,
+              mass: 1,
+              velocity: 800,
+            }) }
+          );
+        }
       })
     )
   }, { dispatch: false });

@@ -360,22 +360,13 @@
     grid-template-rows: auto max-content;
 
     .slider-page__header {
-      max-height: 88vh;
+      max-height: 100vh;
       overflow-y: auto;
     }
 
     .slider-page__content {
       height: 0;
       overflow: hidden;
-    }
-  }
-}
-
-#main.is-shown-bottom-toolbar {
-  .slider-page {
-    .slider-page__header {
-      max-height: calc(100vh - 96px);
-      overflow-y: auto;
     }
   }
 }

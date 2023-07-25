@@ -110,6 +110,7 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
               doses: this.homeConfig.doses.map((dose: any, index: number) => {
                 return {
                   ...dose,
+                  bodyPart: dose.bodyPart ? dose.bodyPart : 'top-left',
                   marked: index + 1 < this.homeConfig.doses.length 
                     ? true 
                     : false,

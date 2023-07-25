@@ -1,1 +1,10 @@
 @import 'src/theme/base/mixins';
+
+.calendar-page {
+  &::ng-deep .slider-page {
+    .slider-page__header {
+      max-height: calc(100vh - 96px);
+      overflow-y: auto;
+    } 
+  }
+}

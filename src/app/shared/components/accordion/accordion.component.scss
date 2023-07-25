@@ -121,15 +121,15 @@ automagic-accordion {
         margin: 0 auto;
       }
 
-      .template {
-        width: 100%;
-      }
-
       automagic-datepicker {
         display: block;
         width: 100%;
       }
-      
+    }
+
+    .accordion__template {
+      width: 100%;
+
       .calendar-widget {
         text-align: center;
       

@@ -3,7 +3,7 @@ import {
   ViewEncapsulation, 
   OnInit,
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import * as moment from 'moment';
@@ -24,7 +24,7 @@ export class AddSymptomFormComponent implements OnInit {
   public activityConfig$!: Observable<any>;
   public reportSelected: any;
   public addSymptomFormGroup: FormGroup;
-  public symptoms: any[];
+  public symptoms: string[];
   public editView: boolean = false;
 
   constructor(
@@ -37,40 +37,28 @@ export class AddSymptomFormComponent implements OnInit {
       date: ['', ''],
       feelingOverall: [1, [Validators.required]],
       notes: ['', ''],
-      symptoms: ['', [Validators.required]],
+      symptoms: this._formBuilder.array([]),
       severity: [1, [Validators.required]],
       energyLevels: [1, [Validators.required]],
       sleepQuality: [1, [Validators.required]],
     });
     this.symptoms = [
-      {
-        marked: false,
-        label: 'Bloating'
-      },
-      {
-        marked: false,
-        label: 'Cramps'
-      },
-      {
-        marked: false,
-        label: 'Nausea'
-      },
-      {
-        marked: false,
-        label: 'Indigestion'
-      },
-      {
-        marked: false,
-        label: 'Acid Reflux'
-      },
-      {
-        marked: false,
-        label: 'Diarrhea'
-      },
+      'Bloating',
+      'Cramps',
+      'Nausea',
+      'Indigestion',
+      'Acid Reflux',
+      'Diarrhea',
     ];
   }
 
   ngOnInit() {
+    this._store.dispatch(new fromActivityStore.SetData({
+      currentSymptomReport: {
+        ...this.addSymptomFormGroup.value
+      }
+    }));
+
     this.sliderPageConfig$.subscribe(sliderPageConfig => {
       if (sliderPageConfig) {
         this.sliderPageConfig = sliderPageConfig;
@@ -99,28 +87,36 @@ export class AddSymptomFormComponent implements OnInit {
     this.addSymptomFormGroup.valueChanges.subscribe(() => {
       if (this.sliderPageConfig.content.toolbar) {
         const actions = this.sliderPageConfig.content.toolbar.actions;
-        if (this.addSymptomFormGroup.valid) {
-          this.addSymptomFormGroup.patchValue({
-            date: new Date(),
-          });
-
-          if ((actions[1].disabled)) {
-            this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
-              toolbar: {
-                actions: [
-                  actions[0],
-                  {
-                    ...actions[1],
-                    disabled: false,
-                  }
-                ]
+        if (actions) {
+          if (this.addSymptomFormGroup.valid) {
+            this._store.dispatch(new fromActivityStore.SetData({
+              currentSymptomReport: {
+                ...this.addSymptomFormGroup.value
               }
             }));
+
+            if (this.addSymptomFormGroup.get('date')?.value === '') {
+              this.addSymptomFormGroup.patchValue({
+                date: new Date(),
+              });
+            }
+  
+            if ((actions[1].disabled)) {
+              console.log('save is disabled');
+              this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
+                toolbar: {
+                  actions: [
+                    actions[0],
+                    {
+                      ...actions[1],
+                      disabled: false,
+                    }
+                  ]
+                }
+              }));
+            }
           }
-        }
-        else {
-          if (this.sliderPageConfig.content.toolbar) {
-            const actions = this.sliderPageConfig.content.toolbar.actions;
+          else {
             if (!actions[1].disabled) {
               this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
                 toolbar: {
@@ -142,10 +138,14 @@ export class AddSymptomFormComponent implements OnInit {
 
   markSymptom(event: any, index: number) {
     event.preventDefault();
-    this.symptoms[index].marked = !this.symptoms[index].marked;
-    this.addSymptomFormGroup.patchValue({
-      symptoms: this.symptoms,
-    });
+    const symptomsField = this.addSymptomFormGroup.get('symptoms') as FormArray;
+    if (!symptomsField?.value.includes(this.symptoms[index])) {
+      symptomsField.push(this._formBuilder.control(this.symptoms[index]));
+    }
+    else {
+      const indexToDelete = symptomsField.value.findIndex((symptom: string) => symptom === this.symptoms[index]);
+      symptomsField.removeAt(indexToDelete);
+    }
   }
 
   ratingFieldUpdate(event: any, field: string) {

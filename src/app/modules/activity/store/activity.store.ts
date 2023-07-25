@@ -5,6 +5,7 @@ export interface ActivityState {
   doseReportSelected: any;
   symptomReports: any;
   symptomReportSelected?: any;
+  currentSymptomReport?: any;
 }
 
 let initialState: ActivityState;
@@ -76,7 +77,8 @@ else {
         sleepQuality: 3,
         notes: 'Custom Notes',
       }
-    ]
+    ],
+    currentSymptomReport: null,
   }
 }
 

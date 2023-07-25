@@ -1,3 +1,5 @@
+import * as moment from 'moment';
+
 import { environment } from 'src/environments/environment';
 
 export interface HomeState {
@@ -98,39 +100,39 @@ else {
     // to skip start dose flow just fill body part and marked properties of the doses
     doses: [
       {
-        marked: false, // true
-        date: '', // new Date(moment().toString())
-        bodyPart: '', //'top-right'
+        marked: true, // false
+        date: new Date(moment().toString()), // '',
+        bodyPart: 'top-right', // '', 
         notes: null, // { painful: 2, mood: 3, symptoms: ['Redness', 'Itching'], note: 'Custom Note', }
       },
       {
-        marked: false, // true
-        date: '',// new Date(moment().add(1, 'weeks').toString()),
-        bodyPart: '', //'top-left'
+        marked: true, // false
+        date: new Date(moment().add(1, 'weeks').toString()), // '',
+        bodyPart: 'top-left', // '', 
         notes: null, // { painful: 3, mood: 1, symptoms: ['Swelling', 'No Reaction'], note: 'Custom Note', }
       },
       {
-        marked: false, // true
-        date: '',// new Date(moment().add(2, 'weeks').toString()),
-        bodyPart: '', //'bottom-right'
+        marked: true, // false
+        date: new Date(moment().add(2, 'weeks').toString()), // '',
+        bodyPart: 'bottom-right', // '', 
         notes: null, // { painful: 5, mood: 4, symptoms: ['Redness', 'Itching'], note: 'Custom Note', }
       },
       {
-        marked: false, // true
-        date: '',// new Date(moment().add(3, 'weeks').toString()),
-        bodyPart: '', //'bottom-left'
+        marked: true, // false
+        date: new Date(moment().add(3, 'weeks').toString()), // '',
+        bodyPart: 'bottom-left', // '', 
         notes: null, // { painful: 2, mood: 5, symptoms: ['Swelling', 'No Reaction'], note: 'Custom Note', }
       },
       {
-        marked: false, // true
-        date: '',// new Date(moment().add(5, 'weeks').toString()),
-        bodyPart: '', //'top-right'
+        marked: true, // false
+        date: new Date(moment().add(5, 'weeks').toString()), // '',
+        bodyPart: 'top-right', // '', 
         notes: null, // { painful: 2, mood: 3, symptoms: ['Redness', 'Itching'], note: 'Custom Note', }
       },
       {
-        marked: false, // true
-        date: '',// new Date(moment().add(7, 'weeks').toString()),
-        bodyPart: '', //'bottom-left'
+        marked: true, // false
+        date: new Date(moment().add(7, 'weeks').toString()), // '',
+        bodyPart: 'bottom-left', // '', 
         notes: null, // { painful: 1, mood: 4, symptoms: ['Swelling', 'No Reaction'], note: 'Custom Note', }
       }
     ],

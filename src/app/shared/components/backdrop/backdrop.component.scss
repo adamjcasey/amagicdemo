@@ -1,7 +1,7 @@
 @import 'src/theme/base/mixins';
 
 :root {
-  --backdrop-size: 75vh;
+  --backdrop-size: calc(75vh + 35px);
 }
 
 .backdrop {

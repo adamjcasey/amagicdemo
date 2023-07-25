@@ -89,7 +89,8 @@ export class StartDoseInjectDoseNotesFormComponent implements OnInit, OnDestroy 
       symptomsField.push(this._formBuilder.control(this.symptoms[index]));
     }
     else {
-      symptomsField.removeAt(index);
+      const indexToDelete = symptomsField.value.findIndex((symptom: string) => symptom === this.symptoms[index]);
+      symptomsField.removeAt(indexToDelete);
     }
   }
 

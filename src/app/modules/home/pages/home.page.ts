@@ -17,6 +17,7 @@ import { environment } from 'src/environments/environment';
 })
 export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   public welcomeState$!: Observable<any>;
+  public welcomeConfig!: any;
   public backdropConfig$!: Observable<any>;
   public backdropConfig: any;
   public homeConfig$!: Observable<any>;
@@ -138,6 +139,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe(welcomeState => {
         if (welcomeState) {
+          this.welcomeConfig = welcomeState;
           this.name = welcomeState.name;
 
           // if you are in development and want to skip welcome flow
@@ -169,8 +171,20 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
         if (homeConfig) {
           this.homeConfig = homeConfig;
           if (this.homeConfig.doses) {
-            const markedDoses = this.homeConfig.doses.filter((dose: any) => dose.marked);
+            if (this.homeConfig.doses[0].date === '') {
+              this._store.dispatch(new fromStore.SetData({
+                doses: this.homeConfig.doses.map((dose: any, index: number) => {
+                  return {
+                    marked: dose.marked,
+                    date: this.welcomeConfig.doses[index],
+                    body: dose.bodyPart,
+                    notes: dose.notes,
+                  }
+                })
+              }));
+            }
 
+            const markedDoses = this.homeConfig.doses.filter((dose: any) => dose.marked);
             // user has completed at least the first dose
             if (markedDoses.length > 0) {
               // only first dose completed

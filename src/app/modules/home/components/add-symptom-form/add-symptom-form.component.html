@@ -11,7 +11,6 @@
   <h4 class="add-symptom-form__subtitle" *ngIf="editView">
     {{ formatReportDate(reportSelected.date) }}
   </h4>
-
   <div class="field-wrapper" *ngIf="!editView">
     <automagic-rating-field 
       [label]="'How are you feeling overall?'"
@@ -39,11 +38,11 @@
     </div>
     <div class="field-checkboxes" *ngIf="!editView">
       <ion-checkbox 
-        [checked]="symptom.marked"
+        [checked]="addSymptomFormGroup.get('symptoms')?.value.includes(symptom)"
         labelPlacement="end"
         *ngFor="let symptom of symptoms; let i = index" 
         (click)="markSymptom($event, i)">
-        {{ symptom.label }}
+        {{ symptom }}
       </ion-checkbox>
     </div>
 
