@@ -13,12 +13,12 @@ import * as fromCoreStore from '@core/store';
 import * as fromSharedStore from '@shared/store';
 
 @Component({
-  selector: 'automagic-highlights-menu',
-  templateUrl: 'highlights-menu.component.html',
-  styleUrls: ['highlights-menu.component.scss'],
+  selector: 'automagic-start-guided-demo',
+  templateUrl: 'start-guided-demo.component.html',
+  styleUrls: ['start-guided-demo.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class HighlightsMenuComponent implements OnInit, OnDestroy {
+export class StartGuidedDemoComponent implements OnInit, OnDestroy {
   public backdropConfig$!: Observable<any>;
   public backdropConfig: any;
   private _ngUnsubscribe: Subject<void> = new Subject<void>();

@@ -260,11 +260,17 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
                       time: moment(lastMarkedDose.date).format('MMM D, H:mm A'),
                       asset: `assets/images/activity-highlights-dose-report-${lastMarkedDose.bodyPart.toLowerCase().replace(' ', '-')}.svg`,
                       description: `This time you injected your <strong>${this._utils.humanizeBodyPartInjected(lastMarkedDose.bodyPart)}<strong>`,
+                      onClick: () => {
+                        this.goTo('activity/dose-report');
+                      }
                     },
                     {
                       tabColor: '--color-bg-pastel-honey-yellow',
                       title: 'Your Progress',
-                      asset: '/assets/images/activity-highlights-your-progress.svg'
+                      asset: '/assets/images/activity-highlights-your-progress.svg',
+                      onClick: () => {
+                        this.goTo('activity/your-progress');
+                      }
                     },
                   ];
                 }
@@ -272,7 +278,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
                 // user has completed 6 doses
                 if (markedDoses.length === 6) {
                   if (!this.homeConfig.allCompletedDoses) {
-                    this.startFinishGuidedDemoFlow();
+                    this.startGuidedDemoFlow();
                   }
 
                   // show the following dose in two weeks since last dose date
@@ -343,15 +349,20 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     this._store.dispatch(new fromSharedStore.BackdropShow({
       transition: 'move',
       header: true,
+      // template: `
+      //   <div class="time-traveling">
+      //     <video 
+      //       id="time-traveling-video"
+      //       src="/assets/videos/time-traveling.mp4" 
+      //       autoplay
+      //       muted
+      //       playsinline
+      //     ></video>
+      //   </div>
+      // `,
       template: `
         <div class="time-traveling">
-          <video 
-            id="time-traveling-video"
-            src="/assets/videos/time-traveling.mp4" 
-            autoplay
-            muted
-            playsinline
-          ></video>
+        
         </div>
       `,
       onClose: () => {
@@ -406,11 +417,11 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     }));
   }
 
-  startFinishGuidedDemoFlow() {
+  startGuidedDemoFlow() {
     this._store.dispatch(new fromSharedStore.BackdropShow({
       transition: 'move',
       header: true,
-      component: 'highlights-menu',
+      component: 'start-guided-demo',
       template: null,
       contentCentered: true,
     }));

@@ -4,8 +4,7 @@ import {
   ViewChild,
   ViewEncapsulation,
   ViewContainerRef,
-  AfterViewInit,
-  Renderer2
+  AfterViewInit
 } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
@@ -33,8 +32,10 @@ export class BackdropComponent implements OnInit, AfterViewInit {
   public config: any;
   public backButton!: any;
   public initialized: boolean = false;
+  public initialSlide: number = 0;
   @ViewChild('sliderMainMenu', { static: false }) sliderMainMenu!: SwiperComponent;
   @ViewChild('sliderHighlights', { static: false }) sliderHighlights!: SwiperComponent;
+  @ViewChild('sliderShareFlow', { static: false }) sliderShareFlow!: SwiperComponent;
   @ViewChild('contentComponent', { read: ViewContainerRef }) contentComponent!: ViewContainerRef;
 
   constructor(
@@ -49,6 +50,12 @@ export class BackdropComponent implements OnInit, AfterViewInit {
     let type = '';
     if (this.config.highlights) {
       type = 'highlights-menu';
+    }
+    else if (this.config.returnFlow) {
+      type = 'return-flow';
+    }
+    else if (this.config.shareFlow) {
+      type = 'share-flow';
     }
     else {
       if (!this.config.template && !this.config.component) {
@@ -90,6 +97,10 @@ export class BackdropComponent implements OnInit, AfterViewInit {
             }, 800);
           }
         }
+
+        if (!this.config.initialSlide || this.initialSlide > 0) {
+          this.initialSlide = 0;
+        }
       }
     });
   }
@@ -117,7 +128,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
   }
 
   onMenuChange() {
-    if (this.sliderMainMenu.swiperRef.activeIndex > 0) {
+    if (this.sliderMainMenu && this.sliderMainMenu.swiperRef.activeIndex > 0) {
       if (this.config.showBackButton) {
         this.backButton = {
           label: 'Back',
@@ -175,7 +186,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
             transition: 'move',
             header: true,
             fullScreen: false,
-            component: 'highlights-menu',
+            component: 'start-guided-demo',
             contentCentered: true,
             highlights: null,
           }));
@@ -213,7 +224,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
             transition: 'move',
             header: true,
             fullScreen: false,
-            component: 'highlights-menu',
+            component: 'start-guided-demo',
             contentCentered: true,
             highlights: null,
           }));
@@ -257,14 +268,71 @@ export class BackdropComponent implements OnInit, AfterViewInit {
     );
   }
 
+  showShareFlow() {
+    const element = document.querySelector('#backdrop .backdrop__wrapper') as HTMLElement;
+    element.style.removeProperty('height');
+
+    this._store.dispatch(new fromStore.BackdropSetConfig({
+      shareFlow: true,
+      returnFlow: null,
+      contentCentered: null,
+    }));
+
+    if (this.config.showBackButton) {
+      this.backButton = {
+        label: 'Back',
+        action: () => {
+          this._store.dispatch(new fromStore.BackdropSetConfig({
+            shareFlow: null,
+          }));
+          this.initialSlide = 1;
+        }
+      };
+    }
+  }
+
+  showReturnFlow() {
+    this._store.dispatch(new fromStore.BackdropSetConfig({
+      returnFlow: true,
+      shareFlow: null,
+      contentCentered: null,
+    }));
+
+    if (this.config.showBackButton) {
+      this.backButton = {
+        label: 'Back',
+        action: () => {
+          this._store.dispatch(new fromStore.BackdropSetConfig({
+            returnFlow: null,
+          }));
+          this.initialSlide = 1;
+        }
+      };
+    }
+  }
+
+  slideNextShareFlow(event: any) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    this.sliderShareFlow.swiperRef.slideNext();
+  }
+
+  cancelCustomFlows() {
+    this._store.dispatch(new fromStore.BackdropSetConfig({
+      shareFlow: null,
+      returnFlow: null,
+    }));
+    this.initialSlide = 1;
+  }
+
   private _loadComponent(component: any) {
     this.contentComponent.clear();
     switch(component) {
       case 'welcome-sign-up':
         this.contentComponent.createComponent(WelcomeSignUpComponent);
         break;
-      case 'highlights-menu':
-        this.contentComponent.createComponent(fromHomeComponents.HighlightsMenuComponent);
+      case 'start-guided-demo':
+        this.contentComponent.createComponent(fromHomeComponents.StartGuidedDemoComponent);
         break;
     }
   }

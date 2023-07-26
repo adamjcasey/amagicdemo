@@ -55,6 +55,7 @@
           effect="fade" 
           [allowTouchMove]="false"
           [autoHeight]="true"
+          [initialSlide]="initialSlide"
           (swiper)="onMenuInit()"
           (slideChange)="onMenuChange()">
           <ng-template swiperSlide>
@@ -94,12 +95,12 @@
                 <ion-icon name="chevron-forward-outline" slot="end" color="light"></ion-icon>
               </ion-button>
 
-              <ion-button fill="outline" expand="block" color="light">
+              <ion-button fill="outline" expand="block" color="light" (click)="showShareFlow()">
                 Share this demo kit
                 <ion-icon name="chevron-forward-outline" slot="end" color="light"></ion-icon>
               </ion-button>
 
-              <ion-button fill="outline" expand="block" color="light">
+              <ion-button fill="outline" expand="block" color="light" (click)="showReturnFlow()">
                 Pack up and return
               </ion-button>
             </div>
@@ -154,11 +155,184 @@
             <ng-template swiperSlide *ngIf="section.detail" class="highlights-menu__slide">
               <div 
                 class="highlights__detail" 
-                [innerHTML]="sanitizeContent(section.detail)" 
-                style="color: white;">
+                [innerHTML]="sanitizeContent(section.detail)">
               </div>
             </ng-template>
           </ng-container>
+        </swiper>
+      </div>
+
+      <div class="return-flow" *ngIf="getType() === 'return-flow'">
+        <swiper 
+          #sliderReturnFlow 
+          effect="fade" 
+          [allowTouchMove]="false">
+          <ng-template swiperSlide>
+            <div class="return-flow">
+              <div class="return-flow__content">
+                <h1 class="font-heading-1--bold">Return</h1>
+                <p>Try to keep track of it - it will need to be returned</p>
+                <ion-img src="/assets/images/return-flow-1.svg"></ion-img>
+              </div>
+
+              <div class="return-flow__actions">
+                <ion-button fill="outline" color="light" (click)="cancelCustomFlows()">
+                  Cancel
+                </ion-button>
+                <ion-button fill="outline" color="light" (click)="sliderReturnFlow.swiperRef.slideNext()">
+                  Got it
+                </ion-button>
+              </div>
+            </div>
+          </ng-template>
+
+          <ng-template swiperSlide>
+            <div class="return-flow">
+              <div class="return-flow__content">
+                <ion-img src="/assets/images/return-flow-2.svg"></ion-img>
+                <h5>1. Replace safety cap</h5>
+              </div>
+
+              <div class="return-flow__actions">
+                <ion-button fill="outline" color="light" (click)="sliderReturnFlow.swiperRef.slidePrev()">
+                  Cancel
+                </ion-button>
+                <ion-button fill="outline" color="light" (click)="sliderReturnFlow.swiperRef.slideNext()">
+                  Got it
+                </ion-button>
+              </div>
+            </div>
+          </ng-template>
+
+          <ng-template swiperSlide>
+            <div class="return-flow">
+              <div class="return-flow__content">
+                <ion-img src="/assets/images/return-flow-3.svg"></ion-img>
+                <h5>2. Put back in box and close lid</h5>
+              </div>
+
+              <div class="return-flow__actions">
+                <ion-button fill="outline" color="light" (click)="sliderReturnFlow.swiperRef.slidePrev()">
+                  Cancel
+                </ion-button>
+                <ion-button fill="outline" color="light" (click)="sliderReturnFlow.swiperRef.slideNext()">
+                  Next
+                </ion-button>
+              </div>
+            </div>
+          </ng-template>
+
+          <ng-template swiperSlide>
+            <div class="return-flow">
+              <div class="return-flow__content">
+                <ion-img src="/assets/images/return-flow-4.svg"></ion-img>
+                <h5>3. Replace injector box and the materials into the shipping box</h5>
+              </div>
+
+              <div class="return-flow__actions">
+                <ion-button fill="outline" color="light" (click)="sliderReturnFlow.swiperRef.slidePrev()">
+                  Cancel
+                </ion-button>
+                <ion-button fill="outline" color="light" (click)="sliderReturnFlow.swiperRef.slideNext()">
+                  Next
+                </ion-button>
+              </div>
+            </div>
+          </ng-template>
+
+          <ng-template swiperSlide>
+            <div class="return-flow">
+              <div class="return-flow__content">
+                <ion-img src="/assets/images/return-flow-5.svg"></ion-img>
+                <h5>4. Apply the prepaid return label, and drop off in your mailroom or package dropoff location</h5>
+              </div>
+
+              <div class="return-flow__actions">
+                <ion-button fill="outline" color="light" (click)="toggle()">
+                  Done
+                </ion-button>
+              </div>
+            </div>
+          </ng-template>
+        </swiper>
+      </div>
+
+      <div class="share-flow" *ngIf="getType() === 'share-flow'">
+        <swiper 
+          #sliderShareFlow 
+          effect="fade" 
+          [allowTouchMove]="false">
+          <ng-template swiperSlide>
+            <div class="share-flow">
+              <div class="share-flow__content">
+                <ion-img src="/assets/images/share-flow-1.svg"></ion-img>
+                <h1 class="font-heading-1--bold">Share experience</h1>
+                <p>To reset and share make sure the cap is on, replace the injector in the box and close it.</p>
+
+                <h5>It will turn itself off in 5 minutes</h5>
+              </div>
+
+              <div class="share-flow__actions" (click)="cancelCustomFlows()">
+                <ion-button fill="outline" color="light">
+                  Cancel
+                </ion-button>
+                <ion-button fill="outline" color="light" (click)="slideNextShareFlow($event)">
+                  Ok
+                </ion-button>
+              </div>
+            </div>
+          </ng-template>
+
+          <ng-template swiperSlide>
+            <div class="return-flow">
+              <div class="return-flow__content">
+                <ion-img src="/assets/images/return-flow-2.svg"></ion-img>
+                <h5>1. Replace safety cap</h5>
+              </div>
+
+              <div class="return-flow__actions">
+                <ion-button fill="outline" color="light" (click)="sliderShareFlow.swiperRef.slidePrev()">
+                  Cancel
+                </ion-button>
+                <ion-button fill="outline" color="light" (click)="sliderShareFlow.swiperRef.slideNext()">
+                  Got it
+                </ion-button>
+              </div>
+            </div>
+          </ng-template>
+
+          <ng-template swiperSlide>
+            <div class="return-flow">
+              <div class="return-flow__content">
+                <ion-img src="/assets/images/return-flow-3.svg"></ion-img>
+                <h5>2. Put back in box and close lid</h5>
+              </div>
+
+              <div class="return-flow__actions">
+                <ion-button fill="outline" color="light" (click)="sliderShareFlow.swiperRef.slidePrev()">
+                  Cancel
+                </ion-button>
+                <ion-button fill="outline" color="light" (click)="sliderShareFlow.swiperRef.slideNext()">
+                  Next
+                </ion-button>
+              </div>
+            </div>
+          </ng-template>
+
+          <ng-template swiperSlide>
+            <div class="return-flow">
+              <div class="return-flow__content">
+                <ion-img src="/assets/images/return-flow-4.svg"></ion-img>
+                <h5>3. Replace injector box and the materials into the shipping box</h5>
+              </div>
+
+              <div class="return-flow__actions">
+                <ion-button fill="outline" color="light" (click)="toggle()">
+                  Done
+                </ion-button>
+              </div>
+            </div>
+          </ng-template>
         </swiper>
       </div>
     </div>

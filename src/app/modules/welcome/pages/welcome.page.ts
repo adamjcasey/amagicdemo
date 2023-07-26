@@ -262,6 +262,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
 
   async allowNotifications() {
     const showDosesSelector = () => {
+      this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-white'));
       this._store.dispatch(new fromSharedStore.SliderPageSetContent({
         isExpanded: true,
         template: `

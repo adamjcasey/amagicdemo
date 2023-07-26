@@ -13,7 +13,7 @@ import { StartDoseInjectDoseNotesFormComponent } from './start-dose-inject-dose-
 import { StartDoseInjectDoneReportComponent } from './start-dose-inject-done-report/start-dose-inject-done-report.component';
 
 import { AddSymptomFormComponent } from './add-symptom-form/add-symptom-form.component';
-import { HighlightsMenuComponent } from './highlights-menu/highlights-menu.component';
+import { StartGuidedDemoComponent } from './start-guided-demo/start-guided-demo.component';
 
 export const components: any[] = [
   StartDosePrepareTempTimerComponent,
@@ -31,7 +31,7 @@ export const components: any[] = [
   StartDoseInjectDoneReportComponent,
 
   AddSymptomFormComponent,
-  HighlightsMenuComponent,
+  StartGuidedDemoComponent,
 ];
 
 export * from './start-dose-prepare-survey/start-dose-prepare-survey.component';
@@ -49,6 +49,6 @@ export * from './start-dose-inject-dose-notes/start-dose-inject-dose-notes.compo
 export * from './start-dose-inject-done-report/start-dose-inject-done-report.component';
 
 export * from './add-symptom-form/add-symptom-form.component';
-export * from './highlights-menu/highlights-menu.component';
+export * from './start-guided-demo/start-guided-demo.component';
 
 

@@ -91,7 +91,6 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    max-width: calc(300px + (var(--size-m) * 2) );
     max-height: max-content;
     overflow-y: auto;
     margin-top: calc(var(--size-xxxl) * -1);
@@ -243,8 +242,8 @@
 
     .main-menu {
       align-items: center;
-      padding-right: var(--size-l);
-      padding-left: var(--size-l);
+      padding-right: var(--size-xxl);
+      padding-left: var(--size-xxl);
 
       swiper {
         .swiper-slide {
@@ -297,6 +296,9 @@
     }
 
     .highlights-menu {
+      padding-right: var(--size-m);
+      padding-left: var(--size-m);
+
       h1 {
         margin-bottom: var(--size-l);
         color: var(--color-white);
@@ -545,6 +547,81 @@
               }
             }
           }
+        }
+      }
+    }
+
+    .return-flow,
+    .share-flow {
+      display: grid;
+      grid-template-rows: auto max-content;
+      max-width: 100vw;
+      height: 100%;
+      padding-bottom: var(--size-s);
+      color: var(--color-white);
+      text-align: center;
+      overflow-x: hidden;
+
+      swiper {
+        .swiper-slide {
+          max-width: 100vw;
+          text-align: center;
+
+          &:not(.swiper-slide-active) {
+            opacity: 0 !important;
+          }
+        }
+      }
+
+      ion-img {
+        width: 280px;
+        margin: 0 auto;
+      }
+
+      &__content,
+      &__actions {
+        padding-right: var(--size-s);
+        padding-left: var(--size-s);
+      }
+
+      &__content {
+        grid-row: 1;
+
+        p {
+          @include paragraph-l;
+        }
+
+        h5 {
+          max-width: 300px;
+          margin-right: auto;
+          margin-left: auto;
+        }
+      }
+
+      &__actions {
+        grid-row: 2;
+
+        ion-button {
+          margin-right: var(--size-xxs);
+          margin-left: var(--size-xxs);
+        }
+      }
+    }
+
+    .return-flow {
+      height: 100%;
+    }
+
+    .share-flow {
+      &__content {
+        h1, p {
+          max-width: 300px;
+          margin-right: auto;
+          margin-left: auto;
+        }
+
+        h5 {
+          margin-bottom: var(--size-s);
         }
       }
     }
