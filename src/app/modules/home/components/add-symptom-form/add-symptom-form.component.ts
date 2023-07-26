@@ -102,7 +102,6 @@ export class AddSymptomFormComponent implements OnInit {
             }
   
             if ((actions[1].disabled)) {
-              console.log('save is disabled');
               this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
                 toolbar: {
                   actions: [
@@ -153,6 +152,6 @@ export class AddSymptomFormComponent implements OnInit {
   }
 
   formatReportDate(date: Date) {
-    return moment(date).format('MMM D, H:m A');
+    return moment(date).format('MMM D, H:mm A');
   }
 }

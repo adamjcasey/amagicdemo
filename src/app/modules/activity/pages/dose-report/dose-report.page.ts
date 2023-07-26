@@ -39,7 +39,7 @@ export class DoseReportPage implements OnInit, OnDestroy {
                 .map((dose: any, index: number) => {
                   return {
                     type: 'dose-report',
-                    title: `Dose ${index + 1} <span>${moment(dose.date).format('MMM D, h:m A')}</span>`,
+                    title: `Dose ${index + 1} <span>${moment(dose.date).format('MMM D, H:mm A')}</span>`,
                     template: `
                       <div class="dose-report-widget">
                         <img src="/assets/images/activity-page-dose-report-widget.svg">

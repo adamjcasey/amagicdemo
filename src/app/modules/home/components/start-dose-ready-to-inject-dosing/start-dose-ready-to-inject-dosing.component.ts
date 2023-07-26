@@ -72,7 +72,7 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
             const dateNextDose = moment(unMarkedDoses[1].date);
             dateNextDose.set('hour', moment().get('hour'));
             dateNextDose.set('minute', moment().get('minute'));
-            nextDoseDateFormatted = dateNextDose.format('D MMMM YYYY H:m A');
+            nextDoseDateFormatted = dateNextDose.format('D MMMM YYYY H:mm A');
           }
 
           if (markedDoses.length === 5) {
@@ -81,7 +81,7 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
             lastDoseDate.set('hour', moment().get('hour'));
             lastDoseDate.set('minute', moment().get('minute'));
             lastDoseDate.add(2, 'weeks');
-            nextDoseDateFormatted = lastDoseDate.format('D MMMM YYYY H:m A');
+            nextDoseDateFormatted = lastDoseDate.format('D MMMM YYYY H:mm A');
           }
           
             
