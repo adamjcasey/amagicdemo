@@ -16,7 +16,6 @@ export class CalendarEditScheduleComponent {
   public homeConfig: any;
   private _ngUnsubscribe: Subject<void> = new Subject<void>();
 
-
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
   ) {

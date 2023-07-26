@@ -145,8 +145,8 @@ automagic-accordion {
       
             &::before {
               content: '';
-              width: 12px;
-              height: 12px;
+              width: var(--size-xxs);
+              height: var(--size-xxs);
             }
       
             &.today,
@@ -171,8 +171,8 @@ automagic-accordion {
             &.reminder,
             &.flare-ups {
               &::before {
-                width: 8px;
-                height: 8px;
+                width: var(--size-xxxs);
+                height: var(--size-xxxs);
               }
             }
       

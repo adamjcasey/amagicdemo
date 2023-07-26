@@ -78,7 +78,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                           this._store.dispatch(new fromSharedStore.BackdropShow({
                             transition: 'move',
                             header: true,
-                            contenCentered: true,
+                            contentCentered: true,
                             template: `
                               <div class="no-needless-message">
                                 <h1 class="font-heading-1--bold">Postpone gives patients control.</h1>
@@ -422,7 +422,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                 <img src="assets/images/start-dose-ready-to-inject-waiting-for-injection.gif">
                 <h4>Waiting for you to begin injection</h4>
                 <div class="loader"></div>
-                <p>The Guide will <strong>detect when you inject</strong> and <strong>advance automatically.</strong></p>
+                <p>The app will <strong>detect when you inject</strong> and <strong>advance automatically.</strong></p>
               </div>
             `,
           },
@@ -463,6 +463,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
     this._store.dispatch(new fromSharedStore.BackdropShow({
       transition: 'move',
       header: true,
+      contentCentered: true,
       template: `
         <div class="no-needless-message">
           <h1 class="font-heading-1--bold">No needles and no drugs</h1>
