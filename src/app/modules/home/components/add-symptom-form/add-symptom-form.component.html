@@ -1,26 +1,27 @@
 <form class="add-symptom-form" [formGroup]="addSymptomFormGroup" autocomplete="off">
   <h1 class="font-heading-1--bold">
-    <ng-container *ngIf="!editView">
+    <ng-container *ngIf="!detailView">
       New Symptom
     </ng-container>
-    <ng-container *ngIf="editView">
+    <ng-container *ngIf="detailView">
       Symptom Details
     </ng-container>
   </h1>
 
-  <h4 class="add-symptom-form__subtitle" *ngIf="editView">
+  <h4 class="add-symptom-form__subtitle" *ngIf="detailView">
     {{ formatReportDate(reportSelected.date) }}
   </h4>
-  <div class="field-wrapper" *ngIf="!editView">
+  <div class="field-wrapper" *ngIf="!detailView">
     <automagic-rating-field 
-      [label]="'How are you feeling overall?'"
-      [value]="addSymptomFormGroup.get('feelingOverall')?.value"
-      [showIcons]="true"
+      [label]="'How are you feeling overall?'" 
+      [disabled]="detailView" 
+      [value]="addSymptomFormGroup.get('feelingOverall')?.value" 
+      [showIcons]="true" 
       (onChage)="ratingFieldUpdate($event, 'feelingOverall')"
     ></automagic-rating-field>
   </div>
 
-  <div class="field-wrapper" *ngIf="!editView">
+  <div class="field-wrapper" *ngIf="!detailView">
     <p class="field-description">Add a custom note or select the symptoms below that apply:</p>
     <ion-input 
       color="purple" 
@@ -33,20 +34,21 @@
 
   <div class="field-wrapper">
     <p class="field-label">Symptoms</p>
-    <div class="field-checkboxes" *ngIf="editView">
+    <div class="field-checkboxes" *ngIf="detailView">
       {{ reportSelected.symptoms.join(', ') }}
     </div>
-    <div class="field-checkboxes" *ngIf="!editView">
+    <div class="field-checkboxes" *ngIf="!detailView">
       <ion-checkbox 
-        [checked]="addSymptomFormGroup.get('symptoms')?.value.includes(symptom)"
-        labelPlacement="end"
+        [checked]="addSymptomFormGroup.get('symptoms')?.value.includes(symptom)" 
+        [disabled]="detailView" 
+        labelPlacement="end" 
         *ngFor="let symptom of symptoms; let i = index" 
         (click)="markSymptom($event, i)">
         {{ symptom }}
       </ion-checkbox>
     </div>
 
-    <div class="add-photo-cta" *ngIf="!editView">
+    <div class="add-photo-cta" *ngIf="!detailView">
       <ion-button fill="clear" color="purple" size="small">
         <ion-icon slot="start" src="/assets/icons/add-photo.svg"></ion-icon>
         Add photo
@@ -57,6 +59,7 @@
   <div class="field-wrapper">
     <automagic-rating-field 
       [label]="'How are your symptoms?'" 
+      [disabled]="detailView"
       [value]="addSymptomFormGroup.get('severity')?.value" 
       [rates]="['Very Severe', 'Absent']" 
       (onChage)="ratingFieldUpdate($event, 'severity')"
@@ -66,7 +69,8 @@
   <div class="field-wrapper">
     <automagic-rating-field 
       [label]="'How are your energy levels?'" 
-      [value]="addSymptomFormGroup.get('energyLevels')?.value"
+      [disabled]="detailView" 
+      [value]="addSymptomFormGroup.get('energyLevels')?.value" 
       [rates]="['Low', 'High']" 
       (onChage)="ratingFieldUpdate($event, 'energyLevels')"
     ></automagic-rating-field>
@@ -75,20 +79,22 @@
   <div class="field-wrapper">
     <automagic-rating-field 
       [label]="'How is your sleep quality?'" 
+      [disabled]="detailView" 
       [value]="addSymptomFormGroup.get('sleepQuality')?.value"
       [rates]="['Not good', 'Good']" 
       (onChage)="ratingFieldUpdate($event, 'sleepQuality')"
     ></automagic-rating-field>
   </div>
 
-  <div class="field-wrapper" *ngIf="editView">
+  <div class="field-wrapper field--disabled" *ngIf="detailView">
     <p class="field-label">Note</p>
     <ion-input 
       color="purple" 
       fill="outline" 
       mode="md" 
       placeholder="Note text" 
-      formControlName="notes"
+      formControlName="notes" 
+      [readonly]="true"
     ></ion-input>
   </div>
 </form>

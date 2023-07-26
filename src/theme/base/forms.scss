@@ -70,4 +70,11 @@
       font-weight: var(--font-weight-bold);
     }
   }
+
+  &--disabled {
+    ion-input {
+      opacity: 0.3;
+      pointer-events: none;
+    }
+  }
 }

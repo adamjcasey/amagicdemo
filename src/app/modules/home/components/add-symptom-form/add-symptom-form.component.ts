@@ -25,7 +25,7 @@ export class AddSymptomFormComponent implements OnInit {
   public reportSelected: any;
   public addSymptomFormGroup: FormGroup;
   public symptoms: string[];
-  public editView: boolean = false;
+  public detailView: boolean = false;
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
@@ -72,14 +72,14 @@ export class AddSymptomFormComponent implements OnInit {
           this.addSymptomFormGroup.patchValue({
             ...this.reportSelected,
           });
-          this.editView = true;
+          this.detailView = true;
           this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
             toolbar: null,
           }));
         }
         else {
           this.reportSelected = null;
-          this.editView = false;
+          this.detailView = false;
         }
       }
     });
