@@ -76,6 +76,10 @@
   font-weight: var(--font-weight-bold);
 }
 
+.card__link_salmon {
+  color: var(--color-primary-salmon);
+}
+
 .card {
   position: relative;
   
@@ -167,6 +171,27 @@
           max-width: 150px;
           margin-top: var(--size-xxs);
         }
+      }
+    }
+  }  
+  
+  &.card--mindful {
+    .card__content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .card__text {
+      text-align: left;
+
+      .card__title {
+        font-size: var(--font-size-heading-4);
+        line-height: var(--font-line-height-heading-4 );
+      }
+
+      ion-button {
+        margin-top: var(--space-s);
       }
     }
   }

@@ -1,0 +1,13 @@
+<ion-content [fullscreen]="true" [scrollY]="false">
+  <section class="one-path">
+    <automagic-hero 
+      *ngIf="heroConfig"
+      [color]="heroConfig.color" 
+      [image]="heroConfig.image" 
+      [template]="heroConfig.template" 
+      [actions]="heroConfig.actions"
+      [icon]="heroConfig.icon"
+    ></automagic-hero>
+  </section>
+</ion-content>
+

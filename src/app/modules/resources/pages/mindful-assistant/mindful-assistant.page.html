@@ -1,0 +1,17 @@
+<ion-content [fullscreen]="true">
+  <section class="mindful-assistant">
+    <automagic-hero 
+      *ngIf="heroConfig"
+      [color]="heroConfig.color" 
+      [image]="heroConfig.image" 
+      [template]="heroConfig.template" 
+      [actions]="heroConfig.actions"
+      [icon]="heroConfig.icon"
+    ></automagic-hero>
+    <p>Looks like you might be stressed about your injection. <strong>Need some help?</strong></p>
+    <div class="mindful-options">
+        <automagic-card *ngFor="let card of cards" [card]="card"></automagic-card>
+    </div>
+    <automagic-card [card]="exit_card"></automagic-card>
+  </section>
+</ion-content>
