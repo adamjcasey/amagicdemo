@@ -4,7 +4,7 @@
   .pin-input__wrapper {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: var(--space-s);
+    gap: var(--size-s);
   }
 
   .pin-input__digit {
@@ -12,7 +12,7 @@
     width: 56px;
     height: 68px;
     box-sizing: border-box;
-    padding: var(--space-xxs) var(--space-xs);
+    padding: var(--size-xxs) var(--size-xs);
     border: 1px solid var(--color-gray);
     border-radius: 8px;
     background-color: transparent;
@@ -27,7 +27,7 @@
 
   .error-message {
     @include paragraph-l;
-    margin-bottom: var(--space-s);
+    margin-bottom: var(--size-s);
     color: var(--color-primary-salmon--light);
   }
 

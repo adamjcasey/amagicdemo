@@ -45,7 +45,7 @@ automagic-alert {
       grid-row: 2;
       top: 100%;
       width: 100%;
-      padding: var(--space-s) var(--space-m);
+      padding: var(--size-s) var(--size-m);
       border-radius: 16px 16px 0px 0px;
     }
   }
@@ -74,7 +74,7 @@ automagic-alert {
 
     &.is-window-mode {
       .alert__content {
-        padding: var(--space-s) var(--space-m);
+        padding: var(--size-s) var(--size-m);
         opacity: 1;
         transition-timing-function: ease-in;
       }

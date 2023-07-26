@@ -1,0 +1,15 @@
+<ion-content [fullscreen]="true" class="dose-report__wrapper ion-padding">
+  <section class="dose-report">
+    <h1 class="font-heading-1--bold">DoseReport</h1>
+    <p>Use this to show your provide your progress. We’ve picked out the key details for you!</p>
+
+    <div class="field-wrapper">
+      <p class="field-label">Time period</p>
+      
+    </div>
+
+    <div class="dose-report__doses">
+      <automagic-accordion [config]="report" *ngFor="let report of reports | reverse"></automagic-accordion>
+    </div>
+  </section>
+</ion-content>

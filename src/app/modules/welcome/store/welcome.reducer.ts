@@ -24,4 +24,4 @@ export function WelcomeReducer(
 const exportWelcome = (state: fromStore.WelcomeState) => state;
 const selectWelcomeState = createFeatureSelector<fromStore.WelcomeState>('welcome');
 
-export const getWelcomeState = createSelector(selectWelcomeState, exportWelcome);
+export const getWelcomeConfig = createSelector(selectWelcomeState, exportWelcome);

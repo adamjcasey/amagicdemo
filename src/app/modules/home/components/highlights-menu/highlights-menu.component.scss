@@ -1,8 +1,8 @@
 @import 'src/theme/base/mixins';
 
-.hightlights-message {
-  padding-right: var(--space-xxs);
-  padding-left: var(--space-xxs);
+.highlights-message {
+  padding-right: var(--size-l);
+  padding-left: var(--size-l);
   color: var(--color-white);
   text-align: center;
 }

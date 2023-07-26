@@ -4,7 +4,8 @@ import {
   ViewChild,
   ViewEncapsulation,
   ViewContainerRef,
-  AfterViewInit
+  AfterViewInit,
+  Renderer2
 } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
@@ -39,15 +40,15 @@ export class BackdropComponent implements OnInit, AfterViewInit {
   constructor(
     private _store: Store<fromStore.SharedState>,
     private _sanitizer: DomSanitizer,
-    private _utils: fromSharedServices.UtilsService
+    private _utils: fromSharedServices.UtilsService,
   ) {
     this.config$ = this._store.select(fromStore.getBackdropConfig);
   }
 
   getType(): string {
     let type = '';
-    if (this.config.hightlights) {
-      type = 'hightlights-menu';
+    if (this.config.highlights) {
+      type = 'highlights-menu';
     }
     else {
       if (!this.config.template && !this.config.component) {
@@ -91,13 +92,6 @@ export class BackdropComponent implements OnInit, AfterViewInit {
         }
       }
     });
-
-    window.backdropComponent = {
-      close: () => {
-        const backdropFold = document.querySelector('#backdrop .backdrop__fold') as HTMLElement;
-        backdropFold.click();
-      },
-    }
   }
   
   ngAfterViewInit() {
@@ -136,6 +130,16 @@ export class BackdropComponent implements OnInit, AfterViewInit {
     }
   }
 
+  goToSubmenu(step: number) {
+    if (this.sliderMainMenu) {
+      this.sliderMainMenu?.swiperRef.slideTo(step);
+    }
+
+    if (this.sliderHighlights) {
+      this.sliderHighlights?.swiperRef.slideTo(step);
+    }
+  }
+
   goBackToMenu() {
     this.backButton = {
       label: 'Menu',
@@ -145,7 +149,6 @@ export class BackdropComponent implements OnInit, AfterViewInit {
         }
 
         this.backButton = null;
-        console.log('hace clear in gobackmenu');
         this.contentComponent?.clear();
         this._store.dispatch(new fromStore.BackdropSetConfig({
           transition: 'move',
@@ -154,7 +157,6 @@ export class BackdropComponent implements OnInit, AfterViewInit {
           fullScreen: this.config.fullScreen ? false : null,
           template: null,
           component: null,
-          hightlights: null,
         }));
       }
     }
@@ -162,7 +164,23 @@ export class BackdropComponent implements OnInit, AfterViewInit {
 
   onHighlightsInit() {
     if (this.config.showBackButton) {
-      this.goBackToMenu();
+      this.backButton = {
+        label: 'Back',
+        action: () => {
+          if (this.config.fullScreen) {
+            this.animateFullScreenToDefault();
+          }
+
+          this._store.dispatch(new fromStore.BackdropSetConfig({
+            transition: 'move',
+            header: true,
+            fullScreen: false,
+            component: 'highlights-menu',
+            contentCentered: true,
+            highlights: null,
+          }));
+        }
+      };
     }
 
     const wrapper = this.sliderHighlights.swiperRef.slides[0].querySelector('.masonry-layout');
@@ -184,17 +202,23 @@ export class BackdropComponent implements OnInit, AfterViewInit {
       }
     }
     else if (activeIndex === 0) {
-      this.goBackToMenu();
-    }
-  }
+      this.backButton = {
+        label: 'Back',
+        action: () => {
+          if (this.config.fullScreen) {
+            this.animateFullScreenToDefault();
+          }
 
-  goToSubmenu(step: number) {
-    if (this.sliderMainMenu) {
-      this.sliderMainMenu?.swiperRef.slideTo(step);
-    }
-
-    if (this.sliderHighlights) {
-      this.sliderHighlights?.swiperRef.slideTo(step);
+          this._store.dispatch(new fromStore.BackdropSetConfig({
+            transition: 'move',
+            header: true,
+            fullScreen: false,
+            component: 'highlights-menu',
+            contentCentered: true,
+            highlights: null,
+          }));
+        }
+      };
     }
   }
 
@@ -203,35 +227,25 @@ export class BackdropComponent implements OnInit, AfterViewInit {
   }
 
   animateFullScreenToDefault() {
+    if (this.config.transition === 'fade') {
+      animate(
+        '#backdrop',
+        { opacity: 1 },
+        {
+          easing: 'ease-in-out',
+          duration: 0.2,
+        },
+      );
+    }
+
     animate(
-      "#backdrop",
+      '#backdrop .backdrop__wrapper',
       {
         height: [
           `${window.innerHeight}px`,
-          `${window.innerHeight * 0.9}px`,
-          `${window.innerHeight * 0.8}px`,
-          `${window.innerHeight * 0.75}px`
-        ], 
-        opacity: this.config.transition === 'fade' ? 1 : ''
-      },
-      { easing: spring({
-        stiffness: 100,
-        damping: 15,
-        mass: 1,
-        velocity: 800,
-      }) }
-    );
-  }
-
-  animateDefaultToFullScreen() {
-    animate(
-      "#backdrop",
-      {
-        height: [
-          `${window.innerHeight * 0.75}px`,
-          `${window.innerHeight * 0.8}px`,
-          `${window.innerHeight * 0.9}px`,
-          `${window.innerHeight}px`
+          `${(window.innerHeight) * 0.9}px`,
+          `${(window.innerHeight) * 0.8}px`,
+          `${(window.innerHeight) * 0.75}px`,
         ],
       },
       { easing: spring({

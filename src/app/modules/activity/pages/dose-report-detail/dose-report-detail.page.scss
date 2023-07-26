@@ -1,0 +1,24 @@
+.dose-report-detail {
+  h1 {
+    padding-top: var(--topbar-size);
+    margin-bottom: var(--size-m);
+    text-align: center;
+  }
+
+  .body-shape {
+    width: 110px;
+    margin: 15px auto 0;
+
+    + p {
+      text-align: center;
+    }
+  }
+
+  .graph {
+    margin-top: 20px;
+  }
+
+  .section {
+    margin-top: 15px;
+  }
+}

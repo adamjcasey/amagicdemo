@@ -1,25 +1,56 @@
 @import 'src/theme/base/mixins';
 
+.datepicker__input {
+  position: relative;
+
+  .field-wrapper {
+    margin-bottom: 0;
+  }
+
+  ion-input {
+    --padding-end: var(--size-xl) !important;
+    min-height: 48px !important;
+    pointer-events: none;
+  }
+
+  ion-icon {
+    position: absolute;
+    top: 12px;
+    right: 10px;
+    z-index: 50;
+    font-size: var(--font-size-heading-3);
+  }
+}
+
 .datepicker {
   max-height: 375px;
-  padding-right: var(--space-xxs);
-  padding-bottom: var(--space-m);
-  padding-left: var(--space-xxs);
   overflow-y: auto;
+  padding-right: var(--size-xxs);
 
   .month {
     width: 100%;
   
     &:nth-child(n+2) {
-      margin-top: var(--space-m);
+      margin-top: var(--size-m);
     }
   
     .month__title {
       td {
         @include heading-5;
-        color: var(--color-gray-dark);
         font-weight: var(--font-weight-medium);
         text-align: center;
+      }
+
+      .prev-month,
+      .next-month {
+        ion-button {
+          --padding-end: 0;
+          --padding-start: 0;
+        }
+
+        ion-icon {
+          color: var(--color-gray-dark);
+        }
       }
     }
   
@@ -33,17 +64,16 @@
   
     .month__weekdays {
       td {
-        padding-top: var(--space-xs);
-        padding-bottom: var(--space-xxxs);
+        padding-top: var(--size-xs);
+        padding-bottom: var(--size-xxxs);
         color: var(--color-gray-medium);
       }
     }
     
     .month__week {
       td {
-        padding-top: calc(var(--space-xxxxs) / 2);
-        padding-bottom: calc(var(--space-xxxxs)  / 2);
-        color: var(--color-primary-dark-blue);
+        padding-top: calc(var(--size-xxxxs) / 2);
+        padding-bottom: calc(var(--size-xxxxs)  / 2);
 
         span {
           display: block;
@@ -62,24 +92,20 @@
             border-radius: 5px;
           }
         }
+
+        &.is-selected {
+          font-weight: var(--font-weight-bold);
+
+          span {
+            background-color: var(--color-bg-pastel-purple);
+          }
+        }
   
         &.is-today {
           color: var(--color-white);
 
           span {
             background-color: var(--color-primary-purple);
-          }
-
-          &.is-selected {
-            color: var(--color-gray-dark);
-          }
-        }
-  
-        &.is-selected {
-          font-weight: var(--font-weight-bold);
-
-          span {
-            background-color: var(--color-bg-pastel-purple);
           }
         }
       }
@@ -92,6 +118,25 @@
     .month {
       &:not(.is-active) {
         display: none;
+      }
+    }
+  }
+  
+  &.is-continuous {
+    &.max-view-1 {
+      .month {
+        position: absolute;
+        opacity: 0;
+        margin-top: 0;
+
+        &:not(.is-active) {
+          pointer-events: none;
+        }
+
+        &.is-active {
+          position: initial;
+          opacity: 1;
+        }
       }
     }
   }

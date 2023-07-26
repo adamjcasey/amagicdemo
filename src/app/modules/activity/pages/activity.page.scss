@@ -1,3 +1,15 @@
+@import 'src/theme/base/mixins';
+
+.activity-page__wrapper {
+  --background: var(--color-bg-pastel-beige);
+}
+
 .activity-page {
-  margin-top: 70px;
+  padding-top: var(--topbar-size);
+  padding-bottom: var(--size-s);
+
+  h1 {
+    margin-bottom: var(--size-l);
+    text-align: center;
+  }
 }

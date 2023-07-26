@@ -6,9 +6,9 @@ import {
   EventEmitter,
   ViewChild, 
   ElementRef,
-  AfterViewInit,
   OnInit
 } from '@angular/core';
+import { IonModal } from '@ionic/angular';
 import * as moment from 'moment';
 
 @Component({
@@ -18,21 +18,28 @@ import * as moment from 'moment';
   encapsulation: ViewEncapsulation.None
 })
 export class DatepickerComponent implements OnInit {
-  @Input() labelInput?: string = 'Label Datepicker';
+  @Input() labelInput?: string;
+  @Input() labelPlaceholder?: string;
   @Input() continuous?: boolean = false;
+  @Input() monthsPerView?: any = 'auto';
   @Input() multiple?: boolean = false;
   @Input() disabled?: boolean = false;
   @Input() selectedDates: Date[] = [];
+  @Input() value?: any;
   @Output() dateSelected = new EventEmitter<Date[]>();
   @ViewChild('datePickerInput') datePickerInput!: ElementRef;
   @ViewChild('datePickerList') datePickerList!: ElementRef;
+  @ViewChild('modal') modal!: IonModal;
   public months: any[] = []; // Array to hold the months data
   public weekdays: string[] = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];; // Array to hold the weekdays data
+  public isFirstMonth: boolean = true;
+  public idDatePicker?: number;
 
   constructor() {}
 
   ngOnInit(): void {
     this.months = this.generateMonths();
+    this.idDatePicker = Math.floor(Math.random() * 100);
   }
 
   generateMonths(): any[] {
@@ -49,7 +56,6 @@ export class DatepickerComponent implements OnInit {
       const weeks = this.generateWeeks(date);
       
       months.push({ name: monthName, year, weeks });
-
       date.setMonth(date.getMonth() + 1);
     }
 
@@ -58,7 +64,7 @@ export class DatepickerComponent implements OnInit {
 
   generateWeeks(date: Date): any[] {
     const weeks: any[] = [];
-    const today = new Date(); // Get today's date
+    const today = new Date(moment().format('YYYY/MM/DD')); // Get today's date
     const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
     const lastDayOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
     const numDays = lastDayOfMonth.getDate();
@@ -69,15 +75,19 @@ export class DatepickerComponent implements OnInit {
     }
 
     for (let day = 1; day <= numDays; day++) {
-      // week.push(day);
       const currentDate = new Date(date.getFullYear(), date.getMonth(), day);
-
       // Check if the current date is today's date
       const isToday = currentDate.toDateString() === today.toDateString();
+      const isSelected = this.selectedDates?.filter((date: any) => {
+        return moment(date).isSame(currentDate, 'year') &&
+          moment(date).isSame(currentDate, 'month') &&
+          moment(date).isSame(currentDate, 'day');
+      }).length;
+
       week.push({ 
         number: day,
         isToday: isToday,
-        isSelected: this.selectedDates?.filter(date => moment(date).isSame(currentDate)).length,
+        isSelected: isSelected,
       });
 
       if (week.length === 7) {
@@ -93,18 +103,10 @@ export class DatepickerComponent implements OnInit {
     return weeks;
   }
 
-  openPicker() {
-    const nativeElement = this.datePickerList.nativeElement;
-    if (nativeElement.classList.contains('is-open')) {
-      nativeElement.classList.remove('is-open')
-    }
-    else {
-      nativeElement.classList.add('is-open')
-    }
-  }
-
   selectDate(event: any, month: string, day: number, year: number) {
     if (!this.disabled) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
       const selectedDates = [...this.selectedDates];
       const dateSelected = new Date(`${month} ${day} ${year}`);
       if (event.target.classList.contains('is-selected')) {
@@ -114,7 +116,13 @@ export class DatepickerComponent implements OnInit {
             selectedDates.splice(index, 1);
           }
         }
-        event.target.classList.remove('is-selected');
+
+        if (event.target.tagName === 'SPAN') {
+          event.target.parentElement.classList.remove('is-selected');
+        }
+        else {
+          event.target.classList.remove('is-selected');
+        }
       }
       else {
         if (this.multiple) {
@@ -127,7 +135,13 @@ export class DatepickerComponent implements OnInit {
             }
           });
         }
-        event.target.classList.add('is-selected');
+
+        if (event.target.tagName === 'SPAN') {
+          event.target.parentElement.classList.add('is-selected');
+        }
+        else {
+          event.target.classList.add('is-selected');
+        }
       }
 
       if (this.multiple) {
@@ -144,4 +158,37 @@ export class DatepickerComponent implements OnInit {
     }
   }
 
+  prevMonth() {
+    const currentMonth = this.datePickerList.nativeElement.querySelector('table.month.is-active');
+    currentMonth.classList.remove('is-active');
+    const prevMonth = currentMonth.previousElementSibling;
+    prevMonth.classList.add('is-active');
+    if (!prevMonth.previousElementSibling) {
+      this.isFirstMonth = true;
+    }
+  }
+
+  nextMonth() {
+    if (this.isFirstMonth) {
+      this.isFirstMonth = false;
+    }
+
+    const currentMonth = this.datePickerList.nativeElement.querySelector('table.month.is-active');
+    currentMonth.classList.remove('is-active');
+    const nextMonth = currentMonth.nextElementSibling;
+    nextMonth.classList.add('is-active');
+  }
+
+  toggleDatepickerModal() {
+    this.modal.isOpen = !this.modal.isOpen;
+    this.modal.showBackdrop = this.modal.isOpen;
+  }
+
+  formatValue(date: Date) {
+    return moment(date).format('MMM D, YYYY');
+  }
+
+  setValuePickerInModal(value: any) {
+    this.value = this.formatValue(new Date(value));
+  }
 }

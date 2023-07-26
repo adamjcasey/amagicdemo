@@ -1,5 +1,7 @@
-<ion-content [fullscreen]="true" class="ion-padding">
+<ion-content [fullscreen]="true" class="activity-page__wrapper ion-padding">
   <section class="activity-page">
-    <h1>ActivityPage</h1>
+    <h1 class="font-heading-1--bold">Activity</h1>
+
+    <automagic-accordion [config]="activity" *ngFor="let activity of widgets"></automagic-accordion>
   </section>
 </ion-content>

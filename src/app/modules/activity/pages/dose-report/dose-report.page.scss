@@ -1,0 +1,11 @@
+.dose-report__wrapper {
+  --background: var(--color-bg-pastel-blue);
+}
+
+.dose-report {
+  h1 {
+    padding-top: var(--topbar-size);
+    margin-bottom: var(--size-m);
+    text-align: center;
+  }
+}

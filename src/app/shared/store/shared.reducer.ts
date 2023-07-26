@@ -127,6 +127,15 @@ export function SharedReducer(
       };
     }
 
+    case fromActions.ActionTypes.BottomToolbarHide: {
+      return {
+        ...state,
+        bottomToolbarConfig: {
+          show: !action.payload,
+        },
+      };
+    }
+
     default: {
       return state;
     }
@@ -136,8 +145,10 @@ export function SharedReducer(
 const exportBackdropSetConfig = (state: fromStore.SharedState) => state.backdropConfig;
 const exportSliderPageConfig = (state: fromStore.SharedState) => state.sliderPageConfig;
 const exportAlertConfig = (state: fromStore.SharedState) => state.alertConfig;
+const exportBottomToolbarConfig = (state: fromStore.SharedState) => state.bottomToolbarConfig;
 const selectSharedState = createFeatureSelector<fromStore.SharedState>('shared');
 
 export const getBackdropConfig = createSelector(selectSharedState, exportBackdropSetConfig);
 export const getSliderPageConfig = createSelector(selectSharedState, exportSliderPageConfig);
 export const getAlertConfig = createSelector(selectSharedState, exportAlertConfig);
+export const getBottomToolbarConfig = createSelector(selectSharedState, exportBottomToolbarConfig);

@@ -2,13 +2,14 @@ import {
   Component,
   ViewEncapsulation, 
   OnInit,
+  OnDestroy,
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
 
+import * as fromStore from '@home/store';
 import * as fromCoreStore from '@core/store';
-import * as fromSharedStore from '@shared/store';
 
 @Component({
   selector: 'automagic-start-dose-inject-dose-notes',
@@ -16,52 +17,81 @@ import * as fromSharedStore from '@shared/store';
   styleUrls: ['start-dose-inject-dose-notes.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class StartDoseInjectDoseNotesFormComponent implements OnInit {
-  public sliderPageConfig$!: Observable<any>;
-  public sliderPageConfig: any;
+export class StartDoseInjectDoseNotesFormComponent implements OnInit, OnDestroy {
+  public homeConfig$!: Observable<any>;
+  public homeConfig: any;
   public doseNotesFormGroup: FormGroup;
   public symptoms: any[];
+
+  private _ngUnsubscribe: Subject<void> = new Subject<void>();
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
     private _formBuilder: FormBuilder,
   ) {
-    this.sliderPageConfig$ = this._store.select(fromSharedStore.getSliderPageConfig);
+    this.homeConfig$ = this._store.select(fromStore.getHomeConfig);
     this.doseNotesFormGroup = this._formBuilder.group({
       painful: ['', [Validators.required]],
       mood: ['', [Validators.required]],
-      symptoms: ['', [Validators.required]],
+      symptoms: this._formBuilder.array([]),
       note: ['', ''],
     });
 
     this.symptoms = [
-      {
-        marked: false,
-        label: 'Redness'
-      },
-      {
-        marked: false,
-        label: 'Swelling'
-      },
-      {
-        marked: false,
-        label: 'Itching'
-      },
-      {
-        marked: false,
-        label: 'No Reaction'
-      },
-    ]
+      'Redness',
+      'Swelling',
+      'Itching',
+      'No Reaction',
+    ];
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.homeConfig$
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(homeConfig => {
+        if (homeConfig) {
+          this.homeConfig = homeConfig;
+        }
+      });
+
+    this.doseNotesFormGroup.valueChanges.subscribe(() => {
+      if (this.doseNotesFormGroup.valid) {
+        this._store.dispatch(new fromStore.SetData({
+          doses: this.homeConfig.doses?.map((dose: any, index: number) => {
+            const nextDose = this.homeConfig.doses[index + 1];
+            if (dose.marked) {
+              if (nextDose && !nextDose.marked)  {
+                return {
+                  marked: dose.marked,
+                  date: dose.date,
+                  bodyPart: dose.bodyPart,
+                  notes: this.doseNotesFormGroup.value,
+                };
+              }
+            }
+
+            return dose;
+          }),
+        }));
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this._ngUnsubscribe.next();
+    this._ngUnsubscribe.complete();
+  }
 
   markReaction(event: any, index: number) {
     event.preventDefault();
-    this.symptoms[index].marked = !this.symptoms[index].marked;
-    this.doseNotesFormGroup.patchValue({
-      symptoms: this.symptoms,
-    });
+    const symptomsField = this.doseNotesFormGroup.get('symptoms') as FormArray;
+    if (!symptomsField?.value.includes(this.symptoms[index])) {
+      symptomsField.push(this._formBuilder.control(this.symptoms[index]));
+    }
+    else {
+      const indexToDelete = symptomsField.value.findIndex((symptom: string) => symptom === this.symptoms[index]);
+      symptomsField.removeAt(indexToDelete);
+    }
   }
 
   ratingFieldUpdate(event: any, field: string) {

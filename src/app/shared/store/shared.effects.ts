@@ -35,7 +35,11 @@ export class SharedEffects {
               mass: 1,
               velocity: 800,
             }) }
-          );
+          ).finished.then(() => {
+            if (typeof this._backdropOptions.onOpen === 'function') {
+              this._backdropOptions.onOpen();
+            }
+          });
         }
         else {
           animate(
@@ -47,7 +51,11 @@ export class SharedEffects {
               `#backdrop`, 
               { opacity: [ 0.5, 0.8, 1 ]},
               { easing: 'ease-in-out', duration: 0.3 }
-            );
+            ).finished.then(() => {
+              if (typeof this._backdropOptions.onOpen === 'function') {
+                this._backdropOptions.onOpen();
+              }
+            });
           })
         }
       })
@@ -62,20 +70,12 @@ export class SharedEffects {
         return action;
       }),
       tap(() => {
-        const element = document.querySelector('#backdrop .backdrop__wrapper') as HTMLElement;
+        const wrapper = document.querySelector('#backdrop .backdrop__wrapper') as HTMLElement;
         if (this._backdropOptions.transition === 'move') {
           if (this._backdropOptions.fullScreen) {
             animate(
               `#backdrop`,
-              {
-                top: `${(window.innerHeight) * -1}px`,
-                height: [
-                  `${window.innerHeight}px`,
-                  `${window.innerHeight * 0.9}px`,
-                  `${window.innerHeight * 0.8}px`,
-                  `${window.innerHeight * 0.75}px`
-                ] 
-              },
+              { top: `${(wrapper.clientHeight) * -1}px` },
               { easing: spring({
                 stiffness: 80,
                 damping: 20,
@@ -86,12 +86,14 @@ export class SharedEffects {
               if (typeof this._backdropOptions.onClose === 'function') {
                 this._backdropOptions.onClose();
               }
+              // clear inline-styles for wrapper element
+              wrapper.style.removeProperty('height');
             });
           }
           else {
             animate(
               `#backdrop`,
-              { top: `${(element.offsetHeight) * -1}px` },
+              { top: `${(wrapper.offsetHeight) * -1}px` },
               {
                 easing: 'ease-in-out',
                 duration: 0.6,
@@ -100,6 +102,9 @@ export class SharedEffects {
               if (typeof this._backdropOptions.onClose === 'function') {
                 this._backdropOptions.onClose();
               }
+
+              // clear inline-styles for wrapper element
+              wrapper.style.removeProperty('height');
             });
           }
         }
@@ -111,12 +116,13 @@ export class SharedEffects {
           ).finished.then(() => {
             animate(
               `#backdrop`,
-              { top: `${(element.offsetHeight) * -1}px` }, 
+              { top: `${(wrapper.clientHeight) * -1}px` }, 
             );
-
             if (typeof this._backdropOptions.onClose === 'function') {
               this._backdropOptions.onClose();
             }
+            // clear inline-styles for wrapper element
+            wrapper.style.removeProperty('height');
           })
         }
       })
@@ -219,7 +225,11 @@ export class SharedEffects {
               mass: 1,
               velocity: 800,
             }) }
-          );
+          ).finished.then(() => {
+            if (typeof this._alertOptions.onShow === 'function') {
+              this._alertOptions.onShow();
+            }
+          });
         }
       })
     )
@@ -249,6 +259,59 @@ export class SharedEffects {
               this._alertOptions.onClose();
             }
           });
+        }
+      })
+    )
+  }, { dispatch: false });
+
+  bottomToolbarHide$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(fromActions.ActionTypes.BottomToolbarHide),
+      map((action: fromActions.BottomToolbarHide) => action.payload),
+      tap((hide) => {
+        const element = document.getElementById('bottom-toolbar') as HTMLElement;
+        if (hide) {
+          animate(
+            '#bottom-toolbar',
+            { y: [
+              '0px', 
+              '25%', 
+              '50%', 
+              '75%', 
+              `${(element?.clientHeight + 30)}px`,
+            ] },
+            { easing: spring({
+              stiffness: 80,
+              damping: 20,
+              mass: 1,
+              velocity: 800,
+            }) },
+          ).finished.then(() => {
+            element.style.display = 'none';
+          });
+        }
+        else {
+          if (element.style.getPropertyValue('display') === 'none') {
+            element.style.removeProperty('display');
+          }
+          
+          animate(
+            '#bottom-toolbar',
+            { y: [
+              `${(element?.clientHeight + 30)}px`,
+              `${(element?.clientHeight * 0.9)}px`,
+              `${(element?.clientHeight * 0.75)}px`,
+              `${(element?.clientHeight * 0.5)}px`,
+              `${(element?.clientHeight * 0.25)}px`,
+              `0px`,
+            ] },
+            { easing: spring({
+              stiffness: 80,
+              damping: 20,
+              mass: 1,
+              velocity: 800,
+            }) }
+          );
         }
       })
     )

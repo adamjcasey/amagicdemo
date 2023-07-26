@@ -1,41 +1,59 @@
 <div class="accordion" [ngClass]="{
   'accordion--task': config.type === 'task',
-  'accordion--task-checked': config.check,
+  'accordion--task-checked': config.completed,
   'accordion--dose-report': config.type === 'dose-report',
   'accordion--contact': config.type === 'contact',
   'accordion--is-closed': config.close,
+  'accordion--dynamic-content': !config.description && !config.asset,
 }">
   <header 
     class="accordion__tab"
     [style.background-color]="config.tabColor
       ? 'var(' + config.tabColor + ')' 
       : 'var(--color-white)'"
-    (click)="toggle()">
+      [ngClass]="{
+        'no-bg': !config.tabColor
+      }">
 
     <ng-container *ngIf="config.type === 'task'">
-      <div class="check" (click)="taskCheck($event)">
-        <ion-icon name="checkmark-circle" *ngIf="config.check"></ion-icon>
+      <div class="check" (click)="onTaskCheck($event)">
+        <ion-icon name="checkmark-circle" *ngIf="config.completed"></ion-icon>
       </div>
     </ng-container>
 
     <ion-img class="avatar" *ngIf="config.type === 'contact'" [src]="config.asset"></ion-img>
     <div class="title-wrapper">
-      <h5 class="title">{{ config.title }}</h5>
+      <h5 class="title" [innerHTML]="config.title"></h5>
       <p class="position" *ngIf="config.position">{{ config.position }}</p>
     </div>
     <ion-icon class="icon" name="chevron-forward"></ion-icon>
   </header>
 
-  <div class="accordion__wrapper">
-    <div class="accordion__subheader" *ngIf="config.type === 'dose-report'">
+  <div class="accordion__wrapper" (click)="config.onClick ? config.onClick() : null">
+    <div class="accordion__subheader" *ngIf="config.type === 'dose-report' && (config.numberDose || config.time)">
       <div class="dose">Dose {{ config.numberDose }}</div>
       <div class="time">{{ config.time }}</div>
     </div>
 
     <div class="accordion__content" *ngIf="config.type !== 'contact'">
       <div class="description" *ngIf="config.description" [innerHTML]="sanitizeContent(config.description)"></div>
-      <ion-img class="asset" [src]="config.asset"></ion-img>
+      <ion-img class="asset" *ngIf="config.asset" [src]="config.asset"></ion-img>
+
+      <ng-container *ngIf="config.component?.type === 'datepicker'">
+        <automagic-datepicker 
+          [multiple]="config.component?.multiple"
+          [continuous]="config.component?.continuous"
+          [monthsPerView]="config.component?.monthsPerView"
+          [selectedDates]="config.component?.selectedDates"
+          [disabled]="config.component?.disabled"
+        ></automagic-datepicker>
+      </ng-container>
     </div>
+
+    <div class="accordion__template" 
+      *ngIf="config.template" 
+      [innerHTML]="sanitizeContent(config.template)"
+    ></div>
 
     <div class="accordion__actions" *ngIf="config.type === 'contact'">
       <div class="action" *ngIf="config.email">

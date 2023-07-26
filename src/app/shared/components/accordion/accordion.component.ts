@@ -3,7 +3,7 @@ import {
   Input, 
   Output,
   EventEmitter, 
-  ViewEncapsulation 
+  ViewEncapsulation, 
 } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
@@ -15,27 +15,28 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 })
 export class AccordionComponent {
   @Input() config: any;
-  @Output() onTaskCheck = new EventEmitter();
+  @Output() onTaskChange = new EventEmitter();
 
   constructor(
     private _sanitizer: DomSanitizer,
   ) {}
 
-  toggle() {
-    if (typeof this.config.close === 'undefined') {
-      this.config.close = false;
-    }
+  // if the toggle behavior (hide/expand) as an accordion is required
+  // this could be used for that
+  // toggle() {
+  //   if (typeof this.config.close === 'undefined') {
+  //     this.config.close = false;
+  //   }
+  //   this.config.close = !this.config.close;
+  // }
 
-    this.config.close = !this.config.close;
-  }
-
-  taskCheck(event: any) {
+  onTaskCheck(event: any) {
     event.preventDefault();
     event.stopImmediatePropagation();
-    if (typeof this.config.check === 'undefined') {
-      this.config.check = false;
+    if (typeof this.config.completed === 'undefined') {
+      this.config.completed = false;
     }
-    this.onTaskCheck.emit(!this.config.check);
+    this.onTaskChange.emit(!this.config.completed);
   }
 
   sanitizeContent(htmlContent: string): SafeHtml {

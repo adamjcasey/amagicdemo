@@ -2,7 +2,7 @@
 
 automagic-accordion {
   display: block;
-  margin-bottom: var(--space-m);
+  margin-bottom: var(--size-m);
 
   &:last-child {
     margin-bottom: 0;
@@ -18,8 +18,8 @@ automagic-accordion {
     display: grid;
     grid-template-columns: max-content auto max-content;
     align-items: center;
-    gap: var(--space-xxxs);
-    padding: var(--space-xxs) var(--space-xs);
+    gap: var(--size-xxxs);
+    padding: var(--size-xxs) var(--size-xs);
 
     .check {
       grid-column: 1;
@@ -46,6 +46,14 @@ automagic-accordion {
         margin: 0;
       }
 
+      .title {
+        span {
+          @include paragraph-m;
+          margin-left: 10px;
+          color: var(--color-gray-dark);
+        }
+      }
+
       .position {
         @include paragraph-s;
       }
@@ -58,10 +66,25 @@ automagic-accordion {
       transition-duration: 200ms;
       transition-timing-function: ease-in-out;
     }
+
+    &.no-bg {
+      position: relative;
+
+      &::after {
+        content: '';
+        position: absolute;
+        left: var(--size-xs);
+        bottom: 0;
+        width: calc(100% - var(--size-l));
+        height: 2px;
+        background-color: var(--color-gray-light);
+      }
+    }
   }
 
   .accordion__wrapper {
-    padding: var(--space-xxs) var(--space-xs);
+    padding: var(--size-xxs) var(--size-xs);
+    background-color: var(--color-white);
 
     .accordion__subheader {
       display: flex;
@@ -79,14 +102,14 @@ automagic-accordion {
       }
 
       + .accordion__content {
-        margin-top: var(--space-xs);
+        margin-top: var(--size-xs);
       }
     }
 
     .accordion__content {
       display: flex;
       align-items: center;
-      gap: var(--space-xxs);
+      gap: var(--size-xxs);
 
       .description {
         @include paragraph-s;
@@ -95,6 +118,92 @@ automagic-accordion {
 
       .asset {
         min-height: 100px;
+        margin: 0 auto;
+      }
+
+      automagic-datepicker {
+        display: block;
+        width: 100%;
+      }
+    }
+
+    .accordion__template {
+      width: 100%;
+
+      .calendar-widget {
+        text-align: center;
+      
+        .indicators {
+          span {
+            @include paragraph-s;
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--size-xxxs);
+            white-space: nowrap;
+            margin: var(--size-xxxxs) var(--size-xxs);
+      
+            &::before {
+              content: '';
+              width: 12px;
+              height: 12px;
+            }
+      
+            &.today,
+            &.next-dose {
+              &::before {
+                border-radius: 2px;
+              }
+            }
+      
+            &.today {
+              &::before {
+                background-color: var(--color-primary-purple);
+              }
+            }
+      
+            &.next-dose {
+              &::before {
+                background-color: var(--color-bg-pastel-purple);
+              }
+            }
+            
+            &.reminder,
+            &.flare-ups {
+              &::before {
+                width: 8px;
+                height: 8px;
+              }
+            }
+      
+            &.reminder {
+              &::before {
+                border-radius: 50%;
+                background-color: var(--color-primary-purple);
+              }
+            }
+      
+            &.flare-ups {
+              position: relative;
+      
+              &::before {
+                background-color: var(--color-primary-salmon);
+                border-radius: 50%;
+              }
+      
+              &::after {
+                content: '';
+                position: absolute;
+                z-index: 10;
+                top: calc(50% - 2px);
+                left: 2px;
+                width: 4px;
+                height: 4px;
+                background-color: var(--color-white);
+              }
+            }
+          }
+        }
       }
     }
   }
@@ -116,15 +225,17 @@ automagic-accordion {
 
   &.accordion--dose-report {
     .accordion__wrapper {
-      padding-right: var(--space-m);
-      padding-left: var(--space-m);
+      padding-right: var(--size-m);
+      padding-left: var(--size-m);
     }
 
     .accordion__content {
       flex-direction: row-reverse;
       justify-content: space-between;
+      margin-bottom: var(--size-m);
 
       .description {
+        @include paragraph-m;
         width: 60%;
       }
     }
@@ -133,20 +244,20 @@ automagic-accordion {
   &.accordion--contact {
     .accordion__tab,
     .accordion__wrapper {
-      padding-right: var(--space-m);
-      padding-left: var(--space-m);
+      padding-right: var(--size-m);
+      padding-left: var(--size-m);
     }
 
     .accordion__tab {
       position: relative;
-      gap: var(--space-m);
+      gap: var(--size-m);
 
       &::before {
         content: '';
         position: absolute;
         bottom: -1px;
-        left: var(--space-m);
-        width: calc(100% - var(--space-xxl));
+        left: var(--size-m);
+        width: calc(100% - var(--size-xxl));
         height: 2px;
         background-color: var(--color-gray-light);
       }
@@ -157,20 +268,20 @@ automagic-accordion {
     }
 
     .accordion__wrapper {
-      padding-top: var(--space-m);
-      padding-bottom: var(--space-m);
+      padding-top: var(--size-m);
+      padding-bottom: var(--size-m);
 
       .accordion__actions {
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: var(--space-m);
+        gap: var(--size-m);
 
         .action {
           display: flex;
           justify-content: center;
           align-items: center;
-          padding: var(--space-xs);
+          padding: var(--size-xs);
           box-sizing: border-box;
           border-radius: 50%;
           border: 2px solid var(--color-primary-purple);
@@ -178,6 +289,65 @@ automagic-accordion {
 
           ion-icon {
             font-size: 32px;
+          }
+        }
+      }
+    }
+  }
+
+  &.accordion--dynamic-content {
+    .accordion__content {
+      flex-direction: column;
+    }
+  }
+
+  .symptom-report-widget {
+    h4 {
+      margin-bottom: var(--size-m);
+      text-align: center;
+
+      span {
+        @include paragraph-m;
+        color: var(--color-gray-dark);
+      }
+    }
+
+    .row-field {
+      margin-bottom: var(--size-xs);
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      h5 {
+        margin-top: 0;
+        margin-bottom: var(--size-xxxs);
+      }
+
+      p {
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+
+      &.severity {
+        p {
+          display: flex;
+          align-items: center;
+          gap: var(--size-xxxs);
+
+          &::before {
+            content: '';
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+          }
+
+          @for $i from 1 through 5 {
+            &.level-#{$i} {
+              &::before {
+                background-color: var((--rating-field-level-) + $i);
+              }
+            }
           }
         }
       }

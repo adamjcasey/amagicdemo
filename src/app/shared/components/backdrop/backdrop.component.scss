@@ -1,7 +1,7 @@
 @import 'src/theme/base/mixins';
 
 :root {
-  --backdrop-size: 75vh;
+  --backdrop-size: calc(75vh + 35px);
 }
 
 .backdrop {
@@ -10,7 +10,6 @@
   left: 0;
   z-index: 100;
   width: 100vw;
-  min-height: var(--backdrop-size);
 
   &::before {
     content: '';
@@ -33,17 +32,29 @@
     z-index: 100;
     display: grid;
     grid-template-rows: max-content auto;
-    width: 100%;
-    height: 100%;
+    min-height: var(--backdrop-size);
     background-color: var(--color-black);
   }
 
   .backdrop__header {
+    position: relative;
+    z-index: 50;
     grid-row: 1;
     display: grid;
     grid-template-rows: max-content auto;
     grid-template-columns: 1fr 1fr 1fr;
-    padding-top: var(--space-xxl);
+    align-items: center;
+    padding-top: var(--size-xxl);
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: var(--size-xxl);
+      background-color: var(--color-black);
+    }
 
     .back-button {
       grid-row: 1;
@@ -55,18 +66,22 @@
       grid-row: 1;
       grid-column: 2;
       width: 135px;
-      margin: 0 auto;
+      margin: var(--size-s) auto 0;
+    }
+
+    .background {
+      grid-row: 1;
+      grid-column: 1 / -1;
+      z-index: -10;
+      width: 100%;
+      height: 100%;
+      background-color: var(--color-black);
     }
 
     .ellipse {
       grid-row: 2;
       grid-column: 1 / -1;
       width: 100%;
-      margin-top: var(--space-s);
-    }
-
-    + .backdrop__content {
-      padding-top: var(--space-s);
     }
   }
 
@@ -74,12 +89,19 @@
     grid-row: 2;
     position: relative;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
     width: 100%;
-    height: 100%;
-    min-height: 55vh;
-    padding: var(--space-xxl) var(--space-m) var(--space-s);
+    max-width: calc(300px + (var(--size-m) * 2) );
+    max-height: max-content;
+    overflow-y: auto;
+    margin-top: calc(var(--size-xxxl) * -1);
+    margin-right: auto;
+    margin-left: auto;
+    padding-top: var(--size-xxxl);
+
+    > * {
+      width: 100%;
+    }
 
     .backdrop__template {
       color: var(--color-white);
@@ -95,17 +117,25 @@
       }
 
       .buttons-container {
-        margin-top: var(--space-l);
+        margin-top: var(--size-l);
 
         ion-button {
           display: block;
-          margin-bottom: var(--space-m);
+          margin-bottom: var(--size-m);
 
           &:last-child {
             margin-bottom: 0;
           }
         }
       }
+    }
+
+    .backdrop__actions {
+      display: flex;
+      gap: var(--size-xxs);
+      justify-content: center;
+      align-items: center;
+      margin-bottom: var(--size-l);
     }
 
     .pin-input {
@@ -149,11 +179,11 @@
     }
 
     .buttons-container {
-      margin-top: var(--space-l);
+      margin-top: var(--size-l);
 
       ion-button {
         display: block;
-        margin-bottom: var(--space-m);
+        margin-bottom: var(--size-m);
 
         &:last-child {
           margin-bottom: 0;
@@ -161,10 +191,43 @@
       }
     }
 
+    .links-container {
+      .link {
+        display: grid;
+        grid-template-columns: max-content auto max-content;
+        align-items: center;
+        gap: var(--size-xxs);
+        height: 48px;
+        margin-bottom: var(--size-xs);
+        padding-bottom: var(--size-xs);
+        border-bottom: 1px solid var(--color-gray-dark);
+
+        &:last-child {
+          margin-bottom: 0;
+          border-bottom: none;
+        }
+
+        ion-icon[slot="start"] {
+          grid-column: 1;
+        }
+
+        ion-label {
+          grid-column: 2;
+          color: var(--color-white);
+          font-weight: var(--font-weight-extrabold);
+          text-align: left;
+        }
+
+        ion-icon[slot="end"] {
+          grid-column: 3;
+          font-size: var(--font-size-heading-3);
+        }
+      }
+    }
+
     .main-menu,
-    .hightlights-menu {
+    .highlights-menu {
       display: flex;
-      width: calc(100vw - 60px);
       color: var(--color-white);
 
       swiper {
@@ -180,6 +243,8 @@
 
     .main-menu {
       align-items: center;
+      padding-right: var(--size-l);
+      padding-left: var(--size-l);
 
       swiper {
         .swiper-slide {
@@ -187,6 +252,7 @@
             position: relative;
 
             p {
+              margin-bottom: 0;
               font-weight: var(--font-weight-bold);
             }
 
@@ -209,11 +275,15 @@
 
             ion-item {
               height: 48px;
-              margin-top: var(--space-xxxs);
-              margin-bottom: var(--space-xxxs);
+              margin-top: var(--size-xxxs);
+              margin-bottom: var(--size-xxxs);
 
               &:last-child {
                 --border-width: 0;
+              }
+
+              ion-icon {
+                margin-top: 0;
               }
             }
 
@@ -226,18 +296,14 @@
       }
     }
 
-    .hightlights-menu {
+    .highlights-menu {
       h1 {
-        margin-top: 0;
-        margin-bottom: var(--space-l);
+        margin-bottom: var(--size-l);
         color: var(--color-white);
       }
 
       .cards-container {
         @include masonry-layout;
-        max-height: calc(100vh - 290px);
-        padding-right: var(--space-xxs);
-        overflow-y: auto;
 
         .card {
           .card__wrapper {
@@ -265,7 +331,7 @@
 
           .card__text {
             flex: 1 1 0;
-            padding: var(--space-xxs);
+            padding: var(--size-xxs);
             background-color: var(--color-bg-dark-gray-blue-dark);
           }
 
@@ -276,17 +342,14 @@
       }
 
       .highlights__detail {
-        max-height: calc(100vh - 240px);
-        padding-right: var(--space-xxs);
-        overflow-y: auto;
         color: var(--color-white);
 
         h1 {
-          margin-bottom: var(--space-xxl);
+          margin-bottom: var(--size-xxl);
         }
 
         .highlights__detail-section {
-          margin-bottom: var(--space-xxxl);
+          margin-bottom: var(--size-xxxl);
 
           &:last-child {
             margin-bottom: 0;
@@ -421,13 +484,13 @@
 
         ion-img {
           height: 180px;
-          margin-bottom: var(--space-xl);
+          margin-bottom: var(--size-xl);
         }
 
         .box-wrapper {
           position: relative;
-          margin-bottom: var(--space-xxl);
-          padding: var(--space-xl) var(--space-xs) var(--space-s);
+          margin-bottom: var(--size-xxl);
+          padding: var(--size-xl) var(--size-xs) var(--size-s);
           background-color: var(--color-bg-dark-gray-blue);
           border-radius: 12px;
 
@@ -452,7 +515,7 @@
           h3 {
             @include heading-5;
             margin-top: 0;
-            margin-bottom: var(--space-xxs);
+            margin-bottom: var(--size-xxs);
             font-weight: var(--font-weight-bold);
           }
 
@@ -461,7 +524,7 @@
 
             &.eyebrow {
               @include paragraph-xs;
-              margin-bottom: var(--space-xxs);
+              margin-bottom: var(--size-xxs);
               text-transform: uppercase;
               text-align: center;
   
@@ -470,15 +533,15 @@
                 content: '';
                 width: 16px;
                 height: 1px;
-                padding-top: var(--space-xxxs);
+                padding-top: var(--size-xxxs);
               }
   
               &::before {
-                margin-right: var(--space-xxs);
+                margin-right: var(--size-xxs);
               }
   
               &::after {
-                margin-left: var(--space-xxs);
+                margin-left: var(--size-xxs);
               }
             }
           }
@@ -521,10 +584,30 @@
 
   &.is-full-screen {
     top: -100vh;
-    height: 100vh !important;
 
     &::before {
       display: none;
+    }
+
+    .backdrop__wrapper {
+      height: 100vh;
+    }
+
+    .backdrop__content {
+      // 162px is the size of the header element including all - 40px of
+      // inverted margin at the top the parts + extra bottom space to 
+      // visualize everything correctly
+      max-height: calc(100vh - (122px + var(--size-s)));
+    }
+  }
+
+  &.is-content-centered {
+    .backdrop__wrapper {
+      align-items: center;
+    }
+
+    .backdrop__content {
+      justify-content: center;
     }
   }
 
@@ -535,11 +618,10 @@
       background-position: center center;
       background-size: cover;
       text-align: center;
-    }
 
-    .backdrop__content {
       .close {
         position: absolute;
+        left: calc(50% - 22.5px);
         color: var(--color-white);
         font-size: 45px;
       }
@@ -547,9 +629,12 @@
 
     &.bg-template--top-hole {
       .backdrop__content {
-        align-items: flex-end;
-        padding-bottom: 20vh;
+        justify-content: flex-end;
+        padding-bottom: 15vh;
+        // height: 100vh;
+      }
 
+      .backdrop__wrapper {
         .close {
           bottom: 5vh;
         }
@@ -558,12 +643,12 @@
 
     &.bg-template--bottom-hole {
       .backdrop__content {
-        align-items: flex-start;
-        padding-top: 10vh;
+        justify-content: flex-start;
+        padding-top: calc(var(--size-xxxl) * 2);
+      }
 
-        .close {
-          bottom: 40vh;
-        }
+      .close {
+        bottom: 40vh;
       }
     }
   }

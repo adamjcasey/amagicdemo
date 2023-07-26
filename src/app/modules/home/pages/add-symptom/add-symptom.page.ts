@@ -8,6 +8,7 @@ import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 
 import * as fromStore from '@home/store';
+import * as fromActivityStore from '@activity/store';
 import * as fromSharedStore from '@shared/store';
 import * as fromSharedComponents from '@shared/components';
 import * as fromCoreStore from '@core/store';
@@ -21,6 +22,8 @@ import * as fromCoreStore from '@core/store';
 export class AddSymptomPage implements OnInit {
   public homeConfig$!: Observable<any>;
   public homeConfig: any;
+  public activityConfig$!: Observable<any>;
+  public activityConfig: any;
   public sliderPageConfig$!: Observable<any>;
   public sliderPageConfig: any;
   public slides: Array<any> = [];
@@ -30,13 +33,11 @@ export class AddSymptomPage implements OnInit {
     private _store: Store<fromCoreStore.CoreState>,
   ) {
     this.homeConfig$ = this._store.select(fromStore.getHomeConfig);
+    this.activityConfig$ = this._store.select(fromActivityStore.getActivityConfig);
     this.slides = [
       {
         content: {
           isExpanded: true,
-          template: `
-            <h1 class="font-heading-1--bold">New Symptom</h1>
-          `,
           component: 'add-symptom-form',
           toolbar: { 
             actions: [
@@ -83,6 +84,13 @@ export class AddSymptomPage implements OnInit {
                       flareUpsDemoDone: true
                     }));
                   }
+                  // save the symptom report on activity store
+                  this._store.dispatch(new fromActivityStore.SetData({
+                    symptomReports: [
+                      ...this.activityConfig.symptomReports, 
+                      this.activityConfig.currentSymptomReport
+                    ],
+                  }));
                   this.goTo('home');
                 }
               }
@@ -97,6 +105,12 @@ export class AddSymptomPage implements OnInit {
     this.homeConfig$.subscribe(homeConfig => {
       if (homeConfig) {
         this.homeConfig = homeConfig;
+      }
+    });
+
+    this.activityConfig$.subscribe(activityConfig => {
+      if (activityConfig) {
+        this.activityConfig = activityConfig;
       }
     });
   }

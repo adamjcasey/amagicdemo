@@ -20,4 +20,48 @@ export class UtilsService {
     resizeItems();
     window.addEventListener('resize', resizeItems);
   }
+
+  humanizeBodyPartInjected(bodyPart: string) {
+    let text;
+    switch(bodyPart) {
+      case 'top-left':
+        text = 'Right Chest';
+        break;
+      case 'top-right':
+        text = 'Left Chest';
+        break;
+
+      case 'bottom-left':
+        text = 'Right Thigh';
+        break;
+      case 'bottom-right':
+        text = 'Left Thigh';
+        break;
+    }
+
+    return text;
+  }
+
+  humanizeSeveritySymptom(value: number) {
+    let text;
+    switch(value) {
+      case 1:
+        text = 'Very Severe';
+        break;
+      case 2:
+        text = 'Severe';
+        break;
+      case 3:
+        text = 'Normal';
+        break;
+      case 4:
+        text = 'Low severe';
+        break;
+      case 5:
+        text = 'Absent';
+        break;
+    }
+
+    return text;
+  }
 }

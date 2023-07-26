@@ -24,6 +24,7 @@ import * as fromWelcomeStore from '@welcome/store';
 import * as fromWelcomeComponents from '@welcome/components';
 import * as fromHomeStore from '@home/store';
 import * as fromHomeComponents from '@home/components';
+import * as fromActivityComponents from '@activity/components';
 
 @Component({
   selector: 'automagic-slider-page',
@@ -259,6 +260,9 @@ export class SliderPageComponent implements OnInit {
       case 'start-dose-ready-to-inject-video':
         componentRef = element.createComponent(fromHomeComponents.StartDoseReadyToInjectVideoComponent);
         break;
+      case 'start-dose-ready-to-inject-body-part-selector':
+        componentRef = element.createComponent(fromHomeComponents.StartDoseReadyToInjectBodyPartSelectorComponent);
+        break;
       case 'start-dose-ready-to-inject-dosing':
         componentRef = element.createComponent(fromHomeComponents.StartDoseReadyToInjectDosingComponent);
         break;
@@ -273,6 +277,12 @@ export class SliderPageComponent implements OnInit {
         break;
       case 'add-symptom-form':
         componentRef = element.createComponent(fromHomeComponents.AddSymptomFormComponent);
+        break;
+      case 'calendar-doses':
+        componentRef = element.createComponent(fromActivityComponents.CalendarDosesComponent);
+        break;
+      case 'calendar-edit-schedule':
+        componentRef = element.createComponent(fromActivityComponents.CalendarEditScheduleComponent);
         break;
     }
   }

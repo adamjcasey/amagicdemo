@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router, Event as RoutingEvent, NavigationEnd, NavigationStart } from '@angular/router';
+import { Router, Event as RoutingEvent, NavigationEnd } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { animate, spring  } from 'motion';
 
