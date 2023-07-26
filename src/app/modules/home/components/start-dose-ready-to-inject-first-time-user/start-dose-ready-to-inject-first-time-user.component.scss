@@ -1,0 +1,21 @@
+@import 'src/theme/base/mixins';
+
+.start-dose-ready-to-inject.first-time-dose {
+  min-height: 540px;
+
+  p {
+    font-size: var(--font-size-paragraph-l);
+  }
+  
+  .first-time-dose__video-indicator {
+    position: relative;
+
+    ion-icon {
+      position: absolute;
+      z-index: 50;
+      top: calc(50% - 40px);
+      left: calc(50% - 40px);
+      font-size: 80px;
+    }
+  }
+}

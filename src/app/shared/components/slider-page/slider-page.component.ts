@@ -257,6 +257,14 @@ export class SliderPageComponent implements OnInit {
       case 'start-dose-prepare-waiting-to-inject':
         componentRef = element.createComponent(fromHomeComponents.StartDosePrepareWaitingToInjectComponent);
         break;
+      case 'start-dose-ready-to-inject-first-time-user':
+        componentRef = element.createComponent(fromHomeComponents.StartDoseReadyToInjectFirstTimeUserComponent);
+        if (componentRef.instance instanceof fromHomeComponents.StartDoseReadyToInjectFirstTimeUserComponent) {
+          componentRef.instance.onPlayTrainingVideo.subscribe(() => {
+            this.slideNext();
+          });
+        }
+        break;
       case 'start-dose-ready-to-inject-video':
         componentRef = element.createComponent(fromHomeComponents.StartDoseReadyToInjectVideoComponent);
         break;

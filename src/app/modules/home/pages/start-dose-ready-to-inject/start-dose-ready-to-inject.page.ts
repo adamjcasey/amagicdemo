@@ -230,17 +230,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
         {
           header: {
             color: '--color-bg-pastel-green',
-            template: `
-              <div class="start-dose-ready-to-inject__content first-time-dose">
-                <h1 class="font-heading-1--bold">First time user?</h1>
-                <p>This video previews what to expect when self-dosing with AutoMagic.</p>
-                <div class="first-time-dose__video-indicator">
-                  <ion-icon src="/assets/icons/play.svg"></ion-icon>
-                  <img src="assets/images/start-dose-first-time-dose.svg">
-                </div>
-                <p>You’ll be guided through the entire dosing process next.</p>
-              </div>
-            `,
+            component: 'start-dose-ready-to-inject-first-time-user',
           },
           content: {
             hideNavigation: true,
@@ -252,25 +242,13 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                   this.showNoNeedlessMessage();
                 }
               },
-              {
-                label: 'Continue',
-                hidden: true,
-                action: () => {
-                  this.sliderPage.slideNext();
-                }
-              }
             ],
-          },
-          onShown: () => {
-            const playVideoElement = document.querySelector('.slider-page .slider-page__header .template-wrapper .first-time-dose__video-indicator');
-            console.log('playVideoElement ', playVideoElement);
           },
         },
         {
           header: {
             fullSize: true,
             color: '--color-bg-pastel-green',
-            template: null,
             component: 'start-dose-ready-to-inject-video',
           },
           content: {
