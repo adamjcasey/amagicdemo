@@ -118,7 +118,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
           `,
           actions: [
             {
-              label: 'Enable Bluetooth',
+              label: 'Allow Bluetooth',
               action: () => { this.allowBluetooth() }
             },
           ],
@@ -207,7 +207,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
         transition: 'fade',
         fullScreen: true,
         header: false,
-        contenCentered: true,
+        contentCentered: true,
         showBackButton: false,
         component: 'welcome-sign-up',
       }));
