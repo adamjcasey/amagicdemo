@@ -3,6 +3,7 @@ export interface SharedState {
   sliderPageConfig?: any;
   alertConfig?: any;
   bottomToolbarConfig?: any;
+  topbarConfig: any;
 }
 
 export const initialState: SharedState = {
@@ -44,4 +45,7 @@ export const initialState: SharedState = {
   bottomToolbarConfig: {
     show: true,
   },
+  topbarConfig: {
+    bgColor: '--color-white',
+  }
 }

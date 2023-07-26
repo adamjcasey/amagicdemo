@@ -136,6 +136,15 @@ export function SharedReducer(
       };
     }
 
+    case fromActions.ActionTypes.TopbarChangeColor: {
+      return {
+        ...state,
+        topbarConfig: {
+          bgColor: action.payload,
+        },
+      };
+    }
+
     default: {
       return state;
     }
@@ -146,9 +155,11 @@ const exportBackdropSetConfig = (state: fromStore.SharedState) => state.backdrop
 const exportSliderPageConfig = (state: fromStore.SharedState) => state.sliderPageConfig;
 const exportAlertConfig = (state: fromStore.SharedState) => state.alertConfig;
 const exportBottomToolbarConfig = (state: fromStore.SharedState) => state.bottomToolbarConfig;
+const exportTopbarConfig = (state: fromStore.SharedState) => state.topbarConfig;
 const selectSharedState = createFeatureSelector<fromStore.SharedState>('shared');
 
 export const getBackdropConfig = createSelector(selectSharedState, exportBackdropSetConfig);
 export const getSliderPageConfig = createSelector(selectSharedState, exportSliderPageConfig);
 export const getAlertConfig = createSelector(selectSharedState, exportAlertConfig);
 export const getBottomToolbarConfig = createSelector(selectSharedState, exportBottomToolbarConfig);
+export const getTopbarConfig = createSelector(selectSharedState, exportTopbarConfig);

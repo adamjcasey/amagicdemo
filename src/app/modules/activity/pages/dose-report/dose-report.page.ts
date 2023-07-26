@@ -4,6 +4,7 @@ import { Observable, Subject, takeUntil } from 'rxjs';
 import * as moment from 'moment';
 
 import * as fromStore from '@activity/store';
+import * as fromSharedStore from '@shared/store';
 import * as fromHomeStore from '@home/store';
 import * as fromCoreStore from '@core/store';
 import * as fromSharedServices from '@shared/services';
@@ -27,6 +28,7 @@ export class DoseReportPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-blue'));
     this.homeConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe(homeConfig => {

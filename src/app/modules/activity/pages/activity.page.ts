@@ -78,6 +78,7 @@ export class ActivityPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-beige'));
     this._store.dispatch(new fromSharedStore.SliderPageClear());
     this.activityConfig$
       .pipe(takeUntil(this._ngUnsubscribe))

@@ -46,7 +46,8 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
             {
               label: 'Continue',
               action: () => { 
-                this.sliderPage.slideNext() 
+                this.sliderPage.slideNext();
+                this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-mint'));
               }
             }
           ],
@@ -97,6 +98,7 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple'));
     this.homeConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe(homeConfig => {
@@ -142,6 +144,11 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
   }
 
   showStepTemperature = () => {
+    // hold on a few ms the change of the topbar bgcolor to match with the opening 
+    // of the expanded box in SlidePage component
+    setTimeout(() => {
+      this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-white'));
+    }, 500);
     this._store.dispatch(new fromSharedStore.SliderPageSetContent({
       isExpanded: true,
       template: this.homeConfig.firstTimeDose 

@@ -1,15 +1,21 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
+
+import * as fromCoreStore from '@core/store';
+import * as fromSharedStore from '@shared/store';
 
 @Component({
   selector: 'automagic-your-progress',
   templateUrl: 'your-progress.page.html',
   styleUrls: ['your-progress.page.scss'],
 })
-export class YourProgressPage {
+export class YourProgressPage implements OnInit {
   public heroConfig: any;
   public cards: any[];
 
-  constructor() {
+  constructor(
+    private _store: Store<fromCoreStore.CoreState>,
+  ) {
     this.heroConfig = {
       color: '--color-bg-pastel-honey-yellow',
       template: '<h1 class="font-heading-1--bold">Your progress</h1>',
@@ -49,4 +55,7 @@ export class YourProgressPage {
     ];
   }
 
+  ngOnInit() {
+    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
+  }
 }

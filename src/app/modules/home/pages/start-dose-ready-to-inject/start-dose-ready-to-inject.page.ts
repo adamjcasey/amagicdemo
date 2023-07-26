@@ -36,6 +36,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-green'));
     this.sliderPageConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe(sliderPageConfig => {
@@ -95,7 +96,8 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                     },
                     {
                       label: 'Continue',
-                      action: () => { 
+                      action: () => {
+                        this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
                         const bodyShapeSlideIndex = this.slides.findIndex((slide: any) => slide.bodyShapeStep);
                         this.sliderPage.slideTo(bodyShapeSlideIndex);
                       }
@@ -152,8 +154,10 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                   actions: [
                     {
                       label: 'Continue',
-                      // disabled: true,
-                      action: () => { this.sliderPage.slideNext() }
+                      action: () => {
+                        this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
+                        this.sliderPage.slideNext();
+                      }
                     }
                   ],
                 },
@@ -170,6 +174,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                     {
                       label: 'Previous step',
                       action: () => { 
+                        this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-green'));
                         if (this.homeConfig?.firstTimeDose) {
                           this.sliderPage.slideTo(2);
                         }
@@ -180,9 +185,10 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                     },
                     {
                       label: 'Next Step',
-                      disabled: true,
-                      action: () => { 
-                        this.sliderPage.slideNext() 
+                      disabled: this.homeConfig?.bodyPartSelected === '' ? true : false,
+                      action: () => {
+                        this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-blue'));
+                        this.sliderPage.slideNext();
                         if (this.homeConfig.firstTimeDose) {
                           this._store.dispatch(new fromSharedStore.BackdropShow({
                             transition: 'move',
@@ -296,7 +302,8 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
         }
       );
 
-      // set instruction steps to clean-site, uncap-injector, and pre-loading for dosing
+      // set instruction steps to clean-site, 
+      // uncap-injector, and pre-loading for dosing
       this.slides.push(
         {
           header: {
@@ -312,11 +319,17 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
             actions: [
               {
                 label: 'Previous step',
-                action: () => { this.sliderPage.slidePrev() }
+                action: () => { 
+                  this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
+                  this.sliderPage.slidePrev();
+                }
               },
               {
                 label: 'Next Step',
-                action: () => { this.sliderPage.slideNext() }
+                action: () => {
+                  this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-green'));
+                  this.sliderPage.slideNext();
+                }
               }
             ],
           },
@@ -335,11 +348,15 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
             actions: [
               {
                 label: 'Previous step',
-                action: () => { this.sliderPage.slidePrev() }
+                action: () => { 
+                  this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-blue'));
+                  this.sliderPage.slidePrev();
+                }
               },
               {
                 label: 'Next Step',
                 action: () => { 
+                  this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-beige'));
                   this.sliderPage.slideNext();
                 }
               }
@@ -382,15 +399,20 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
             actions: [
               {
                 label: 'Previous step',
-                action: () => { this.sliderPage.slidePrev() }
+                action: () => {
+                  this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-green'));
+                  this.sliderPage.slidePrev();
+                }
               },
               {
                 label: 'Next Step',
                 action: () => { 
+                  this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
                   this.sliderPage.slideNext();
                   // simulate Waiting for injection process
                   // first, wait for 2seg to set bgColor as purple
                   setTimeout(() => {
+                    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple'));
                     this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
                       color: '--color-bg-pastel-purple'
                     }));
@@ -398,6 +420,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
     
                   // second, wait for 4segs to set bgColor as lime
                   setTimeout(() => {
+                    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-lime'));
                     this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
                       color: '--color-bg-pastel-lime'
                     }));

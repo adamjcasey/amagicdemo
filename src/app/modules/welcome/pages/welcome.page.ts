@@ -96,6 +96,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
               label: 'Continue',
               action: () => {
                 if (this.welcomeFormGroup.get('name')?.valid) {
+                  this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-blue'));
                   this.sliderPage.slideNext();
                 }
                 else {
@@ -155,7 +156,8 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
           actions: [
             {
               label: 'Previous',
-              action: () => { 
+              action: () => {
+                this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-blue'));
                 this.sliderPage.slidePrev();
               }
             },
@@ -173,6 +175,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-green'));
     this.config$
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe(config => {
@@ -248,6 +251,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
       // TODO: make bluetooth integration
       // skipping bluetooth step
       this.sliderPage.slideNext();
+      this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
       // await BleClient.initialize();
       // const isEnabled = await BleClient.isEnabled();
     }
@@ -295,6 +299,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
                   this._store.dispatch(new fromSharedStore.SliderPageSetContent({
                     isExpanded: false
                   }));
+                  this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-lime'));
                   this.sliderPage.slideNext();
                 }
               },
