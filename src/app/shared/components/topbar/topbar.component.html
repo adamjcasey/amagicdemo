@@ -1,12 +1,12 @@
-<ion-header class="topbar" [translucent]="true">
+<ion-header class="topbar" [style.background-color]="'var(' + config?.bgColor + ')'">
   <ion-toolbar class="topbar__toolbar">
     <ion-buttons slot="start">
       <ion-button (click)="leftElementAction()">
-        <ng-container *ngIf="!activityScope">
+        <ng-container *ngIf="!activityScope && !settingsScope">
           <ion-icon slot="icon-only" src="/assets/icons/user.svg"></ion-icon>
         </ng-container>
 
-        <ng-container *ngIf="activityScope">
+        <ng-container *ngIf="activityScope || settingsScope">
           <ion-icon slot="icon-only" size="medium" color="dark" name="chevron-back-outline"></ion-icon>
         </ng-container>
       </ion-button>

@@ -1,3 +1,53 @@
+@import 'src/theme/base/mixins';
+
+.settings-page__wrapper {
+  --background: var(--color-bg-pastel-green);
+}
+
 .settings-page {
-  margin-top: 70px;
+  padding-top: var(--topbar-size);
+  padding-bottom: var(--size-s);
+
+  h1 {
+    margin-bottom: var(--size-l);
+    text-align: center;
+  }
+
+  .settings__avatar {
+    width: 120px;
+    margin: 0 auto var(--size-l);
+  }
+
+  .settings__section {
+    padding: var(--size-m);
+    border-radius: 12px;
+    background-color: var(--color-white);
+    box-shadow: 0px 0px 16px 0px #0000001A;
+
+    .field {
+      margin-bottom: var(--size-xxs);
+
+      .field-label {
+        @include paragraph-s;
+        margin-top: 0;
+        margin-bottom: var(--size-xxxs);
+      }
+
+      .field-value {
+        @include paragraph-m;
+        margin: 0;
+        font-weight: var(--font-weight-bold);
+      }
+    }
+  }
+
+  h5 {
+    margin-top: var(--size-m);
+    margin-bottom: var(--size-xxs);
+  }
+
+  automagic-card {
+    display: block;
+    margin-top: var(--size-m);
+  }
 }

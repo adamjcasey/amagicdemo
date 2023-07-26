@@ -56,6 +56,10 @@
     ></div>
 
     <div class="accordion__actions" *ngIf="config.type === 'contact'">
+      <div class="action" *ngIf="config.website">
+        <ion-icon src="/assets/icons/accordion-action-website.svg"></ion-icon>
+      </div>
+
       <div class="action" *ngIf="config.email">
         <ion-icon src="/assets/icons/accordion-action-mail.svg"></ion-icon>
       </div>

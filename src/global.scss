@@ -37,9 +37,3 @@
 :root {
   --topbar-size: 106px;
 }
-
-.settings-page {
-  h1 {
-    margin-top: calc(var(--topbar-size) + var(--size-m));
-  }
-}

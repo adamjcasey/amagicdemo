@@ -1,0 +1,66 @@
+@import 'src/theme/base/mixins';
+
+.setup-reminders-page {
+  .setup-reminders-page__content {
+    padding-right: var(--size-m);
+    padding-bottom: calc(var(--size-xxxl) * 2.5);
+    padding-left: var(--size-m);
+    text-align: center;
+
+    ion-img {
+      width: 280px;
+      margin: 0 auto var(--size-m);
+    }
+  
+    .setup-reminders-action {
+      margin-top: var(--size-m);
+      margin-bottom: var(--size-m);
+      padding-right: var(--size-s);
+      padding-left: var(--size-s);
+  
+      .field-label {
+        @include heading-5;
+      }
+    }
+  
+    .settings__section {
+      margin-bottom: var(--size-m);
+      padding: var(--size-m);
+      border-radius: 12px;
+      background-color: var(--color-white);
+      box-shadow: 0px 0px 16px 0px #0000001A;
+  
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  
+    .settings__section-header {
+      @include heading-5;
+      display: flex;
+      align-items: center;
+      gap: var(--size-xxs);
+      margin-bottom: var(--size-xxs);
+      padding-bottom: var(--size-xxs);
+      border-bottom: 2px solid var(--color-gray-light);
+    }
+  }
+
+  .setup-reminders-page__controls {
+    position: fixed;
+    z-index: 50;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--size-xxs);
+    width: 100vw;
+    padding-top: var(--size-xs);
+    padding-bottom: var(--size-xl);
+    border-top-right-radius: 16px;
+    border-top-left-radius: 16px;
+    background-color: var(--color-white);
+    box-shadow: 0px 0px 16px 0px #0000001A;
+  }
+}
