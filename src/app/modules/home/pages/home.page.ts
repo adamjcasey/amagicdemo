@@ -135,6 +135,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-green'));
     this.welcomeState$
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe(welcomeState => {
@@ -171,6 +172,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
         if (homeConfig) {
           this.homeConfig = homeConfig;
           if (this.homeConfig.doses) {
+            // fill up with the doses on WelcomeState the doses for HomeConfig
             if (this.homeConfig.doses[0].date === '') {
               this._store.dispatch(new fromStore.SetData({
                 doses: this.homeConfig.doses.map((dose: any, index: number) => {
@@ -189,56 +191,58 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
             if (markedDoses.length > 0) {
               // only first dose completed
               if (markedDoses.length === 1) {
-                if (!this.homeConfig.timeTravelingDemoDone) {
-                  // update template in the hero component
-                  const unMarkedDoses = this.homeConfig.doses.filter((dose: any) => !dose.marked);
-                  const nextDose = unMarkedDoses[0];
-                  const nextDoseDateFormatter = moment(nextDose.date).format('D MMMM YYYY');
-                  this.heroConfig.template = `
-                    <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
-                    <p>Your next Theryx® dose is scheduled for<br> <stong>${nextDoseDateFormatter}</stong></p>
-                  `;
+                if (!this.homeConfig.firstTimeDose) {
+                  if (!this.homeConfig.timeTravelingDemoDone) {
+                    // update template in the hero component
+                    const unMarkedDoses = this.homeConfig.doses.filter((dose: any) => !dose.marked);
+                    const nextDose = unMarkedDoses[0];
+                    const nextDoseDateFormatter = moment(nextDose.date).format('D MMMM YYYY');
+                    this.heroConfig.template = `
+                      <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
+                      <p>Your next Theryx® dose is scheduled for<br> <stong>${nextDoseDateFormatter}</stong></p>
+                    `;
 
-                  setTimeout(() => {
-                    this.startTimeTravelingSimulation();
-
-                    // DEMO: only for demo purposes
                     setTimeout(() => {
+                      this.startTimeTravelingSimulation();
+
+                      // DEMO: only for demo purposes
+                      setTimeout(() => {
+                        this.heroConfig.template = `
+                          <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
+                          <p>Your Theryx® dose is scheduled for today!</p>
+                        `;
+                      }, 800);
+                    }, 2000);
+                  }
+                  else { 
+                    if (!this.homeConfig.flareUpsDemoDone) {
+                      setTimeout(() => {
+                        this.startFlareUpsFlow();
+                      }, 600);
+                    }
+                    else {
+                      // DEMO: only for demo purposes
                       this.heroConfig.template = `
                         <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
                         <p>Your Theryx® dose is scheduled for today!</p>
                       `;
-                    }, 800);
-                  }, 2000);
-                }
-                else { 
-                  if (!this.homeConfig.flareUpsDemoDone) {
-                    setTimeout(() => {
-                      this.startFlareUpsFlow();
-                    }, 600);
-                  }
-                  else {
-                    // DEMO: only for demo purposes
-                    this.heroConfig.template = `
-                      <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
-                      <p>Your Theryx® dose is scheduled for today!</p>
-                    `;
 
-                    setTimeout(() => {
-                      this._store.dispatch(new fromSharedStore.BackdropShow({
-                        transition: 'move',
-                        fullScreen: true,
-                        bgTemplate: 'top-hole',
-                        header: true,
-                        template: `
-                          <h1 class="font-heading-1--bold">Start dose</h1>
-                          <p>You should start dose to continue the demo</p>
-                        `,
-                        onClose: () => {
-                          // TODO: Highlight Start Dose button in homepage
-                        }
-                      }));
-                    }, 1000);
+                      setTimeout(() => {
+                        this._store.dispatch(new fromSharedStore.BackdropShow({
+                          transition: 'move',
+                          fullScreen: true,
+                          bgTemplate: 'top-hole',
+                          header: true,
+                          template: `
+                            <h1 class="font-heading-1--bold">Start dose</h1>
+                            <p>You should start dose to continue the demo</p>
+                          `,
+                          onClose: () => {
+                            // TODO: Highlight Start Dose button in homepage
+                          }
+                        }));
+                      }, 1000);
+                    }
                   }
                 }
               }
@@ -315,7 +319,8 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     this.initialized = true;
-    if (this.homeConfig.firstTimeDose) {
+    const markedDoses = this.homeConfig.doses.filter((dose: any) => dose.marked);
+    if (this.homeConfig.firstTimeDose && markedDoses.length === 0) {
       this._store.dispatch(new fromSharedStore.BackdropShow({
         transition: 'move',
         fullScreen: true,
