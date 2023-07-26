@@ -45,6 +45,7 @@ export class StartDoseInjectDonePage implements OnInit {
             {
               label: 'Add dose notes',
               action: () => {
+                this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-white'));
                 this.sliderPage.slideNext();
               },
             },
@@ -53,6 +54,7 @@ export class StartDoseInjectDonePage implements OnInit {
               action: () => { 
                 const markedDoses = this.homeConfig?.doses.filter((dose: any) => dose.marked);
                 if (this.homeConfig.firstTimeDose || markedDoses.length === 6) {
+                  this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-mint'));
                   this.sliderPage.slideTo(2);
                 }
                 else {
@@ -103,6 +105,7 @@ export class StartDoseInjectDonePage implements OnInit {
   }
 
   ngOnInit() {
+    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
     this.sliderPageConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe(sliderPageConfig => {
@@ -139,6 +142,7 @@ export class StartDoseInjectDonePage implements OnInit {
                       {
                         label: 'Got it',
                         action: () => {
+                          this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-blue'));
                           this._store.dispatch(new fromSharedStore.BackdropShow({
                             transition: 'move',
                             fullScreen: true,
@@ -186,6 +190,7 @@ export class StartDoseInjectDonePage implements OnInit {
                       {
                         label: 'Got it',
                         action: () => { 
+                          this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-green'));
                           this.sliderPage.slideNext();
                         }
                       }
@@ -224,16 +229,8 @@ export class StartDoseInjectDonePage implements OnInit {
                       {
                         label: 'Set up smart reminders',
                         action: () => {
-                          // TODO: Redirect to Settings page
-                          this.goTo('home');
+                          this.goTo('settings/setup-reminders');
                           this._store.dispatch(new fromSharedStore.SliderPageClear());
-
-                          // first dose totally completed, set firstTimeDose as false
-                          if (this.homeConfig.firstTimeDose) {
-                            this._store.dispatch(new fromStore.SetData({
-                              firstTimeDose: false,
-                            }));
-                          }
                         }
                       }
                     ],

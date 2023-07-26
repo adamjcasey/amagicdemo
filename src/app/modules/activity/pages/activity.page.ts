@@ -78,6 +78,7 @@ export class ActivityPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-beige'));
     this._store.dispatch(new fromSharedStore.SliderPageClear());
     this.activityConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
@@ -127,7 +128,7 @@ export class ActivityPage implements OnInit, OnDestroy {
               const markedDoses = this.homeConfig?.doses.filter((dose: any) => dose.marked);
               const lastMarkedDose = markedDoses[markedDoses.length - 1];
               this.widgets[1].numberDose = markedDoses.length;
-              this.widgets[1].time = moment(lastMarkedDose.date).format('MMM D, H:m A');
+              this.widgets[1].time = moment(lastMarkedDose.date).format('MMM D, H:mm A');
               this.widgets[1].asset = `assets/images/activity-highlights-dose-report-${lastMarkedDose.bodyPart.toLowerCase().replace(' ', '-')}.svg`;
               this.widgets[1].description = `This time you injected your <strong>${this._utils.humanizeBodyPartInjected(lastMarkedDose.bodyPart)}<strong>`
             }

@@ -4,6 +4,7 @@ import { Observable, Subject, takeUntil } from 'rxjs';
 import * as moment from 'moment';
 
 import * as fromStore from '@activity/store';
+import * as fromSharedStore from '@shared/store';
 import * as fromHomeStore from '@home/store';
 import * as fromCoreStore from '@core/store';
 import * as fromSharedServices from '@shared/services';
@@ -27,6 +28,7 @@ export class DoseReportPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-blue'));
     this.homeConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe(homeConfig => {
@@ -39,7 +41,7 @@ export class DoseReportPage implements OnInit, OnDestroy {
                 .map((dose: any, index: number) => {
                   return {
                     type: 'dose-report',
-                    title: `Dose ${index + 1} <span>${moment(dose.date).format('MMM D, h:m A')}</span>`,
+                    title: `Dose ${index + 1} <span>${moment(dose.date).format('MMM D, H:mm A')}</span>`,
                     template: `
                       <div class="dose-report-widget">
                         <img src="/assets/images/activity-page-dose-report-widget.svg">

@@ -55,9 +55,10 @@ export class StartDoseReadyToInjectVideoComponent implements OnInit, AfterViewIn
     const duration = moment.duration(Math.floor(videoElement.duration), 's').asSeconds();
     const progress = moment.duration(Math.floor(videoElement.currentTime), 's').asSeconds();
     const currentTime = Math.floor(videoElement.currentTime);
+    const remainingTime = duration - progress;
     const timeline = {
       progress: `00:${currentTime < 10 ? '0' + currentTime : currentTime}`,
-      duration: `00:${duration - progress}`,
+      duration: `00:${remainingTime < 10 ? '0' + remainingTime : remainingTime}`,
       percentage: percentageCompleted,
     }
 

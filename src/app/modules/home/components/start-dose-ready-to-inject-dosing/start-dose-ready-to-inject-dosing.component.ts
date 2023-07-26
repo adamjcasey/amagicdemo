@@ -32,6 +32,7 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
   }
 
   ngOnInit() {
+    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple'));
     this.homeConfig$.subscribe(homeConfig => {
       if (homeConfig) {
         this.homeConfig = homeConfig;
@@ -58,6 +59,7 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
     const loop = setInterval(() => {
       this.totalTime--;
       if (this.totalTime === 0) {
+        this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-lime'));
         this.title = 'Full dose delivered!';
         this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
           color: '--color-bg-pastel-lime',
@@ -72,7 +74,7 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
             const dateNextDose = moment(unMarkedDoses[1].date);
             dateNextDose.set('hour', moment().get('hour'));
             dateNextDose.set('minute', moment().get('minute'));
-            nextDoseDateFormatted = dateNextDose.format('D MMMM YYYY H:m A');
+            nextDoseDateFormatted = dateNextDose.format('D MMMM YYYY H:mm A');
           }
 
           if (markedDoses.length === 5) {
@@ -81,7 +83,7 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
             lastDoseDate.set('hour', moment().get('hour'));
             lastDoseDate.set('minute', moment().get('minute'));
             lastDoseDate.add(2, 'weeks');
-            nextDoseDateFormatted = lastDoseDate.format('D MMMM YYYY H:m A');
+            nextDoseDateFormatted = lastDoseDate.format('D MMMM YYYY H:mm A');
           }
           
             

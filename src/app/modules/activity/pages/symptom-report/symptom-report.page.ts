@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, Subject, takeUntil } from 'rxjs';
 import * as moment from 'moment';
 
 import * as fromStore from '@activity/store';
 import * as fromCoreStore from '@core/store';
+import * as fromSharedStore from '@shared/store';
 import * as fromSharedServices from '@shared/services';
 
 @Component({
@@ -12,7 +13,7 @@ import * as fromSharedServices from '@shared/services';
   templateUrl: 'symptom-report.page.html',
   styleUrls: ['symptom-report.page.scss'],
 })
-export class SymptomReportPage {
+export class SymptomReportPage implements OnInit, OnDestroy {
   public activityConfig$!: Observable<any>;
   public symptomReports: any;
   private _ngUnsubscribe: Subject<void> = new Subject<void>();
@@ -22,6 +23,10 @@ export class SymptomReportPage {
     private _utils: fromSharedServices.UtilsService,
   ) {
     this.activityConfig$ = this._store.select(fromStore.getActivityConfig);
+  }
+
+  ngOnInit() {
+    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-tiffany-blue'));
     this.activityConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe(activityConfig => {

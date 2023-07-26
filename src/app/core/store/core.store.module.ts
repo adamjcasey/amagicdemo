@@ -13,7 +13,7 @@ import { SharedStoreModule } from '@shared/store';
 import { WelcomeStoreModule } from '@welcome/store';
 import { HomeStoreModule } from '@home/store';
 import { ActivityStoreModule } from '@activity/store';
-
+import { SettingsStoreModule } from '@settings/store';
 
 export function clearState(reducer: any) {
   return function (state: any, action: Action) {
@@ -50,6 +50,7 @@ metaReducers.push(clearState);
     WelcomeStoreModule,
     HomeStoreModule,
     ActivityStoreModule,
+    SettingsStoreModule,
   ],
 })
 export class CoreStoreModule {}

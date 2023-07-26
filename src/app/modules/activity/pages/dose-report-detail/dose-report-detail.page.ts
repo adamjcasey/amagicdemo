@@ -1,8 +1,9 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, Subject, takeUntil } from 'rxjs';
 
 import * as fromStore from '@activity/store';
+import * as fromSharedStore from '@shared/store';
 import * as fromCoreStore from '@core/store';
 import * as fromSharedServices from '@shared/services'
 
@@ -11,7 +12,7 @@ import * as fromSharedServices from '@shared/services'
   templateUrl: 'dose-report-detail.page.html',
   styleUrls: ['dose-report-detail.page.scss'],
 })
-export class DoseReportDetailPage implements OnDestroy {
+export class DoseReportDetailPage implements OnInit, OnDestroy {
   public activityConfig$!: Observable<any>;
   public doseReportSelected: any;
   private _ngUnsubscribe: Subject<void> = new Subject<void>();
@@ -21,6 +22,10 @@ export class DoseReportDetailPage implements OnDestroy {
     private _utils: fromSharedServices.UtilsService,
   ) {
     this.activityConfig$ = this._store.select(fromStore.getActivityConfig);
+  }
+
+  ngOnInit() {
+    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-white'));
     this.activityConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe(activityConfig => {

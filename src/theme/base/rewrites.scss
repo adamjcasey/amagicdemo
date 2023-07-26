@@ -43,8 +43,9 @@ ion-button {
   }
 
   &.no-padding {
-    --padding-end: 10px;
-    --padding-start: 10px;
+    --padding-end: 6px;
+    --padding-start: 6px;
+    height: 35px;
   }
 }
 

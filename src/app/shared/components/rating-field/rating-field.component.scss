@@ -1,6 +1,10 @@
 @import 'src/theme/base/mixins';
 
 .rating-field {
+  &.is-disabled {
+    pointer-events: none; 
+  }
+
   .rating-field__rates {
     &:not(.with-icons) {
       display: flex;
@@ -21,7 +25,6 @@
     margin-top: var(--size-xs);
     padding: var(--size-xxs);
     box-sizing: border-box;
-
     overflow: hidden;
 
     &::after {

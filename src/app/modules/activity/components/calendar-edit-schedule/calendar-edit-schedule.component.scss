@@ -22,7 +22,7 @@
 
       &::before {
         top: 26px;
-        left: 10px;
+        left: 6px;
         width: var(--size-xxs);
         height: var(--size-xxs);
         border-radius: 50%;
@@ -31,7 +31,7 @@
 
       &::after {
         top: 44px;
-        left: 18px;
+        left: 14px;
         height: 52px;
         border: 1px dashed var(--color-primary-green);
       }
@@ -43,7 +43,7 @@
         gap: var(--size-xs);
         padding-top: var(--size-xxs);
         padding-bottom: var(--size-xxs);
-        padding-left: var(--size-xl);
+        padding-left: var(--size-l);
 
         .dose-label {
           grid-column: 1;
@@ -79,7 +79,7 @@
         }
 
         &::after {
-          top: 40px;
+          top: 30px;
           height: 30px;
         }
 

@@ -1,5 +1,124 @@
-<ion-content [fullscreen]="true" class="ion-padding">
+<ion-content [fullscreen]="true" class="settings-page__wrapper ion-padding">
   <section class="settings-page">
-    <h1>SettingsPage</h1>
+    <h1 class="font-heading-1--bold">Settings</h1>
+
+    <ion-img class="settings__avatar" src="/assets/images/settings-default-avatar.svg"></ion-img>
+
+    <div class="settings__section">
+      <div class="field">
+        <p class="field-label">Name</p>
+        <p class="field-value">Marissa Lopez</p>
+      </div>
+
+      <div class="field">
+        <p class="field-label">Medication(s)</p>
+        <p class="field-value">Theryx</p>
+      </div>
+
+      <div class="field">
+        <p class="field-label">Phone number</p>
+        <p class="field-value">+1 555 325 4643</p>
+      </div>
+
+      <div class="field">
+        <p class="field-label">Email</p>
+        <p class="field-value">marissa-L125@gmail.com</p>
+      </div>
+
+      <ion-button fill="clear" color="purple" class="no-padding">
+        <ion-icon slot="start" src="/assets/icons/edit.svg"></ion-icon>
+          Edit Personal Info
+      </ion-button>
+    </div>
+
+    <h5>Notifications</h5>
+    <div class="settings__section">
+      <div class="field-wrapper field--slider">
+        <p class="field-label">Dose day reminders</p>
+        <ion-toggle 
+          color="purple"
+          (ionChange)="saveSettings($event, 'notifications', 'dose-day-reminders')"
+          [checked]="settingsConfig.notifications.includes('dose-day-reminders')"
+        ></ion-toggle>
+      </div>
+
+      <div class="field-wrapper field--slider">
+        <p class="field-label">Add new symptom reminders</p>
+        <ion-toggle 
+          color="purple"
+          (ionChange)="saveSettings($event, 'notifications', 'add-new-symptoms-reminders')"
+          [checked]="settingsConfig.notifications.includes('add-new-symptoms-reminders')"
+        ></ion-toggle>
+      </div>
+
+      <div class="field-wrapper field--slider">
+        <p class="field-label">Refill reminders</p>
+        <ion-toggle 
+          color="purple"
+          (ionChange)="saveSettings($event, 'notifications', 'refill-reminders')"
+          [checked]="settingsConfig.notifications.includes('refill-reminders')"
+        ></ion-toggle>
+      </div>
+
+      <ion-button fill="clear" color="purple" class="no-padding" (click)="goTo('settings/manage-refill-delivery')">
+        <ion-icon slot="start" src="/assets/icons/date-range.svg"></ion-icon>
+        Manage Refill & Delivery
+      </ion-button>
+    </div>
+
+    <automagic-card [card]="card"></automagic-card>
+    
+    <h5>Integrations</h5>
+    <div class="settings__section">
+      <div class="field-wrapper field--slider">
+        <ion-icon slot="start" src="/assets/images/settings-integrations-apple-health.svg"></ion-icon>
+        <p class="field-label">Apple health</p>
+        <ion-toggle 
+          color="purple"
+          (ionChange)="saveSettings($event, 'integrations', 'apple-health')"
+          [checked]="settingsConfig.integrations.includes('apple-health')"
+        ></ion-toggle>
+      </div>
+
+      <div class="field-wrapper field--slider">
+        <ion-icon slot="start" src="/assets/images/settings-integrations-one-path.svg"></ion-icon>
+        <p class="field-label">OnePath</p>
+        <ion-toggle 
+          color="purple"
+          (ionChange)="saveSettings($event, 'integrations', 'one-path')"
+          [checked]="settingsConfig.integrations.includes('one-path')"
+        ></ion-toggle>
+      </div>
+
+      <div class="field-wrapper field--slider">
+        <ion-icon slot="start" src="/assets/images/settings-integrations-my-pharmacy.svg"></ion-icon>
+        <p class="field-label">My Pharmacy</p>
+        <ion-toggle 
+          color="purple"
+          (ionChange)="saveSettings($event, 'integrations', 'my-pharmacy')"
+          [checked]="settingsConfig.integrations.includes('my-pharmacy')"
+        ></ion-toggle>
+      </div>
+
+      <div class="field-wrapper field--slider">
+        <ion-icon slot="start" src="/assets/images/settings-integrations-my-chart-by-epic.svg"></ion-icon>
+        <p class="field-label">My chart by Epic</p>
+        <ion-toggle 
+          color="purple"
+          (ionChange)="saveSettings($event, 'integrations', 'my-chart-by-epic')"
+          [checked]="settingsConfig.integrations.includes('my-chart-by-epic')"
+        ></ion-toggle>
+      </div>
+
+      <div class="field-wrapper field--slider">
+        <ion-icon slot="start" src="/assets/images/settings-integrations-my-pharmacy-2.svg"></ion-icon>
+        <p class="field-label">My Pharmacy</p>
+        <ion-toggle 
+          color="purple"
+          (ionChange)="saveSettings($event, 'integrations', 'my-pharmacy-2')"
+          [checked]="settingsConfig.integrations.includes('my-pharmacy-2')"
+        ></ion-toggle>
+      </div>
+    </div>
   </section>
 </ion-content>

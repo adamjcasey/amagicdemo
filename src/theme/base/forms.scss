@@ -37,4 +37,44 @@
       }
     }
   }
+
+  &--slider {
+    display: grid;
+    grid-template-columns: max-content auto max-content;
+    align-items: center;
+    margin-bottom: var(--size-xs);
+
+    .field-label {
+      @include paragraph-m;
+      grid-column: 2;
+      margin-bottom: 0;
+    }
+
+    ion-icon {
+      grid-column: 1;
+      margin-right: var(--size-xs);
+      font-size: var(--size-xxl);
+
+      + .field-label {
+        @include heading-5;
+      }
+    }
+
+    ion-toggle {
+      grid-column: 3;
+    }
+
+    .field-value {
+      @include paragraph-m;
+      margin: 0;
+      font-weight: var(--font-weight-bold);
+    }
+  }
+
+  &--disabled {
+    ion-input {
+      opacity: 0.3;
+      pointer-events: none;
+    }
+  }
 }

@@ -19,6 +19,7 @@ export class RatingFieldComponent {
   @Input() name!: string;
   @Input() rates!: string[];
   @Input() showIcons!: boolean;
+  @Input() disabled: boolean = false;
   @Input() error!: any;
 
   constructor() {}

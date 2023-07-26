@@ -1,0 +1,25 @@
+<ion-content [fullscreen]="true">
+  <section class="manage-refill-delivery-page">
+    <automagic-hero 
+      [color]="heroConfig.color" 
+      [template]="heroConfig.template"
+    ></automagic-hero>
+    
+    <div class="manage-refill-delivery-page__content ion-padding">
+      <div class="field-wrapper field--slider">
+        <p class="field-label">Automatic Refills</p>
+        <ion-toggle 
+          color="purple"
+          (ionChange)="saveAutomaticRefills($event)"
+          [checked]="settingsConfig.automaticRefiils"
+        ></ion-toggle>
+      </div>
+
+      <h5>My Pharmacy</h5>
+      <automagic-accordion [config]="myPharmacy"></automagic-accordion>
+
+      <h5>My Pharmacist</h5>
+      <automagic-accordion [config]="myPharmacist"></automagic-accordion>
+    </div>
+  </section>
+</ion-content>

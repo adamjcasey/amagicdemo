@@ -1,7 +1,4 @@
 import { Component } from '@angular/core';
-import { Store } from '@ngrx/store';
-
-import * as fromCoreStore from '@core/store';
 
 @Component({
   selector: 'automagic-calendar',
@@ -11,9 +8,7 @@ import * as fromCoreStore from '@core/store';
 export class CalendarPage {
   public slides: any[];
 
-  constructor(
-    private _store: Store<fromCoreStore.CoreState>,
-  ) {
+  constructor() {
     this.slides = [
       {
         header: {

@@ -1,0 +1,8 @@
+@import 'src/theme/base/mixins';
+
+.start-guided-demo {
+  padding-right: var(--size-xxl);
+  padding-left: var(--size-xxl);
+  color: var(--color-white);
+  text-align: center;
+}

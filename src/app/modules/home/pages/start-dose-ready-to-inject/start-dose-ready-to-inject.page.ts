@@ -36,6 +36,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-green'));
     this.sliderPageConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe(sliderPageConfig => {
@@ -78,7 +79,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                           this._store.dispatch(new fromSharedStore.BackdropShow({
                             transition: 'move',
                             header: true,
-                            contenCentered: true,
+                            contentCentered: true,
                             template: `
                               <div class="no-needless-message">
                                 <h1 class="font-heading-1--bold">Postpone gives patients control.</h1>
@@ -95,7 +96,8 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                     },
                     {
                       label: 'Continue',
-                      action: () => { 
+                      action: () => {
+                        this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
                         const bodyShapeSlideIndex = this.slides.findIndex((slide: any) => slide.bodyShapeStep);
                         this.sliderPage.slideTo(bodyShapeSlideIndex);
                       }
@@ -152,8 +154,10 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                   actions: [
                     {
                       label: 'Continue',
-                      // disabled: true,
-                      action: () => { this.sliderPage.slideNext() }
+                      action: () => {
+                        this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
+                        this.sliderPage.slideNext();
+                      }
                     }
                   ],
                 },
@@ -170,6 +174,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                     {
                       label: 'Previous step',
                       action: () => { 
+                        this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-green'));
                         if (this.homeConfig?.firstTimeDose) {
                           this.sliderPage.slideTo(2);
                         }
@@ -180,9 +185,10 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                     },
                     {
                       label: 'Next Step',
-                      disabled: true,
-                      action: () => { 
-                        this.sliderPage.slideNext() 
+                      disabled: this.homeConfig?.bodyPartSelected === '' ? true : false,
+                      action: () => {
+                        this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-blue'));
+                        this.sliderPage.slideNext();
                         if (this.homeConfig.firstTimeDose) {
                           this._store.dispatch(new fromSharedStore.BackdropShow({
                             transition: 'move',
@@ -224,17 +230,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
         {
           header: {
             color: '--color-bg-pastel-green',
-            template: `
-              <div class="start-dose-ready-to-inject__content first-time-dose">
-                <h1 class="font-heading-1--bold">First time user?</h1>
-                <p>This video previews what to expect when self-dosing with AutoMagic.</p>
-                <div class="first-time-dose__video-indicator">
-                  <ion-icon src="/assets/icons/play.svg"></ion-icon>
-                  <img src="assets/images/start-dose-first-time-dose.svg">
-                </div>
-                <p>You’ll be guided through the entire dosing process next.</p>
-              </div>
-            `,
+            component: 'start-dose-ready-to-inject-first-time-user',
           },
           content: {
             hideNavigation: true,
@@ -246,25 +242,13 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                   this.showNoNeedlessMessage();
                 }
               },
-              {
-                label: 'Continue',
-                hidden: true,
-                action: () => {
-                  this.sliderPage.slideNext();
-                }
-              }
             ],
-          },
-          onShown: () => {
-            const playVideoElement = document.querySelector('.slider-page .slider-page__header .template-wrapper .first-time-dose__video-indicator');
-            console.log('playVideoElement ', playVideoElement);
           },
         },
         {
           header: {
             fullSize: true,
             color: '--color-bg-pastel-green',
-            template: null,
             component: 'start-dose-ready-to-inject-video',
           },
           content: {
@@ -296,7 +280,8 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
         }
       );
 
-      // set instruction steps to clean-site, uncap-injector, and pre-loading for dosing
+      // set instruction steps to clean-site, 
+      // uncap-injector, and pre-loading for dosing
       this.slides.push(
         {
           header: {
@@ -312,11 +297,17 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
             actions: [
               {
                 label: 'Previous step',
-                action: () => { this.sliderPage.slidePrev() }
+                action: () => { 
+                  this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
+                  this.sliderPage.slidePrev();
+                }
               },
               {
                 label: 'Next Step',
-                action: () => { this.sliderPage.slideNext() }
+                action: () => {
+                  this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-green'));
+                  this.sliderPage.slideNext();
+                }
               }
             ],
           },
@@ -335,11 +326,15 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
             actions: [
               {
                 label: 'Previous step',
-                action: () => { this.sliderPage.slidePrev() }
+                action: () => { 
+                  this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-blue'));
+                  this.sliderPage.slidePrev();
+                }
               },
               {
                 label: 'Next Step',
                 action: () => { 
+                  this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-beige'));
                   this.sliderPage.slideNext();
                 }
               }
@@ -382,15 +377,20 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
             actions: [
               {
                 label: 'Previous step',
-                action: () => { this.sliderPage.slidePrev() }
+                action: () => {
+                  this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-green'));
+                  this.sliderPage.slidePrev();
+                }
               },
               {
                 label: 'Next Step',
                 action: () => { 
+                  this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
                   this.sliderPage.slideNext();
                   // simulate Waiting for injection process
                   // first, wait for 2seg to set bgColor as purple
                   setTimeout(() => {
+                    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple'));
                     this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
                       color: '--color-bg-pastel-purple'
                     }));
@@ -398,6 +398,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
     
                   // second, wait for 4segs to set bgColor as lime
                   setTimeout(() => {
+                    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-lime'));
                     this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
                       color: '--color-bg-pastel-lime'
                     }));
@@ -422,7 +423,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                 <img src="assets/images/start-dose-ready-to-inject-waiting-for-injection.gif">
                 <h4>Waiting for you to begin injection</h4>
                 <div class="loader"></div>
-                <p>The Guide will <strong>detect when you inject</strong> and <strong>advance automatically.</strong></p>
+                <p>The app will <strong>detect when you inject</strong> and <strong>advance automatically.</strong></p>
               </div>
             `,
           },
@@ -463,6 +464,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
     this._store.dispatch(new fromSharedStore.BackdropShow({
       transition: 'move',
       header: true,
+      contentCentered: true,
       template: `
         <div class="no-needless-message">
           <h1 class="font-heading-1--bold">No needles and no drugs</h1>

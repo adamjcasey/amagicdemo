@@ -1,0 +1,88 @@
+<ion-content [fullscreen]="true">
+  <section class="setup-reminders-page">
+    <automagic-hero 
+      [color]="heroConfig.color" 
+      [template]="heroConfig.template"
+    ></automagic-hero>
+    
+    <div class="setup-reminders-page__content ion-padding">
+      <ion-img src="assets/images/alert-setup-reminders.svg"></ion-img>
+      <p clsas="intro">AutoMagic is smarter than your average app. Smart reminders can be personalized.<br> For example: it can send injection reminders when you’re at home.</p>
+
+      <div class="field-wrapper field--slider setup-reminders-action">
+        <p class="field-label">Smart Reminders</p>
+        <ion-toggle 
+          color="purple"
+          (ionChange)="saveSmartReminders($event)"
+          [checked]="settingsConfig.smartReminders"
+        ></ion-toggle>
+      </div>
+
+      <ng-container *ngIf="settingsConfig.smartReminders">
+        <div class="settings__section">
+          <div class="settings__section-header">
+            <ion-icon slot="start" src="/assets/icons/date-range.svg"></ion-icon>
+            Calendar
+          </div>
+          <div class="field-wrapper field--slider">
+            <p class="field-label">Notify me if an appointment conflicts with my dosing time</p>
+            <ion-toggle 
+              color="purple"
+              (ionChange)="saveNotifyConflictsCalendar($event)"
+              [checked]="settingsConfig.notifyConflictsTime"
+            ></ion-toggle>
+          </div>
+        </div>
+
+        <div class="settings__section">
+          <div class="settings__section-header">
+            <ion-icon slot="start" src="/assets/icons/health-data.svg"></ion-icon>
+            Health Data
+          </div>
+          <div class="field-wrapper field--slider">
+            <p class="field-label">Add symptom reminder when Health Kit detects a flare-up</p>
+            <ion-toggle 
+              color="purple"
+              (ionChange)="saveSymptomReminder($event)"
+              [checked]="settingsConfig.symptomReminder"
+            ></ion-toggle>
+          </div>
+        </div>
+
+        <div class="settings__section">
+          <div class="settings__section-header">
+            <ion-icon slot="start" src="/assets/icons/location.svg"></ion-icon>
+            Location
+          </div>
+          <div class="field-wrapper field--slider">
+            <p class="field-label">Only remind me when I’m at home</p>
+            <ion-toggle 
+              color="purple"
+              (ionChange)="saveOnlyRemindAtHome($event)"
+              [checked]="settingsConfig.onlyRemindAtHome"
+            ></ion-toggle>
+          </div>
+
+          <div class="field-wrapper field--slider">
+            <p class="field-label">Notify me when environmental conditions may trigger flare-ups</p>
+            <ion-toggle 
+              color="purple"
+              (ionChange)="saveNotifyWeatherPrecautions($event)"
+              [checked]="settingsConfig.notifyWeatherPrecautions"
+            ></ion-toggle>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+    <div class="setup-reminders-page__controls">
+      <ion-button fill="outline" color="purple" (click)="goTo('settings')">
+        Cancel
+      </ion-button>
+
+      <ion-button color="purple" (click)="saveSettings()">
+        Save
+      </ion-button>
+    </div>
+  </section>
+</ion-content>

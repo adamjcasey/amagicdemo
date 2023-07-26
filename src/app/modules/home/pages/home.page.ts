@@ -135,6 +135,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-green'));
     this.welcomeState$
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe(welcomeState => {
@@ -171,6 +172,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
         if (homeConfig) {
           this.homeConfig = homeConfig;
           if (this.homeConfig.doses) {
+            // fill up with the doses on WelcomeState the doses for HomeConfig
             if (this.homeConfig.doses[0].date === '') {
               this._store.dispatch(new fromStore.SetData({
                 doses: this.homeConfig.doses.map((dose: any, index: number) => {
@@ -189,56 +191,58 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
             if (markedDoses.length > 0) {
               // only first dose completed
               if (markedDoses.length === 1) {
-                if (!this.homeConfig.timeTravelingDemoDone) {
-                  // update template in the hero component
-                  const unMarkedDoses = this.homeConfig.doses.filter((dose: any) => !dose.marked);
-                  const nextDose = unMarkedDoses[0];
-                  const nextDoseDateFormatter = moment(nextDose.date).format('D MMMM YYYY');
-                  this.heroConfig.template = `
-                    <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
-                    <p>Your next Theryx® dose is scheduled for<br> <stong>${nextDoseDateFormatter}</stong></p>
-                  `;
+                if (!this.homeConfig.firstTimeDose) {
+                  if (!this.homeConfig.timeTravelingDemoDone) {
+                    // update template in the hero component
+                    const unMarkedDoses = this.homeConfig.doses.filter((dose: any) => !dose.marked);
+                    const nextDose = unMarkedDoses[0];
+                    const nextDoseDateFormatter = moment(nextDose.date).format('D MMMM YYYY');
+                    this.heroConfig.template = `
+                      <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
+                      <p>Your next Theryx® dose is scheduled for<br> <stong>${nextDoseDateFormatter}</stong></p>
+                    `;
 
-                  setTimeout(() => {
-                    this.startTimeTravelingSimulation();
-
-                    // DEMO: only for demo purposes
                     setTimeout(() => {
+                      this.startTimeTravelingSimulation();
+
+                      // DEMO: only for demo purposes
+                      setTimeout(() => {
+                        this.heroConfig.template = `
+                          <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
+                          <p>Your Theryx® dose is scheduled for today!</p>
+                        `;
+                      }, 800);
+                    }, 2000);
+                  }
+                  else { 
+                    if (!this.homeConfig.flareUpsDemoDone) {
+                      setTimeout(() => {
+                        this.startFlareUpsFlow();
+                      }, 600);
+                    }
+                    else {
+                      // DEMO: only for demo purposes
                       this.heroConfig.template = `
                         <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
                         <p>Your Theryx® dose is scheduled for today!</p>
                       `;
-                    }, 800);
-                  }, 2000);
-                }
-                else { 
-                  if (!this.homeConfig.flareUpsDemoDone) {
-                    setTimeout(() => {
-                      this.startFlareUpsFlow();
-                    }, 600);
-                  }
-                  else {
-                    // DEMO: only for demo purposes
-                    this.heroConfig.template = `
-                      <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
-                      <p>Your Theryx® dose is scheduled for today!</p>
-                    `;
 
-                    setTimeout(() => {
-                      this._store.dispatch(new fromSharedStore.BackdropShow({
-                        transition: 'move',
-                        fullScreen: true,
-                        bgTemplate: 'top-hole',
-                        header: true,
-                        template: `
-                          <h1 class="font-heading-1--bold">Start dose</h1>
-                          <p>You should start dose to continue the demo</p>
-                        `,
-                        onClose: () => {
-                          // TODO: Highlight Start Dose button in homepage
-                        }
-                      }));
-                    }, 1000);
+                      setTimeout(() => {
+                        this._store.dispatch(new fromSharedStore.BackdropShow({
+                          transition: 'move',
+                          fullScreen: true,
+                          bgTemplate: 'top-hole',
+                          header: true,
+                          template: `
+                            <h1 class="font-heading-1--bold">Start dose</h1>
+                            <p>You should start dose to continue the demo</p>
+                          `,
+                          onClose: () => {
+                            // TODO: Highlight Start Dose button in homepage
+                          }
+                        }));
+                      }, 1000);
+                    }
                   }
                 }
               }
@@ -256,11 +260,17 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
                       time: moment(lastMarkedDose.date).format('MMM D, H:mm A'),
                       asset: `assets/images/activity-highlights-dose-report-${lastMarkedDose.bodyPart.toLowerCase().replace(' ', '-')}.svg`,
                       description: `This time you injected your <strong>${this._utils.humanizeBodyPartInjected(lastMarkedDose.bodyPart)}<strong>`,
+                      onClick: () => {
+                        this.goTo('activity/dose-report');
+                      }
                     },
                     {
                       tabColor: '--color-bg-pastel-honey-yellow',
                       title: 'Your Progress',
-                      asset: '/assets/images/activity-highlights-your-progress.svg'
+                      asset: '/assets/images/activity-highlights-your-progress.svg',
+                      onClick: () => {
+                        this.goTo('activity/your-progress');
+                      }
                     },
                   ];
                 }
@@ -268,7 +278,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
                 // user has completed 6 doses
                 if (markedDoses.length === 6) {
                   if (!this.homeConfig.allCompletedDoses) {
-                    this.startFinishGuidedDemoFlow();
+                    this.startGuidedDemoFlow();
                   }
 
                   // show the following dose in two weeks since last dose date
@@ -315,7 +325,8 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     this.initialized = true;
-    if (this.homeConfig.firstTimeDose) {
+    const markedDoses = this.homeConfig.doses.filter((dose: any) => dose.marked);
+    if (this.homeConfig.firstTimeDose && markedDoses.length === 0) {
       this._store.dispatch(new fromSharedStore.BackdropShow({
         transition: 'move',
         fullScreen: true,
@@ -338,15 +349,20 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     this._store.dispatch(new fromSharedStore.BackdropShow({
       transition: 'move',
       header: true,
+      // template: `
+      //   <div class="time-traveling">
+      //     <video 
+      //       id="time-traveling-video"
+      //       src="/assets/videos/time-traveling.mp4" 
+      //       autoplay
+      //       muted
+      //       playsinline
+      //     ></video>
+      //   </div>
+      // `,
       template: `
         <div class="time-traveling">
-          <video 
-            id="time-traveling-video"
-            src="/assets/videos/time-traveling.mp4" 
-            autoplay
-            muted
-            playsinline
-          ></video>
+        
         </div>
       `,
       onClose: () => {
@@ -401,11 +417,11 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     }));
   }
 
-  startFinishGuidedDemoFlow() {
+  startGuidedDemoFlow() {
     this._store.dispatch(new fromSharedStore.BackdropShow({
       transition: 'move',
       header: true,
-      component: 'highlights-menu',
+      component: 'start-guided-demo',
       template: null,
       contentCentered: true,
     }));

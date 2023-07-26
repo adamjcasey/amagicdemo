@@ -1,7 +1,8 @@
 <div 
   class="rating-field"
   [ngClass]="{ 
-    'is-invalid': error 
+    'is-invalid': error, 
+    'is-disabled': disabled === true
   }">
 
   <p class="field-label" *ngIf="label">{{ label }}</p>
@@ -29,6 +30,4 @@
     type="number" 
     [value]="value" 
   />
-
-  <!-- [errorText]="slide.content.form.group.get(field.name)?.errors?.['required'] ? 'Please enter your name' : null"  -->
 </div>

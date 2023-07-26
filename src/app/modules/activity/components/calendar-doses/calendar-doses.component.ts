@@ -24,6 +24,7 @@ export class CalendarDosesComponent implements OnInit {
   }
 
   ngOnInit() {
+    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple'));
     this.welcomeConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe(welcomeConfig => {
@@ -39,6 +40,7 @@ export class CalendarDosesComponent implements OnInit {
   }
 
   onEditSchedule() {
+    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-white'));
     this._store.dispatch(new fromSharedStore.BottomToolbarHide(true));
     this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
       hide: false,
@@ -49,6 +51,7 @@ export class CalendarDosesComponent implements OnInit {
           {
             label: 'Cancel',
             action: () => {
+              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple'));
               this._store.dispatch(new fromSharedStore.BottomToolbarHide(false));
               this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
                 hide: true,
@@ -60,6 +63,7 @@ export class CalendarDosesComponent implements OnInit {
           {
             label: 'Save',
             action: () => {
+              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple'));
               this._store.dispatch(new fromSharedStore.BottomToolbarHide(false));
               this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
                 hide: true,
