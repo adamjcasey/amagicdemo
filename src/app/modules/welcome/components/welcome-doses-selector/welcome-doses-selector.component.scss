@@ -1,3 +1,8 @@
 .welcome-doses-selector {
-  
+  automagic-datepicker {
+    display: block;
+    max-width: 300px;
+    margin: var(--size-s) auto 0;
+    padding-bottom: var(--size-m);
+  }
 }

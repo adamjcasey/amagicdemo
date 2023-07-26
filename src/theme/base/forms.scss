@@ -1,7 +1,7 @@
 .field {
   &-wrapper {
     text-align: left;
-    margin-bottom: var(--space-m);
+    margin-bottom: var(--size-m);
 
     &:last-child {
       margin-bottom: 0;
@@ -22,7 +22,7 @@
       &::after {
         content: '*';
         position: absolute;
-        right: calc(var(--space-xxxs) * -1);
+        right: calc(var(--size-xxxs) * -1);
         color: var(--ion-color-salmon);
       }
     }
@@ -33,7 +33,7 @@
 
     ion-checkbox {
       &:nth-child(n+2) {
-        margin-top: var(--space-xxxs);
+        margin-top: var(--size-xxxs);
       }
     }
   }

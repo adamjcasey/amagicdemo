@@ -16,9 +16,9 @@
 
     .timer__label {
       z-index: 10;
-      margin-right: calc(var(--space-xxs) * -1);
-      padding: var(--space-xxxxs);
-      padding-left: var(--space-xxs);
+      margin-right: calc(var(--size-xxs) * -1);
+      padding: var(--size-xxxxs);
+      padding-left: var(--size-xxs);
       border-top-left-radius: 66px;
       border-bottom-left-radius: 60px;
       background-color: var(--color-bg-pastel-beige);

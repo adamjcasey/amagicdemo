@@ -71,7 +71,6 @@ export class SharedEffects {
       }),
       tap(() => {
         const wrapper = document.querySelector('#backdrop .backdrop__wrapper') as HTMLElement;
-        const content = document.querySelector('#backdrop .backdrop__content') as HTMLElement;
         if (this._backdropOptions.transition === 'move') {
           if (this._backdropOptions.fullScreen) {
             animate(
@@ -87,23 +86,9 @@ export class SharedEffects {
               if (typeof this._backdropOptions.onClose === 'function') {
                 this._backdropOptions.onClose();
               }
+              // clear inline-styles for wrapper element
+              wrapper.style.removeProperty('height');
             });
-
-            animate(
-              `#backdrop .backdrop__content`,
-              { height: [
-                `${window.innerHeight}px`,
-                `${window.innerHeight * 0.9}px`,
-                `${window.innerHeight * 0.8}px`,
-                `${window.innerHeight * 0.75}px`
-              ] },
-              { easing: spring({
-                stiffness: 80,
-                damping: 20,
-                mass: 1,
-                velocity: 800,
-              }) },
-            );
           }
           else {
             animate(
@@ -114,12 +99,12 @@ export class SharedEffects {
                 duration: 0.6,
               } 
             ).finished.then(() => {
-              // clean-up height style inline set in previous animations
-              content.style.removeProperty('height');
-
               if (typeof this._backdropOptions.onClose === 'function') {
                 this._backdropOptions.onClose();
               }
+
+              // clear inline-styles for wrapper element
+              wrapper.style.removeProperty('height');
             });
           }
         }
@@ -133,13 +118,11 @@ export class SharedEffects {
               `#backdrop`,
               { top: `${(wrapper.clientHeight) * -1}px` }, 
             );
-
-            // clean-up height style inline set in previous animations
-            content.style.removeProperty('height');
-
             if (typeof this._backdropOptions.onClose === 'function') {
               this._backdropOptions.onClose();
             }
+            // clear inline-styles for wrapper element
+            wrapper.style.removeProperty('height');
           })
         }
       })

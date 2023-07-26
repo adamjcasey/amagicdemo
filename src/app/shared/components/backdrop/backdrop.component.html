@@ -1,7 +1,7 @@
 <section id="backdrop" class="backdrop" [ngClass]="{ 
   'is-open': config.show, 
   'is-full-screen': config.fullScreen, 
-  'is-content-centered': config.contenCentered, 
+  'is-content-centered': config.contentCentered || getType() === 'menu-main', 
   'transition-fade': config.transition === 'fade', 
   'transition-move': config.transition === 'move', 
   'bg-template': config.bgTemplate, 
@@ -25,6 +25,7 @@
         </ion-button>
       </div>
       <ion-img class="logo" src="/assets/images/backdrop-header-logo.svg"></ion-img>
+      <div class="background"></div>
       <ion-img class="ellipse" src="/assets/images/backdrop-header-ellipse.svg"></ion-img>
     </header>
 
@@ -140,7 +141,7 @@
           effect="fade" 
           [allowTouchMove]="false" 
           (swiper)="onHighlightsInit()" 
-          (slideChange)="onHighlightsChange()"
+          (slideChange)="onHighlightsChange()" 
           [autoHeight]="true">
           <ng-template swiperSlide>
             <h1 class="font-heading-1--bold">Highlights Tour</h1>

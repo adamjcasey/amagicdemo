@@ -1,24 +1,24 @@
 @import 'src/theme/base/mixins';
 
 .add-symptom-form {
-  padding-bottom: var(--space-xxl);
+  padding-bottom: var(--size-xxl);
 
   h1 {
-    margin-bottom: var(--space-m);
+    margin-bottom: var(--size-m);
     text-align: center;
   }
 
   .add-symptom-form__subtitle {
-    margin-top: var(--space-m);
-    margin-bottom: var(--space-l);
+    margin-top: var(--size-m);
+    margin-bottom: var(--size-l);
     text-align: center;
   }
 
   .add-photo-cta {
-    margin-bottom: var(--space-m);
+    margin-bottom: var(--size-m);
 
     ion-button {
-      --padding-start: var(--space-xxxs);
+      --padding-start: var(--size-xxxs);
     }
   }
 }

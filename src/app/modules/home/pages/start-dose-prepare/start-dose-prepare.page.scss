@@ -10,11 +10,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: var(--space-xs);
+    gap: var(--size-xs);
 
     .indicator {
-      margin-top: var(--space-xxxs);
-      margin-bottom: var(--space-xxxs);
+      margin-top: var(--size-xxxs);
+      margin-bottom: var(--size-xxxs);
       font-size: 4rem;
       font-weight: var(--font-weight-extra-light);
       text-align: center;
@@ -44,8 +44,8 @@
 
   .inspection {
     .statement {
-      margin-bottom: var(--space-l);
-      padding-left: calc(var(--space-l) * 2);
+      margin-bottom: var(--size-l);
+      padding-left: calc(var(--size-l) * 2);
       text-align: left;
 
       &:last-child {
@@ -54,7 +54,7 @@
 
       h3 {
         position: relative;
-        margin-bottom: var(--space-xs);
+        margin-bottom: var(--size-xs);
       }
       
       ion-icon {
@@ -66,7 +66,7 @@
 
       p {
         margin-bottom: 0;
-        margin-top: var(--space-xxxs);
+        margin-top: var(--size-xxxs);
       }
 
       &.incorrect {

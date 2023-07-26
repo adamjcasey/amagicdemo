@@ -7,7 +7,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: var(--space-s);
+    margin-bottom: var(--size-s);
   }
 
   .calendar-edit-schedule__schedule {
@@ -23,8 +23,8 @@
       &::before {
         top: 26px;
         left: 10px;
-        width: 12px;
-        height: 12px;
+        width: var(--size-xxs);
+        height: var(--size-xxs);
         border-radius: 50%;
         border: 3px solid var(--color-primary-green);
       }
@@ -40,10 +40,10 @@
         display: grid;
         grid-template-columns: max-content auto max-content;
         align-items: center;
-        gap: var(--space-xs);
-        padding-top: var(--space-xxs);
-        padding-bottom: var(--space-xxs);
-        padding-left: 45px;
+        gap: var(--size-xs);
+        padding-top: var(--size-xxs);
+        padding-bottom: var(--size-xxs);
+        padding-left: var(--size-xl);
 
         .dose-label {
           grid-column: 1;
@@ -58,7 +58,7 @@
           grid-column: 3;
 
           ion-icon {
-            font-size: var(--space-xxl);
+            font-size: var(--size-xxl);
           }
         }
 

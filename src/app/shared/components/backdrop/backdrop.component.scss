@@ -37,14 +37,24 @@
   }
 
   .backdrop__header {
-    position: inherit;
+    position: relative;
     z-index: 50;
     grid-row: 1;
     display: grid;
     grid-template-rows: max-content auto;
     grid-template-columns: 1fr 1fr 1fr;
-    padding-top: var(--space-xxl);
-    background-color: var(--color-black);
+    align-items: center;
+    padding-top: var(--size-xxl);
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: var(--size-xxl);
+      background-color: var(--color-black);
+    }
 
     .back-button {
       grid-row: 1;
@@ -56,14 +66,22 @@
       grid-row: 1;
       grid-column: 2;
       width: 135px;
-      margin: 0 auto;
+      margin: var(--size-s) auto 0;
+    }
+
+    .background {
+      grid-row: 1;
+      grid-column: 1 / -1;
+      z-index: -10;
+      width: 100%;
+      height: 100%;
+      background-color: var(--color-black);
     }
 
     .ellipse {
       grid-row: 2;
       grid-column: 1 / -1;
       width: 100%;
-      margin-top: var(--space-s);
     }
   }
 
@@ -73,16 +91,13 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    max-width: calc(300px + (var(--space-m) * 2) );
-    min-height: calc(55vh + (var(--space-xxxxl) * 2.8));
+    max-width: calc(300px + (var(--size-m) * 2) );
     max-height: max-content;
     overflow-y: auto;
-    margin-top: calc((var(--space-xxxxl) * 2.8) * -1);
+    margin-top: calc(var(--size-xxxl) * -1);
     margin-right: auto;
     margin-left: auto;
-    padding-top: calc(var(--space-xxxxl) * 2.8);
-    padding-right: var(--space-l);
-    padding-left: var(--space-l);
+    padding-top: var(--size-xxxl);
 
     > * {
       width: 100%;
@@ -102,11 +117,11 @@
       }
 
       .buttons-container {
-        margin-top: var(--space-l);
+        margin-top: var(--size-l);
 
         ion-button {
           display: block;
-          margin-bottom: var(--space-m);
+          margin-bottom: var(--size-m);
 
           &:last-child {
             margin-bottom: 0;
@@ -117,10 +132,10 @@
 
     .backdrop__actions {
       display: flex;
-      gap: var(--space-xxs);
+      gap: var(--size-xxs);
       justify-content: center;
       align-items: center;
-      margin-bottom: var(--space-l);
+      margin-bottom: var(--size-l);
     }
 
     .pin-input {
@@ -164,11 +179,11 @@
     }
 
     .buttons-container {
-      margin-top: var(--space-l);
+      margin-top: var(--size-l);
 
       ion-button {
         display: block;
-        margin-bottom: var(--space-m);
+        margin-bottom: var(--size-m);
 
         &:last-child {
           margin-bottom: 0;
@@ -181,10 +196,10 @@
         display: grid;
         grid-template-columns: max-content auto max-content;
         align-items: center;
-        gap: var(--space-xxs);
+        gap: var(--size-xxs);
         height: 48px;
-        margin-bottom: var(--space-xs);
-        padding-bottom: var(--space-xs);
+        margin-bottom: var(--size-xs);
+        padding-bottom: var(--size-xs);
         border-bottom: 1px solid var(--color-gray-dark);
 
         &:last-child {
@@ -228,6 +243,8 @@
 
     .main-menu {
       align-items: center;
+      padding-right: var(--size-l);
+      padding-left: var(--size-l);
 
       swiper {
         .swiper-slide {
@@ -258,8 +275,8 @@
 
             ion-item {
               height: 48px;
-              margin-top: var(--space-xxxs);
-              margin-bottom: var(--space-xxxs);
+              margin-top: var(--size-xxxs);
+              margin-bottom: var(--size-xxxs);
 
               &:last-child {
                 --border-width: 0;
@@ -281,7 +298,7 @@
 
     .highlights-menu {
       h1 {
-        margin-bottom: var(--space-l);
+        margin-bottom: var(--size-l);
         color: var(--color-white);
       }
 
@@ -314,7 +331,7 @@
 
           .card__text {
             flex: 1 1 0;
-            padding: var(--space-xxs);
+            padding: var(--size-xxs);
             background-color: var(--color-bg-dark-gray-blue-dark);
           }
 
@@ -325,17 +342,14 @@
       }
 
       .highlights__detail {
-        max-height: calc(100vh - 240px);
-        padding-right: var(--space-xxs);
-        overflow-y: auto;
         color: var(--color-white);
 
         h1 {
-          margin-bottom: var(--space-xxl);
+          margin-bottom: var(--size-xxl);
         }
 
         .highlights__detail-section {
-          margin-bottom: var(--space-xxxl);
+          margin-bottom: var(--size-xxxl);
 
           &:last-child {
             margin-bottom: 0;
@@ -470,13 +484,13 @@
 
         ion-img {
           height: 180px;
-          margin-bottom: var(--space-xl);
+          margin-bottom: var(--size-xl);
         }
 
         .box-wrapper {
           position: relative;
-          margin-bottom: var(--space-xxl);
-          padding: var(--space-xl) var(--space-xs) var(--space-s);
+          margin-bottom: var(--size-xxl);
+          padding: var(--size-xl) var(--size-xs) var(--size-s);
           background-color: var(--color-bg-dark-gray-blue);
           border-radius: 12px;
 
@@ -501,7 +515,7 @@
           h3 {
             @include heading-5;
             margin-top: 0;
-            margin-bottom: var(--space-xxs);
+            margin-bottom: var(--size-xxs);
             font-weight: var(--font-weight-bold);
           }
 
@@ -510,7 +524,7 @@
 
             &.eyebrow {
               @include paragraph-xs;
-              margin-bottom: var(--space-xxs);
+              margin-bottom: var(--size-xxs);
               text-transform: uppercase;
               text-align: center;
   
@@ -519,15 +533,15 @@
                 content: '';
                 width: 16px;
                 height: 1px;
-                padding-top: var(--space-xxxs);
+                padding-top: var(--size-xxxs);
               }
   
               &::before {
-                margin-right: var(--space-xxs);
+                margin-right: var(--size-xxs);
               }
   
               &::after {
-                margin-left: var(--space-xxs);
+                margin-left: var(--size-xxs);
               }
             }
           }
@@ -576,15 +590,22 @@
     }
 
     .backdrop__wrapper {
-      min-height: 100vh;
+      height: 100vh;
     }
 
     .backdrop__content {
-      min-height: calc(80vh + (var(--space-xxxxl) * 2.8));
+      // 162px is the size of the header element including all - 40px of
+      // inverted margin at the top the parts + extra bottom space to 
+      // visualize everything correctly
+      max-height: calc(100vh - (122px + var(--size-s)));
     }
   }
 
   &.is-content-centered {
+    .backdrop__wrapper {
+      align-items: center;
+    }
+
     .backdrop__content {
       justify-content: center;
     }
@@ -610,7 +631,7 @@
       .backdrop__content {
         justify-content: flex-end;
         padding-bottom: 15vh;
-        min-height: 100vh;
+        // height: 100vh;
       }
 
       .backdrop__wrapper {
@@ -623,7 +644,7 @@
     &.bg-template--bottom-hole {
       .backdrop__content {
         justify-content: flex-start;
-        margin-top: calc(var(--space-xxxxl) * 2.2 * -1);
+        padding-top: calc(var(--size-xxxl) * 2);
       }
 
       .close {

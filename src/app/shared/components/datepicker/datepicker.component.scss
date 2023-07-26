@@ -8,7 +8,7 @@
   }
 
   ion-input {
-    --padding-end: var(--space-xl) !important;
+    --padding-end: var(--size-xl) !important;
     min-height: 48px !important;
     pointer-events: none;
   }
@@ -25,12 +25,13 @@
 .datepicker {
   max-height: 375px;
   overflow-y: auto;
+  padding-right: var(--size-xxs);
 
   .month {
     width: 100%;
   
     &:nth-child(n+2) {
-      margin-top: var(--space-m);
+      margin-top: var(--size-m);
     }
   
     .month__title {
@@ -63,16 +64,16 @@
   
     .month__weekdays {
       td {
-        padding-top: var(--space-xs);
-        padding-bottom: var(--space-xxxs);
+        padding-top: var(--size-xs);
+        padding-bottom: var(--size-xxxs);
         color: var(--color-gray-medium);
       }
     }
     
     .month__week {
       td {
-        padding-top: calc(var(--space-xxxxs) / 2);
-        padding-bottom: calc(var(--space-xxxxs)  / 2);
+        padding-top: calc(var(--size-xxxxs) / 2);
+        padding-bottom: calc(var(--size-xxxxs)  / 2);
 
         span {
           display: block;

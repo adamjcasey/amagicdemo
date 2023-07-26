@@ -201,9 +201,17 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
 
                   setTimeout(() => {
                     this.startTimeTravelingSimulation();
-                  }, 1000);
+
+                    // DEMO: only for demo purposes
+                    setTimeout(() => {
+                      this.heroConfig.template = `
+                        <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
+                        <p>Your Theryx® dose is scheduled for today!</p>
+                      `;
+                    }, 800);
+                  }, 2000);
                 }
-                else {  
+                else { 
                   if (!this.homeConfig.flareUpsDemoDone) {
                     setTimeout(() => {
                       this.startFlareUpsFlow();
@@ -245,7 +253,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
                       tabColor: '--color-bg-pastel-blue',
                       title: 'Dose Report',
                       numberDose: this.homeConfig.doses.findIndex((dose: any) => dose.date === lastMarkedDose.date) + 1,
-                      time: moment(lastMarkedDose.date).format('MMM D, H:m A'),
+                      time: moment(lastMarkedDose.date).format('MMM D, H:mm A'),
                       asset: `assets/images/activity-highlights-dose-report-${lastMarkedDose.bodyPart.toLowerCase().replace(' ', '-')}.svg`,
                       description: `This time you injected your <strong>${this._utils.humanizeBodyPartInjected(lastMarkedDose.bodyPart)}<strong>`,
                     },
@@ -387,12 +395,6 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
           ],
           onClose: () => {
             this.goTo('home/add-symptom');
-
-            // DEMO: only for demo purposes
-            this.heroConfig.template = `
-              <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
-              <p>Your Theryx® dose is scheduled for today!</p>
-            `;
           }
         }));
       }
@@ -405,6 +407,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
       header: true,
       component: 'highlights-menu',
       template: null,
+      contentCentered: true,
     }));
   }
 

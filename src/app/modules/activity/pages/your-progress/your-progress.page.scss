@@ -2,7 +2,7 @@
 
 .your-progress {
   &::ng-deep .hero {
-    padding-bottom: var(--space-xxl);
+    padding-bottom: var(--size-xxl);
   }
 
   .your-progress__states {
@@ -10,7 +10,7 @@
     z-index: 50;
     display: flex;
     justify-content: space-between;
-    gap: var(--space-xxxs);
+    gap: var(--size-xxxs);
     margin-top: -50px;
 
     .state {
@@ -80,7 +80,7 @@
 
   automagic-card {
     display: block;
-    margin-bottom: var(--space-m);
+    margin-bottom: var(--size-m);
 
     &:last-child {
       margin-bottom: 0;

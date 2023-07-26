@@ -7,13 +7,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: var(--space-xxxs);
-    margin-bottom: var(--space-m);
+    gap: var(--size-xxxs);
+    margin-bottom: var(--size-m);
     padding-top: var(--topbar-size);
 
     ion-icon {
-      width: var(--space-xl);
-      height: var(--space-xl);
+      width: var(--size-xl);
+      height: var(--size-xl);
     }
   }
 
@@ -22,7 +22,7 @@
   }
 
   .symptom-report__filters-cta {
-    margin-top: var(--space-xl);
-    margin-bottom: var(--space-m);
+    margin-top: var(--size-xl);
+    margin-bottom: var(--size-m);
   }
 }

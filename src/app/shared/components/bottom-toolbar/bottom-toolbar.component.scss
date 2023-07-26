@@ -3,12 +3,12 @@ automagic-bottom-toolbar {
 }
 
 .bottom-toolbar {
-  --item-size: 64px;
+  --bottom-toolbar-item-tab-size: 64px;
 
   position: relative;
   align-items: flex-start;
-  height: var(--item-size);
-  padding-bottom: var(--space-l);
+  height: var(--bottom-toolbar-item-tab-size);
+  padding-bottom: var(--size-l);
   background-color: transparent;
   border: none;
   contain: inherit;
@@ -20,7 +20,7 @@ automagic-bottom-toolbar {
 
   ion-tab-button {
     position: relative;
-    height: var(--item-size);
+    height: var(--bottom-toolbar-item-tab-size);
     background-color: transparent;
     color: var(--color-gray-dark);
     font-size: var(--font-size-paragraph-xs);
@@ -53,11 +53,11 @@ automagic-bottom-toolbar {
 
   .bottom-toolbar__content {
     position: absolute;
-    top: calc(var(--item-size) + var(--space-l));
+    top: calc(var(--bottom-toolbar-item-tab-size) + var(--size-l));
     left: 0;
     display: flex;
     justify-content: center;
-    gap: var(--space-xxs);
+    gap: var(--size-xxs);
     width: 100%;
     overflow: hidden;
 
@@ -71,14 +71,14 @@ automagic-bottom-toolbar {
       }
 
       ion-button {
-        margin-top: var(--space-xxs);
+        margin-top: var(--size-xxs);
       }
     }
   }
 
   &.is-open {
     .bottom-toolbar__content {
-      top: var(--item-size);
+      top: var(--bottom-toolbar-item-tab-size);
     }
   }
 }

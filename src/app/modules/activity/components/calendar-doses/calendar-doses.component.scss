@@ -1,17 +1,13 @@
 @import 'src/theme/base/mixins';
 
-.activity-page--calendar-doses__wrapper {
-  --background: var(--color-bg-pastel-purple);
-}
-
 .calendar-doses {
   h1 {
-    margin-bottom: var(--space-m);
+    margin-bottom: var(--size-m);
   } 
 }
 
 .calendar-doses__wrapper {
-  padding: var(--space-m);
+  padding: var(--size-m);
   background-color: var(--color-white);
   border-radius: 12px;
 
@@ -29,9 +25,9 @@
         position: relative;
         display: inline-flex;
         align-items: center;
-        gap: var(--space-xxxs);
+        gap: var(--size-xxxs);
         white-space: nowrap;
-        margin: var(--space-xxxxs) var(--space-xxs);
+        margin: var(--size-xxxxs) var(--size-xxs);
   
         &::before {
           content: '';
@@ -98,12 +94,12 @@
 }
 
 .calendar-doses__next-reminder {
-  margin-top: var(--space-l);
-  padding-bottom: calc(var(--space-xxl) * 1.5);
+  margin-top: var(--size-l);
+  padding-bottom: calc(var(--size-xxl) * 1.5);
 
   h5 {
     margin-top: 0;
-    margin-bottom: var(--space-xs);
+    margin-bottom: var(--size-xs);
     text-align: left;
   }
 }

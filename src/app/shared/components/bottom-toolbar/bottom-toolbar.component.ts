@@ -33,7 +33,6 @@ export class BottomToolbarComponent {
       (event: RoutingEvent) => {
         if (event instanceof NavigationEnd) {
           this.currentRoute = event.urlAfterRedirects;
-          this._store.dispatch(new fromCoreStore.HideBottomToolbar(true));
         }
       },
     );

@@ -8,16 +8,16 @@
 .start-dose-ready-to-inject__dosing {
   .dosing-counter {
     height: 130px;
-    margin-top: var(--space-m);
+    margin-top: var(--size-m);
 
     .dosing-counter__wrapper {
-      margin-bottom: var(--space-xxs);
+      margin-bottom: var(--size-xxs);
     }
 
     .dosing-counter__digits {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: var(--space-xs);
+      gap: var(--size-xs);
       width: 175px;
       margin: 0 auto;
     }
@@ -25,7 +25,7 @@
     .digit {
       width: 80px;
       box-sizing: border-box;
-      padding: var(--space-xxs) var(--space-xs);
+      padding: var(--size-xxs) var(--size-xs);
       background-color: var(--color-white);
       border: 2px solid var(--color-primary-purple);
       border-radius: 16px;
@@ -45,7 +45,7 @@
     position: relative;
     width: 80px;
     height: var(--dosing-box-height);
-    margin: var(--space-m) auto 44px;
+    margin: var(--size-m) auto 44px;
     background-color: var(--color-white);
     border-radius: 40px;
 

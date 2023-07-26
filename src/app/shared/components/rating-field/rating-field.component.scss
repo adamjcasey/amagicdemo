@@ -18,8 +18,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: var(--space-xs);
-    padding: var(--space-xxs);
+    margin-top: var(--size-xs);
+    padding: var(--size-xxs);
     box-sizing: border-box;
 
     overflow: hidden;
@@ -28,8 +28,8 @@
       content: '';
       position: absolute;
       top: calc(50% - 1.5px);
-      left: var(--space-xxs);
-      width: calc(100% - calc(var(--space-xxs) * 2));
+      left: var(--size-xxs);
+      width: calc(100% - calc(var(--size-xxs) * 2));
       height: 3px;
       background: linear-gradient(89.99deg, #FF7858 2.26%, #FFB852 42.11%, #E6DA61 74.51%, #83B03C 104.27%);
     }
@@ -184,11 +184,7 @@
 
   .error-message {
     @include paragraph-l;
-    margin-bottom: var(--space-s);
+    margin-bottom: var(--size-s);
     color: var(--color-primary-salmon--light);
-  }
-
-  &.is-invalid {
-    
   }
 }

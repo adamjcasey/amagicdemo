@@ -4,12 +4,12 @@
   @include heading-3;
   position: absolute;
   top: 0;
-  left: calc(50% - (var(--space-xxl) / 2));
+  left: calc(50% - (var(--size-xxl) / 2));
   display: inline-block;
   margin: 0 auto;
-  width: var(--space-xxl);
-  height: var(--space-xxl);
-  line-height: var(--space-xxl);
+  width: var(--size-xxl);
+  height: var(--size-xxl);
+  line-height: var(--size-xxl);
   border-radius: 50%;
   background-color: var(--color-primary-dark-blue);
   color: var(--color-white);
@@ -22,13 +22,13 @@
   box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
   border-radius: 12px;
   background: var(--color-white);
-  padding: var(--space-xs);
+  padding: var(--size-xs);
 }
 
 .card__content {
   display: grid;
   grid-template-columns: max-content auto;
-  gap: var(--space-xs);
+  gap: var(--size-xs);
 }
 
 .card__image {
@@ -43,14 +43,14 @@
   margin-bottom: 0;
 
   + .card__description {
-    margin-top: var(--space-xxs); 
+    margin-top: var(--size-xxs); 
   }
 }
 
 .card__text {
   grid-column: 2;
-  padding-top: var(--space-xxxs);
-  padding-bottom: var(--space-xxxs);
+  padding-top: var(--size-xxxs);
+  padding-bottom: var(--size-xxxs);
   text-align: left;
 }
 
@@ -66,12 +66,12 @@
 }
 
 .card__disclaimer {
-  margin-top: var(--space-xxxs);
+  margin-top: var(--size-xxxs);
 }
 
 .card__link {
   display: block;
-  margin-top: var(--space-xxxs);
+  margin-top: var(--size-xxxs);
   color: var(--color-primary-purple);
   font-weight: var(--font-weight-bold);
 }
@@ -80,10 +80,10 @@
   position: relative;
   
   &.card--stepper {
-    padding-top: var(--space-m);
+    padding-top: var(--size-m);
 
     .card__wrapper {
-      padding: var(--space-l) var(--space-xxs ) var(--space-s);
+      padding: var(--size-l) var(--size-xxs ) var(--size-s);
     }
 
     .card__content {
@@ -91,7 +91,7 @@
     }
 
     .card__title {
-      margin-bottom: var(--space-xxxs);
+      margin-bottom: var(--size-xxxs);
     }
 
     .card__text {
@@ -115,7 +115,7 @@
       }
 
       ion-button {
-        margin-top: var(--space-s);
+        margin-top: var(--size-s);
       }
     }
   }
@@ -139,7 +139,7 @@
       }
 
       ion-button {
-        margin-top: var(--space-s);
+        margin-top: var(--size-s);
       }
     }
   }
@@ -165,7 +165,7 @@
 
         .card__title {
           max-width: 150px;
-          margin-top: var(--space-xxs);
+          margin-top: var(--size-xxs);
         }
       }
     }

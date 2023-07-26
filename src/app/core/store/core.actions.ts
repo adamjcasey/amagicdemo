@@ -8,7 +8,6 @@ export enum ActionTypes {
   SetFullScreen = '[Layout] Set FullScreen',
   SetRightCornerEl = '[Layout] Set Right Corner Element',
   ClearRightCornerEl = '[Layout] Clear Right Corner Element',
-  HideBottomToolbar = '[Layout] Hide BottomToolbar',
 }
 
 export class Go implements Action {
@@ -44,11 +43,6 @@ export class SetRightCornerEl implements Action {
 export class ClearRightCornerEl implements Action {
   readonly type = ActionTypes.ClearRightCornerEl;
 }
-export class HideBottomToolbar implements Action {
-  readonly type = ActionTypes.HideBottomToolbar;
-
-  constructor(public payload: boolean) {}
-}
 
 export type ActionsUnion 
   = Go 
@@ -56,5 +50,4 @@ export type ActionsUnion
   | Forward
   | SetFullScreen
   | SetRightCornerEl
-  | ClearRightCornerEl
-  | HideBottomToolbar;
+  | ClearRightCornerEl;

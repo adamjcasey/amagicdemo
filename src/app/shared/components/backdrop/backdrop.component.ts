@@ -41,7 +41,6 @@ export class BackdropComponent implements OnInit, AfterViewInit {
     private _store: Store<fromStore.SharedState>,
     private _sanitizer: DomSanitizer,
     private _utils: fromSharedServices.UtilsService,
-    private _renderer: Renderer2,
   ) {
     this.config$ = this._store.select(fromStore.getBackdropConfig);
   }
@@ -79,20 +78,6 @@ export class BackdropComponent implements OnInit, AfterViewInit {
               this.goBackToMenu();
             }
           }
-
-          if (this.config.template) {
-            if (this.config.template.includes('close-action')) {
-              const controller = setInterval(() => {
-                const closeAction = document.querySelector('#backdrop .backdrop__template .close-action');
-                if (closeAction) {
-                  closeAction.addEventListener('click', () => {
-                    console.log('click in close action');
-                  });
-                  clearInterval(controller);
-                }
-              }, 500);
-            }
-          }
         }
         else {
           // wait until close totally backdrop
@@ -107,13 +92,6 @@ export class BackdropComponent implements OnInit, AfterViewInit {
         }
       }
     });
-
-    window.backdropComponent = {
-      close: () => {
-        const backdropFold = document.querySelector('#backdrop .backdrop__fold') as HTMLElement;
-        backdropFold.click();
-      },
-    }
   }
   
   ngAfterViewInit() {
@@ -198,6 +176,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
             header: true,
             fullScreen: false,
             component: 'highlights-menu',
+            contentCentered: true,
             highlights: null,
           }));
         }
@@ -235,6 +214,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
             header: true,
             fullScreen: false,
             component: 'highlights-menu',
+            contentCentered: true,
             highlights: null,
           }));
         }
@@ -247,46 +227,25 @@ export class BackdropComponent implements OnInit, AfterViewInit {
   }
 
   animateFullScreenToDefault() {
-    animate(
-      '#backdrop',
-      { opacity: this.config.transition === 'fade' ? 1 : '' },
-      {
-        easing: 'ease-in-out',
-        duration: 0.2,
-      },
-    );
+    if (this.config.transition === 'fade') {
+      animate(
+        '#backdrop',
+        { opacity: 1 },
+        {
+          easing: 'ease-in-out',
+          duration: 0.2,
+        },
+      );
+    }
 
     animate(
-      '#backdrop .backdrop__content',
+      '#backdrop .backdrop__wrapper',
       {
         height: [
           `${window.innerHeight}px`,
           `${(window.innerHeight) * 0.9}px`,
           `${(window.innerHeight) * 0.8}px`,
-          `${(window.innerHeight) * 0.7}px`,
-          `${(window.innerHeight) * 0.6}px`,
-          `${(window.innerHeight) * 0.5}px`,
-        ], 
-        opacity: this.config.transition === 'fade' ? 1 : ''
-      },
-      { easing: spring({
-        stiffness: 100,
-        damping: 15,
-        mass: 1,
-        velocity: 800,
-      }) }
-    );
-  }
-
-  animateDefaultToFullScreen() {
-    animate(
-      '#backdrop .backdrop__content',
-      {
-        height: [
-          `${window.innerHeight * 0.75}px`,
-          `${window.innerHeight * 0.8}px`,
-          `${window.innerHeight * 0.9}px`,
-          `${window.innerHeight}px`
+          `${(window.innerHeight) * 0.75}px`,
         ],
       },
       { easing: spring({

@@ -8,12 +8,12 @@
   padding-top: var(--topbar-size);
 
   h1 {
-    margin-bottom: var(--space-l);
+    margin-bottom: var(--size-l);
     text-align: center;
   }
 }
 
 .resources-page__container {
   @include masonry-layout;
-  gap: calc(var(--space-xs) - 5px);
+  gap: calc(var(--size-xs) - 5px);
 }

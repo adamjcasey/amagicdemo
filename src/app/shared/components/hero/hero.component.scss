@@ -1,6 +1,6 @@
 .hero {
   position: relative;
-  padding-top: calc(var(--topbar-size) + var(--space-s));
+  padding-top: calc(var(--topbar-size) + var(--size-s));
   overflow: hidden;
 
   .hero__layer {
@@ -16,8 +16,8 @@
   }
 
   .hero__content {
-    padding-right: var(--space-m);
-    padding-left: var(--space-m);
+    padding-right: var(--size-m);
+    padding-left: var(--size-m);
     text-align: center;
   }
 
@@ -44,6 +44,6 @@
   }
 
   &.only-title {
-    padding-bottom: var(--space-l);
+    padding-bottom: var(--size-l);
   }
 }

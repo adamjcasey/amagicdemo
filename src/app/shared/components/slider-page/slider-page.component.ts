@@ -279,11 +279,9 @@ export class SliderPageComponent implements OnInit {
         componentRef = element.createComponent(fromHomeComponents.AddSymptomFormComponent);
         break;
       case 'calendar-doses':
-        console.log('calendar-dose');
         componentRef = element.createComponent(fromActivityComponents.CalendarDosesComponent);
         break;
       case 'calendar-edit-schedule':
-        console.log('calendar-edit-schedule');
         componentRef = element.createComponent(fromActivityComponents.CalendarEditScheduleComponent);
         break;
     }

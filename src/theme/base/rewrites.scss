@@ -111,15 +111,15 @@ ion-datetime-button {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: var(--space-xs);
+  gap: var(--size-xs);
 
   &::before,
   &::after {
     content: '';
     position: absolute;
     z-index: 50;
-    width: var(--space-m);
-    height: var(--space-m);
+    width: var(--size-m);
+    height: var(--size-m);
     background-repeat: no-repeat;
     background-position: center center;
     background-size: cover;
@@ -142,9 +142,9 @@ ion-datetime-button {
     position: relative;
     width: 50%;
     margin: 0;
-    padding-top: var(--space-xxs);
-    padding-right: calc(var(--space-m) + var(--space-xxs));
-    padding-bottom: var(--space-xxs);
+    padding-top: var(--size-xxs);
+    padding-right: calc(var(--size-m) + var(--size-xxs));
+    padding-bottom: var(--size-xxs);
     background-color: var(--color-white);
     border: 1px solid var(--color-gray-medium);
     text-align: left;
@@ -159,11 +159,11 @@ ion-modal#modal-datepicker {
   --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
 
   .ion-page {
-    padding: var(--space-s);
+    padding: var(--size-s);
   }
 
   .buttons-container {
-    margin-top: var(--space-xxs);
+    margin-top: var(--size-xxs);
     text-align: right;
   }
 }
