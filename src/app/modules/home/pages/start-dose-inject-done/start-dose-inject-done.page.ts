@@ -52,12 +52,15 @@ export class StartDoseInjectDonePage implements OnInit {
             {
               label: 'Done',
               action: () => { 
-                const markedDoses = this.homeConfig?.doses.filter((dose: any) => dose.marked);
-                if (this.homeConfig.firstTimeDose || markedDoses.length === 6) {
-                  this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-mint'));
+                if (this.homeConfig.firstTimeDose) {
                   this.sliderPage.slideTo(2);
                 }
                 else {
+                  const markedDoses = this.homeConfig?.doses.filter((dose: any) => dose.marked);
+                  if (markedDoses.length === 6) {
+                    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-white'));
+                  }
+
                   this.goTo('home');
                   this._store.dispatch(new fromSharedStore.SliderPageClear());
                 }
@@ -75,7 +78,15 @@ export class StartDoseInjectDonePage implements OnInit {
               {
                 label: 'Skip',
                 action: (event: any) => {
-                  this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-mint'));
+                  if (this.homeConfig.firstTimeDose) {
+                    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-mint'));
+                  }
+                  else {
+                    const markedDoses = this.homeConfig?.doses.filter((dose: any) => dose.marked);
+                    if (markedDoses.length === 6) {
+                      this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-white'));
+                    }
+                  }
                   event.target.nextElementSibling.click();
                 },
               },
@@ -83,13 +94,14 @@ export class StartDoseInjectDonePage implements OnInit {
                 label: 'Proceed',
                 // disabled: true,
                 action: () => {
-                  this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-mint'));
                   if (this.homeConfig.firstTimeDose) {
+                    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-mint'));
                     this.sliderPage.slideNext();
                   }
                   else {
                     const markedDoses = this.homeConfig?.doses.filter((dose: any) => dose.marked);
                     if (markedDoses.length === 6) {
+                      this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-white'));
                       this.sliderPage.slideNext();
                     }
                     else {

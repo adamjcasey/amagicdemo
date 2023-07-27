@@ -15,7 +15,7 @@
     </ion-button>
 
     <div class="symptom-report__content">
-      <automagic-accordion [config]="report" *ngFor="let report of symptomReports"></automagic-accordion>
+      <automagic-accordion [config]="report" *ngFor="let report of symptomReports | reverse"></automagic-accordion>
     </div>
   </section>
 </ion-content>
