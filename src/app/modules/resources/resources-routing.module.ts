@@ -28,10 +28,10 @@ const routes: Routes = [
     path: 'mindful-assistant',
     component: fromPages.MindfulAssistantPage
   },  
-  {
-    path: 'headspace',
-    component: fromPages.HeadspacePage
-  },  
+  // {
+  //   path: 'headspace',
+  //   component: fromPages.HeadspacePage
+  // },  
   {
     path: 'one-path',
     component: fromPages.OnePathPage

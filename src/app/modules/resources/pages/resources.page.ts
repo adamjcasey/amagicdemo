@@ -45,6 +45,7 @@ export class ResourcesPage implements OnInit, AfterViewChecked, OnDestroy {
         description: 'Connect to a larger community of fellow patients to learn tips and tricks.',
         action: () => {
           this.goTo('resources/community-feed');
+          this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-mint'));
         }
       },
       {
@@ -54,6 +55,7 @@ export class ResourcesPage implements OnInit, AfterViewChecked, OnDestroy {
         description: 'Stay up-to-date and learn more about your condition and treatment.',
         action: () => {
           this.goTo('resources/education');
+          this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
         }
       },   
       {
@@ -63,6 +65,7 @@ export class ResourcesPage implements OnInit, AfterViewChecked, OnDestroy {
         description: 'Use Headspace to help navigate the stress and anxiety of chronic conditions.',
         action: () => {
           this.goTo('/resources/mindful-assistant');
+          this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-mint'));
         }
       },   
       {
@@ -71,7 +74,8 @@ export class ResourcesPage implements OnInit, AfterViewChecked, OnDestroy {
         asset: '/assets/images/resources-entry-one-path.svg',
         description: 'Chat with your patient support manager (PSM).',
         action: () => {
-          console.log('action go to OnePath');
+          this.goTo('/resources/one-path');
+          this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
         }
       },
     ];

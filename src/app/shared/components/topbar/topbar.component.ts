@@ -110,7 +110,13 @@ export class TopBarComponent implements OnInit, OnDestroy {
       this.goTo('settings');
     }
     else if (this.resourcesScope) {
-      if (this.currentRoute.includes('resources/your-care-team')) {
+      if (
+        this.currentRoute.includes('resources/your-care-team') ||
+        this.currentRoute.includes('resources/community-feed') ||
+        this.currentRoute.includes('resources/education') ||
+        this.currentRoute.includes('resources/mindful-assistant') ||
+        this.currentRoute.includes('resources/one-path')
+      ) {
         this.goTo('resources');
       }
 

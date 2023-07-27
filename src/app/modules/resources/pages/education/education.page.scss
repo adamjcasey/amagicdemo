@@ -1,0 +1,11 @@
+.education-page {
+  .education-page__content {
+    margin-top: var(--size-s);
+
+    automagic-feed-card {
+      display: block;
+      margin-bottom: var(--size-m);
+    }
+  }
+}
+  

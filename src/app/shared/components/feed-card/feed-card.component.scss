@@ -1,0 +1,97 @@
+@import 'src/theme/base/mixins';
+
+.feed-card {
+  border-radius: 12px;
+  background-color: var(--color-white);
+  box-shadow: 0px 0px 16px 0px #0000001A;
+
+  .feed-card__header {
+    display: grid;
+    grid-template-columns: max-content auto;
+    gap: var(--size-xxs);
+    align-items: center;
+
+    .feed-card__avatar {
+      grid-column: 1;
+      width: 40px;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+
+    .feed-card__author {
+      grid-column: 2;
+
+      .name,
+      .post-at {
+        @include paragraph-s;
+        margin: 0;
+      }
+
+      .post-at {
+        color: var(--color-gray-medium);
+      }
+    }
+
+    .feed-card__asset {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .feed-card__content {
+    padding: var(--size-xs) var(--size-m) var(--size-xs);
+
+    .feed-card__asset {
+      margin-bottom: var(--size-s)
+    }
+
+    .feed-card__template {
+      > * {
+        margin: 0;
+      }
+
+      p {
+        @include paragraph-s;
+      }
+    }
+
+    .feed-card__actions {
+      display: grid;
+      grid-template-columns: auto max-content;
+      gap: var(--size-xs);
+      align-items: center;
+      margin-top: var(--size-s);
+
+      ion-button {
+        @include paragraph-s;
+        color: var(--color-gray-medium);
+      }
+
+      .reactions,
+      .post-at {
+        grid-column: 1;
+      }
+
+      .reactions {
+        .like-cta {
+          margin-right: var(--size-xs);
+        }
+      }
+
+      .post-at {
+        @include paragraph-s;
+        margin: 0;
+        color: var(--color-gray-medium);
+      }
+
+      .share-cta {
+        grid-column: 2;
+      }
+    }
+  }
+
+  &.feed-card--post {
+    .feed-card__header {
+      padding: var(--size-m) var(--size-m) 0;
+    }
+  }
+}

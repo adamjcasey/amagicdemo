@@ -1,8 +1,6 @@
 import { 
   Component, 
   Input, 
-  Output,
-  EventEmitter, 
   ViewEncapsulation, 
 } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';

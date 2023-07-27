@@ -1,11 +1,13 @@
-<ion-content [fullscreen]="true" [scrollY]="false">
-  <section class="education">
+<ion-content [fullscreen]="true">
+  <section class="education-page">
     <automagic-hero 
       *ngIf="heroConfig"
       [color]="heroConfig.color" 
-      [image]="heroConfig.image" 
       [template]="heroConfig.template" 
-      [actions]="heroConfig.actions"
     ></automagic-hero>
+
+    <div class="education-page__content ion-padding">
+      <automagic-feed-card [config]="post" *ngFor="let post of posts"></automagic-feed-card>
+    </div>
   </section>
 </ion-content>
