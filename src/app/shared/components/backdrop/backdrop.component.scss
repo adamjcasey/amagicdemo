@@ -734,6 +734,12 @@
         bottom: 40vh;
       }
     }
+
+    &.bg-template--bottom-ellipse-hole {
+      .close {
+        bottom: 5vh;
+      }
+    }
   }
   
   &.is-open {

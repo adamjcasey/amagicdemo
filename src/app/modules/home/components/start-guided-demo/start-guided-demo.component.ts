@@ -285,5 +285,28 @@ export class StartGuidedDemoComponent implements OnInit, OnDestroy {
     this._store.dispatch(new fromStore.SetData({
       allCompletedDoses: true
     }));
+
+    setTimeout(() => {
+      this._store.dispatch(new fromSharedStore.BackdropShow({
+        transition: 'move',
+        fullScreen: true,
+        header: true,
+        bgTemplate: 'bottom-ellipse-hole',
+        template: `
+          <div class="start-guided-demo-message">
+            <h1 class="font-heading-1--bold">You're free to explore!</h1>
+            <p>Use the onboarding cards here to track where you've been and what's left to explore</p>
+          </div>
+        `,
+        buttons: [
+          {
+            label: 'Got it',
+            action: () => {
+              this._store.dispatch(new fromSharedStore.BackdropClose());
+            },
+          }
+        ]
+      }));
+    }, 2000);
   }
 }
