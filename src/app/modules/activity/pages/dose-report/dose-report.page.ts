@@ -15,16 +15,19 @@ import * as fromSharedServices from '@shared/services';
   styleUrls: ['dose-report.page.scss'],
 })
 export class DoseReportPage implements OnInit, OnDestroy {
-  public reports!: any[];
+  public activityConfig$!: Observable<any>;
+  public activityConfig: any;
   public homeConfig$!: Observable<any>;
   public homeConfig: any;
   private _ngUnsubscribe: Subject<void> = new Subject<void>();
+  public reports!: any[];
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
     private _utils: fromSharedServices.UtilsService,
   ) {
     this.homeConfig$ = this._store.select(fromHomeStore.getHomeConfig);
+    this.activityConfig$ = this._store.select(fromStore.getActivityConfig);
   }
 
   ngOnInit() {
@@ -61,6 +64,25 @@ export class DoseReportPage implements OnInit, OnDestroy {
                   }
                 });
             }
+          }
+        }
+      });
+
+    this.activityConfig$
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(activityConfig => {
+        if (activityConfig) {
+          this.activityConfig = activityConfig;
+          if (!this.activityConfig.doseReportsPageVisited && this.homeConfig) {
+            const onBoardingTasks = this.homeConfig.onBoardingTasks.map((task: any, index: number) => {
+              return {
+                ...task,
+              }
+            });
+            onBoardingTasks[1].completed = true;
+            this._store.dispatch(new fromHomeStore.SetData({
+              onBoardingTasks: onBoardingTasks,
+            }));
           }
         }
       });

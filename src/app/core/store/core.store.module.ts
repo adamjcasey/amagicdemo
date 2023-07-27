@@ -14,6 +14,7 @@ import { WelcomeStoreModule } from '@welcome/store';
 import { HomeStoreModule } from '@home/store';
 import { ActivityStoreModule } from '@activity/store';
 import { SettingsStoreModule } from '@settings/store';
+import { ResourcesStoreModule } from '@resources/store';
 
 export function clearState(reducer: any) {
   return function (state: any, action: Action) {
@@ -51,6 +52,7 @@ metaReducers.push(clearState);
     HomeStoreModule,
     ActivityStoreModule,
     SettingsStoreModule,
+    ResourcesStoreModule,
   ],
 })
 export class CoreStoreModule {}

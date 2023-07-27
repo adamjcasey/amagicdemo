@@ -68,50 +68,6 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
         }
       },
     }
-    this.onBoardingTasks = [
-      {
-        type: 'task',
-        tabColor: '--color-bg-pastel-purple',
-        title: 'Activity Calendar',
-        description: 'This calendar tracks doses and flareups and reminders.',
-        asset: '/assets/images/onboarding-task-1.svg'
-      },
-      {
-        type: 'task',
-        tabColor: '--color-bg-pastel-purple',
-        title: 'Activity Dose Report',
-        description: 'Make a note of your symptoms to see Theryx® at work.',
-        asset: '/assets/images/onboarding-task-2.svg'
-      },
-      {
-        type: 'task',
-        tabColor: '--color-bg-pastel-purple',
-        title: 'Activity Progress',
-        description: 'Make a note of your symptoms to see Theryx® at work.',
-        asset: '/assets/images/onboarding-task-3.svg'
-      },
-      {
-        type: 'task',
-        tabColor: '--color-bg-pastel-purple',
-        title: 'Activity Symptom Report',
-        description: 'Review individual symptom recordings to track progress.',
-        asset: '/assets/images/onboarding-task-4.svg'
-      },
-      {
-        type: 'task',
-        tabColor: '--color-bg-pastel-purple',
-        title: 'Resources',
-        description: 'Make a note of your symptoms to see Theryx® at work.',
-        asset: '/assets/images/onboarding-task-5.svg'
-      },
-      {
-        type: 'task',
-        tabColor: '--color-bg-pastel-purple',
-        title: 'Care Team',
-        description: 'Make a note of your symptoms to see Theryx® at work.',
-        asset: '/assets/images/onboarding-task-6.svg'
-      }
-    ];
     this.careTeam = [
       {
         type: 'contact',
@@ -308,14 +264,38 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
           }
 
           if (this.homeConfig.onBoardingTasks) {
+            this.completedTasks = this.homeConfig.onBoardingTasks.filter((task: any) => task.completed).length;
+            this._store.dispatch(new fromSharedStore.TopbarPendingNotifications(this.homeConfig.onBoardingTasks.length - this.completedTasks));
             this.onBoardingTasks = this.homeConfig.onBoardingTasks.map((task: any, index: number) => {
               return {
-                type: 'task',
-                tabColor: '--color-bg-pastel-purple',
                 completed: task.completed,
                 title: task.title,
                 description: task.description,
+                type: 'task',
+                tabColor: '--color-bg-pastel-purple',
                 asset: `/assets/images/onboarding-task-${index + 1}.svg`,
+                onClick: () => {
+                  switch(index) {
+                    case 0:
+                      this.goTo('activity/calendar');
+                      break;
+                    case 1:
+                      this.goTo('activity/dose-report');
+                      break;
+                    case 2:
+                      this.goTo('activity/your-progress');
+                      break;
+                    case 3:
+                      this.goTo('activity/symptom-report');
+                      break;
+                    case 4:
+                      this.goTo('resources');
+                      break;
+                    case 5:
+                      this.goTo('resources/your-care-team');
+                      break;
+                  }
+                },
               }
             });
           }
@@ -426,20 +406,6 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
       component: 'start-guided-demo',
       template: null,
       contentCentered: true,
-    }));
-  }
-
-  onTaskChange(value: any, index: number) {
-    this.onBoardingTasks[index].completed = value;
-    if (value) {
-      this.completedTasks = this.completedTasks - 1;
-    }
-    else {
-      this.completedTasks = this.completedTasks + 1;
-    }
-    
-    this._store.dispatch(new fromStore.SetData({
-      onBoardingTasks: this.onBoardingTasks
     }));
   }
 

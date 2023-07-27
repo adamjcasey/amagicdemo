@@ -5,7 +5,10 @@ export interface ActivityState {
   doseReportSelected: any;
   symptomReports: any;
   symptomReportSelected?: any;
-  currentSymptomReport?: any;
+  calendarPageVisited: boolean;
+  doseReportsPageVisited: boolean;
+  yourProgressPageVisited: boolean;
+  symptomReportPageVisited: boolean;
 }
 
 let initialState: ActivityState;
@@ -17,7 +20,11 @@ if (environment.production) {
       bodyPart: null,
       numberDose: null,
     },
-    symptomReports: []
+    symptomReports: [],
+    calendarPageVisited: false,
+    doseReportsPageVisited: false,
+    yourProgressPageVisited: false,
+    symptomReportPageVisited: false,
   }
 }
 else {
@@ -78,7 +85,10 @@ else {
         notes: 'Custom Notes',
       }
     ],
-    currentSymptomReport: null,
+    calendarPageVisited: false,
+    doseReportsPageVisited: false,
+    yourProgressPageVisited: false,
+    symptomReportPageVisited: false,
   }
 }
 

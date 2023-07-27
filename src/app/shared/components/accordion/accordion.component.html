@@ -16,7 +16,7 @@
       }">
 
     <ng-container *ngIf="config.type === 'task'">
-      <div class="check" (click)="onTaskCheck($event)">
+      <div class="check">
         <ion-icon name="checkmark-circle" *ngIf="config.completed"></ion-icon>
       </div>
     </ng-container>
@@ -28,7 +28,6 @@
     </div>
     <ion-icon class="icon" name="chevron-forward"></ion-icon>
   </header>
-
   <div class="accordion__wrapper" (click)="config.onClick ? config.onClick() : null">
     <div class="accordion__subheader" *ngIf="config.type === 'dose-report' && (config.numberDose || config.time)">
       <div class="dose">Dose {{ config.numberDose }}</div>

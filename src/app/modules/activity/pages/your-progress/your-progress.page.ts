@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { Observable, Subject, takeUntil } from 'rxjs';
 
+import * as fromStore from '@activity/store';
 import * as fromCoreStore from '@core/store';
 import * as fromSharedStore from '@shared/store';
+import * as fromHomeStore from '@home/store';
 
 @Component({
   selector: 'automagic-your-progress',
@@ -10,12 +13,20 @@ import * as fromSharedStore from '@shared/store';
   styleUrls: ['your-progress.page.scss'],
 })
 export class YourProgressPage implements OnInit {
+  public activityConfig$!: Observable<any>;
+  public activityConfig: any;
+  public homeConfig$!: Observable<any>;
+  public homeConfig: any;
+  private _ngUnsubscribe: Subject<void> = new Subject<void>();
   public heroConfig: any;
   public cards: any[];
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
   ) {
+    this.homeConfig$ = this._store.select(fromHomeStore.getHomeConfig);
+    this.activityConfig$ = this._store.select(fromStore.getActivityConfig);
+
     this.heroConfig = {
       color: '--color-bg-pastel-honey-yellow',
       template: '<h1 class="font-heading-1--bold">Your progress</h1>',
@@ -57,5 +68,31 @@ export class YourProgressPage implements OnInit {
 
   ngOnInit() {
     this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
+    this.homeConfig$
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(homeConfig => {
+        if (homeConfig) {
+          this.homeConfig = homeConfig;
+        }
+      });
+
+    this.activityConfig$
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(activityConfig => {
+        if (activityConfig) {
+          this.activityConfig = activityConfig;
+          if (!this.activityConfig.yourProgressPageVisited && this.homeConfig) {
+            const onBoardingTasks = this.homeConfig.onBoardingTasks.map((task: any, index: number) => {
+              return {
+                ...task,
+              }
+            });
+            onBoardingTasks[2].completed = true;
+            this._store.dispatch(new fromHomeStore.SetData({
+              onBoardingTasks: onBoardingTasks,
+            }));
+          }
+        }
+      });
   }
 }

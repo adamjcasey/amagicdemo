@@ -1,14 +1,29 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Observable, Subject, takeUntil } from 'rxjs';
+
+import * as fromStore from '@activity/store';
+import * as fromCoreStore from '@core/store';
+import * as fromHomeStore from '@home/store';
 
 @Component({
   selector: 'automagic-calendar',
   templateUrl: 'calendar.page.html',
   styleUrls: ['calendar.page.scss'],
 })
-export class CalendarPage {
+export class CalendarPage implements OnInit, OnDestroy {
+  public activityConfig$!: Observable<any>;
+  public activityConfig: any;
+  public homeConfig$!: Observable<any>;
+  public homeConfig: any;
+  private _ngUnsubscribe: Subject<void> = new Subject<void>();
   public slides: any[];
 
-  constructor() {
+  constructor(
+    private _store: Store<fromCoreStore.CoreState>,
+  ) {
+    this.activityConfig$ = this._store.select(fromStore.getActivityConfig);
+    this.homeConfig$ = this._store.select(fromHomeStore.getHomeConfig);
     this.slides = [
       {
         header: {
@@ -20,5 +35,39 @@ export class CalendarPage {
         },
       },
     ];
+  }
+
+  ngOnInit() {
+    this.homeConfig$
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(homeConfig => {
+        if (homeConfig) {
+          this.homeConfig = homeConfig;
+        }
+      });
+
+    this.activityConfig$
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(activityConfig => {
+        if (activityConfig) {
+          this.activityConfig = activityConfig;
+          if (!this.activityConfig.calendarPageVisited && this.homeConfig) {
+            const onBoardingTasks = this.homeConfig.onBoardingTasks.map((task: any, index: number) => {
+              return {
+                ...task,
+              }
+            });
+            onBoardingTasks[0].completed = true;
+            this._store.dispatch(new fromHomeStore.SetData({
+              onBoardingTasks: onBoardingTasks,
+            }));
+          }
+        }
+      });
+  }
+
+  ngOnDestroy() {
+    this._ngUnsubscribe.next();
+    this._ngUnsubscribe.complete();
   }
 }
