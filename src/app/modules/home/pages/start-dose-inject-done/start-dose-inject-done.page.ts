@@ -45,7 +45,7 @@ export class StartDoseInjectDonePage implements OnInit {
             {
               label: 'Add dose notes',
               action: () => {
-                this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-white'));
+                this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-white'));
                 this.sliderPage.slideNext();
               },
             },

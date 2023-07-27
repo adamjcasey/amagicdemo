@@ -14,6 +14,7 @@ export enum ActionTypes {
   AlertSetConfig = '[Alert] Set Config',
   BottomToolbarHide = '[BottomToolbar] Hide',
   TopbarChangeColor = '[Topbar] Chnage Color',
+  TopbarPendingNotifications = '[Topbar] Pending Notifications',
 }
 export class BackdropShow implements Action {
   readonly type = ActionTypes.BackdropShow;
@@ -78,6 +79,11 @@ export class TopbarChangeColor implements Action {
 
   constructor(public payload: any) {}
 }
+export class TopbarPendingNotifications implements Action {
+  readonly type = ActionTypes.TopbarPendingNotifications;
+
+  constructor(public payload: any) {}
+}
 
 export type ActionsUnion 
   = BackdropShow 
@@ -92,4 +98,5 @@ export type ActionsUnion
   | AlertClose
   | AlertSetConfig
   | BottomToolbarHide
-  | TopbarChangeColor;
+  | TopbarChangeColor
+  | TopbarPendingNotifications;

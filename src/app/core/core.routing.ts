@@ -38,6 +38,10 @@ const routes: Routes = [
     path: 'styleguide',
     loadChildren: () => import('src/app/modules/styleguide/styleguide.module').then( m => m.StyleguideModule)
   },
+  {
+    path: 'notifications',
+    component: fromPages.NotificationsPage
+  },
   // Handler error
   { path: '**', component: fromPages.ErrorPage }
 ];

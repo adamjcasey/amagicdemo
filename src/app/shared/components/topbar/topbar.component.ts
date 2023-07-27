@@ -113,6 +113,10 @@ export class TopBarComponent implements OnInit, OnDestroy {
   }
 
   goTo(path: string) {
+    if (path === 'notifications') {
+      this._store.dispatch(new fromStore.TopbarChangeColor('--color-white'));
+    }
+
     this._store.dispatch(new fromCoreStore.Go({
       path: [path]
     }));

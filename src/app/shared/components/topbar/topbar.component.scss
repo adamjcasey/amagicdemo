@@ -1,3 +1,5 @@
+@import 'src/theme/base/mixins';
+
 .topbar__toolbar {
   --background: transparent;
   --border-width: 0 !important;
@@ -26,6 +28,22 @@
       font-size: var(--font-size-paragraph-m);
       font-weight: var(--font-weight-extrabold);
       line-height: var(--font-line-height-heading-5);
+    }
+  }
+  .notifications-cta {
+    .counter {
+      position: absolute;
+      top: 22px;
+      left: 21px;
+      width: 16px;
+      height: 16px;
+      font-size: 10px;
+      line-height: 18px;
+      font-weight: var(--font-weight-extrabold);
+      background-color: var(--color-primary-salmon);
+      border-radius: 50%;
+      color: var(--color-white);
+      text-align: center;
     }
   }
 }

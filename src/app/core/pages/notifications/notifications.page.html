@@ -1,0 +1,17 @@
+<ion-content [fullscreen]="true" class="ion-padding">
+  <section class="notifications-page">
+    <h1 class="font-heading-1--bold">Notifications</h1>
+    <ng-container *ngIf="remainingTasks > 0"></ng-container>
+    <h3 class="notifications-page__counter">Onboarding Tasks <span class="tasks-counter">{{ remainingTasks }}</span></h3>
+    <div class="notifications-page__content">
+      <div class="notification" *ngFor="let task of pendingOnBoardingTask; let i = index" (click)="task.onClick()">
+        <ion-img class="notification__asset" src="{{ task.asset }}"></ion-img>
+        <div class="notification__content">
+          <h5>{{ task.title }}</h5>
+          <p>{{ task.description }}</p>
+        </div>
+        <ion-icon name="chevron-forward-outline"></ion-icon>
+      </div>
+    </div>
+  </section>
+</ion-content>

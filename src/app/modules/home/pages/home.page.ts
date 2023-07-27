@@ -380,9 +380,11 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
       transition: 'move',
       header: true,
       template: `
-        <img src="assets/images/flare-up-backdrop-image.svg" />
-        <h1 class="font-heading-1--bold">Pretend you’ve got a flare-up...</h1>
-        <p>To demonstrate the capabilities of a connected ecosystem, we’re going to simulate a symptom flare-up that can be detected by your watch.</p>
+        <div class="simulate-flares-up">
+          <img src="assets/images/flare-up-backdrop-image.svg" />
+          <h1 class="font-heading-1--bold">Pretend you’ve got a flare-up...</h1>
+          <p>To demonstrate the capabilities of a connected ecosystem, we’re going to simulate a symptom flare-up that can be detected by your watch.</p>
+        </div>
       `,
       buttons: [
         {
