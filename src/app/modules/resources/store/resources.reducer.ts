@@ -14,6 +14,26 @@ export function ResourcesReducer(
         ...action.payload,
       };
     }
+    
+    case fromActions.ActionTypes.UpdateCareTeam: {
+      return {
+        ...state,
+        yourCareTeam: {
+          ...state.yourCareTeam,
+          ...action.payload,
+        }
+      };
+    }
+
+    case fromActions.ActionTypes.MemberYouCareTeamSelected: {
+      return {
+        ...state,
+        yourCareTeam: {
+          ...state.yourCareTeam,
+          memberSelected: action.payload,
+        }
+      };
+    }
 
     default: {
       return state;

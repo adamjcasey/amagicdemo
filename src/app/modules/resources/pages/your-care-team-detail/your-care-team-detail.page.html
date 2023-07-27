@@ -1,0 +1,95 @@
+<ion-content [fullscreen]="true">
+  <section class="your-care-team-detail">
+    <automagic-hero 
+      *ngIf="heroConfig"
+      [color]="heroConfig.color" 
+      [template]="heroConfig.template" 
+      [extraCss]="heroConfig.extraCss"
+    ></automagic-hero>
+
+    <header class="your-care-team-detail__header">
+      <ion-img [src]="memberSelected.photo"></ion-img>
+      <div class="your-care-team-detail__contact">
+        <div class="action" *ngIf="memberSelected.website">
+          <ion-icon src="/assets/icons/accordion-action-website.svg" size="large"></ion-icon>
+        </div>
+  
+        <div class="action" *ngIf="memberSelected.email">
+          <ion-icon src="/assets/icons/accordion-action-mail.svg" size="large"></ion-icon>
+        </div>
+  
+        <div class="action" *ngIf="memberSelected.video">
+          <ion-icon src="/assets/icons/accordion-action-video.svg" size="large"></ion-icon>
+        </div>
+  
+        <div class="action" *ngIf="memberSelected.phone">
+          <ion-icon src="/assets/icons/accordion-action-phone.svg" size="large"></ion-icon>
+        </div>
+      </div>
+    </header>
+
+    <div class="your-care-team-detail__content ion-padding">
+      <div class="your-care-team-detail__section">
+        <div class="field">
+          <p class="field-label">Name</p>
+          <p class="field-value">{{ memberSelected.name }}</p>
+        </div>
+
+        <div class="field">
+          <p class="field-label">Role</p>
+          <p class="field-value">{{ memberSelected.role }}</p>
+        </div>
+
+        <div class="field">
+          <p class="field-label">Phone number</p>
+          <p class="field-value">{{ memberSelected.phone }}</p>
+        </div>
+
+        <div class="field">
+          <p class="field-label">Email</p>
+          <p class="field-value">{{ memberSelected.email }}</p>
+        </div>
+      </div>
+
+      <h5>Permissions</h5>
+      <div class="your-care-team-detail__section">
+        <div class="field-wrapper field--slider">
+          <p class="field-label">Dose history</p>
+          <ion-toggle 
+            color="purple" 
+            [checked]="memberSelected.permissions.includes('dose-history')"
+          ></ion-toggle>
+        </div>
+
+        <div class="field-wrapper field--slider">
+          <p class="field-label">Prescription info</p>
+          <ion-toggle 
+            color="purple" 
+            [checked]="memberSelected.permissions.includes('prescription-info')"
+          ></ion-toggle>
+        </div>
+
+        <div class="field-wrapper field--slider">
+          <p class="field-label">Dose Schedule</p>
+          <ion-toggle 
+            color="purple" 
+            [checked]="memberSelected.permissions.includes('dose-schedule')"
+          ></ion-toggle>
+        </div>
+
+        <div class="field-wrapper field--slider">
+          <p class="field-label">Injection Site Photos</p>
+          <ion-toggle 
+            color="purple" 
+            [checked]="memberSelected.permissions.includes('injection-site-photos')"
+          ></ion-toggle>
+        </div>
+      </div>
+
+      <ion-button class="delete-cta no-padding" fill="clear" color="purple" (click)="deleteMember(memberSelected)">
+        <ion-icon slot="start" src="/assets/icons/delete.svg" size="extra-large"></ion-icon>
+        Delete member
+      </ion-button>
+    </div>
+  </section>
+</ion-content>

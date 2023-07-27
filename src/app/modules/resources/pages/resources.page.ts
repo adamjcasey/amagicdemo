@@ -5,6 +5,7 @@ import { Observable, Subject, takeUntil } from 'rxjs';
 import * as fromSharedServices from '@shared/services';
 import * as fromStore from '@resources/store';
 import * as fromCoreStore from '@core/store';
+import * as fromSharedStore from '@shared/store';
 import * as fromHomeStore from '@home/store';
 
 @Component({
@@ -34,6 +35,7 @@ export class ResourcesPage implements OnInit, AfterViewChecked, OnDestroy {
         description: 'Connect to your health care providers for holistic care.',
         action: () => {
           this.goTo('resources/your-care-team');
+          this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-blue'));
         }
       },
       {

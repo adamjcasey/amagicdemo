@@ -1,0 +1,26 @@
+<ion-content [fullscreen]="true">
+  <section class="your-care-team-list">
+    <automagic-hero 
+      *ngIf="heroConfig"
+      [color]="heroConfig.color" 
+      [template]="heroConfig.template" 
+    ></automagic-hero>
+
+    <div class="your-care-team-list__actions">
+      <div class="action">
+        <ion-icon src="/assets/icons/add.svg" size="extra-large"></ion-icon>
+        <p>Add member</p>
+      </div>
+    </div>
+
+    <div class="your-care-team-list__section ion-padding">
+      <h5>My Care Team</h5>
+      <automagic-accordion [config]="contact" *ngFor="let contact of myTeam"></automagic-accordion>
+    </div>
+
+    <div class="your-care-team-list__section ion-padding">
+      <h5>Caregivers</h5>
+      <automagic-accordion [config]="contact" *ngFor="let contact of caregivers"></automagic-accordion>
+    </div>
+  </section>
+</ion-content>

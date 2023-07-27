@@ -28,6 +28,7 @@ export class BottomToolbarComponent {
       '/home/start-dose/inject-done',
       '/home/add-symptom',
       '/settings/setup-reminders',
+      'resources/your-care-team/detail',
     ];
 
     this.routerEvents$ = this._router.events.subscribe(

@@ -103,7 +103,11 @@ ion-checkbox::part(container) {
 
 ion-icon {
   &.icon-medium {
-    font-size: var(--font-size-heading-3) !important;
+    font-size: var(--size-m) !important;
+  }
+
+  &.icon-extra-large {
+    font-size: var(--size-xxl) !important;
   }
 }
 

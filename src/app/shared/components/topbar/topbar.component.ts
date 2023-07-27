@@ -22,6 +22,7 @@ export class TopBarComponent implements OnInit, OnDestroy {
   public routerEvents$;
   public activityScope: boolean = false;
   public settingsScope: boolean = false;
+  public resourcesScope: boolean = false;
   public currentRoute: string = '';
   private _ngUnsubscribe: Subject<void> = new Subject<void>();
 
@@ -45,6 +46,7 @@ export class TopBarComponent implements OnInit, OnDestroy {
           else {
             this.activityScope = this.currentRoute.includes('activity/');
             this.settingsScope = this.currentRoute.includes('settings/');
+            this.resourcesScope = this.currentRoute.includes('resources/');
           }
         }
       },
@@ -106,6 +108,19 @@ export class TopBarComponent implements OnInit, OnDestroy {
     }
     else if (this.settingsScope) {
       this.goTo('settings');
+    }
+    else if (this.resourcesScope) {
+      if (this.currentRoute.includes('resources/your-care-team')) {
+        this.goTo('resources');
+      }
+
+      if (this.currentRoute.includes('resources/your-care-team/list')) {
+        this.goTo('resources/your-care-team');
+      }
+
+      if (this.currentRoute.includes('resources/your-care-team/detail')) {
+        this.goTo('resources/your-care-team/list');
+      }
     }
     else {
       // this.goTo('profile');

@@ -2,11 +2,11 @@
   <ion-toolbar class="topbar__toolbar">
     <ion-buttons slot="start">
       <ion-button (click)="leftElementAction()">
-        <ng-container *ngIf="!activityScope && !settingsScope">
+        <ng-container *ngIf="!activityScope && !settingsScope && !resourcesScope">
           <ion-icon slot="icon-only" src="/assets/icons/user.svg"></ion-icon>
         </ng-container>
 
-        <ng-container *ngIf="activityScope || settingsScope">
+        <ng-container *ngIf="activityScope || settingsScope || resourcesScope">
           <ion-icon slot="icon-only" size="medium" color="dark" name="chevron-back-outline"></ion-icon>
         </ng-container>
       </ion-button>

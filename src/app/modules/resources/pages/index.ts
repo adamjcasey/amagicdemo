@@ -1,7 +1,7 @@
 import { ResourcesPage } from './resources.page';
 import { YourCareTeamPage } from './your-care-team/your-care-team.page';
-import { YourCareTeamAddPage } from './your-care-team-add/your-care-team-add.page';
-import { YourCareTeamOnePage } from './your-care-team-one/your-care-team-one.page';
+import { YourCareTeamListPage } from './your-care-team-list/your-care-team-list.page';
+import { YourCareTeamDetailPage } from './your-care-team-detail/your-care-team-detail.page';
 import { CommunityFeedPage } from './community-feed/community-feed.page';
 import { OnePathPage } from './one-path/one-path.page';
 import { EducationPage } from './education/education.page';
@@ -11,8 +11,8 @@ import { HeadspacePage } from './mindful-assistant/headspace.page';
 export const pages: any[] = [
     ResourcesPage,
     YourCareTeamPage,
-    YourCareTeamAddPage,
-    YourCareTeamOnePage,
+    YourCareTeamListPage,
+    YourCareTeamDetailPage,
     CommunityFeedPage,
     OnePathPage,
     EducationPage,
@@ -22,8 +22,8 @@ export const pages: any[] = [
 
 export * from './resources.page';
 export * from './your-care-team/your-care-team.page';
-export * from './your-care-team-add/your-care-team-add.page';
-export * from './your-care-team-one/your-care-team-one.page';
+export * from './your-care-team-list/your-care-team-list.page';
+export * from './your-care-team-detail/your-care-team-detail.page';
 export * from './community-feed/community-feed.page';
 export * from './one-path/one-path.page';
 export * from './education/education.page';

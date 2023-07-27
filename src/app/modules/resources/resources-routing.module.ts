@@ -13,12 +13,12 @@ const routes: Routes = [
     component: fromPages.YourCareTeamPage
   },
   {
-    path: 'your-care-team/add',
-    component: fromPages.YourCareTeamAddPage
+    path: 'your-care-team/list',
+    component: fromPages.YourCareTeamListPage
   },
   {
-    path: 'your-care-team/one',
-    component: fromPages.YourCareTeamOnePage
+    path: 'your-care-team/detail',
+    component: fromPages.YourCareTeamDetailPage
   },
   {
     path: 'education',
