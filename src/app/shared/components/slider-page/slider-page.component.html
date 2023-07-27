@@ -17,9 +17,10 @@
         'has-asset': config.header?.asset, 
         'has-template': config.header?.template, 
         'has-component': config.header?.component, 
+        'has-timeline': config.content?.timeline,
       }">
 
-      <swiper #sliderHeader effect="fade" [allowTouchMove]="false" [autoHeight]="true">
+      <swiper #sliderHeader effect="fade" [allowTouchMove]="false">
         <ng-template class="slider-page__header-slide" swiperSlide *ngFor="let slide of slides">
           <div class="asset-wrapper" *ngIf="slide.header?.asset">
             <img [src]="slide.header.asset" />

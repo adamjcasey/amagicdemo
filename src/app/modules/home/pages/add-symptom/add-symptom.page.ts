@@ -39,6 +39,7 @@ export class AddSymptomPage implements OnInit {
         content: {
           isExpanded: true,
           component: 'add-symptom-form',
+          template: null,
           toolbar: { 
             actions: [
               {
@@ -86,9 +87,10 @@ export class AddSymptomPage implements OnInit {
                   }
                   // save the symptom report on activity store
                   this._store.dispatch(new fromActivityStore.SetData({
+                    currentSymptomCreating: null,
                     symptomReports: [
                       ...this.activityConfig.symptomReports, 
-                      this.activityConfig.currentSymptomReport
+                      this.activityConfig.currentSymptomCreating
                     ],
                   }));
                   this.goTo('home');

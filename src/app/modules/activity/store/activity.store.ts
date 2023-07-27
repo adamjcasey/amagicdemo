@@ -5,6 +5,7 @@ export interface ActivityState {
   doseReportSelected: any;
   symptomReports: any;
   symptomReportSelected?: any;
+  currentSymptomCreating?: any;
   calendarPageVisited: boolean;
   doseReportsPageVisited: boolean;
   yourProgressPageVisited: boolean;

@@ -53,12 +53,6 @@ export class AddSymptomFormComponent implements OnInit {
   }
 
   ngOnInit() {
-    this._store.dispatch(new fromActivityStore.SetData({
-      currentSymptomReport: {
-        ...this.addSymptomFormGroup.value
-      }
-    }));
-
     this.sliderPageConfig$.subscribe(sliderPageConfig => {
       if (sliderPageConfig) {
         this.sliderPageConfig = sliderPageConfig;
@@ -68,18 +62,18 @@ export class AddSymptomFormComponent implements OnInit {
     this.activityConfig$.subscribe(activityConfig => {
       if (activityConfig) {
         if (activityConfig.symptomReportSelected) {
+          this.detailView = true;
           this.reportSelected = activityConfig.symptomReportSelected;
           this.addSymptomFormGroup.patchValue({
             ...this.reportSelected,
           });
-          this.detailView = true;
           this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
             toolbar: null,
           }));
         }
         else {
-          this.reportSelected = null;
           this.detailView = false;
+          this.reportSelected = null;
         }
       }
     });
@@ -89,30 +83,32 @@ export class AddSymptomFormComponent implements OnInit {
         const actions = this.sliderPageConfig.content.toolbar.actions;
         if (actions) {
           if (this.addSymptomFormGroup.valid) {
-            this._store.dispatch(new fromActivityStore.SetData({
-              currentSymptomReport: {
-                ...this.addSymptomFormGroup.value
-              }
-            }));
-
-            if (this.addSymptomFormGroup.get('date')?.value === '') {
-              this.addSymptomFormGroup.patchValue({
-                date: new Date(),
-              });
-            }
-  
-            if ((actions[1].disabled)) {
-              this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
-                toolbar: {
-                  actions: [
-                    actions[0],
-                    {
-                      ...actions[1],
-                      disabled: false,
-                    }
-                  ]
+            if (!this.detailView) {
+              this._store.dispatch(new fromActivityStore.SetData({
+                currentSymptomCreating: {
+                  ...this.addSymptomFormGroup.value
                 }
               }));
+
+              if (this.addSymptomFormGroup.get('date')?.value === '') {
+                this.addSymptomFormGroup.patchValue({
+                  date: new Date(),
+                });
+              }
+    
+              if ((actions[1].disabled)) {
+                this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
+                  toolbar: {
+                    actions: [
+                      actions[0],
+                      {
+                        ...actions[1],
+                        disabled: false,
+                      }
+                    ]
+                  }
+                }));
+              }
             }
           }
           else {

@@ -8,7 +8,8 @@
   .your-progress__states {
     position: relative;
     z-index: 50;
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     justify-content: space-between;
     gap: var(--size-xxxs);
     margin-top: -50px;

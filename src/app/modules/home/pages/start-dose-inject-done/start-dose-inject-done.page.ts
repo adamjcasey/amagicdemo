@@ -75,6 +75,7 @@ export class StartDoseInjectDonePage implements OnInit {
               {
                 label: 'Skip',
                 action: (event: any) => {
+                  this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-mint'));
                   event.target.nextElementSibling.click();
                 },
               },
@@ -82,6 +83,7 @@ export class StartDoseInjectDonePage implements OnInit {
                 label: 'Proceed',
                 // disabled: true,
                 action: () => {
+                  this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-mint'));
                   if (this.homeConfig.firstTimeDose) {
                     this.sliderPage.slideNext();
                   }

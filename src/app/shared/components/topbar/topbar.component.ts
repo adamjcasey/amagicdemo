@@ -117,6 +117,14 @@ export class TopBarComponent implements OnInit, OnDestroy {
       this._store.dispatch(new fromStore.TopbarChangeColor('--color-white'));
     }
 
+    if (this.currentRoute.includes('home/add-symptom')) {
+      if (this.activityConfig.symptomReportSelected) {
+        this._store.dispatch(new fromActivityStore.SetData({
+          symptomReportSelected: null,
+        }));
+      }
+    }
+
     this._store.dispatch(new fromCoreStore.Go({
       path: [path]
     }));

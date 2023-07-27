@@ -52,19 +52,19 @@ export class StartDoseReadyToInjectBodyPartSelectorComponent implements OnInit, 
       x: event.x,
       y: event.y,
     };
+    console.log('coords ', coords);
 
-
-    if (coords.x >= 150 && coords.x <= 245) {
+    if (coords.x >= 150 && coords.x <= 240) {
       // top-right
-      if (coords.x >= 200) {
-        if (coords.y >= 335 && coords.y <= 390) {
+      if (coords.x >= 210) {
+        if (coords.y >= 355 && coords.y <= 405) {
           clickOnPath = true;
           this.bodyPartSelected = 'top-right';
         }
       }
       // top-left
       else {
-        if (coords.y >= 335 && coords.y <= 390) {
+        if (coords.y >= 355 && coords.y <= 405) {
           clickOnPath = true;
           this.bodyPartSelected = 'top-left';
         }
@@ -73,15 +73,15 @@ export class StartDoseReadyToInjectBodyPartSelectorComponent implements OnInit, 
 
     if (coords.x >= 145 && coords.x <= 250) {
       // bottom-right
-      if (coords.x >= 195) {
-        if (coords.y >= 450 && coords.y <= 510) {
+      if (coords.x >= 210) {
+        if (coords.y >= 480 && coords.y <= 545) {
           clickOnPath = true;
           this.bodyPartSelected = 'bottom-right';
         }
       }
       // bottom-left
       else {
-        if (coords.y >= 450 && coords.y <= 510) {
+        if (coords.y >= 480 && coords.y <= 545) {
           clickOnPath = true;
           this.bodyPartSelected = 'bottom-left';
         }

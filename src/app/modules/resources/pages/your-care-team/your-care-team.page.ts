@@ -1,16 +1,29 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Observable, Subject, takeUntil } from 'rxjs';
+
+import * as fromStore from '@resources/store';
+import * as fromCoreStore from '@core/store';
+import * as fromHomeStore from '@home/store';
 
 @Component({
   selector: 'automagic-your-care-team',
   templateUrl: './your-care-team.page.html',
   styleUrls: ['./your-care-team.page.scss'],
 })
-export class YourCareTeamPage implements OnInit {
+export class YourCareTeamPage implements OnInit, OnDestroy {
+  public resourcesConfig$!: Observable<any>;
+  public resourcesConfig: any;
+  public homeConfig$!: Observable<any>;
+  public homeConfig: any;
+  private _ngUnsubscribe: Subject<void> = new Subject<void>();
   public heroConfig: any;
 
-  constructor() { }
-
-  ngOnInit() {
+  constructor(
+    private _store: Store<fromCoreStore.CoreState>,
+  ) {
+    this.homeConfig$ = this._store.select(fromHomeStore.getHomeConfig);
+    this.resourcesConfig$ = this._store.select(fromStore.getResourcesConfig);
     this.heroConfig = {
       color: 'var(--color-bg-pastel-blue)',
       template: `
@@ -18,5 +31,39 @@ export class YourCareTeamPage implements OnInit {
        `,
        actions: [],
     }
+  }
+
+  ngOnInit() {
+    this.homeConfig$
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(homeConfig => {
+        if (homeConfig) {
+          this.homeConfig = homeConfig;
+        }
+      });
+
+    this.resourcesConfig$
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(resourcesConfig => {
+        if (resourcesConfig) {
+          this.resourcesConfig = resourcesConfig;
+          if (!this.resourcesConfig.yourCareTeamPageVisited && this.homeConfig) {
+            const onBoardingTasks = this.homeConfig.onBoardingTasks.map((task: any) => {
+              return {
+                ...task,
+              }
+            });
+            onBoardingTasks[5].completed = true;
+            this._store.dispatch(new fromHomeStore.SetData({
+              onBoardingTasks: onBoardingTasks,
+            }));
+          }
+        }
+      });
+  }
+
+  ngOnDestroy() {
+    this._ngUnsubscribe.next();
+    this._ngUnsubscribe.complete();
   }
 }

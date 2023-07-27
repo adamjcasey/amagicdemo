@@ -1,21 +1,31 @@
-import { Component, AfterViewChecked } from '@angular/core';
+import { Component, AfterViewChecked, OnInit, OnDestroy } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Observable, Subject, takeUntil } from 'rxjs';
 
 import * as fromSharedServices from '@shared/services';
+import * as fromStore from '@resources/store';
 import * as fromCoreStore from '@core/store';
-import { Store } from '@ngrx/store';
+import * as fromHomeStore from '@home/store';
 
 @Component({
   selector: 'automagic-resources',
   templateUrl: 'resources.page.html',
   styleUrls: ['resources.page.scss'],
 })
-export class ResourcesPage implements AfterViewChecked {
+export class ResourcesPage implements OnInit, AfterViewChecked, OnDestroy {
+  public resourcesConfig$!: Observable<any>;
+  public resourcesConfig: any;
+  public homeConfig$!: Observable<any>;
+  public homeConfig: any;
+  private _ngUnsubscribe: Subject<void> = new Subject<void>();
   public cards: any[];
 
   constructor(
     private _utils: fromSharedServices.UtilsService,
     private _store: Store<fromCoreStore.CoreState>,
   ) {
+    this.homeConfig$ = this._store.select(fromHomeStore.getHomeConfig);
+    this.resourcesConfig$ = this._store.select(fromStore.getResourcesConfig);
     this.cards = [
       {
         type: 'simple',
@@ -63,6 +73,40 @@ export class ResourcesPage implements AfterViewChecked {
         }
       },
     ];
+  }
+
+  ngOnInit() {
+    this.homeConfig$
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(homeConfig => {
+        if (homeConfig) {
+          this.homeConfig = homeConfig;
+        }
+      });
+
+    this.resourcesConfig$
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(resourcesConfig => {
+        if (resourcesConfig) {
+          this.resourcesConfig = resourcesConfig;
+          if (!this.resourcesConfig.entryPageVisited && this.homeConfig) {
+            const onBoardingTasks = this.homeConfig.onBoardingTasks.map((task: any) => {
+              return {
+                ...task,
+              }
+            });
+            onBoardingTasks[4].completed = true;
+            this._store.dispatch(new fromHomeStore.SetData({
+              onBoardingTasks: onBoardingTasks,
+            }));
+          }
+        }
+      });
+  }
+
+  ngOnDestroy() {
+    this._ngUnsubscribe.next();
+    this._ngUnsubscribe.complete();
   }
 
   ngAfterViewChecked() {

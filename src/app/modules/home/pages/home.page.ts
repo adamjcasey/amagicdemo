@@ -265,7 +265,6 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
 
           if (this.homeConfig.onBoardingTasks) {
             this.completedTasks = this.homeConfig.onBoardingTasks.filter((task: any) => task.completed).length;
-            this._store.dispatch(new fromSharedStore.TopbarPendingNotifications(this.homeConfig.onBoardingTasks.length - this.completedTasks));
             this.onBoardingTasks = this.homeConfig.onBoardingTasks.map((task: any, index: number) => {
               return {
                 completed: task.completed,
@@ -298,6 +297,11 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
                 },
               }
             });
+
+            const markedDoses = this.homeConfig.doses.filter((dose: any) => dose.marked);
+            if (markedDoses.length === 6) {
+              this._store.dispatch(new fromSharedStore.TopbarPendingNotifications(this.homeConfig.onBoardingTasks.length - this.completedTasks));
+            }
           }
         }
       });

@@ -45,6 +45,34 @@ export class SymptomReportPage implements OnInit, OnDestroy {
       .subscribe(activityConfig => {
         if (activityConfig) {
           this.activityConfig = activityConfig;
+
+          if (this.activityConfig.symptomReports) {
+            this.symptomReports = this.activityConfig.symptomReports.map((report: any) => {
+              return {
+                title: moment(report.date).format('MMM D, H:mm A'),
+                template: `
+                  <div class="symptom-report-widget">
+                    <div class="row-field symptoms">
+                      <h5>Symptoms</h5>
+                      <p>${report.symptoms.join(', ')}</p>
+                    </div>
+      
+                    <div class="row-field severity">
+                      <h5>Severity</h5>
+                      <p class="level-${report.severity}">${this.humanizeSeveritySymptom(report.severity)}</p>
+                    </div>
+                  </div>
+                `,
+                onClick: () => {
+                  this._store.dispatch(new fromStore.SetData({
+                    symptomReportSelected: report,
+                  }));
+                  this.goTo('home/add-symptom');
+                }
+              }
+            });
+          }
+
           if (!this.activityConfig.symptomReportPageVisited && this.homeConfig) {
             const onBoardingTasks = this.homeConfig.onBoardingTasks.map((task: any) => {
               return {
