@@ -10,6 +10,7 @@ export interface ResourcesState {
   yourCareTeam: any;
   communityFeeds: any[];
   educationFeeds: any[];
+  supportPatientChat?: any;
 }
 
 let initialState: ResourcesState;
@@ -139,7 +140,58 @@ else {
           <p>Rem neque dicta sit omnis dolor et galisum consequuntur qui eaque nihil. Id sunt iste... Continue Reading</p>
         `,
       },
-    ]
+    ],
+    supportPatientChat: {
+      to: {
+        name: 'Bruno',
+        role: 'Your Patient Support Manager',
+        phone: '+155555555',
+        photo: '/assets/images/patient-support-manager.svg',
+        status: 'online',
+      },
+      messages: [
+        {
+          type: 'from',
+          content: 'I’m going to be traveling for my next injection. How do I make sure to get my Theryx when I’m away?',
+        },
+        {
+          type: 'to',
+          content: 'I can help you with that where will you be traveling? Also how are you doing?',
+        },
+        {
+          type: 'from',
+          content: 'I’m going to be traveling for my next injection. How do I make sure to get my Theryx when I’m away?',
+        },
+        {
+          type: 'to',
+          content: 'I can help you with that where will you be traveling? Also how are you doing?',
+        },
+        {
+          type: 'from',
+          content: 'I’m going to be traveling for my next injection. How do I make sure to get my Theryx when I’m away?',
+        },
+        {
+          type: 'to',
+          content: 'I can help you with that where will you be traveling? Also how are you doing?',
+        },
+        {
+          type: 'from',
+          content: 'I’m going to be traveling for my next injection. How do I make sure to get my Theryx when I’m away?',
+        },
+        {
+          type: 'to',
+          content: 'I can help you with that where will you be traveling? Also how are you doing?',
+        },
+        {
+          type: 'from',
+          content: 'I’m going to be traveling for my next injection. How do I make sure to get my Theryx when I’m away?',
+        },
+        {
+          type: 'to',
+          content: 'I can help you with that where will you be traveling? Also how are you doing?',
+        }
+      ]
+    }
   }
 }
 
