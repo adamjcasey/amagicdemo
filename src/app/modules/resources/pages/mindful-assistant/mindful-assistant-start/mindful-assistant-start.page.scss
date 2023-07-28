@@ -1,0 +1,27 @@
+.mindful-assistant-start-page__wrapper {
+  --background: var(--color-bg-pastel-green);
+}
+
+.mindful-assistant-start-page {
+  text-align: center;
+
+  h1 {
+    padding-top: var(--topbar-size);
+    margin-bottom: var(--size-m);
+  }
+
+  .mindful-assistant-start-page__content {
+    ion-button {
+      margin-top: var(--size-s);
+    }
+  }
+
+  .mindful-assistant-start-page__asset {
+    padding-top: var(--size-l);
+
+    ion-img {
+      width: 280px;
+      margin: 0 auto;
+    }
+  }
+}

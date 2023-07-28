@@ -1,27 +1,27 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
+
 import * as fromCoreStore from '@core/store';
+import * as fromSharedStore from '@shared/store';
 
 @Component({
   selector: 'automagic-mindful-assistant',
   templateUrl: './mindful-assistant.page.html',
   styleUrls: ['./mindful-assistant.page.scss'],
 })
-export class MindfulAssistantPage implements OnInit {
+export class MindfulAssistantPage {
   public heroConfig: any;
   public cards: Array<any> = [];
   public exit_card: any;
 
-  constructor(private _store: Store<fromCoreStore.CoreState>) { 
-  }
-
-  ngOnInit() {
+  constructor(
+    private _store: Store<fromCoreStore.CoreState>
+  ) { 
     this.heroConfig = {
-      color: 'var(--color-bg-pastel-lime)',
+      color: '--color-bg-pastel-lime',
       template: `
         <h1 class="font-heading-1--bold">Mindful Assistant</h1>
-       `,
-       actions: [],
+      `,
     };
 
     this.cards = [
@@ -35,14 +35,6 @@ export class MindfulAssistantPage implements OnInit {
       },
       {
         type: 'mindful',
-        title: 'Delay Injection 30 min',
-        asset: '/assets/images/resources-mindful-assistant-delay.svg',
-        action: () => {
-          console.log('Mindful Assistant: Delay Injection');
-        }
-      },      
-      {
-        type: 'mindful',
         title: 'Pain reduction Techniques',
         asset: '/assets/images/resources-mindful-assistant-pain.svg',
         action: () => {
@@ -51,24 +43,32 @@ export class MindfulAssistantPage implements OnInit {
       }, 
       {
         type: 'mindful',
-        title: 'Talk to a coach',
+        title: 'Delay Injection 30 min',
+        asset: '/assets/images/resources-mindful-assistant-delay.svg',
+        action: () => {
+          console.log('Mindful Assistant: Delay Injection');
+        }
+      },
+      {
+        type: 'mindful',
+        title: 'Talk to a<br>coach',
         asset: '/assets/images/resources-mindful-assistant-talk.svg',
         action: () => {
           console.log('Mindful Assistant: Talk to a coach');
         }
-      },      
-    ];    
-    this.exit_card = {
-      asset: '/assets/images/resources-mindful-assistant-dot.svg',
-      description: 'Stress less, sleep soundly, and get happier.  Use Headspace.',
-      link: {
-        label: 'Let’s start',
-        color: "salmon",
-        action: () => {
-          this.goTo('/resources/headspace');
-        }
-      },
-    }
+      }, 
+      {
+        asset: '/assets/images/resources-mindful-assistant-dot.svg',
+        description: 'Stress less, sleep soundly, and get happier. Use Headspace.',
+        link: {
+          label: 'Let’s start',
+          color: 'salmon',
+          action: () => {
+            this.goTo('resources/mindful-assistant/start');
+          }
+        },
+      }     
+    ];
   }
 
   goTo(path: string) {

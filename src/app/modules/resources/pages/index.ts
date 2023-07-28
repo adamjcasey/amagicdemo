@@ -6,7 +6,7 @@ import { CommunityFeedPage } from './community-feed/community-feed.page';
 import { OnePathPage } from './one-path/one-path.page';
 import { EducationPage } from './education/education.page';
 import { MindfulAssistantPage } from './mindful-assistant/mindful-assistant.page';
-import { HeadspacePage } from './mindful-assistant/headspace.page';
+import { MindfulAssistantStartPage } from './mindful-assistant/mindful-assistant-start/mindful-assistant-start.page';
 
 export const pages: any[] = [
     ResourcesPage,
@@ -17,7 +17,7 @@ export const pages: any[] = [
     OnePathPage,
     EducationPage,
     MindfulAssistantPage,
-    HeadspacePage
+    MindfulAssistantStartPage
 ];
 
 export * from './resources.page';
@@ -28,4 +28,4 @@ export * from './community-feed/community-feed.page';
 export * from './one-path/one-path.page';
 export * from './education/education.page';
 export * from './mindful-assistant/mindful-assistant.page';
-export * from './mindful-assistant/headspace.page';
+export * from './mindful-assistant/mindful-assistant-start/mindful-assistant-start.page';

@@ -1,14 +1,22 @@
-.mindful-assistant {
-    p {
-        margin-top: var(--space-xxs);
-        margin-bottom: var(--space-xxxs);
-        margin-left: var(--space-m);
-        margin-right: var(--space-m);
-        font-size: 1rem;
-        font-weight: var(--font-weight-extra-light);
-        text-align: center;
+@import 'src/theme/base/mixins';
+
+.mindful-assistant-page {
+  .mindful-assistant-page__content {
+    .description {
+      @include paragraph-m;
+      text-align: center;
     }
-    .mindful-options {
-        column-count: 2; 
-    }
+
+    .mindful-assistant-page__cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--size-xxs);
+  
+      automagic-card:last-child {
+        grid-column: 1 / -1;
+      }
+    }  
+  }
+  
 }
+  

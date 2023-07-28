@@ -21,6 +21,10 @@ const routes: Routes = [
     component: fromPages.YourCareTeamDetailPage
   },
   {
+    path: 'community-feed',
+    component: fromPages.CommunityFeedPage
+  },
+  {
     path: 'education',
     component: fromPages.EducationPage
   },  
@@ -28,18 +32,14 @@ const routes: Routes = [
     path: 'mindful-assistant',
     component: fromPages.MindfulAssistantPage
   },  
-  // {
-  //   path: 'headspace',
-  //   component: fromPages.HeadspacePage
-  // },  
+  {
+    path: 'mindful-assistant/start',
+    component: fromPages.MindfulAssistantStartPage
+  },  
   {
     path: 'one-path',
     component: fromPages.OnePathPage
   },  
-  {
-    path: 'community-feed',
-    component: fromPages.CommunityFeedPage
-  },
 ];
 
 @NgModule({
