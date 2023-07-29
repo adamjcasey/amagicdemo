@@ -31,7 +31,6 @@ export class SymptomReportPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-tiffany-blue'));
     this.homeConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe(homeConfig => {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, Subject, takeUntil } from 'rxjs';
 
@@ -10,7 +10,7 @@ import * as fromCoreStore from '@core/store';
   templateUrl: './your-care-team-detail.page.html',
   styleUrls: ['./your-care-team-detail.page.scss'],
 })
-export class YourCareTeamDetailPage implements OnInit {
+export class YourCareTeamDetailPage implements OnInit, OnDestroy {
   public resourcesConfig$!: Observable<any>;
   public config: any;
   private _ngUnsubscribe: Subject<void> = new Subject<void>();

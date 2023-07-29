@@ -67,7 +67,6 @@ export class YourProgressPage implements OnInit {
   }
 
   ngOnInit() {
-    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
     this.homeConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe(homeConfig => {

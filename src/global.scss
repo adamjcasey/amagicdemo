@@ -36,4 +36,51 @@
 
 :root {
   --topbar-size: 106px;
+  --bottom-toolbar-size: 96px;
+}
+
+.field-custom {
+  --padding-start: var(--size-s);
+  --padding-end: var(--size-s);
+
+  height: var(--size-xxl);
+  border-radius: 24px;
+  border: 1px solid var(--color-gray-medium);
+  
+  &.field-custom--action {
+    --padding-end: calc(var(--size-m) + var(--size-xs));
+
+    ion-icon {
+      position: absolute;
+      top: var(--size-xxs);
+      right: var(--size-xxs);
+      font-size: var(--size-m);
+    }
+  }
+}
+
+.button--link {
+  display: flex;
+  align-items: center;
+  gap: var(--size-xxxs);
+  color: var(--color-primary-purple);
+  font-weight: var(--font-weight-extrabold);
+
+  ion-icon {
+    font-size: var(--size-l);
+  }
+}
+
+.button--only-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(var(--size-xxs) - 1px);
+  border-radius: 50%;
+  border: 1px solid var(--color-gray-medium);
+  background-color: var(--color-white);
+
+  ion-icon {
+    font-size: var(--size-m);
+  }
 }

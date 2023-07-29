@@ -24,7 +24,6 @@ export class CalendarDosesComponent implements OnInit {
   }
 
   ngOnInit() {
-    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple'));
     this.welcomeConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe(welcomeConfig => {

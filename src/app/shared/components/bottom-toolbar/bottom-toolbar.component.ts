@@ -85,6 +85,9 @@ export class BottomToolbarComponent {
     this._store.dispatch(new fromCoreStore.Go({
       path: [path]
     }));
-    this.toggle();
+
+    if (this.isOpen) {
+      this.toggle();
+    }
   }
 }

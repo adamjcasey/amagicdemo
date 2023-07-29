@@ -74,10 +74,10 @@
   margin-top: var(--size-xxxs);
   color: var(--color-primary-purple);
   font-weight: var(--font-weight-bold);
-}
 
-.card__link_salmon {
-  color: var(--color-primary-salmon);
+  &.card__link--color-salmon {
+    color: var(--color-primary-salmon);
+  }
 }
 
 .card {
@@ -176,6 +176,10 @@
   }  
   
   &.card--mindful {
+    .card__image {
+      height: 105px;
+    }
+
     .card__content {
       display: flex;
       flex-direction: column;
@@ -183,15 +187,10 @@
     }
 
     .card__text {
-      text-align: left;
+      text-align: center;
 
       .card__title {
-        font-size: var(--font-size-heading-4);
-        line-height: var(--font-line-height-heading-4 );
-      }
-
-      ion-button {
-        margin-top: var(--space-s);
+        @include heading-5;
       }
     }
   }

@@ -31,7 +31,6 @@ export class DoseReportPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-blue'));
     this.homeConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe(homeConfig => {

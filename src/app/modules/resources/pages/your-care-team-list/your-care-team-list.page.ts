@@ -22,16 +22,15 @@ export class YourCareTeamListPage implements OnInit, OnDestroy {
     private _store: Store<fromCoreStore.CoreState>,
   ) {
     this.resourcesConfig$ = this._store.select(fromStore.getResourcesConfig);
-  }
-
-  ngOnInit() {
     this.heroConfig = {
       color: '--color-bg-pastel-blue',
       template: `
         <h1 class="font-heading-1--bold">Your Care Team</h1>
-       `,
+      `,
     }
+  }
 
+  ngOnInit() {
     this.resourcesConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe(resourcesConfig => {

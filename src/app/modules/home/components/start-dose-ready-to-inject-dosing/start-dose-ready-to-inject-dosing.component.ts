@@ -59,8 +59,8 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
     const loop = setInterval(() => {
       this.totalTime--;
       if (this.totalTime === 0) {
-        this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-lime'));
         this.title = 'Full dose delivered!';
+        this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-lime'));
         this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
           color: '--color-bg-pastel-lime',
         }));

@@ -22,7 +22,6 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   public backdropConfig: any;
   public homeConfig$!: Observable<any>;
   public homeConfig: any;
-  public initialized: boolean = false;
   public heroConfig: any;
   public card: any;
   public name: string = '';
@@ -91,7 +90,6 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-green'));
     this.welcomeState$
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe(welcomeState => {
@@ -308,7 +306,6 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    this.initialized = true;
     const markedDoses = this.homeConfig.doses.filter((dose: any) => dose.marked);
     if (this.homeConfig.firstTimeDose && markedDoses.length === 0) {
       this._store.dispatch(new fromSharedStore.BackdropShow({

@@ -3,6 +3,7 @@ import {
   Input, 
   ViewEncapsulation 
 } from '@angular/core';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'automagic-card',
@@ -13,6 +14,11 @@ import {
 export class CardComponent {
   @Input() card: any;
 
-  constructor() {}
+  constructor(
+    private _sanitizer: DomSanitizer,
+  ) {}
 
+  sanitizeContent(htmlContent: string): SafeHtml {
+    return this._sanitizer.bypassSecurityTrustHtml(htmlContent);
+  }
 }

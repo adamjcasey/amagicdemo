@@ -6,6 +6,8 @@ import { Observable, Subject, takeUntil } from 'rxjs';
 import * as fromStore from '@shared/store';
 import * as fromCoreStore from '@core/store';
 import * as fromActivityStore from '@activity/store';
+import * as fromResourcesStore from '@resources/store';
+import * as fromSharedStore from '@shared/store';
 
 @Component({
   selector: 'automagic-topbar',
@@ -47,6 +49,57 @@ export class TopBarComponent implements OnInit, OnDestroy {
             this.activityScope = this.currentRoute.includes('activity/');
             this.settingsScope = this.currentRoute.includes('settings/');
             this.resourcesScope = this.currentRoute.includes('resources/');
+          }
+
+          console.log('this.currentRoute ', this.currentRoute);
+          switch(this.currentRoute) {
+            case '/home':
+            case '/settings':
+              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-green'));
+              break;
+
+            case '/activity':
+            case '/resources':
+              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-beige'));
+              break;
+
+            case '/activity/calendar':
+              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple'));
+              break;
+            case '/activity/dose-report':
+              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-blue'));
+              break;
+            case '/activity/dose-report-detail':
+              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-white'));
+              break;
+            case '/activity/your-progress':
+              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
+              break;
+            case '/activity/symptom-report':
+              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-tiffany-blue'));
+              break;
+            case '/home/add-symptom':
+              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-white'));
+              break;
+
+            case '/resources/your-care-team':
+            case '/resources/your-care-team/list':
+            case '/resources/your-care-team/detail':
+              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-blue'));
+              break;
+            case '/resources/community-feed':
+              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-mint'));
+              break;
+            case '/resources/education':
+            case '/resources/one-path':
+              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
+              break;
+            case '/resources/mindful-assistant':
+              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-lime'));
+              break;
+            case '/resources/mindful-assistant/start':
+              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-green'));
+              break;
           }
         }
       },
@@ -117,7 +170,14 @@ export class TopBarComponent implements OnInit, OnDestroy {
         this.currentRoute.includes('resources/mindful-assistant') ||
         this.currentRoute.includes('resources/one-path')
       ) {
-        this.goTo('resources');
+        if (this.currentRoute.includes('resources/mindful-assistant/start')) {
+          this.goTo('resources/mindful-assistant');
+          this._store.dispatch(new fromStore.TopbarChangeColor('--color-bg-pastel-lime'));
+        }
+        else {
+          this._store.dispatch(new fromStore.TopbarChangeColor('--color-bg-pastel-beige'));
+          this.goTo('resources'); 
+        }
       }
 
       if (this.currentRoute.includes('resources/your-care-team/list')) {
@@ -126,6 +186,7 @@ export class TopBarComponent implements OnInit, OnDestroy {
 
       if (this.currentRoute.includes('resources/your-care-team/detail')) {
         this.goTo('resources/your-care-team/list');
+        this._store.dispatch(new fromResourcesStore.MemberYouCareTeamSelected(null));
       }
     }
     else {

@@ -14,10 +14,30 @@ export class UtilsService {
     const resizeItems = () => {
       for(let i = 0; i < items.length; i++) {
         resizeGridItem(items[i]);
+
+        if (i + 1 === items.length) {
+          if (!wrapper.classList.contains('masonry-initialized')) {
+            wrapper.classList.add('masonry-initialized')
+          }
+        }
       }
     }
 
-    resizeItems();
+    let loadedItems = 0;
+    const controller = setInterval(() => {
+      Array.from(items).forEach((element: any, index: number) => {
+        const image = element.querySelector('.card__image ion-img');
+        if (image && image.offsetHeight !== 0) {
+          loadedItems++;
+        }
+      });
+
+      if (loadedItems === items.length) {
+        console.log('clear');
+        resizeItems();
+        clearInterval(controller);
+      }
+    }, 200);
     window.addEventListener('resize', resizeItems);
   }
 

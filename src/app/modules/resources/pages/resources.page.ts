@@ -1,4 +1,4 @@
-import { Component, AfterViewChecked, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewChecked, AfterViewInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, Subject, takeUntil } from 'rxjs';
 
@@ -13,7 +13,7 @@ import * as fromHomeStore from '@home/store';
   templateUrl: 'resources.page.html',
   styleUrls: ['resources.page.scss'],
 })
-export class ResourcesPage implements OnInit, AfterViewChecked, OnDestroy {
+export class ResourcesPage implements OnInit, AfterViewInit, OnDestroy {
   public resourcesConfig$!: Observable<any>;
   public resourcesConfig: any;
   public homeConfig$!: Observable<any>;
@@ -35,7 +35,6 @@ export class ResourcesPage implements OnInit, AfterViewChecked, OnDestroy {
         description: 'Connect to your health care providers for holistic care.',
         action: () => {
           this.goTo('resources/your-care-team');
-          this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-blue'));
         }
       },
       {
@@ -45,7 +44,6 @@ export class ResourcesPage implements OnInit, AfterViewChecked, OnDestroy {
         description: 'Connect to a larger community of fellow patients to learn tips and tricks.',
         action: () => {
           this.goTo('resources/community-feed');
-          this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-mint'));
         }
       },
       {
@@ -55,7 +53,6 @@ export class ResourcesPage implements OnInit, AfterViewChecked, OnDestroy {
         description: 'Stay up-to-date and learn more about your condition and treatment.',
         action: () => {
           this.goTo('resources/education');
-          this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
         }
       },   
       {
@@ -65,7 +62,6 @@ export class ResourcesPage implements OnInit, AfterViewChecked, OnDestroy {
         description: 'Use Headspace to help navigate the stress and anxiety of chronic conditions.',
         action: () => {
           this.goTo('/resources/mindful-assistant');
-          this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-mint'));
         }
       },   
       {
@@ -75,7 +71,6 @@ export class ResourcesPage implements OnInit, AfterViewChecked, OnDestroy {
         description: 'Chat with your patient support manager (PSM).',
         action: () => {
           this.goTo('/resources/one-path');
-          this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
         }
       },
     ];
@@ -115,7 +110,7 @@ export class ResourcesPage implements OnInit, AfterViewChecked, OnDestroy {
     this._ngUnsubscribe.complete();
   }
 
-  ngAfterViewChecked() {
+  ngAfterViewInit() {
     const container = document.querySelector('.resources-page__container') as HTMLElement;
     if (container) {
       this._utils.createMasonryLayout(container);
