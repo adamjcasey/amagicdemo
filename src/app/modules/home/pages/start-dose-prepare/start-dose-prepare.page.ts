@@ -258,7 +258,7 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
           {
             label: 'Looks off',
             action: () => {
-              console.log('click looks off');
+              console.log('Looks off action');
             },
           },
           {

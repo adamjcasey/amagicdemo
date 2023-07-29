@@ -2,10 +2,11 @@ import {
   Component,
   ViewEncapsulation, 
   OnInit,
+  OnDestroy,
   ViewChild,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
 
 import * as fromStore from '@home/store';
 import * as fromActivityStore from '@activity/store';
@@ -19,13 +20,14 @@ import * as fromCoreStore from '@core/store';
   styleUrls: ['add-symptom.page.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class AddSymptomPage implements OnInit {
+export class AddSymptomPage implements OnInit, OnDestroy {
   public homeConfig$!: Observable<any>;
   public homeConfig: any;
   public activityConfig$!: Observable<any>;
   public activityConfig: any;
   public sliderPageConfig$!: Observable<any>;
   public sliderPageConfig: any;
+  private _ngUnsubscribe: Subject<void> = new Subject<void>();
   public slides: Array<any> = [];
   @ViewChild('sliderPage', { static: false }) sliderPage!: fromSharedComponents.SliderPageComponent;
 
@@ -104,17 +106,26 @@ export class AddSymptomPage implements OnInit {
   }
 
   ngOnInit() {
-    this.homeConfig$.subscribe(homeConfig => {
-      if (homeConfig) {
-        this.homeConfig = homeConfig;
-      }
-    });
+    this.homeConfig$
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(homeConfig => {
+        if (homeConfig) {
+          this.homeConfig = homeConfig;
+        }
+      });
 
-    this.activityConfig$.subscribe(activityConfig => {
-      if (activityConfig) {
-        this.activityConfig = activityConfig;
-      }
-    });
+    this.activityConfig$
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(activityConfig => {
+        if (activityConfig) {
+          this.activityConfig = activityConfig;
+        }
+      });
+  }
+
+  ngOnDestroy() {
+    this._ngUnsubscribe.next();
+    this._ngUnsubscribe.complete();
   }
 
   goTo(path: string) {

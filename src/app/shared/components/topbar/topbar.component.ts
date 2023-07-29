@@ -40,7 +40,7 @@ export class TopBarComponent implements OnInit, OnDestroy {
       (event: RoutingEvent) => {
         if (event instanceof NavigationEnd) {
           this.currentRoute = event.urlAfterRedirects;
-          if (this.currentRoute.includes('home/add-symptom')) {
+          if (this.currentRoute.includes('symptoms/add')) {
             if (this.activityConfig.symptomReportSelected) {
               this.activityScope = true;
             }
@@ -51,8 +51,8 @@ export class TopBarComponent implements OnInit, OnDestroy {
             this.resourcesScope = this.currentRoute.includes('resources/');
           }
 
-          console.log('this.currentRoute ', this.currentRoute);
           switch(this.currentRoute) {
+            case '/welcome':
             case '/home':
             case '/settings':
               this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-green'));
@@ -61,6 +61,10 @@ export class TopBarComponent implements OnInit, OnDestroy {
             case '/activity':
             case '/resources':
               this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-beige'));
+              break;
+
+            case '/symptoms/add':
+              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-white'));
               break;
 
             case '/activity/calendar':
@@ -77,9 +81,6 @@ export class TopBarComponent implements OnInit, OnDestroy {
               break;
             case '/activity/symptom-report':
               this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-tiffany-blue'));
-              break;
-            case '/home/add-symptom':
-              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-white'));
               break;
 
             case '/resources/your-care-team':
@@ -152,7 +153,7 @@ export class TopBarComponent implements OnInit, OnDestroy {
         this.goTo('activity/dose-report');
       }
 
-      if (this.currentRoute.includes('home/add-symptom')) {
+      if (this.currentRoute.includes('symptoms/add')) {
         if (this.activityConfig.symptomReportSelected) {
           this.goTo('activity/symptom-report');
           this._store.dispatch(new fromStore.SliderPageClear());
@@ -199,7 +200,7 @@ export class TopBarComponent implements OnInit, OnDestroy {
       this._store.dispatch(new fromStore.TopbarChangeColor('--color-white'));
     }
 
-    if (this.currentRoute.includes('home/add-symptom')) {
+    if (this.currentRoute.includes('symptoms/add')) {
       if (this.activityConfig.symptomReportSelected) {
         this._store.dispatch(new fromActivityStore.SetData({
           symptomReportSelected: null,

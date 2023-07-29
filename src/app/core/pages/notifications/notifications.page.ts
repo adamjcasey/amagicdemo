@@ -11,7 +11,7 @@ import * as fromSharedStore from '@shared/store';
   templateUrl: 'notifications.page.html',
   styleUrls: ['notifications.page.scss'],
 })
-export class NotificationsPage implements OnInit {
+export class NotificationsPage implements OnInit, OnDestroy {
   public homeConfig$!: Observable<any>;
   public homeConfig: any;
   private _ngUnsubscribe: Subject<void> = new Subject<void>();
@@ -68,6 +68,11 @@ export class NotificationsPage implements OnInit {
           }
         }
       });
+  }
+
+  ngOnDestroy() {
+    this._ngUnsubscribe.next();
+    this._ngUnsubscribe.complete();
   }
 
   goTo(path: string) {

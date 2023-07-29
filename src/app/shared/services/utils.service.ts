@@ -33,7 +33,6 @@ export class UtilsService {
       });
 
       if (loadedItems === items.length) {
-        console.log('clear');
         resizeItems();
         clearInterval(controller);
       }

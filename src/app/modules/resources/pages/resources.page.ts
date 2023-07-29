@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, AfterViewChecked, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, Subject, takeUntil } from 'rxjs';
 

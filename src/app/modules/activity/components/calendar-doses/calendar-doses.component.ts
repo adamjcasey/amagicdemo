@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, Subject, takeUntil } from 'rxjs';
 
@@ -11,7 +11,7 @@ import * as fromSharedStore from '@shared/store';
   templateUrl: 'calendar-doses.component.html',
   styleUrls: ['calendar-doses.component.scss'],
 })
-export class CalendarDosesComponent implements OnInit {
+export class CalendarDosesComponent implements OnInit, OnDestroy {
   public welcomeConfig$!: Observable<any>;
   public welcomeConfig: any;
   public selectedDates: Date[] = [];
@@ -36,6 +36,11 @@ export class CalendarDosesComponent implements OnInit {
           }
         }
       });
+  }
+
+  ngOnDestroy() {
+    this._ngUnsubscribe.next();
+    this._ngUnsubscribe.complete();
   }
 
   onEditSchedule() {

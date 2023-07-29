@@ -63,7 +63,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
       link: {
         label: 'Let’s start',
         action: () => {
-          console.log('action home page card');
+          console.log('Track your progress action');
         }
       },
     }
@@ -393,7 +393,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
             }
           ],
           onClose: () => {
-            this.goTo('home/add-symptom');
+            this.goTo('symptoms/add');
           }
         }));
       }

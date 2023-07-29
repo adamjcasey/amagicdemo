@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 
 import * as fromCoreStore from '@core/store';
-import * as fromSharedStore from '@shared/store';
 
 @Component({
   selector: 'automagic-mindful-assistant',
@@ -29,33 +28,21 @@ export class MindfulAssistantPage {
         type: 'mindful',
         title: 'Stress reduction Exercises',
         asset: '/assets/images/resources-mindful-assistant-stress.svg',
-        action: () => {
-          console.log('Mindful Assistant: Stress Reduction');
-        }
       },
       {
         type: 'mindful',
         title: 'Pain reduction Techniques',
         asset: '/assets/images/resources-mindful-assistant-pain.svg',
-        action: () => {
-          console.log('Mindful Assistant: Pain Reduction');
-        }
       }, 
       {
         type: 'mindful',
         title: 'Delay Injection 30 min',
         asset: '/assets/images/resources-mindful-assistant-delay.svg',
-        action: () => {
-          console.log('Mindful Assistant: Delay Injection');
-        }
       },
       {
         type: 'mindful',
         title: 'Talk to a<br>coach',
         asset: '/assets/images/resources-mindful-assistant-talk.svg',
-        action: () => {
-          console.log('Mindful Assistant: Talk to a coach');
-        }
       }, 
       {
         asset: '/assets/images/resources-mindful-assistant-dot.svg',

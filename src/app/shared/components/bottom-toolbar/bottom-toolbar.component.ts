@@ -26,7 +26,7 @@ export class BottomToolbarComponent {
       '/home/start-dose/prepare',
       '/home/start-dose/ready-to-inject',
       '/home/start-dose/inject-done',
-      '/home/add-symptom',
+      '/symptoms/add',
       '/settings/setup-reminders',
       'resources/your-care-team/detail',
     ];

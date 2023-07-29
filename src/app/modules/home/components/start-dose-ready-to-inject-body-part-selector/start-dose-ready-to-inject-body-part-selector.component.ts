@@ -52,7 +52,6 @@ export class StartDoseReadyToInjectBodyPartSelectorComponent implements OnInit, 
       x: event.x,
       y: event.y,
     };
-    console.log('coords ', coords);
 
     if (coords.x >= 150 && coords.x <= 240) {
       // top-right

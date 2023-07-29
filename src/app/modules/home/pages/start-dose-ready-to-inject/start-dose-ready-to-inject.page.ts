@@ -456,7 +456,6 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
   }
 
   playVideo() {
-    console.log('StartDoseReadyToInjectPage -> playVideo');
     const continueButtonOnSliderPage = document.querySelector('.slider-page .wrapper-small .swiper-slide-active .actions-wrapper ion-button.is-hidden') as HTMLElement;
     continueButtonOnSliderPage?.click();
   };

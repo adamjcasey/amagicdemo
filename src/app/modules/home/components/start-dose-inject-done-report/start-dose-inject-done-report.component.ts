@@ -31,7 +31,7 @@ export class StartDoseInjectDoneReportComponent implements OnInit {
       link: {
         label: 'Go to Guide',
         action: () => {
-          console.log('Go to Guide Card');
+          console.log('Go to Guide action');
         }
       },
     }

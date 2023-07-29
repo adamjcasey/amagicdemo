@@ -1,10 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, Subject, takeUntil } from 'rxjs';
 
 import * as fromStore from '@activity/store';
 import * as fromCoreStore from '@core/store';
-import * as fromSharedStore from '@shared/store';
 import * as fromHomeStore from '@home/store';
 
 @Component({
@@ -12,7 +11,7 @@ import * as fromHomeStore from '@home/store';
   templateUrl: 'your-progress.page.html',
   styleUrls: ['your-progress.page.scss'],
 })
-export class YourProgressPage implements OnInit {
+export class YourProgressPage implements OnInit, OnDestroy {
   public activityConfig$!: Observable<any>;
   public activityConfig: any;
   public homeConfig$!: Observable<any>;
@@ -46,7 +45,7 @@ export class YourProgressPage implements OnInit {
         link: {
           label: 'Let’s start',
           action: () => {
-            console.log('action your progress card');
+            console.log('Apple Health action');
           }
         },
       },
@@ -59,7 +58,7 @@ export class YourProgressPage implements OnInit {
           icon: '/assets/icons/import.svg',
           fill: 'outline',
           action: () => {
-            console.log('click in import');
+            console.log('Import data from Apple Health action');
           }
         },
       }
@@ -93,5 +92,10 @@ export class YourProgressPage implements OnInit {
           }
         }
       });
+  }
+
+  ngOnDestroy() {
+    this._ngUnsubscribe.next();
+    this._ngUnsubscribe.complete();
   }
 }

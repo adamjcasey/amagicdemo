@@ -25,6 +25,7 @@ import * as fromWelcomeComponents from '@welcome/components';
 import * as fromHomeStore from '@home/store';
 import * as fromHomeComponents from '@home/components';
 import * as fromActivityComponents from '@activity/components';
+import * as fromCoreComponents from '@core/components';
 
 @Component({
   selector: 'automagic-slider-page',
@@ -284,7 +285,7 @@ export class SliderPageComponent implements OnInit {
         componentRef = element.createComponent(fromHomeComponents.StartDoseInjectDoneReportComponent);
         break;
       case 'add-symptom-form':
-        componentRef = element.createComponent(fromHomeComponents.AddSymptomFormComponent);
+        componentRef = element.createComponent(fromCoreComponents.AddSymptomFormComponent);
         break;
       case 'calendar-doses':
         componentRef = element.createComponent(fromActivityComponents.CalendarDosesComponent);

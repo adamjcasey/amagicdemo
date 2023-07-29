@@ -1,17 +1,16 @@
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, Subject, takeUntil } from 'rxjs';
 
 import * as fromStore from '@settings/store';
 import * as fromCoreStore from '@core/store';
-import * as fromSharedStore from '@shared/store';
 
 @Component({
   selector: 'automagic-settings',
   templateUrl: 'settings.page.html',
   styleUrls: ['settings.page.scss'],
 })
-export class SettingsPage implements OnInit, OnDestroy, AfterViewInit {
+export class SettingsPage implements OnInit, OnDestroy {
   public settingsConfig$!: Observable<any>;
   public settingsConfig: any;
   private _ngUnsubscribe: Subject<void> = new Subject<void>();
@@ -47,10 +46,6 @@ export class SettingsPage implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy() {
     this._ngUnsubscribe.next();
     this._ngUnsubscribe.complete();
-  }
-
-  ngAfterViewInit() {
-    console.log('settings AfterViewInit');
   }
 
   saveSettings(event: any, parent: string, value: string) {

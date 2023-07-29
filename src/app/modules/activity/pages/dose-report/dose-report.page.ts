@@ -1,10 +1,9 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, Subject, takeUntil } from 'rxjs';
 import * as moment from 'moment';
 
 import * as fromStore from '@activity/store';
-import * as fromSharedStore from '@shared/store';
 import * as fromHomeStore from '@home/store';
 import * as fromCoreStore from '@core/store';
 import * as fromSharedServices from '@shared/services';
