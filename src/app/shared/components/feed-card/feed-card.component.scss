@@ -13,7 +13,7 @@
 
     .feed-card__avatar {
       grid-column: 1;
-      width: 40px;
+      width: var(--size-xl);
       border-radius: 50%;
       overflow: hidden;
     }
@@ -38,7 +38,7 @@
   }
 
   .feed-card__content {
-    padding: var(--size-xs) var(--size-m) var(--size-xs);
+    padding: var(--size-xs) var(--size-m);
 
     .feed-card__asset {
       margin-bottom: var(--size-s)
