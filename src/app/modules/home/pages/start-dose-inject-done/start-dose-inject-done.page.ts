@@ -53,16 +53,19 @@ export class StartDoseInjectDonePage implements OnInit {
               label: 'Done',
               action: () => { 
                 if (this.homeConfig.firstTimeDose) {
+                  this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-mint'));
                   this.sliderPage.slideTo(2);
                 }
                 else {
                   const markedDoses = this.homeConfig?.doses.filter((dose: any) => dose.marked);
                   if (markedDoses.length === 6) {
                     this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-white'));
+                    this.sliderPage.slideTo(this.slides.length - 1);
                   }
-
-                  this.goTo('home');
-                  this._store.dispatch(new fromSharedStore.SliderPageClear());
+                  else {
+                    this.goTo('home');
+                    this._store.dispatch(new fromSharedStore.SliderPageClear());
+                  }
                 }
               }
             }

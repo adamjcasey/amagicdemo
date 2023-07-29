@@ -312,6 +312,7 @@
 
       .cards-container {
         @include masonry-layout;
+        min-height: 1010px;
 
         .card {
           .card__wrapper {
@@ -351,6 +352,7 @@
 
       .highlights__detail {
         color: var(--color-white);
+        min-height: 7000px;
 
         h1 {
           margin-bottom: var(--size-xxl);
