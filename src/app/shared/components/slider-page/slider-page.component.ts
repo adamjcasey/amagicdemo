@@ -189,6 +189,11 @@ export class SliderPageComponent implements OnInit {
   }
 
   slidePrev() {
+    const activeIndex = this.sliderContent.swiperRef.activeIndex;
+    if (this.slides[activeIndex].header?.component !== null) {
+      this.componentsHeader?.toArray()[activeIndex].clear();
+    }
+
     if (this.onPrevSlide.observers.length > 0) {
       this.onPrevSlide.emit({
         asset: this.sliderHeader.swiperRef,
@@ -202,6 +207,11 @@ export class SliderPageComponent implements OnInit {
   }
 
   slideNext() {
+    const activeIndex = this.sliderContent.swiperRef.activeIndex;
+    if (this.slides[activeIndex].header?.component !== null) {
+      this.componentsHeader?.toArray()[activeIndex].clear();
+    }
+
     if (this.onNextSlide.observers.length > 0) {
       this.onNextSlide.emit({
         asset: this.sliderHeader.swiperRef,
