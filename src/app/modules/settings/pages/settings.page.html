@@ -25,10 +25,10 @@
         <p class="field-value">marissa-L125@gmail.com</p>
       </div>
 
-      <ion-button fill="clear" color="purple" class="no-padding">
+      <a class="button--link">
         <ion-icon slot="start" src="/assets/icons/edit.svg"></ion-icon>
-          Edit Personal Info
-      </ion-button>
+        Edit Personal Info
+      </a>
     </div>
 
     <h5>Notifications</h5>
@@ -60,10 +60,10 @@
         ></ion-toggle>
       </div>
 
-      <ion-button fill="clear" color="purple" class="no-padding" (click)="goTo('settings/manage-refill-delivery')">
+      <a class="button--link" (click)="goTo('manage-refill-delivery')">
         <ion-icon slot="start" src="/assets/icons/date-range.svg"></ion-icon>
         Manage Refill & Delivery
-      </ion-button>
+      </a>
     </div>
 
     <automagic-card [card]="card"></automagic-card>

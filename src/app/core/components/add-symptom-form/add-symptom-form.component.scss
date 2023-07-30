@@ -15,10 +15,7 @@
   }
 
   .add-photo-cta {
+    margin-top: var(--size-xs);
     margin-bottom: var(--size-m);
-
-    ion-button {
-      --padding-start: var(--size-xxxs);
-    }
   }
 }

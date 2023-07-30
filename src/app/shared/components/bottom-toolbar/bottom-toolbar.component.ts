@@ -26,8 +26,9 @@ export class BottomToolbarComponent {
       '/home/start-dose/prepare',
       '/home/start-dose/ready-to-inject',
       '/home/start-dose/inject-done',
-      '/home/add-symptom',
+      '/symptoms/add',
       '/settings/setup-reminders',
+      'resources/your-care-team/detail',
     ];
 
     this.routerEvents$ = this._router.events.subscribe(
@@ -84,6 +85,9 @@ export class BottomToolbarComponent {
     this._store.dispatch(new fromCoreStore.Go({
       path: [path]
     }));
-    this.toggle();
+
+    if (this.isOpen) {
+      this.toggle();
+    }
   }
 }

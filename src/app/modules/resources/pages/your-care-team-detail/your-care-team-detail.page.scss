@@ -1,0 +1,72 @@
+@import 'src/theme/base/mixins';
+
+.your-care-team-detail {
+  .your-care-team-detail__header {
+    position: relative;
+    z-index: 50;
+    margin-top: -60px;
+    text-align: center;
+
+    ion-img {
+      width: 120px;
+      margin: 0 auto;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+
+    .your-care-team-detail__contact {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--size-l);
+      margin-top: var(--size-s);
+
+      .action {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: var(--size-xxxxl);
+        height: var(--size-xxxxl);
+        border-radius: 50%;
+        background-color: var(--color-white);
+        box-shadow: 0px 2px 8px 0px #00000026;
+      }
+    }
+  }
+
+  .your-care-team-detail__content {
+    margin-top: var(--size-m);
+
+    h5 {
+      @include paragraph-m;
+      font-weight: var(--font-weight-bold);
+    }
+
+    .your-care-team-detail__section {
+      margin-bottom: var(--size-l);
+      padding: var(--size-m);
+      border-radius: 12px;
+      box-shadow: 0px 0px 16px 0px #0000001A;
+
+      .field {
+        margin-bottom: var(--size-xxs);
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+  
+        .field-label {
+          @include paragraph-s;
+          margin-top: 0;
+          margin-bottom: var(--size-xxxs);
+        }
+  
+        .field-value {
+          @include paragraph-m;
+          margin: 0;
+          font-weight: var(--font-weight-bold);
+        }
+      }
+    }
+  }
+}

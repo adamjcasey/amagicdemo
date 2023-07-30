@@ -6,7 +6,8 @@
   }"
   [style.background-color]="color
     ? 'var(' + color + ')' 
-    : 'var(--color-white)'">
+    : 'var(--color-white)'"
+  [style]="extraCss ? extraCss : null">
 
   <div class="hero__layer"></div>
   <div class="hero__content">

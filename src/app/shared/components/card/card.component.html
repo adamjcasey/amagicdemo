@@ -5,6 +5,7 @@
   'card--simple': card.type === 'simple',
   'card--guide-step': card.type === 'guide-step',
   'card--no-image': !card.asset,
+  'card--mindful': card.type === 'mindful',
 }">
   <div class="card__indicator" *ngIf="card.type === 'stepper'">
     {{ card.indicator }}
@@ -25,14 +26,16 @@
         <div class="card__indicator" *ngIf="card.type === 'guide-step'">
           {{ card.indicator }}
         </div>
-        <h5 class="card__title" *ngIf="card.title && card.type !== 'stepper'">{{ card.title }}</h5>
-        <div class="card__description" *ngIf="card.description" [innerHTML]="card.description"></div>
-        <div class="card__disclaimer" *ngIf="card.disclamerText" [innerHTML]="card.disclamerText"></div>
-        <a class="card__link" *ngIf="card.link" (click)="card.link.action()">{{ card.link.label }}</a>
-        <!-- <ion-button class="card__button" *ngIf="card.button" [fill]="card.button.fill" color="purple" (click)="card.button.action()">
-          <ion-icon [src]="card.button.icon" slot="start"></ion-icon>
-          {{ card.button.label }}
-        </ion-button> -->
+        <h5 class="card__title" *ngIf="card.title && card.type !== 'stepper'" [innerHTML]="sanitizeContent(card.title)"></h5>
+        <div class="card__description" *ngIf="card.description" [innerHTML]="sanitizeContent(card.description)"></div>
+        <div class="card__disclaimer" *ngIf="card.disclamerText" [innerHTML]="sanitizeContent(card.disclamerText)"></div>
+        <a 
+          class="card__link" 
+          *ngIf="card.link" 
+          [ngClass]="{ 'card__link--color-salmon': card.link.color === 'salmon' }" 
+          (click)="card.link.action()">
+          {{ card.link.label }}
+        </a>
       </div>
 
       <ion-button class="card__button" *ngIf="card.button" [fill]="card.button.fill" color="purple" (click)="card.button.action()">

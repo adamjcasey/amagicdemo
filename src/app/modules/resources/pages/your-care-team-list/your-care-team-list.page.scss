@@ -1,0 +1,20 @@
+.your-care-team-list {
+  .your-care-team-list__actions {
+    margin-top: -20px;
+    text-align: center;
+  
+    .action {
+      p {
+        margin: 0;
+        color: var(--color-primary-purple);
+        font-weight: var(--font-weight-extrabold);
+      }
+    }
+  }
+  
+  .your-care-team-list__section {
+    margin-bottom: var(--size-l);
+    padding-top: 0;
+    padding-bottom: 0;
+  }  
+}

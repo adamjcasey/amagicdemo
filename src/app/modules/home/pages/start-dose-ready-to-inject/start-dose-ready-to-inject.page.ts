@@ -185,7 +185,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                     },
                     {
                       label: 'Next Step',
-                      disabled: this.homeConfig?.bodyPartSelected === '' ? true : false,
+                      disabled: true,
                       action: () => {
                         this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-blue'));
                         this.sliderPage.slideNext();
@@ -237,6 +237,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
             actions: [
               {
                 label: 'Skip',
+                fill: 'outline',
                 action: () => {
                   this.sliderPage.slideTo(2);
                   this.showNoNeedlessMessage();
@@ -455,7 +456,6 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
   }
 
   playVideo() {
-    console.log('StartDoseReadyToInjectPage -> playVideo');
     const continueButtonOnSliderPage = document.querySelector('.slider-page .wrapper-small .swiper-slide-active .actions-wrapper ion-button.is-hidden') as HTMLElement;
     continueButtonOnSliderPage?.click();
   };

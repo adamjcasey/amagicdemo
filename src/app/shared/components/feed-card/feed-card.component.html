@@ -1,0 +1,52 @@
+<div class="feed-card" [ngClass]="{
+  'feed-card--post': config.type === 'post',
+  'feed-card--article': config.type === 'article',
+}">
+  <header class="feed-card__header">
+    <ng-container *ngIf="config.type === 'post'">
+      <ion-img class="feed-card__avatar" *ngIf="config.avatar" [src]="config.avatar"></ion-img>
+      <div class="feed-card__author">
+        <p class="name">{{ config.name }}</p>
+        <p class="post-at" *ngIf="config.date">{{ postAtFormatDate(config.date) }}</p>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="config.type === 'article'">
+      <ion-img class="feed-card__asset" *ngIf="config.asset" [src]="config.asset"></ion-img>
+    </ng-container>
+  </header>
+
+  <div class="feed-card__content">
+    <ng-container *ngIf="config.type === 'post'">
+      <ion-img *ngIf="config.asset" class="feed-card__asset" [src]="config.asset"></ion-img>
+    </ng-container>
+
+    <div class="feed-card__template" 
+      *ngIf="config.template" 
+      [innerHTML]="sanitizeContent(config.template)"
+    ></div>
+
+    <div class="feed-card__actions">
+      <ng-container *ngIf="config.type === 'post'">
+        <div class="reactions">
+          <ion-button class="like-cta no-padding" fill="clear">
+            <ion-icon slot="start" src="/assets/icons/like.svg"></ion-icon>
+            {{ config.likes }}
+          </ion-button>
+          <ion-button class="comment-cta no-padding" fill="clear">
+            <ion-icon slot="start" src="/assets/icons/comment.svg"></ion-icon>
+            {{ config.comments }}
+          </ion-button>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="config.type === 'article'">
+        <p class="post-at">{{ postAtFormatDate(config.date) }}</p>
+      </ng-container>
+
+      <ion-button class="share-cta no-padding" fill="clear">
+        <ion-icon slot="icon-only" src="/assets/icons/share.svg"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+</div>

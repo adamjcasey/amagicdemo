@@ -140,7 +140,18 @@ export function SharedReducer(
       return {
         ...state,
         topbarConfig: {
+          ...state.topbarConfig,
           bgColor: action.payload,
+        },
+      };
+    }
+
+    case fromActions.ActionTypes.TopbarPendingNotifications: {
+      return {
+        ...state,
+        topbarConfig: {
+          ...state.topbarConfig,
+          pendingNotifications: action.payload,
         },
       };
     }

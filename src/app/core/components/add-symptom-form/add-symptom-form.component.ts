@@ -2,10 +2,11 @@ import {
   Component,
   ViewEncapsulation, 
   OnInit,
+  OnDestroy,
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
 import * as moment from 'moment';
 
 import * as fromCoreStore from '@core/store';
@@ -18,10 +19,11 @@ import * as fromSharedStore from '@shared/store';
   styleUrls: ['add-symptom-form.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class AddSymptomFormComponent implements OnInit {
+export class AddSymptomFormComponent implements OnInit, OnDestroy {
   public sliderPageConfig$!: Observable<any>;
   public sliderPageConfig: any;
   public activityConfig$!: Observable<any>;
+  private _ngUnsubscribe: Subject<void> = new Subject<void>();
   public reportSelected: any;
   public addSymptomFormGroup: FormGroup;
   public symptoms: string[];
@@ -53,66 +55,66 @@ export class AddSymptomFormComponent implements OnInit {
   }
 
   ngOnInit() {
-    this._store.dispatch(new fromActivityStore.SetData({
-      currentSymptomReport: {
-        ...this.addSymptomFormGroup.value
-      }
-    }));
-
-    this.sliderPageConfig$.subscribe(sliderPageConfig => {
-      if (sliderPageConfig) {
-        this.sliderPageConfig = sliderPageConfig;
-      }
-    });
-
-    this.activityConfig$.subscribe(activityConfig => {
-      if (activityConfig) {
-        if (activityConfig.symptomReportSelected) {
-          this.reportSelected = activityConfig.symptomReportSelected;
-          this.addSymptomFormGroup.patchValue({
-            ...this.reportSelected,
-          });
-          this.detailView = true;
-          this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
-            toolbar: null,
-          }));
+    this.sliderPageConfig$
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(sliderPageConfig => {
+        if (sliderPageConfig) {
+          this.sliderPageConfig = sliderPageConfig;
         }
-        else {
-          this.reportSelected = null;
-          this.detailView = false;
+      });
+
+    this.activityConfig$
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(activityConfig => {
+        if (activityConfig) {
+          if (activityConfig.symptomReportSelected) {
+            this.detailView = true;
+            this.reportSelected = activityConfig.symptomReportSelected;
+            this.addSymptomFormGroup.patchValue({
+              ...this.reportSelected,
+            });
+            this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
+              toolbar: null,
+            }));
+          }
+          else {
+            this.detailView = false;
+            this.reportSelected = null;
+          }
         }
-      }
-    });
+      });
 
     this.addSymptomFormGroup.valueChanges.subscribe(() => {
       if (this.sliderPageConfig.content.toolbar) {
         const actions = this.sliderPageConfig.content.toolbar.actions;
         if (actions) {
           if (this.addSymptomFormGroup.valid) {
-            this._store.dispatch(new fromActivityStore.SetData({
-              currentSymptomReport: {
-                ...this.addSymptomFormGroup.value
-              }
-            }));
-
-            if (this.addSymptomFormGroup.get('date')?.value === '') {
-              this.addSymptomFormGroup.patchValue({
-                date: new Date(),
-              });
-            }
-  
-            if ((actions[1].disabled)) {
-              this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
-                toolbar: {
-                  actions: [
-                    actions[0],
-                    {
-                      ...actions[1],
-                      disabled: false,
-                    }
-                  ]
+            if (!this.detailView) {
+              this._store.dispatch(new fromActivityStore.SetData({
+                currentSymptomCreating: {
+                  ...this.addSymptomFormGroup.value
                 }
               }));
+
+              if (this.addSymptomFormGroup.get('date')?.value === '') {
+                this.addSymptomFormGroup.patchValue({
+                  date: new Date(),
+                });
+              }
+    
+              if ((actions[1].disabled)) {
+                this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
+                  toolbar: {
+                    actions: [
+                      actions[0],
+                      {
+                        ...actions[1],
+                        disabled: false,
+                      }
+                    ]
+                  }
+                }));
+              }
             }
           }
           else {
@@ -133,6 +135,11 @@ export class AddSymptomFormComponent implements OnInit {
         }
       }
     });
+  }
+
+  ngOnDestroy() {
+    this._ngUnsubscribe.next();
+    this._ngUnsubscribe.complete();
   }
 
   markSymptom(event: any, index: number) {

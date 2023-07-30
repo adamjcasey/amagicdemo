@@ -6,6 +6,8 @@ import { Observable, Subject, takeUntil } from 'rxjs';
 import * as fromStore from '@shared/store';
 import * as fromCoreStore from '@core/store';
 import * as fromActivityStore from '@activity/store';
+import * as fromResourcesStore from '@resources/store';
+import * as fromSharedStore from '@shared/store';
 
 @Component({
   selector: 'automagic-topbar',
@@ -22,6 +24,7 @@ export class TopBarComponent implements OnInit, OnDestroy {
   public routerEvents$;
   public activityScope: boolean = false;
   public settingsScope: boolean = false;
+  public resourcesScope: boolean = false;
   public currentRoute: string = '';
   private _ngUnsubscribe: Subject<void> = new Subject<void>();
 
@@ -37,7 +40,7 @@ export class TopBarComponent implements OnInit, OnDestroy {
       (event: RoutingEvent) => {
         if (event instanceof NavigationEnd) {
           this.currentRoute = event.urlAfterRedirects;
-          if (this.currentRoute.includes('home/add-symptom')) {
+          if (this.currentRoute.includes('symptoms/add')) {
             if (this.activityConfig.symptomReportSelected) {
               this.activityScope = true;
             }
@@ -45,6 +48,59 @@ export class TopBarComponent implements OnInit, OnDestroy {
           else {
             this.activityScope = this.currentRoute.includes('activity/');
             this.settingsScope = this.currentRoute.includes('settings/');
+            this.resourcesScope = this.currentRoute.includes('resources/');
+          }
+
+          switch(this.currentRoute) {
+            case '/welcome':
+            case '/home':
+            case '/settings':
+              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-green'));
+              break;
+
+            case '/activity':
+            case '/resources':
+              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-beige'));
+              break;
+
+            case '/symptoms/add':
+              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-white'));
+              break;
+
+            case '/activity/calendar':
+              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple'));
+              break;
+            case '/activity/dose-report':
+              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-blue'));
+              break;
+            case '/activity/dose-report-detail':
+              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-white'));
+              break;
+            case '/activity/your-progress':
+              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
+              break;
+            case '/activity/symptom-report':
+              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-tiffany-blue'));
+              break;
+
+            case '/resources/your-care-team':
+            case '/resources/your-care-team/list':
+            case '/resources/your-care-team/detail':
+              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-blue'));
+              break;
+            case '/resources/community-feed':
+              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-mint'));
+              break;
+            case '/resources/education':
+            case '/resources/one-path':
+              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
+              break;
+            case '/resources/mindful-assistant':
+              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-lime'));
+              break;
+            case '/resources/mindful-assistant/start':
+              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-green'));
+              break;
           }
         }
       },
@@ -97,7 +153,7 @@ export class TopBarComponent implements OnInit, OnDestroy {
         this.goTo('activity/dose-report');
       }
 
-      if (this.currentRoute.includes('home/add-symptom')) {
+      if (this.currentRoute.includes('symptoms/add')) {
         if (this.activityConfig.symptomReportSelected) {
           this.goTo('activity/symptom-report');
           this._store.dispatch(new fromStore.SliderPageClear());
@@ -107,12 +163,51 @@ export class TopBarComponent implements OnInit, OnDestroy {
     else if (this.settingsScope) {
       this.goTo('settings');
     }
+    else if (this.resourcesScope) {
+      if (
+        this.currentRoute.includes('resources/your-care-team') ||
+        this.currentRoute.includes('resources/community-feed') ||
+        this.currentRoute.includes('resources/education') ||
+        this.currentRoute.includes('resources/mindful-assistant') ||
+        this.currentRoute.includes('resources/one-path')
+      ) {
+        if (this.currentRoute.includes('resources/mindful-assistant/start')) {
+          this.goTo('resources/mindful-assistant');
+          this._store.dispatch(new fromStore.TopbarChangeColor('--color-bg-pastel-lime'));
+        }
+        else {
+          this._store.dispatch(new fromStore.TopbarChangeColor('--color-bg-pastel-beige'));
+          this.goTo('resources'); 
+        }
+      }
+
+      if (this.currentRoute.includes('resources/your-care-team/list')) {
+        this.goTo('resources/your-care-team');
+      }
+
+      if (this.currentRoute.includes('resources/your-care-team/detail')) {
+        this.goTo('resources/your-care-team/list');
+        this._store.dispatch(new fromResourcesStore.MemberYouCareTeamSelected(null));
+      }
+    }
     else {
       // this.goTo('profile');
     }
   }
 
   goTo(path: string) {
+    if (path === 'notifications') {
+      this._store.dispatch(new fromStore.TopbarChangeColor('--color-white'));
+    }
+
+    if (this.currentRoute.includes('symptoms/add')) {
+      if (this.activityConfig.symptomReportSelected) {
+        this._store.dispatch(new fromActivityStore.SetData({
+          symptomReportSelected: null,
+        }));
+      }
+    }
+
     this._store.dispatch(new fromCoreStore.Go({
       path: [path]
     }));

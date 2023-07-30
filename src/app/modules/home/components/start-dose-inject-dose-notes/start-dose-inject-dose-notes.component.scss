@@ -11,11 +11,7 @@
   }
 
   .add-photo-cta {
+    margin-top: var(--size-xs);
     margin-bottom: var(--size-m);
-    text-align: left;
-
-    ion-button {
-      --padding-start: var(--size-xxxs);
-    }
   }
 }

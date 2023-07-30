@@ -3,9 +3,9 @@ import {
   ViewEncapsulation,
   ViewChild,
   OnInit,
+  OnDestroy,
   AfterViewInit,
   ElementRef,
-  OnDestroy,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
@@ -175,7 +175,6 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-green'));
     this.config$
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe(config => {

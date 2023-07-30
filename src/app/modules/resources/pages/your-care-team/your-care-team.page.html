@@ -1,0 +1,21 @@
+<ion-content [fullscreen]="true" [scrollY]="false">
+  <section class="your-care-team">
+    <automagic-hero 
+      *ngIf="heroConfig"
+      [color]="heroConfig.color" 
+      [image]="heroConfig.image" 
+      [template]="heroConfig.template" 
+    ></automagic-hero>
+
+    <ion-img src="/assets/images/your-care-team.svg"></ion-img>
+
+    <div class="your-care-team__content ion-padding">
+      <h1 class="font-heading-1--bold">Hi {{ name }}</h1>
+      <p>You can add your providers, caregivers and care locations - providing each different levels of access to your tracking and symptoms data</p>
+
+      <ion-button fill="outline" color="purple" (click)="goTo('resources/your-care-team/list')">
+        Add to your Care Team 
+      </ion-button>
+    </div>
+  </section>
+</ion-content>

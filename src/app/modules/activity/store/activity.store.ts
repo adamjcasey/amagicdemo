@@ -2,35 +2,35 @@ import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
 
 export interface ActivityState {
-  doseReportSelected: any;
+  calendarPageVisited: boolean;
+  doseReportsPageVisited: boolean;
+  yourProgressPageVisited: boolean;
+  symptomReportPageVisited: boolean;
+  doseReportSelected?: any;
+  currentSymptomCreating?: any;
   symptomReports: any;
   symptomReportSelected?: any;
-  currentSymptomReport?: any;
 }
 
 let initialState: ActivityState;
 if (environment.production) {
   initialState = {
-    doseReportSelected: {
-      marked: null,
-      date: null,
-      bodyPart: null,
-      numberDose: null,
-    },
-    symptomReports: []
+    calendarPageVisited: false,
+    doseReportsPageVisited: false,
+    yourProgressPageVisited: false,
+    symptomReportPageVisited: false,
+    symptomReports: [],
   }
 }
 else {
   initialState = {
-    doseReportSelected: {
-      marked: null,
-      date: null,
-      bodyPart: null,
-      numberDose: null,
-    },
+    calendarPageVisited: false,
+    doseReportsPageVisited: false,
+    yourProgressPageVisited: false,
+    symptomReportPageVisited: false,
     symptomReports: [
       {
-        date: new Date(moment().toString()),
+        date: new Date(moment().add('4', 'weeks').toString()),
         feelingOverall: 1,
         customNote: 'Custom Note',
         symptoms: ['Bloating', 'Nausea'],
@@ -40,7 +40,7 @@ else {
         notes: 'Custom Notes',
       },
       {
-        date: new Date(moment().add('1', 'week').toString()),
+        date: new Date(moment().add('3', 'week').toString()),
         feelingOverall: 5,
         customNote: 'Custom Note',
         symptoms: ['Indigestion', 'Acid Reflux'],
@@ -59,7 +59,7 @@ else {
         notes: 'Custom Notes',
       },
       {
-        date: new Date(moment().add('3', 'week').toString()),
+        date: new Date(moment().add('1', 'week').toString()),
         feelingOverall: 2,
         customNote: 'Custom Note',
         symptoms: ['Nausea', 'Indigestion'],
@@ -68,7 +68,7 @@ else {
         sleepQuality: 5,
       },
       {
-        date: new Date(moment().add('4', 'weeks').toString()),
+        date: new Date(moment().toString()),
         feelingOverall: 1,
         customNote: 'Custom Note',
         symptoms: ['Acid Reflux', 'Diarrhea'],
@@ -78,7 +78,6 @@ else {
         notes: 'Custom Notes',
       }
     ],
-    currentSymptomReport: null,
   }
 }
 

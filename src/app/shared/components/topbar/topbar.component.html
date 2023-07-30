@@ -2,11 +2,11 @@
   <ion-toolbar class="topbar__toolbar">
     <ion-buttons slot="start">
       <ion-button (click)="leftElementAction()">
-        <ng-container *ngIf="!activityScope && !settingsScope">
+        <ng-container *ngIf="!activityScope && !settingsScope && !resourcesScope">
           <ion-icon slot="icon-only" src="/assets/icons/user.svg"></ion-icon>
         </ng-container>
 
-        <ng-container *ngIf="activityScope || settingsScope">
+        <ng-container *ngIf="activityScope || settingsScope || resourcesScope">
           <ion-icon slot="icon-only" size="medium" color="dark" name="chevron-back-outline"></ion-icon>
         </ng-container>
       </ion-button>
@@ -22,7 +22,10 @@
         </div>
       </div>
       <ng-template #default>
-        <ion-button>
+        <ion-button class="notifications-cta" (click)="goTo('notifications')">
+          <div class="counter" *ngIf="config.pendingNotifications > 0">
+            {{ config.pendingNotifications }}
+          </div>
           <ion-icon slot="icon-only" src="/assets/icons/notifications.svg"></ion-icon>
         </ion-button>
       </ng-template>

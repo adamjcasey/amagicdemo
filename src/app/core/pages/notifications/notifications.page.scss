@@ -1,0 +1,62 @@
+@import 'src/theme/base/mixins';
+
+.notifications-page {
+  padding-top: var(--topbar-size);
+
+  h1 {
+    margin-bottom: var(--size-m);
+    text-align: center;
+  }
+
+  .notifications-page__counter {
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--size-m);
+    font-weight: var(--font-weight-bold);
+
+    .tasks-counter {
+      @include heading-5;
+      width: 28px;
+      height: 28px;
+      margin-left: var(--size-xxs);
+      background-color: var(--color-primary-salmon);
+      border-radius: 50%;
+      color: var(--color-white);
+      line-height: 30px;
+      text-align: center;
+    }
+  }
+
+  .notification {
+    display: grid;
+    grid-template-columns: max-content auto max-content;
+    align-items: center;
+    gap: var(--size-xxs);
+    margin-bottom: var(--size-xs);
+    padding-bottom: var(--size-xs);
+    border-bottom: 1px solid var(--color-gray);
+
+    .notification__asset {
+      grid-column: 1;
+      width: 80px;
+    }
+
+    .notification__content {
+      grid-column: 2;
+
+      h5 {
+        margin-top: 0
+      }
+
+      p {
+        @include paragraph-s;
+        margin: 0;
+      }
+    }
+
+    ion-icon {
+      grid-column: 3;
+      font-size: var(--size-l);
+    }
+  }
+}

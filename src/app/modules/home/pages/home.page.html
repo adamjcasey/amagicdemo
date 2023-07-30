@@ -1,5 +1,5 @@
 <ion-content [fullscreen]="true">
-  <section class="home-page" [hidden]="!initialized">
+  <section class="home-page">
     <automagic-hero 
       [color]="heroConfig.color" 
       [image]="heroConfig.image" 
@@ -14,14 +14,13 @@
       </ng-container>
 
       <ng-container *ngIf="homeConfig.allCompletedDoses">
-        <div class="home-page__section" *ngIf="onBoardingTasks">
+        <div class="home-page__section" *ngIf="onBoardingTasks && completedTasks < 6">
           <h3>
-            Onboarding Tasks<div class="tasks-counter">{{ completedTasks }}</div>
+            Onboarding Tasks<div class="tasks-counter">{{ (6 - completedTasks) }}</div>
           </h3>
           <automagic-accordion 
             *ngFor="let task of onBoardingTasks; let i = index"
-            [config]="task" 
-            (onTaskChange)="onTaskChange($event, i)"
+            [config]="task"
           ></automagic-accordion>
         </div>
 

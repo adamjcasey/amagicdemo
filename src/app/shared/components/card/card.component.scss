@@ -74,6 +74,10 @@
   margin-top: var(--size-xxxs);
   color: var(--color-primary-purple);
   font-weight: var(--font-weight-bold);
+
+  &.card__link--color-salmon {
+    color: var(--color-primary-salmon);
+  }
 }
 
 .card {
@@ -167,6 +171,26 @@
           max-width: 150px;
           margin-top: var(--size-xxs);
         }
+      }
+    }
+  }  
+  
+  &.card--mindful {
+    .card__image {
+      height: 105px;
+    }
+
+    .card__content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .card__text {
+      text-align: center;
+
+      .card__title {
+        @include heading-5;
       }
     }
   }

@@ -1,9 +1,8 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, Subject, takeUntil } from 'rxjs';
 
 import * as fromStore from '@activity/store';
-import * as fromSharedStore from '@shared/store';
 import * as fromCoreStore from '@core/store';
 import * as fromSharedServices from '@shared/services'
 
@@ -25,7 +24,6 @@ export class DoseReportDetailPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-white'));
     this.activityConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe(activityConfig => {

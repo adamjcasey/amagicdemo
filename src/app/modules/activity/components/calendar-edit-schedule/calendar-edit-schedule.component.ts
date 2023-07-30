@@ -1,17 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, Subject, takeUntil } from 'rxjs';
 
 import * as fromStore from '@home/store';
 import * as fromCoreStore from '@core/store';
-import * as fromSharedStore from '@shared/store';
 
 @Component({
   selector: 'automagic-calendar-edit-schedule',
   templateUrl: 'calendar-edit-schedule.component.html',
   styleUrls: ['calendar-edit-schedule.component.scss'],
 })
-export class CalendarEditScheduleComponent {
+export class CalendarEditScheduleComponent implements OnInit, OnDestroy {
   public homeConfig$!: Observable<any>;
   public homeConfig: any;
   private _ngUnsubscribe: Subject<void> = new Subject<void>();
@@ -30,5 +29,10 @@ export class CalendarEditScheduleComponent {
           this.homeConfig = homeConfig;
         }
       });
+  }
+
+  ngOnDestroy() {
+    this._ngUnsubscribe.next();
+    this._ngUnsubscribe.complete();
   }
 }

@@ -177,6 +177,12 @@
       }
     }
 
+    .simulate-flares-up {
+      max-width: 300px;
+      margin-right: auto;
+      margin-left: auto;
+    }
+
     .buttons-container {
       margin-top: var(--size-l);
 
@@ -726,6 +732,12 @@
 
       .close {
         bottom: 40vh;
+      }
+    }
+
+    &.bg-template--bottom-ellipse-hole {
+      .close {
+        bottom: 5vh;
       }
     }
   }

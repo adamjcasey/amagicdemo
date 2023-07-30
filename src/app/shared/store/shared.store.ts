@@ -47,5 +47,6 @@ export const initialState: SharedState = {
   },
   topbarConfig: {
     bgColor: '--color-white',
+    pendingNotifications: 0,
   }
 }

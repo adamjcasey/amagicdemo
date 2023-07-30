@@ -1,0 +1,22 @@
+@import 'src/theme/base/mixins';
+
+.mindful-assistant-page {
+  .mindful-assistant-page__content {
+    .description {
+      @include paragraph-m;
+      text-align: center;
+    }
+
+    .mindful-assistant-page__cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--size-xxs);
+  
+      automagic-card:last-child {
+        grid-column: 1 / -1;
+      }
+    }  
+  }
+  
+}
+  

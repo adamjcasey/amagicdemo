@@ -1,0 +1,54 @@
+<ion-content [fullscreen]="true" [scrollY]="false">
+  <section class="one-path-page">
+    <automagic-hero 
+      *ngIf="heroConfig"
+      [color]="heroConfig.color" 
+      [template]="heroConfig.template"
+      [extraCss]="heroConfig.extraCss" 
+    ></automagic-hero>
+
+    <div class="one-path-page__wrapper ion-padding">
+      <div class="one-path-page__to">
+        <div class="avatar">
+          <ion-img [src]="config.to.photo"></ion-img>
+          <div class="status is-{{ config.to.status }}"></div>
+        </div>
+
+        <h5>{{ config.to.name }}</h5>
+        <p *ngIf="config.to.role">{{ config.to.role }}</p>
+        <div class="one-path-page__to-contact">
+          <div class="action" *ngIf="config.to.phone">
+            <ion-icon src="/assets/icons/accordion-action-phone.svg" size="large"></ion-icon>
+            <span>Call me</span>
+          </div>
+
+          <div class="action">
+            <ion-icon src="/assets/images/one-path.svg" size="large"></ion-icon>
+            <span>Go to OnePath</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="one-path__messages">
+        <div 
+          class="message" 
+          *ngFor="let message of config.messages"
+          [ngClass]="{
+            'message--to': message.type === 'to',
+            'message--from': message.type === 'from',
+          }">
+          {{ message.content }}
+        </div>
+      </div>
+
+      <div class="one-path__input">
+        <ion-input fill="outline" placeholder="Send Message" class="field-custom field-custom--action">
+          <ion-icon src="/assets/icons/send.svg"></ion-icon>
+        </ion-input>
+        <button class="record-cta button--only-icon" type="button">
+          <ion-icon src="/assets/icons/record.svg"></ion-icon>
+        </button>
+      </div>
+    </div>
+  </section>
+</ion-content>

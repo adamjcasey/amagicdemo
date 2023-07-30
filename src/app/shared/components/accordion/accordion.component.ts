@@ -1,8 +1,6 @@
 import { 
   Component, 
   Input, 
-  Output,
-  EventEmitter, 
   ViewEncapsulation, 
 } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -15,7 +13,6 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 })
 export class AccordionComponent {
   @Input() config: any;
-  @Output() onTaskChange = new EventEmitter();
 
   constructor(
     private _sanitizer: DomSanitizer,
@@ -30,14 +27,15 @@ export class AccordionComponent {
   //   this.config.close = !this.config.close;
   // }
 
-  onTaskCheck(event: any) {
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    if (typeof this.config.completed === 'undefined') {
-      this.config.completed = false;
-    }
-    this.onTaskChange.emit(!this.config.completed);
-  }
+  // if the check/uncheck behaviors need to be use from the component
+  // and not dynamically
+  // onTaskCheck(event: any) {
+  //   event.preventDefault();
+  //   event.stopImmediatePropagation();
+  //   if (typeof this.config.completed === 'undefined') {
+  //     this.config.completed = false;
+  //   }
+  // }
 
   sanitizeContent(htmlContent: string): SafeHtml {
     return this._sanitizer.bypassSecurityTrustHtml(htmlContent);

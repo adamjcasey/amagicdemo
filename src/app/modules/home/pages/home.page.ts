@@ -22,7 +22,6 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   public backdropConfig: any;
   public homeConfig$!: Observable<any>;
   public homeConfig: any;
-  public initialized: boolean = false;
   public heroConfig: any;
   public card: any;
   public name: string = '';
@@ -64,54 +63,10 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
       link: {
         label: 'Let’s start',
         action: () => {
-          console.log('action home page card');
+          console.log('Track your progress action');
         }
       },
     }
-    this.onBoardingTasks = [
-      {
-        type: 'task',
-        tabColor: '--color-bg-pastel-purple',
-        title: 'Activity Calendar',
-        description: 'This calendar tracks doses and flareups and reminders.',
-        asset: '/assets/images/onboarding-task-1.svg'
-      },
-      {
-        type: 'task',
-        tabColor: '--color-bg-pastel-purple',
-        title: 'Activity Dose Report',
-        description: 'Make a note of your symptoms to see Theryx® at work.',
-        asset: '/assets/images/onboarding-task-2.svg'
-      },
-      {
-        type: 'task',
-        tabColor: '--color-bg-pastel-purple',
-        title: 'Activity Progress',
-        description: 'Make a note of your symptoms to see Theryx® at work.',
-        asset: '/assets/images/onboarding-task-3.svg'
-      },
-      {
-        type: 'task',
-        tabColor: '--color-bg-pastel-purple',
-        title: 'Activity Symptom Report',
-        description: 'Review individual symptom recordings to track progress.',
-        asset: '/assets/images/onboarding-task-4.svg'
-      },
-      {
-        type: 'task',
-        tabColor: '--color-bg-pastel-purple',
-        title: 'Resources',
-        description: 'Make a note of your symptoms to see Theryx® at work.',
-        asset: '/assets/images/onboarding-task-5.svg'
-      },
-      {
-        type: 'task',
-        tabColor: '--color-bg-pastel-purple',
-        title: 'Care Team',
-        description: 'Make a note of your symptoms to see Theryx® at work.',
-        asset: '/assets/images/onboarding-task-6.svg'
-      }
-    ];
     this.careTeam = [
       {
         type: 'contact',
@@ -135,7 +90,6 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-green'));
     this.welcomeState$
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe(welcomeState => {
@@ -308,23 +262,50 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
           }
 
           if (this.homeConfig.onBoardingTasks) {
+            this.completedTasks = this.homeConfig.onBoardingTasks.filter((task: any) => task.completed).length;
             this.onBoardingTasks = this.homeConfig.onBoardingTasks.map((task: any, index: number) => {
               return {
-                type: 'task',
-                tabColor: '--color-bg-pastel-purple',
                 completed: task.completed,
                 title: task.title,
                 description: task.description,
+                type: 'task',
+                tabColor: '--color-bg-pastel-purple',
                 asset: `/assets/images/onboarding-task-${index + 1}.svg`,
+                onClick: () => {
+                  switch(index) {
+                    case 0:
+                      this.goTo('activity/calendar');
+                      break;
+                    case 1:
+                      this.goTo('activity/dose-report');
+                      break;
+                    case 2:
+                      this.goTo('activity/your-progress');
+                      break;
+                    case 3:
+                      this.goTo('activity/symptom-report');
+                      break;
+                    case 4:
+                      this.goTo('resources');
+                      break;
+                    case 5:
+                      this.goTo('resources/your-care-team');
+                      break;
+                  }
+                },
               }
             });
+
+            const markedDoses = this.homeConfig.doses.filter((dose: any) => dose.marked);
+            if (markedDoses.length === 6) {
+              this._store.dispatch(new fromSharedStore.TopbarPendingNotifications(this.homeConfig.onBoardingTasks.length - this.completedTasks));
+            }
           }
         }
       });
   }
 
   ngAfterViewInit() {
-    this.initialized = true;
     const markedDoses = this.homeConfig.doses.filter((dose: any) => dose.marked);
     if (this.homeConfig.firstTimeDose && markedDoses.length === 0) {
       this._store.dispatch(new fromSharedStore.BackdropShow({
@@ -380,9 +361,11 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
       transition: 'move',
       header: true,
       template: `
-        <img src="assets/images/flare-up-backdrop-image.svg" />
-        <h1 class="font-heading-1--bold">Pretend you’ve got a flare-up...</h1>
-        <p>To demonstrate the capabilities of a connected ecosystem, we’re going to simulate a symptom flare-up that can be detected by your watch.</p>
+        <div class="simulate-flares-up">
+          <img src="assets/images/flare-up-backdrop-image.svg" />
+          <h1 class="font-heading-1--bold">Pretend you’ve got a flare-up...</h1>
+          <p>To demonstrate the capabilities of a connected ecosystem, we’re going to simulate a symptom flare-up that can be detected by your watch.</p>
+        </div>
       `,
       buttons: [
         {
@@ -410,7 +393,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
             }
           ],
           onClose: () => {
-            this.goTo('home/add-symptom');
+            this.goTo('symptoms/add');
           }
         }));
       }
@@ -424,20 +407,6 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
       component: 'start-guided-demo',
       template: null,
       contentCentered: true,
-    }));
-  }
-
-  onTaskChange(value: any, index: number) {
-    this.onBoardingTasks[index].completed = value;
-    if (value) {
-      this.completedTasks = this.completedTasks - 1;
-    }
-    else {
-      this.completedTasks = this.completedTasks + 1;
-    }
-    
-    this._store.dispatch(new fromStore.SetData({
-      onBoardingTasks: this.onBoardingTasks
     }));
   }
 

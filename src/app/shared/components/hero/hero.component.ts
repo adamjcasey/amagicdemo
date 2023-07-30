@@ -16,6 +16,7 @@ export class HeroComponent implements AfterViewInit {
   @Input() image: string = '';
   @Input() template!: string;
   @Input() actions: any[] = [];
+  @Input() extraCss: string = '';
   public initialized: boolean = false;
 
   constructor() {}

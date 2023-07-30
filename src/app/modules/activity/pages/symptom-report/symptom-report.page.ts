@@ -1,11 +1,11 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, Subject, takeUntil } from 'rxjs';
 import * as moment from 'moment';
 
 import * as fromStore from '@activity/store';
 import * as fromCoreStore from '@core/store';
-import * as fromSharedStore from '@shared/store';
+import * as fromHomeStore from '@home/store';
 import * as fromSharedServices from '@shared/services';
 
 @Component({
@@ -15,6 +15,9 @@ import * as fromSharedServices from '@shared/services';
 })
 export class SymptomReportPage implements OnInit, OnDestroy {
   public activityConfig$!: Observable<any>;
+  public activityConfig: any;
+  public homeConfig$!: Observable<any>;
+  public homeConfig: any;
   public symptomReports: any;
   private _ngUnsubscribe: Subject<void> = new Subject<void>();
 
@@ -23,44 +26,62 @@ export class SymptomReportPage implements OnInit, OnDestroy {
     private _utils: fromSharedServices.UtilsService,
   ) {
     this.activityConfig$ = this._store.select(fromStore.getActivityConfig);
+    this.homeConfig$ = this._store.select(fromHomeStore.getHomeConfig);
   }
 
   ngOnInit() {
-    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-tiffany-blue'));
+    this.homeConfig$
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(homeConfig => {
+        if (homeConfig) {
+          this.homeConfig = homeConfig;
+        }
+      });
+
     this.activityConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe(activityConfig => {
         if (activityConfig) {
-          this.symptomReports = activityConfig.symptomReports.map((report: any) => {
-            return {
-              title: `${moment(report.date).format('MMM D, H:mm A')}`,
-              template: `
-                <div class="symptom-report-widget">
-                  <div class="row-field symptoms">
-                    <h5>Symptoms</h5>
-                    <p>${report.symptoms.join(', ')}</p>
-                  </div>
+          this.activityConfig = activityConfig;
 
-                  <div class="row-field severity">
-                    <h5>Severity</h5>
-                    <p class="level-${report.severity}">${this.humanizeSeveritySymptom(report.severity)}</p>
+          if (this.activityConfig.symptomReports) {
+            this.symptomReports = this.activityConfig.symptomReports.map((report: any) => {
+              return {
+                title: moment(report.date).format('MMM D, H:mm A'),
+                template: `
+                  <div class="symptom-report-widget">
+                    <div class="row-field symptoms">
+                      <h5>Symptoms</h5>
+                      <p>${report.symptoms.join(', ')}</p>
+                    </div>
+      
+                    <div class="row-field severity">
+                      <h5>Severity</h5>
+                      <p class="level-${report.severity}">${this.humanizeSeveritySymptom(report.severity)}</p>
+                    </div>
                   </div>
-
-                  ${report.notes ? `
-                    <div class="row-field notes">
-                      <h5>Note</h5>
-                      <p>${report.notes}</p>
-                    </div>` : ''}
-                </div>
-              `,
-              onClick: () => {
-                this._store.dispatch(new fromStore.SetData({
-                  symptomReportSelected: report
-                }));
-                this.goTo('home/add-symptom');
+                `,
+                onClick: () => {
+                  this._store.dispatch(new fromStore.SetData({
+                    symptomReportSelected: report,
+                  }));
+                  this.goTo('symptoms/add');
+                }
               }
-            }
-          });
+            });
+          }
+
+          if (!this.activityConfig.symptomReportPageVisited && this.homeConfig) {
+            const onBoardingTasks = this.homeConfig.onBoardingTasks.map((task: any) => {
+              return {
+                ...task,
+              }
+            });
+            onBoardingTasks[3].completed = true;
+            this._store.dispatch(new fromHomeStore.SetData({
+              onBoardingTasks: onBoardingTasks,
+            }));
+          }
         }
       });
   }

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, Subject, takeUntil } from 'rxjs';
 import * as moment from 'moment';
@@ -78,7 +78,6 @@ export class ActivityPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-beige'));
     this._store.dispatch(new fromSharedStore.SliderPageClear());
     this.activityConfig$
       .pipe(takeUntil(this._ngUnsubscribe))

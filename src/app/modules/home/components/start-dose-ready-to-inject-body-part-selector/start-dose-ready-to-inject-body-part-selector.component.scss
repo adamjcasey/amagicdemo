@@ -1,5 +1,19 @@
 @import 'src/theme/base/mixins';
 
-.start-dose-ready-to-inject-body-part-selector {
-  
+.start-dose-ready-to-inject__content {
+  svg {
+    > * {
+      &:not(.body-shape__top-left):not(.body-shape__top-right):not(.body-shape__bottom-left):not(.body-shape__bottom-right) {
+        pointer-events: none;        
+      }
+    }
+
+    .body-shape__top-left,
+    .body-shape__top-right,
+    .body-shape__bottom-left,
+    .body-shape__bottom-right {
+      position: relative;
+      z-index: 100;
+    }
+  }
 }
