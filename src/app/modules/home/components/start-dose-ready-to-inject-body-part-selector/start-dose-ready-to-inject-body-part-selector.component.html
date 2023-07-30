@@ -1,7 +1,21 @@
 <div class="start-dose-ready-to-inject__content">
     <h1 class="font-heading-1--bold">Select injection site.</h1>
     
-    <svg class="body-shape {{ bodyPartSelected ? bodyPartSelected + '-selected' : null }}" (click)="onBodyPartSelected($event)" width="350" height="440" viewBox="0 0 350 440" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg 
+      class="body-shape {{ bodyPartSelected ? bodyPartSelected + '-selected' : null }}" 
+      [ngClass]="{
+        'top-right-selected': bodyPartSelected === 'top-right',
+        'top-left-selected': bodyPartSelected === 'top-left',
+        'bottom-right-selected': bodyPartSelected === 'bottom-right',
+        'bottom-left-selected': bodyPartSelected === 'bottom-left',
+        'top-right-disabled': bodyPartPreviousSelected === 'top-right',
+        'top-left-disabled': bodyPartPreviousSelected === 'top-left',
+        'bottom-right-disabled': bodyPartPreviousSelected === 'bottom-right',
+        'bottom-left-disabled': bodyPartPreviousSelected === 'bottom-left',
+      }"
+      (click)="onBodyPartSelected($event)" 
+      width="350" height="440" viewBox="0 0 350 440" fill="none" xmlns="http://www.w3.org/2000/svg">
+
       <path d="M73.94 295.822C70.0167 251.357 51.381 221.253 42.5535 196.759C-5.50713 46.9708 70.9978 44.1446 94.5377 39.4342C114.645 35.4108 147.993 29.0715 170.061 21.535C199.486 11.4862 258.826 -4.84283 295.607 25.3033C342.464 63.707 320.128 166.759 295.607 267.56C262.879 402.099 198.356 450.461 134.751 425.827C73.94 402.275 78.8442 351.404 73.94 295.822Z" fill="white"/>
       <mask id="mask0_952_35774" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="2" y="8" width="343" height="425">
         <path d="M48 342.5C-55.4401 320.678 51.381 221.253 42.5535 196.759C-5.50709 46.9708 70.9978 44.1446 94.5377 39.4342C114.645 35.4108 147.993 29.0715 170.061 21.535C199.486 11.4862 258.826 -4.84283 295.607 25.3033C332.701 55.7054 326.432 145.423 310.044 231.5C305.731 254.155 356.605 266.555 342.5 293.5C303.5 368 285.235 300.541 282.5 309.5C247 412.5 195.5 448 134.751 425.827C66.8195 401.032 102.596 354.018 48 342.5Z" fill="white"/>

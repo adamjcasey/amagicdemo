@@ -2,7 +2,6 @@ import {
   Component,
   ViewEncapsulation, 
   OnInit,
-  ViewChild,
   OnDestroy,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
@@ -10,7 +9,6 @@ import { Observable, Subject, takeUntil } from 'rxjs';
 
 import * as fromStore from '@home/store';
 import * as fromSharedStore from '@shared/store';
-import * as fromSharedComponents from '@shared/components';
 import * as fromCoreStore from '@core/store';
 
 @Component({
@@ -20,15 +18,19 @@ import * as fromCoreStore from '@core/store';
   encapsulation: ViewEncapsulation.None
 })
 export class StartDoseReadyToInjectBodyPartSelectorComponent implements OnInit, OnDestroy {
-  public bodyPartSelected!: string;
+  public bodyPartSelected: string = '';
+  public bodyPartPreviousSelected: string = '';
   public sliderPageConfig$!: Observable<any>;
   public sliderPageConfig: any;
+  public homeConfig$!: Observable<any>;
+  public homeConfig: any;
   private _ngUnsubscribe: Subject<void> = new Subject<void>();
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
   ) {
     this.sliderPageConfig$ = this._store.select(fromSharedStore.getSliderPageConfig);
+    this.homeConfig$ = this._store.select(fromStore.getHomeConfig);
   }
 
   ngOnInit() {
@@ -37,6 +39,19 @@ export class StartDoseReadyToInjectBodyPartSelectorComponent implements OnInit, 
       .subscribe(sliderPageConfig => {
         if (sliderPageConfig) {
           this.sliderPageConfig = sliderPageConfig;
+        }
+      });
+
+    this.homeConfig$
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(homeConfig => {
+        if (homeConfig) {
+          this.homeConfig = homeConfig;
+          const markedDoses = this.homeConfig?.doses.filter((dose: any) => dose.marked);
+          if (markedDoses.length) {
+            const lastMarkedDose = markedDoses[markedDoses.length - 1];
+            this.bodyPartPreviousSelected = lastMarkedDose.bodyPart;
+          }
         }
       });
   }
@@ -57,15 +72,19 @@ export class StartDoseReadyToInjectBodyPartSelectorComponent implements OnInit, 
       // top-right
       if (coords.x >= 210) {
         if (coords.y >= 355 && coords.y <= 405) {
-          clickOnPath = true;
-          this.bodyPartSelected = 'top-right';
+          if (this.bodyPartPreviousSelected !== 'top-right') {
+            clickOnPath = true;
+            this.bodyPartSelected = 'top-right';
+          }
         }
       }
       // top-left
       else {
         if (coords.y >= 355 && coords.y <= 405) {
-          clickOnPath = true;
-          this.bodyPartSelected = 'top-left';
+          if (this.bodyPartPreviousSelected !== 'top-left') {
+            clickOnPath = true;
+            this.bodyPartSelected = 'top-left';
+          }
         }
       }
     }
@@ -74,15 +93,19 @@ export class StartDoseReadyToInjectBodyPartSelectorComponent implements OnInit, 
       // bottom-right
       if (coords.x >= 210) {
         if (coords.y >= 480 && coords.y <= 545) {
-          clickOnPath = true;
-          this.bodyPartSelected = 'bottom-right';
+          if (this.bodyPartPreviousSelected !== 'bottom-right') {
+            clickOnPath = true;
+            this.bodyPartSelected = 'bottom-right';
+          }
         }
       }
       // bottom-left
       else {
         if (coords.y >= 480 && coords.y <= 545) {
-          clickOnPath = true;
-          this.bodyPartSelected = 'bottom-left';
+          if (this.bodyPartPreviousSelected !== 'bottom-left') {
+            clickOnPath = true;
+            this.bodyPartSelected = 'bottom-left';
+          }
         }
       }
     }
