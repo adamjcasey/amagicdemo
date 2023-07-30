@@ -166,7 +166,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
                           <p>Your Theryx® dose is scheduled for today!</p>
                         `;
                       }, 800);
-                    }, 2000);
+                    }, 800);
                   }
                   else { 
                     if (!this.homeConfig.flareUpsDemoDone) {
@@ -188,8 +188,10 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
                           bgTemplate: 'top-hole',
                           header: true,
                           template: `
-                            <h1 class="font-heading-1--bold">Start dose</h1>
-                            <p>You should start dose to continue the demo</p>
+                            <div class="start-dose-message">
+                              <h1 class="font-heading-1--bold">Start dose</h1>
+                              <p>Please press <strong>Start dose</strong> to continue this demo</p>
+                            </div>
                           `,
                           onClose: () => {
                             // TODO: Highlight Start Dose button in homepage
@@ -330,22 +332,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     this._store.dispatch(new fromSharedStore.BackdropShow({
       transition: 'move',
       header: true,
-      // template: `
-      //   <div class="time-traveling">
-      //     <video 
-      //       id="time-traveling-video"
-      //       src="/assets/videos/time-traveling.mp4" 
-      //       autoplay
-      //       muted
-      //       playsinline
-      //     ></video>
-      //   </div>
-      // `,
-      template: `
-        <div class="time-traveling">
-        
-        </div>
-      `,
+      component: 'time-traveling',
       onClose: () => {
         setTimeout(() => {
           this._store.dispatch(new fromStore.SetData({
@@ -361,7 +348,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
       transition: 'move',
       header: true,
       template: `
-        <div class="simulate-flares-up">
+        <div class="simulate-flares-up-message">
           <img src="assets/images/flare-up-backdrop-image.svg" />
           <h1 class="font-heading-1--bold">Pretend you’ve got a flare-up...</h1>
           <p>To demonstrate the capabilities of a connected ecosystem, we’re going to simulate a symptom flare-up that can be detected by your watch.</p>
