@@ -1,6 +1,61 @@
 @import 'src/theme/base/mixins';
 
 .start-dose-ready-to-inject__content {
+  .body-shape {
+    width: 100%;
+    height: auto;
+
+    &.top-left-selected {
+      .body-shape__top-left {
+        fill: var(--color-bg-pastel-purple);
+      }
+    }
+    &.top-right-selected {
+      .body-shape__top-right {
+        fill: var(--color-bg-pastel-purple);
+      }
+    }
+
+    &.bottom-left-selected {
+      .body-shape__bottom-left {
+        fill: var(--color-bg-pastel-purple);
+      }
+    }
+    &.bottom-right-selected {
+      .body-shape__bottom-right {
+        fill: var(--color-bg-pastel-purple);
+      }
+    }
+
+    &.top-left-disabled {
+      .body-shape__top-left {
+        pointer-events: none;
+        stroke: var(--color-skintone-4);
+      }
+    }
+    &.top-right-disabled {
+      .body-shape__top-right {
+        pointer-events: none;
+        stroke: var(--color-skintone-4);
+      }
+    }
+
+    &.bottom-left-disabled {
+      .body-shape__bottom-left {
+        pointer-events: none;
+        stroke: var(--color-skintone-4);
+      }
+    }
+    &.bottom-right-disabled {
+      .body-shape__bottom-right {
+        pointer-events: none;
+        stroke: var(--color-skintone-4);
+      }
+    }
+  }
+
+  
+
   svg {
     > * {
       &:not(.body-shape__top-left):not(.body-shape__top-right):not(.body-shape__bottom-left):not(.body-shape__bottom-right) {

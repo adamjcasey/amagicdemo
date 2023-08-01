@@ -38,10 +38,10 @@ export class UtilsService {
     let text;
     switch(bodyPart) {
       case 'top-left':
-        text = 'Right Chest';
+        text = 'Right Abdomen';
         break;
       case 'top-right':
-        text = 'Left Chest';
+        text = 'Left Abdomen';
         break;
 
       case 'bottom-left':

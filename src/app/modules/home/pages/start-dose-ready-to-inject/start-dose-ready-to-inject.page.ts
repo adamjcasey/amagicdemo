@@ -293,6 +293,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                 <img src="assets/images/start-dose-ready-to-inject-clean.svg">
               </div>
             `,
+            component: null,
           },
           content: {
             actions: [

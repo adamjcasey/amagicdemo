@@ -2,35 +2,6 @@
 
 .start-dose-ready-to-inject {
   .start-dose-ready-to-inject__content {
-    .body-shape {
-      width: 100%;
-      height: auto;
-
-      &.top-left-selected {
-        .body-shape__top-left {
-          fill: var(--color-bg-pastel-purple);
-        }
-      }
-
-      &.top-right-selected {
-        .body-shape__top-right {
-          fill: var(--color-bg-pastel-purple);
-        }
-      }
-
-      &.bottom-left-selected {
-        .body-shape__bottom-left {
-          fill: var(--color-bg-pastel-purple);
-        }
-      }
-
-      &.bottom-right-selected {
-        .body-shape__bottom-right {
-          fill: var(--color-bg-pastel-purple);
-        }
-      }
-    }
-
     .pro-tip {
       position: relative;
       padding-left: var(--size-l);
@@ -42,12 +13,12 @@
         left: 0;
         font-size: var(--size-m);
       }
-
+  
       p {
         margin-top: 0;
         margin-bottom: var(--size-xxxxs);
         font-size: var(--font-size-paragraph-l);
-
+  
         &:last-child {
           margin-bottom: 0;
         }
@@ -75,11 +46,4 @@
       animation: spinner-animation 1s linear infinite;
     }
   }
-}
-
-.no-needless-message {
-  max-width: 300px;
-  margin-right: auto;
-  margin-left: auto;
-  text-align: center;
 }

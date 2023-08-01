@@ -8,6 +8,7 @@
   'bg-template--top-hole': config.bgTemplate === 'top-hole', 
   'bg-template--bottom-hole': config.bgTemplate === 'bottom-hole', 
   'bg-template--bottom-ellipse-hole': config.bgTemplate === 'bottom-ellipse-hole', 
+  'has-buttons': config.buttons, 
 }">
   <div 
     class="backdrop__wrapper" 
@@ -339,7 +340,7 @@
     </div>
 
     <ion-icon 
-      class="close" 
+      class="backdrop__close" 
       name="chevron-up-outline" 
       *ngIf="config.fullScreen && config.bgTemplate" 
       (click)="toggle()" 

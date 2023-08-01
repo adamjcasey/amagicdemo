@@ -157,7 +157,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
             {
               label: 'Previous',
               action: () => {
-                this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-blue'));
+                this.showDosesSelector();
                 this.sliderPage.slidePrev();
               }
             },
@@ -246,11 +246,11 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async allowBluetooth() {
+    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
     if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios') {
       // TODO: make bluetooth integration
       // skipping bluetooth step
       this.sliderPage.slideNext();
-      this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
       // await BleClient.initialize();
       // const isEnabled = await BleClient.isEnabled();
     }
@@ -260,55 +260,6 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async allowNotifications() {
-    const showDosesSelector = () => {
-      this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-white'));
-      this._store.dispatch(new fromSharedStore.SliderPageSetContent({
-        isExpanded: true,
-        template: `
-          <h1 class="font-heading-1--bold">Confirm your dosing schedule.</h1>
-          <p>Typical dosing for Theryx®:<br> 1 weekly for the first 4 weeks,<br> Every 2 weeks afterwards</p>
-        `,
-        component: 'welcome-doses-selector',
-        toolbar: {
-          template: `
-            <p><strong>6 doses</strong> are preselected</p>
-          `,
-          actions: [
-            {
-              label: 'Previous',
-              action: () => {
-                this._store.dispatch(new fromSharedStore.SliderPageSetContent({
-                  isExpanded: false,
-                  template: `
-                    <h1 class="font-heading-1--bold">Allow Notifications.</h1>
-                    <p>To help you remember your dose schedule and know when medication is at the right temperature, please <strong>enable notifications.</strong> You can customize notifications in the Settings menu.</p>
-                  `,
-                  actions: [
-                    {
-                      label: 'Allow Notifications',
-                      action: () => { this.allowNotifications() }
-                    },
-                  ],
-                }));
-              },
-            },
-            {
-              label: 'Proceed',
-              action: () => {
-                if (this.welcomeFormGroup.get('doses')?.valid) {
-                  this._store.dispatch(new fromSharedStore.SliderPageSetContent({
-                    isExpanded: false
-                  }));
-                  this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-lime'));
-                  this.sliderPage.slideNext();
-                }
-              },
-            },
-          ],
-        }
-      }));
-    }
-
     if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios') {
       let permissionStatus = await PushNotifications.checkPermissions();
       
@@ -321,14 +272,64 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
       }
 
       if (permissionStatus.receive === 'granted') {
-        showDosesSelector();
+        this.showDosesSelector();
       }
 
       await PushNotifications.register();
     }
     else {
-      showDosesSelector();
+      this.showDosesSelector();
     }
+  }
+
+  showDosesSelector() {
+    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-white'));
+    this._store.dispatch(new fromSharedStore.SliderPageSetContent({
+      isExpanded: true,
+      template: `
+        <h1 class="font-heading-1--bold">Confirm your dosing schedule.</h1>
+        <p>Typical dosing for Theryx®:<br> 1 weekly for the first 4 weeks,<br> Every 2 weeks afterwards</p>
+      `,
+      component: 'welcome-doses-selector',
+      toolbar: {
+        template: `
+          <p><strong>6 doses</strong> are preselected</p>
+        `,
+        actions: [
+          {
+            label: 'Previous',
+            action: () => {
+              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
+              this._store.dispatch(new fromSharedStore.SliderPageSetContent({
+                isExpanded: false,
+                template: `
+                  <h1 class="font-heading-1--bold">Allow Notifications.</h1>
+                  <p>To help you remember your dose schedule and know when medication is at the right temperature, please <strong>enable notifications.</strong> You can customize notifications in the Settings menu.</p>
+                `,
+                actions: [
+                  {
+                    label: 'Allow Notifications',
+                    action: () => { this.allowNotifications() }
+                  },
+                ],
+              }));
+            },
+          },
+          {
+            label: 'Proceed',
+            action: () => {
+              if (this.welcomeFormGroup.get('doses')?.valid) {
+                this._store.dispatch(new fromSharedStore.SliderPageSetContent({
+                  isExpanded: false
+                }));
+                this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-lime'));
+                this.sliderPage.slideNext();
+              }
+            },
+          },
+        ],
+      }
+    }));
   }
 
   goTo(path: string) {

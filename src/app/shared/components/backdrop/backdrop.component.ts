@@ -334,6 +334,9 @@ export class BackdropComponent implements OnInit, AfterViewInit {
       case 'start-guided-demo':
         this.contentComponent.createComponent(fromHomeComponents.StartGuidedDemoComponent);
         break;
+      case 'time-traveling':
+        this.contentComponent.createComponent(fromHomeComponents.TimeTravelingComponent);
+        break;
     }
   }
 }
