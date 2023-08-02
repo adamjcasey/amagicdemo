@@ -11,13 +11,13 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Observable, Subject, takeUntil } from 'rxjs';
 import { Capacitor } from '@capacitor/core';
-import { BleClient } from '@capacitor-community/bluetooth-le';
 import { PushNotifications } from '@capacitor/push-notifications';
 
 import * as fromStore from '../store';
 import * as fromCoreStore from '@core/store';
 import * as fromSharedStore from '@shared/store';
 import * as fromSharedComponents from '@shared/components';
+import * as fromSharedServices from '@shared/services';
 
 @Component({
   selector: 'automagic-welcome',
@@ -39,6 +39,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
     private _formBuilder: FormBuilder,
+    private _bluetoothService: fromSharedServices.BluetoothService,
   ) {
     this.config$ = this._store.select(fromStore.getWelcomeConfig);
     this.welcomeFormGroup = this._formBuilder.group({
@@ -246,15 +247,9 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async allowBluetooth() {
-    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
-    if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios') {
-      // TODO: make bluetooth integration
-      // skipping bluetooth step
-      this.sliderPage.slideNext();
-      // await BleClient.initialize();
-      // const isEnabled = await BleClient.isEnabled();
-    }
-    else {
+    const checkPermissions = await this._bluetoothService.checkPermissions();
+    if (checkPermissions === 'granted') {
+      this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
       this.sliderPage.slideNext();
     }
   }
