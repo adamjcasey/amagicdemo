@@ -22,7 +22,7 @@
         </div>
       </div>
       <ng-template #default>
-        <ion-button class="notifications-cta" (click)="goTo('notifications')">
+        <ion-button class="notifications-cta" (click)="goTo('notifications')" [disabled]="config.pendingNotifications === 0">
           <div class="counter" *ngIf="config.pendingNotifications > 0">
             {{ config.pendingNotifications }}
           </div>
