@@ -256,8 +256,15 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
             hideNavigation: true,
             actions: [
               {
+                label: 'Replay',
+                action: () => {
+                  const videoElement = document.getElementById('start-dose-ready-to-inject-video') as HTMLMediaElement;
+                  videoElement.currentTime = 0;
+                  videoElement.play();
+                }
+              },
+              {
                 label: 'Continue',
-                fill: 'outline',
                 action: () => {
                   const videoElement = document.getElementById('start-dose-ready-to-inject-video') as HTMLMediaElement;
                   // pausing the video if it's ended
