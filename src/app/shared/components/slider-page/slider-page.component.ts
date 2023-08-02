@@ -9,6 +9,7 @@ import {
   EventEmitter,
   ViewContainerRef,
   QueryList,
+  ElementRef,
 } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
@@ -44,6 +45,7 @@ export class SliderPageComponent implements OnInit {
   @Input() slides!: Array<any>;
   @Output() onPrevSlide = new EventEmitter<any>();
   @Output() onNextSlide = new EventEmitter<any>();
+  @ViewChild('wrapper') wrapper!: ElementRef;
   @ViewChild('sliderHeader', { static: false }) sliderHeader!: SwiperComponent;
   @ViewChildren('componentHeader', { read: ViewContainerRef }) componentsHeader!: QueryList<ViewContainerRef>;
   @ViewChild('sliderContent', { static: false }) sliderContent!: SwiperComponent;
@@ -227,6 +229,33 @@ export class SliderPageComponent implements OnInit {
   slideTo(index: number) {
     this.sliderHeader.swiperRef.slideTo(index);
     this.sliderContent.swiperRef.slideTo(index);
+  }
+
+  handlerEnterKey(event: any) {
+    if (this.wrapper) {
+      const field = event.target;
+      const form = event.currentTarget.parentElement.parentElement;
+      if (form.children.length > 1) {
+        // if there more than 1 field
+      }
+      else {
+        field.blur();
+      }
+
+      const actions = this.config.content?.isExpanded 
+        ? this.wrapper.nativeElement.querySelector('.slider-page__content .wrapper-large .wrapper-large__toolbar-actions')
+        : this.wrapper.nativeElement.querySelector('.slider-page__content .wrapper-small .swiper-slide-active .actions-wrapper');
+
+      if (actions) {
+        const buttons = actions.children;
+        if (buttons.length > 1) {
+          buttons[buttons.length - 1].click();
+        }
+        else {
+          buttons[0].click();
+        }
+      }
+    }
   }
 
   sanitizeContent(htmlContent: string): SafeHtml {

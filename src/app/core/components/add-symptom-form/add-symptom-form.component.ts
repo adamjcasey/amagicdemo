@@ -161,4 +161,9 @@ export class AddSymptomFormComponent implements OnInit, OnDestroy {
   formatReportDate(date: Date) {
     return moment(date).format('MMM D, H:mm A');
   }
+
+  handlerEnterKey(event: any) {
+    const field = event.target;
+    field.blur();
+  }
 }

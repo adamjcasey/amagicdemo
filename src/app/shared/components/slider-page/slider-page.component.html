@@ -1,4 +1,5 @@
 <div 
+  #wrapper 
   *ngIf="config$ | async as config"
   class="slider-page" 
   [style.background-color]="config.header?.color 
@@ -90,6 +91,7 @@
                     color="purple" 
                     fill="outline" 
                     mode="md" 
+                    (keyup.enter)="handlerEnterKey($event)"
                     [formControlName]="field.name" 
                     [placeholder]="field.placeholder" 
                     [errorText]="slide.content.form.group.get(field.name)?.errors?.['required'] ? 'Please enter your name' : null" 

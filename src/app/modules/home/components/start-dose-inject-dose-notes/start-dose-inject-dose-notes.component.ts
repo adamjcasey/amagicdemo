@@ -64,7 +64,7 @@ export class StartDoseInjectDoseNotesFormComponent implements OnInit, OnDestroy 
                 return {
                   marked: dose.marked,
                   date: dose.date,
-                  bodyPart: dose.bodyPart,
+                  bodyPartInjected: dose.bodyPartInjected,
                   notes: this.doseNotesFormGroup.value,
                 };
               }
@@ -96,5 +96,14 @@ export class StartDoseInjectDoseNotesFormComponent implements OnInit, OnDestroy 
 
   ratingFieldUpdate(event: any, field: string) {
     this.doseNotesFormGroup.get(field)?.setValue(event);
+  }
+
+  handlerEnterKey(event: any) {
+    const field = event.target;
+    field.blur();
+
+    const sliderPageComponent = document.querySelector('.slider-page');
+    const submitAction = sliderPageComponent?.querySelector('.wrapper-large__toolbar ion-button:last-child') as HTMLElement;
+    submitAction.click();
   }
 }
