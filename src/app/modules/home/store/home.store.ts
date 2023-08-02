@@ -20,37 +20,37 @@ if (environment.production) {
       {
         marked: false,
         date: '',
-        bodyPart: '',
+        bodyPartInjected: '',
         notes: null,
       },
       {
         marked: false,
         date: '',
-        bodyPart: '',
+        bodyPartInjected: '',
         notes: null,
       },
       {
         marked: false,
         date: '',
-        bodyPart: '',
+        bodyPartInjected: '',
         notes: null,
       },
       {
         marked: false,
         date: '',
-        bodyPart: '',
+        bodyPartInjected: '',
         notes: null,
       },
       {
         marked: false,
         date: '',
-        bodyPart: '',
+        bodyPartInjected: '',
         notes: null,
       },
       {
         marked: false,
         date: '',
-        bodyPart: '',
+        bodyPartInjected: '',
         notes: null,
       }
     ],
@@ -103,37 +103,37 @@ else {
       {
         marked: true, // false
         date: new Date(moment().toString()), // '',
-        bodyPart: 'top-right', // '', 
+        bodyPartInjected: 'top-right', // '', 
         notes: null, // { painful: 2, mood: 3, symptoms: ['Redness', 'Itching'], note: 'Custom Note', }
       },
       {
         marked: true, // false
         date: new Date(moment().add(1, 'weeks').toString()), // '',
-        bodyPart: 'top-left', // '', 
+        bodyPartInjected: 'top-left', // '', 
         notes: null, // { painful: 3, mood: 1, symptoms: ['Swelling', 'No Reaction'], note: 'Custom Note', }
       },
       {
         marked: true, // false
         date: new Date(moment().add(2, 'weeks').toString()), // '',
-        bodyPart: 'bottom-right', // '', 
+        bodyPartInjected: 'bottom-right', // '', 
         notes: null, // { painful: 5, mood: 4, symptoms: ['Redness', 'Itching'], note: 'Custom Note', }
       },
       {
         marked: true, // false
         date: new Date(moment().add(3, 'weeks').toString()), // '',
-        bodyPart: 'bottom-left', // '', 
+        bodyPartInjected: 'bottom-left', // '', 
         notes: null, // { painful: 2, mood: 5, symptoms: ['Swelling', 'No Reaction'], note: 'Custom Note', }
       },
       {
         marked: true, // false
         date: new Date(moment().add(5, 'weeks').toString()), // '',
-        bodyPart: 'top-right', // '', 
+        bodyPartInjected: 'top-right', // '', 
         notes: null, // { painful: 2, mood: 3, symptoms: ['Redness', 'Itching'], note: 'Custom Note', }
       },
       {
         marked: true, // false
         date: new Date(moment().add(7, 'weeks').toString()), // '',
-        bodyPart: 'bottom-left', // '', 
+        bodyPartInjected: 'bottom-left', // '', 
         notes: null, // { painful: 1, mood: 4, symptoms: ['Swelling', 'No Reaction'], note: 'Custom Note', }
       }
     ],
@@ -141,37 +141,37 @@ else {
     //   {
     //     marked: false,
     //     date: '',
-    //     bodyPart: '',
+    //     bodyPartInjected: '',
     //     notes: null,
     //   },
     //   {
     //     marked: false,
     //     date: '',
-    //     bodyPart: '',
+    //     bodyPartInjected: '',
     //     notes: null,
     //   },
     //   {
     //     marked: false,
     //     date: '',
-    //     bodyPart: '',
+    //     bodyPartInjected: '',
     //     notes: null,
     //   },
     //   {
     //     marked: false,
     //     date: '',
-    //     bodyPart: '',
+    //     bodyPartInjected: '',
     //     notes: null,
     //   },
     //   {
     //     marked: false,
     //     date: '',
-    //     bodyPart: '',
+    //     bodyPartInjected: '',
     //     notes: null,
     //   },
     //   {
     //     marked: false,
     //     date: '',
-    //     bodyPart: '',
+    //     bodyPartInjected: '',
     //     notes: null,
     //   }
     // ],

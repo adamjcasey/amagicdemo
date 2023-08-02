@@ -152,8 +152,12 @@ export class TopBarComponent implements OnInit, OnDestroy {
 
   leftElementAction() {
     if (this.activityScope) {
+      if (this.currentRoute.includes('activity/calendar')) {
+        this._store.dispatch(new fromSharedStore.BottomToolbarHide(false));
+        this.goTo('activity');
+      }
+
       if (
-        this.currentRoute.includes('activity/calendar') ||
         this.currentRoute.includes('activity/dose-report') ||
         this.currentRoute.includes('activity/your-progress') ||
         this.currentRoute.includes('activity/symptom-report')
