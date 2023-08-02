@@ -263,7 +263,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
             }
           }
 
-          if (this.homeConfig.onBoardingTasks) {
+          if (!this.homeConfig.onBoardingDone && this.homeConfig.onBoardingTasks) {
             this.completedTasks = this.homeConfig.onBoardingTasks.filter((task: any) => task.completed).length;
             this.onBoardingTasks = this.homeConfig.onBoardingTasks.map((task: any, index: number) => {
               return {
@@ -300,7 +300,28 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
 
             const markedDoses = this.homeConfig.doses.filter((dose: any) => dose.marked);
             if (markedDoses.length === 6) {
+              this._store.dispatch(new fromSharedStore.AlertShow({
+                mode: 'full',
+                template: `
+                  <img src="assets/images/on-boarding-done.svg" />
+                  <h1 class="font-heading-1--bold">Onboarding complete!</h1>
+                  <p>Way to go! You’ve finished all of your onboarding tasks.</p>
+                `,
+                actions: [
+                  {
+                    label: 'Got it',
+                    fill: 'outline',
+                    action: () => { 
+                      this._store.dispatch(new fromSharedStore.AlertClose);
+                    },
+                  }
+                ]
+              }));
+
               this._store.dispatch(new fromSharedStore.TopbarPendingNotifications(this.homeConfig.onBoardingTasks.length - this.completedTasks));
+              this._store.dispatch(new fromStore.SetData({
+                onBoardingDone: true,
+              }));
             }
           }
         }
