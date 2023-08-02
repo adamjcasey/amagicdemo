@@ -90,8 +90,6 @@ export class YourProgressPage implements OnInit, OnDestroy {
             this._store.dispatch(new fromHomeStore.SetData({
               onBoardingTasks: onBoardingTasks,
             }));
-            const remainingTasks = this.homeConfig.onBoardingTasks.length - this.homeConfig.onBoardingTasks.filter((task: any) => task.completed).length;
-            this._store.dispatch(new fromSharedStore.TopbarPendingNotifications(remainingTasks));
           }
         }
       });

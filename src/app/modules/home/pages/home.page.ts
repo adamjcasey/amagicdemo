@@ -263,65 +263,65 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
             }
           }
 
-          if (!this.homeConfig.onBoardingDone && this.homeConfig.onBoardingTasks) {
-            this.completedTasks = this.homeConfig.onBoardingTasks.filter((task: any) => task.completed).length;
-            this.onBoardingTasks = this.homeConfig.onBoardingTasks.map((task: any, index: number) => {
-              return {
-                completed: task.completed,
-                title: task.title,
-                description: task.description,
-                type: 'task',
-                tabColor: '--color-bg-pastel-purple',
-                asset: `/assets/images/onboarding-task-${index + 1}.svg`,
-                onClick: () => {
-                  switch(index) {
-                    case 0:
-                      this.goTo('activity/calendar');
-                      break;
-                    case 1:
-                      this.goTo('activity/dose-report');
-                      break;
-                    case 2:
-                      this.goTo('activity/your-progress');
-                      break;
-                    case 3:
-                      this.goTo('activity/symptom-report');
-                      break;
-                    case 4:
-                      this.goTo('resources');
-                      break;
-                    case 5:
-                      this.goTo('resources/your-care-team');
-                      break;
-                  }
-                },
-              }
-            });
+          if (!this.homeConfig.onBoardingDone) {
+            if (this.homeConfig.onBoardingTasks) {
+              this.onBoardingTasks = this.homeConfig.onBoardingTasks.map((task: any, index: number) => {
+                return {
+                  completed: task.completed,
+                  title: task.title,
+                  description: task.description,
+                  type: 'task',
+                  tabColor: '--color-bg-pastel-purple',
+                  asset: `/assets/images/onboarding-task-${index + 1}.svg`,
+                  onClick: () => {
+                    switch(index) {
+                      case 0:
+                        this.goTo('activity/calendar');
+                        break;
+                      case 1:
+                        this.goTo('activity/dose-report');
+                        break;
+                      case 2:
+                        this.goTo('activity/your-progress');
+                        break;
+                      case 3:
+                        this.goTo('activity/symptom-report');
+                        break;
+                      case 4:
+                        this.goTo('resources');
+                        break;
+                      case 5:
+                        this.goTo('resources/your-care-team');
+                        break;
+                    }
+                  },
+                }
+              });
 
-            const markedDoses = this.homeConfig.doses.filter((dose: any) => dose.marked);
-            if (markedDoses.length === 6) {
-              this._store.dispatch(new fromSharedStore.AlertShow({
-                mode: 'full',
-                template: `
-                  <img src="assets/images/on-boarding-done.svg" />
-                  <h1 class="font-heading-1--bold">Onboarding complete!</h1>
-                  <p>Way to go! You’ve finished all of your onboarding tasks.</p>
-                `,
-                actions: [
-                  {
-                    label: 'Got it',
-                    fill: 'outline',
-                    action: () => { 
-                      this._store.dispatch(new fromSharedStore.AlertClose);
-                    },
-                  }
-                ]
-              }));
-
+              this.completedTasks = this.homeConfig.onBoardingTasks.filter((task: any) => task.completed).length;
               this._store.dispatch(new fromSharedStore.TopbarPendingNotifications(this.homeConfig.onBoardingTasks.length - this.completedTasks));
-              this._store.dispatch(new fromStore.SetData({
-                onBoardingDone: true,
-              }));
+              if (this.completedTasks === 6) {
+                this._store.dispatch(new fromSharedStore.AlertShow({
+                  mode: 'full',
+                  template: `
+                    <img src="assets/images/on-boarding-done.svg" />
+                    <h1 class="font-heading-1--bold">Onboarding complete!</h1>
+                    <p>Way to go! You’ve finished all of your onboarding tasks.</p>
+                  `,
+                  actions: [
+                    {
+                      label: 'Got it',
+                      fill: 'outline',
+                      action: () => { 
+                        this._store.dispatch(new fromSharedStore.AlertClose);
+                        this._store.dispatch(new fromStore.SetData({
+                          onBoardingDone: true,
+                        }));
+                      },
+                    }
+                  ]
+                }));
+              }
             }
           }
         }
