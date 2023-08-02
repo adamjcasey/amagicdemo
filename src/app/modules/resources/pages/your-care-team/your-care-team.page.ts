@@ -6,6 +6,7 @@ import * as fromStore from '@resources/store';
 import * as fromCoreStore from '@core/store';
 import * as fromWelcomeStore from '@welcome/store';
 import * as fromHomeStore from '@home/store';
+import * as fromSharedStore from '@shared/store';
 
 @Component({
   selector: 'automagic-your-care-team',
@@ -68,6 +69,8 @@ export class YourCareTeamPage implements OnInit, OnDestroy {
             this._store.dispatch(new fromHomeStore.SetData({
               onBoardingTasks: onBoardingTasks,
             }));
+            const remainingTasks = this.homeConfig.onBoardingTasks.length - this.homeConfig.onBoardingTasks.filter((task: any) => task.completed).length;
+            this._store.dispatch(new fromSharedStore.TopbarPendingNotifications(remainingTasks));
           }
         }
       });

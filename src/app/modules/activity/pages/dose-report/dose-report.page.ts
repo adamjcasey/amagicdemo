@@ -6,6 +6,7 @@ import * as moment from 'moment';
 import * as fromStore from '@activity/store';
 import * as fromHomeStore from '@home/store';
 import * as fromCoreStore from '@core/store';
+import * as fromSharedStore from '@shared/store';
 import * as fromSharedServices from '@shared/services';
 
 @Component({
@@ -57,8 +58,8 @@ export class DoseReportPage implements OnInit, OnDestroy {
                       }));
                       this.goTo(`activity/dose-report-detail`);
                     },
-                    asset: `assets/images/activity-highlights-dose-report-${dose.bodyPart.toLowerCase().replace(' ', '-')}.svg`,
-                    description: `This time you injected your <strong>${this._utils.humanizeBodyPartInjected(dose.bodyPart)}<strong>`
+                    asset: `assets/images/activity-highlights-dose-report-${dose.bodyPartInjected.toLowerCase().replace(' ', '-')}.svg`,
+                    description: `This time you injected your <strong>${this._utils.humanizeBodyPartInjected(dose.bodyPartInjected)}<strong>`
                   }
                 });
             }
@@ -81,6 +82,8 @@ export class DoseReportPage implements OnInit, OnDestroy {
             this._store.dispatch(new fromHomeStore.SetData({
               onBoardingTasks: onBoardingTasks,
             }));
+            const remainingTasks = this.homeConfig.onBoardingTasks.length - this.homeConfig.onBoardingTasks.filter((task: any) => task.completed).length;
+            this._store.dispatch(new fromSharedStore.TopbarPendingNotifications(remainingTasks));
           }
         }
       });

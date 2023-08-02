@@ -42,11 +42,6 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     this.heroConfig = {
       color: '--color-bg-pastel-green',
       image: '/assets/images/homepage.svg',
-      template: `
-        <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
-        <h5>Welcome to wellness on your schedule.</h5>
-        <p>Ready to start your Theryx® injections?<br> Your first guided injection will take about <strong>10 minutes.</strong></p>
-      `,
       actions: [
         {
           label: 'Start dose',
@@ -96,19 +91,6 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
         if (welcomeState) {
           this.welcomeConfig = welcomeState;
           this.name = welcomeState.name;
-
-          // if you are in development and want to skip welcome flow
-          if (!environment.production && this.name === '') {
-            this.name = 'Jhon Doe';
-          }
-
-          if (this.name !== '') {
-            this.heroConfig.template = `
-              <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
-              <h5>Welcome to wellness on your schedule.</h5>
-              <p>Ready to start your Theryx® injections?<br> Your first guided injection will take about <strong>10 minutes.</strong></p>
-            `;
-          }
         }
       });
 
@@ -133,7 +115,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
                   return {
                     marked: dose.marked,
                     date: this.welcomeConfig.doses[index],
-                    body: dose.bodyPart,
+                    bodyPartInjected: dose.bodyPartInjected,
                     notes: dose.notes,
                   }
                 })
@@ -143,19 +125,22 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
             const markedDoses = this.homeConfig.doses.filter((dose: any) => dose.marked);
             // user has completed at least the first dose
             if (markedDoses.length > 0) {
+              console.log('tiene dosis, pone next dose');
               // only first dose completed
               if (markedDoses.length === 1) {
-                if (!this.homeConfig.firstTimeDose) {
-                  if (!this.homeConfig.timeTravelingDemoDone) {
-                    // update template in the hero component
-                    const unMarkedDoses = this.homeConfig.doses.filter((dose: any) => !dose.marked);
-                    const nextDose = unMarkedDoses[0];
-                    const nextDoseDateFormatter = moment(nextDose.date).format('D MMMM YYYY');
-                    this.heroConfig.template = `
-                      <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
-                      <p>Your next Theryx® dose is scheduled for<br> <stong>${nextDoseDateFormatter}</stong></p>
-                    `;
+                console.log('tiene solo 1 dosis');
+                if (!this.homeConfig.timeTravelingDemoDone) {
+                  // update template in the hero component
+                  const unMarkedDoses = this.homeConfig.doses.filter((dose: any) => !dose.marked);
+                  const nextDose = unMarkedDoses[0];
+                  const nextDoseDateFormatted = moment(nextDose.date).format('D MMMM YYYY');
+                  console.log('nextDoseDateFormatted ', nextDoseDateFormatted);
+                  this.heroConfig.template = `
+                    <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
+                    <p>Your next Theryx® dose is scheduled for<br> <stong>${nextDoseDateFormatted}</stong></p>
+                  `;
 
+                  if (!this.homeConfig.firstTimeDose) {
                     setTimeout(() => {
                       this.startTimeTravelingSimulation();
 
@@ -168,69 +153,42 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
                       }, 800);
                     }, 800);
                   }
-                  else { 
-                    if (!this.homeConfig.flareUpsDemoDone) {
-                      setTimeout(() => {
-                        this.startFlareUpsFlow();
-                      }, 600);
-                    }
-                    else {
-                      // DEMO: only for demo purposes
-                      this.heroConfig.template = `
-                        <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
-                        <p>Your Theryx® dose is scheduled for today!</p>
-                      `;
+                }
+                else { 
+                  if (!this.homeConfig.flareUpsDemoDone) {
+                    setTimeout(() => {
+                      this.startFlareUpsFlow();
+                    }, 600);
+                  }
+                  else {
+                    // DEMO: only for demo purposes
+                    this.heroConfig.template = `
+                      <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
+                      <p>Your Theryx® dose is scheduled for today!</p>
+                    `;
 
-                      setTimeout(() => {
-                        this._store.dispatch(new fromSharedStore.BackdropShow({
-                          transition: 'move',
-                          fullScreen: true,
-                          bgTemplate: 'top-hole',
-                          header: true,
-                          template: `
-                            <div class="start-dose-message">
-                              <h1 class="font-heading-1--bold">Start dose</h1>
-                              <p>Please press <strong>Start dose</strong> to continue this demo</p>
-                            </div>
-                          `,
-                          onClose: () => {
-                            // TODO: Highlight Start Dose button in homepage
-                          }
-                        }));
-                      }, 1000);
-                    }
+                    setTimeout(() => {
+                      this._store.dispatch(new fromSharedStore.BackdropShow({
+                        transition: 'move',
+                        fullScreen: true,
+                        bgTemplate: 'top-hole',
+                        header: true,
+                        template: `
+                          <div class="start-dose-message">
+                            <h1 class="font-heading-1--bold">Start dose</h1>
+                            <p>Please press <strong>Start dose</strong> to continue this demo</p>
+                          </div>
+                        `,
+                        onClose: () => {
+                          // TODO: Highlight Start Dose button in homepage
+                        }
+                      }));
+                    }, 1000);
                   }
                 }
               }
               else {
-                // user has completed 1 or more doses
-                // get last dose injected data to be showed on Dose report widget
-                const lastMarkedDose = markedDoses[markedDoses.length - 1];
-                if (lastMarkedDose) {
-                  this.activityHighlights = [
-                    {
-                      type: 'dose-report',
-                      tabColor: '--color-bg-pastel-blue',
-                      title: 'Dose Report',
-                      numberDose: this.homeConfig.doses.findIndex((dose: any) => dose.date === lastMarkedDose.date) + 1,
-                      time: moment(lastMarkedDose.date).format('MMM D, H:mm A'),
-                      asset: `assets/images/activity-highlights-dose-report-${lastMarkedDose.bodyPart.toLowerCase().replace(' ', '-')}.svg`,
-                      description: `This time you injected your <strong>${this._utils.humanizeBodyPartInjected(lastMarkedDose.bodyPart)}<strong>`,
-                      onClick: () => {
-                        this.goTo('activity/dose-report');
-                      }
-                    },
-                    {
-                      tabColor: '--color-bg-pastel-honey-yellow',
-                      title: 'Your Progress',
-                      asset: '/assets/images/activity-highlights-your-progress.svg',
-                      onClick: () => {
-                        this.goTo('activity/your-progress');
-                      }
-                    },
-                  ];
-                }
-
+                console.log('tiene mas de 1 dosis');
                 // user has completed 6 doses
                 if (markedDoses.length === 6) {
                   if (!this.homeConfig.allCompletedDoses) {
@@ -259,48 +217,105 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
                     <p>Your next Theryx® dose is scheduled for<br> <stong>${nextDoseDateFormatter}</stong></p>
                   `;
                 }
+
+                // user has completed 1 or more doses
+                // get last dose injected data to be showed on Dose report widget
+                const lastMarkedDose = markedDoses[markedDoses.length - 1];
+                if (lastMarkedDose) {
+                  this.activityHighlights = [
+                    {
+                      type: 'dose-report',
+                      tabColor: '--color-bg-pastel-blue',
+                      title: 'Dose Report',
+                      numberDose: this.homeConfig.doses.findIndex((dose: any) => dose.date === lastMarkedDose.date) + 1,
+                      time: moment(lastMarkedDose.date).format('MMM D, H:mm A'),
+                      asset: `assets/images/activity-highlights-dose-report-${lastMarkedDose.bodyPartInjected.toLowerCase().replace(' ', '-')}.svg`,
+                      description: `This time you injected your <strong>${this._utils.humanizeBodyPartInjected(lastMarkedDose.bodyPartInjected)}<strong>`,
+                      onClick: () => {
+                        this.goTo('activity/dose-report');
+                      }
+                    },
+                    {
+                      tabColor: '--color-bg-pastel-honey-yellow',
+                      title: 'Your Progress',
+                      asset: '/assets/images/activity-highlights-your-progress.svg',
+                      onClick: () => {
+                        this.goTo('activity/your-progress');
+                      }
+                    },
+                  ];
+                }
               }
+            }
+            else {
+              console.log('no tiene dosis, pone la default');
+              this.heroConfig.template = `
+                <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
+                <h5>Welcome to wellness on your schedule.</h5>
+                <p>Ready to start your Theryx® injections?<br> Your first guided injection will take about <strong>10 minutes.</strong></p>
+              `;
             }
           }
 
-          if (this.homeConfig.onBoardingTasks) {
-            this.completedTasks = this.homeConfig.onBoardingTasks.filter((task: any) => task.completed).length;
-            this.onBoardingTasks = this.homeConfig.onBoardingTasks.map((task: any, index: number) => {
-              return {
-                completed: task.completed,
-                title: task.title,
-                description: task.description,
-                type: 'task',
-                tabColor: '--color-bg-pastel-purple',
-                asset: `/assets/images/onboarding-task-${index + 1}.svg`,
-                onClick: () => {
-                  switch(index) {
-                    case 0:
-                      this.goTo('activity/calendar');
-                      break;
-                    case 1:
-                      this.goTo('activity/dose-report');
-                      break;
-                    case 2:
-                      this.goTo('activity/your-progress');
-                      break;
-                    case 3:
-                      this.goTo('activity/symptom-report');
-                      break;
-                    case 4:
-                      this.goTo('resources');
-                      break;
-                    case 5:
-                      this.goTo('resources/your-care-team');
-                      break;
-                  }
-                },
-              }
-            });
+          if (!this.homeConfig.onBoardingDone) {
+            if (this.homeConfig.onBoardingTasks) {
+              this.onBoardingTasks = this.homeConfig.onBoardingTasks.map((task: any, index: number) => {
+                return {
+                  completed: task.completed,
+                  title: task.title,
+                  description: task.description,
+                  type: 'task',
+                  tabColor: '--color-bg-pastel-purple',
+                  asset: `/assets/images/onboarding-task-${index + 1}.svg`,
+                  onClick: () => {
+                    switch(index) {
+                      case 0:
+                        this.goTo('activity/calendar');
+                        break;
+                      case 1:
+                        this.goTo('activity/dose-report');
+                        break;
+                      case 2:
+                        this.goTo('activity/your-progress');
+                        break;
+                      case 3:
+                        this.goTo('activity/symptom-report');
+                        break;
+                      case 4:
+                        this.goTo('resources');
+                        break;
+                      case 5:
+                        this.goTo('resources/your-care-team');
+                        break;
+                    }
+                  },
+                }
+              });
 
-            const markedDoses = this.homeConfig.doses.filter((dose: any) => dose.marked);
-            if (markedDoses.length === 6) {
+              this.completedTasks = this.homeConfig.onBoardingTasks.filter((task: any) => task.completed).length;
               this._store.dispatch(new fromSharedStore.TopbarPendingNotifications(this.homeConfig.onBoardingTasks.length - this.completedTasks));
+              if (this.completedTasks === 6) {
+                this._store.dispatch(new fromSharedStore.AlertShow({
+                  mode: 'full',
+                  template: `
+                    <img src="assets/images/on-boarding-done.svg" />
+                    <h1 class="font-heading-1--bold">Onboarding complete!</h1>
+                    <p>Way to go! You’ve finished all of your onboarding tasks.</p>
+                  `,
+                  actions: [
+                    {
+                      label: 'Got it',
+                      fill: 'outline',
+                      action: () => { 
+                        this._store.dispatch(new fromSharedStore.AlertClose);
+                        this._store.dispatch(new fromStore.SetData({
+                          onBoardingDone: true,
+                        }));
+                      },
+                    }
+                  ]
+                }));
+              }
             }
           }
         }

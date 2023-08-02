@@ -49,6 +49,10 @@ automagic-bottom-toolbar {
         height: 4px;
       }
     }
+
+    &.is-blocked {
+      pointer-events: none;
+    }
   }
 
   .bottom-toolbar__content {

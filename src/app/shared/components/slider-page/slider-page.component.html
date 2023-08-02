@@ -1,172 +1,172 @@
-<ion-content [fullscreen]="true" [scrollY]="false">
+<div 
+  #wrapper 
+  *ngIf="config$ | async as config"
+  class="slider-page" 
+  [style.background-color]="config.header?.color 
+    ? 'var(' + config.header.color + ')' 
+    : 'var(--color-white)'"
+  [ngClass]="{ 
+    'is-content-hidden': config.content?.hide, 
+    'is-content-expanded': config.content?.isExpanded, 
+    'is-full-size': config.header?.fullSize, 
+  }">
+
   <div 
-    *ngIf="config$ | async as config"
-    class="slider-page" 
-    [style.background-color]="config.header?.color 
-      ? 'var(' + config.header.color + ')' 
-      : 'var(--color-white)'"
+    class="slider-page__header" 
     [ngClass]="{ 
-      'is-content-hidden': config.content?.hide, 
-      'is-content-expanded': config.content?.isExpanded, 
-      'is-full-size': config.header?.fullSize, 
+      'has-asset': config.header?.asset, 
+      'has-template': config.header?.template, 
+      'has-component': config.header?.component, 
+      'has-timeline': config.content?.timeline,
     }">
 
-    <div 
-      class="slider-page__header" 
-      [ngClass]="{ 
-        'has-asset': config.header?.asset, 
-        'has-template': config.header?.template, 
-        'has-component': config.header?.component, 
-        'has-timeline': config.content?.timeline,
-      }">
+    <swiper #sliderHeader effect="fade" [allowTouchMove]="false">
+      <ng-template class="slider-page__header-slide" swiperSlide *ngFor="let slide of slides">
+        <div class="asset-wrapper" *ngIf="slide.header?.asset">
+          <img [src]="slide.header.asset" />
+        </div>
 
-      <swiper #sliderHeader effect="fade" [allowTouchMove]="false">
-        <ng-template class="slider-page__header-slide" swiperSlide *ngFor="let slide of slides">
-          <div class="asset-wrapper" *ngIf="slide.header?.asset">
-            <img [src]="slide.header.asset" />
+        <div class="content-wrapper">
+          <div 
+            class="template-wrapper" 
+            *ngIf="config.header?.template || slide.header?.template" 
+            [innerHTML]="sanitizeContent(config.header?.template ? config.header?.template : slide.header?.template)"
+          ></div>
+
+          <div class="cards-wrapper" *ngIf="slide.header?.cards">
+            <automagic-card *ngFor="let card of slide.header.cards" [card]="card"></automagic-card>
           </div>
 
+          <div class="component-wrapper">
+            <ng-template #componentHeader></ng-template>
+          </div>
+        </div>
+      </ng-template>
+    </swiper>
+  </div>
+
+  <div 
+    class="slider-page__content" 
+    [ngClass]="{ 
+      'is-expanded': config.content?.isExpanded,
+      'has-template': config.content?.template || config.content?.form,
+    }">
+
+    <div class="wrapper-small">
+      <div class="wrapper-small__navigation" [ngClass]="{ 'visibility-hidden': config.content?.hideNavigation }">
+        <div class="swiper-pagination"></div>
+      </div>
+
+      <div class="wrapper-small__timeline" *ngIf="config.content?.timeline">
+        <div class="timeline-bar-progress value-{{ config.content.timeline.percentage }}"></div>
+        <div class="timeline-start">{{ config.content.timeline.progress }}</div>
+        <div class="timeline-end">{{ config.content.timeline.duration }}</div>
+      </div>
+
+      <swiper 
+        #sliderContent 
+        effect="fade" 
+        [allowTouchMove]="false" 
+        [pagination]="{ el: '.swiper-pagination' }" 
+        (swiper)="onSliderInit()"
+        (slideChange)="onSlideChange()">
+
+        <ng-template class="wrapper-small__slide" swiperSlide *ngFor="let slide of slides">
           <div class="content-wrapper">
             <div 
               class="template-wrapper" 
-              *ngIf="config.header?.template || slide.header?.template" 
-              [innerHTML]="sanitizeContent(config.header?.template ? config.header?.template : slide.header?.template)"
+              *ngIf="slide.content?.template" 
+              [innerHTML]="sanitizeContent(slide.content.template)"
             ></div>
 
-            <div class="cards-wrapper" *ngIf="slide.header?.cards">
-              <automagic-card *ngFor="let card of slide.header.cards" [card]="card"></automagic-card>
+            <div class="cards-wrapper" *ngIf="slide.content?.cards">
+              <automagic-card *ngFor="let card of slide.content.cards" [card]="card"></automagic-card>
             </div>
 
-            <div class="component-wrapper">
-              <ng-template #componentHeader></ng-template>
+            <div class="form-wrapper" *ngIf="slide.content?.form">
+              <form [formGroup]="slide.content.form.group" autocomplete="off">
+                <div class="field-wrapper" *ngFor="let field of slide.content.form.fields">
+                  <p class="field-label">{{ field.label }}</p>
+                  <ion-input 
+                    color="purple" 
+                    fill="outline" 
+                    mode="md" 
+                    (keyup.enter)="handlerEnterKey($event)"
+                    [formControlName]="field.name" 
+                    [placeholder]="field.placeholder" 
+                    [errorText]="slide.content.form.group.get(field.name)?.errors?.['required'] ? 'Please enter your name' : null" 
+                    (input)="field.onInput ? field.onInput($event) : null"
+                  ></ion-input>
+                </div>
+              </form>
             </div>
           </div>
-        </ng-template>
-      </swiper>
-    </div>
 
-    <div 
-      class="slider-page__content" 
-      [ngClass]="{ 
-        'is-expanded': config.content?.isExpanded,
-        'has-template': config.content?.template || config.content?.form,
-      }">
-
-      <div class="wrapper-small">
-        <div class="wrapper-small__navigation" [ngClass]="{ 'visibility-hidden': config.content?.hideNavigation }">
-          <div class="swiper-pagination"></div>
-        </div>
-
-        <div class="wrapper-small__timeline" *ngIf="config.content?.timeline">
-          <div class="timeline-bar-progress value-{{ config.content.timeline.percentage }}"></div>
-          <div class="timeline-start">{{ config.content.timeline.progress }}</div>
-          <div class="timeline-end">{{ config.content.timeline.duration }}</div>
-        </div>
-
-        <swiper 
-          #sliderContent 
-          effect="fade" 
-          [allowTouchMove]="false" 
-          [pagination]="{ el: '.swiper-pagination' }" 
-          (swiper)="onSliderInit()"
-          (slideChange)="onSlideChange()">
-
-          <ng-template class="wrapper-small__slide" swiperSlide *ngFor="let slide of slides">
-            <div class="content-wrapper">
-              <div 
-                class="template-wrapper" 
-                *ngIf="slide.content?.template" 
-                [innerHTML]="sanitizeContent(slide.content.template)"
-              ></div>
-
-              <div class="cards-wrapper" *ngIf="slide.content?.cards">
-                <automagic-card *ngFor="let card of slide.content.cards" [card]="card"></automagic-card>
-              </div>
-
-              <div class="form-wrapper" *ngIf="slide.content?.form">
-                <form [formGroup]="slide.content.form.group" autocomplete="off">
-                  <div class="field-wrapper" *ngFor="let field of slide.content.form.fields">
-                    <p class="field-label">{{ field.label }}</p>
-                    <ion-input 
-                      color="purple" 
-                      fill="outline" 
-                      mode="md" 
-                      [formControlName]="field.name" 
-                      [placeholder]="field.placeholder" 
-                      [errorText]="slide.content.form.group.get(field.name)?.errors?.['required'] ? 'Please enter your name' : null" 
-                      (input)="field.onInput ? field.onInput($event) : null"
-                    ></ion-input>
-                  </div>
-                </form>
-              </div>
-            </div>
-
-            <div class="actions-wrapper" *ngIf="config.content?.actions">
-              <ion-button 
-                *ngFor="let button of config.content.actions; let i = index"
-                color="purple" 
-                size="large" 
-                [ngClass]="{ 'is-hidden': button.hidden }"
-                [disabled]="button.disabled ? true : null" 
-                (click)="button.action ? button.action($event) : null" 
-                [fill]="
-                  button.fill 
-                  ? button.fill 
-                  : (i % 2 !== 1 && config.content.actions.length > 1 
-                    ? 'outline' 
-                    : null)
-                ">
-                {{ button.label }}
-              </ion-button>
-            </div>
-          </ng-template>
-        </swiper>
-      </div>
-
-      <div 
-        class="wrapper-large" 
-        [style.background-color]="config.content?.bgColor 
-          ? 'var(' + config.content.bgColor + ')' 
-          : 'var(--color-white)'">
-
-        <div class="wrapper-large__content">
-          <div 
-            class="wrapper-large__template" 
-            *ngIf="config.content?.template" 
-            [innerHTML]="sanitizeContent(config.content.template)"
-          ></div>
-
-          <div class="wrapper-large__component">
-            <ng-template #componentContent></ng-template>
-          </div>
-        </div>
-
-        <div class="wrapper-large__toolbar" *ngIf="config.content?.toolbar">
-          <div 
-            class="wrapper-large__toolbar-template" 
-            *ngIf="config.content?.toolbar?.template" 
-            [innerHTML]="sanitizeContent(config.content.toolbar.template)"
-          ></div>
-
-          <div class="wrapper-large__toolbar-actions" *ngIf="config.content?.toolbar?.actions">
+          <div class="actions-wrapper" *ngIf="config.content?.actions">
             <ion-button 
-              *ngFor="let button of config.content.toolbar.actions; let i = index" 
+              *ngFor="let button of config.content.actions; let i = index"
               color="purple" 
               size="large" 
+              [ngClass]="{ 'is-hidden': button.hidden }"
               [disabled]="button.disabled ? true : null" 
               (click)="button.action ? button.action($event) : null" 
               [fill]="
                 button.fill 
-                ? button.fill
-                : (i % 2 !== 1 && config.content?.toolbar?.actions.length > 1 
+                ? button.fill 
+                : (i % 2 !== 1 && config.content.actions.length > 1 
                   ? 'outline' 
                   : null)
               ">
               {{ button.label }}
             </ion-button>
           </div>
+        </ng-template>
+      </swiper>
+    </div>
+
+    <div 
+      class="wrapper-large" 
+      [style.background-color]="config.content?.bgColor 
+        ? 'var(' + config.content.bgColor + ')' 
+        : 'var(--color-white)'">
+
+      <div class="wrapper-large__content">
+        <div 
+          class="wrapper-large__template" 
+          *ngIf="config.content?.template" 
+          [innerHTML]="sanitizeContent(config.content.template)"
+        ></div>
+
+        <div class="wrapper-large__component">
+          <ng-template #componentContent></ng-template>
+        </div>
+      </div>
+
+      <div class="wrapper-large__toolbar" *ngIf="config.content?.toolbar">
+        <div 
+          class="wrapper-large__toolbar-template" 
+          *ngIf="config.content?.toolbar?.template" 
+          [innerHTML]="sanitizeContent(config.content.toolbar.template)"
+        ></div>
+
+        <div class="wrapper-large__toolbar-actions" *ngIf="config.content?.toolbar?.actions">
+          <ion-button 
+            *ngFor="let button of config.content.toolbar.actions; let i = index" 
+            color="purple" 
+            size="large" 
+            [disabled]="button.disabled ? true : null" 
+            (click)="button.action ? button.action($event) : null" 
+            [fill]="
+              button.fill 
+              ? button.fill
+              : (i % 2 !== 1 && config.content?.toolbar?.actions.length > 1 
+                ? 'outline' 
+                : null)
+            ">
+            {{ button.label }}
+          </ion-button>
         </div>
       </div>
     </div>
   </div>
-</ion-content>
+</div>

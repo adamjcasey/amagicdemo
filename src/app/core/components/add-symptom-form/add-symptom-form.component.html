@@ -28,6 +28,7 @@
       fill="outline" 
       mode="md" 
       placeholder="Type or dictate a note here..." 
+      (keyup.enter)="handlerEnterKey($event)"
       formControlName="notes"
     ></ion-input>
   </div>

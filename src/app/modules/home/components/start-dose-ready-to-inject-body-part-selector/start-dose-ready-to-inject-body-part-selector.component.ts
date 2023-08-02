@@ -50,7 +50,7 @@ export class StartDoseReadyToInjectBodyPartSelectorComponent implements OnInit, 
           const markedDoses = this.homeConfig?.doses.filter((dose: any) => dose.marked);
           if (markedDoses.length) {
             const lastMarkedDose = markedDoses[markedDoses.length - 1];
-            this.bodyPartPreviousSelected = lastMarkedDose.bodyPart;
+            this.bodyPartPreviousSelected = lastMarkedDose.bodyPartInjected;
           }
         }
       });

@@ -88,7 +88,7 @@ export class StartDosePrepareTempTimerComponent implements OnInit, AfterViewInit
             ]
           }
         }));
-      }, 800);
+      }, 300);
     }, 1500);
   }
 

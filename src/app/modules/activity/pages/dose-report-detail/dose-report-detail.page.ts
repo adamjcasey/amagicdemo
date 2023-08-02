@@ -39,10 +39,10 @@ export class DoseReportDetailPage implements OnInit, OnDestroy {
   }
 
   preprocessInjectionImage() {
-    return this.doseReportSelected.bodyPart.toLowerCase().replace(' ', '-');
+    return this.doseReportSelected.bodyPartInjected.toLowerCase().replace(' ', '-');
   }
 
   preprocessDescriptionImage() {
-    return this._utils.humanizeBodyPartInjected(this.doseReportSelected.bodyPart);
+    return this._utils.humanizeBodyPartInjected(this.doseReportSelected.bodyPartInjected);
   }
 }

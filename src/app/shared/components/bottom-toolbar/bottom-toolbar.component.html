@@ -8,11 +8,17 @@
   slot="bottom" 
   color="light">
 
-  <ion-tab-button tab="home" [ngClass]="{'is-active': isActivePath('home')}">
+  <ion-tab-button tab="home" [ngClass]="{
+    'is-active': isActivePath('home'), 
+    'is-blocked': homeConfig.firstTimeDose,
+  }">
     <ion-icon size="medium" src="/assets/icons/home.svg"></ion-icon>
     Home
   </ion-tab-button>
-  <ion-tab-button tab="activity" [ngClass]="{'is-active': isActivePath('activity')}">
+  <ion-tab-button tab="activity" [ngClass]="{
+    'is-active': isActivePath('activity'), 
+    'is-blocked': homeConfig.firstTimeDose,
+  }">
     <ion-icon size="medium" src="/assets/icons/activity.svg"></ion-icon>
     Activity
   </ion-tab-button>
@@ -23,11 +29,17 @@
     </ion-button>
   </ion-tab-button>
 
-  <ion-tab-button tab="resources" [ngClass]="{'is-active': isActivePath('resources')}">
+  <ion-tab-button tab="resources" [ngClass]="{
+    'is-active': isActivePath('resources'), 
+    'is-blocked': homeConfig.firstTimeDose,
+  }">
     <ion-icon size="medium" src="/assets/icons/resources.svg"></ion-icon>
     Resources
   </ion-tab-button>
-  <ion-tab-button tab="settings" [ngClass]="{'is-active': isActivePath('settings')}">
+  <ion-tab-button tab="settings" [ngClass]="{
+    'is-active': isActivePath('settings'), 
+    'is-blocked': homeConfig.firstTimeDose,
+  }">
     <ion-icon size="medium" src="/assets/icons/settings.svg"></ion-icon>
     Settings
   </ion-tab-button>
