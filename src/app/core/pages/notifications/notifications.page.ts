@@ -31,7 +31,10 @@ export class NotificationsPage implements OnInit, OnDestroy {
       .subscribe(homeConfig => {
         if (homeConfig) {
           this.homeConfig = homeConfig;
-          if (this.homeConfig.onBoardingTasks) {
+          if (
+            this.homeConfig.allCompletedDoses && 
+            this.homeConfig.onBoardingTasks
+          ) {
             this.remainingTasks = this.homeConfig.onBoardingTasks.length - this.homeConfig.onBoardingTasks.filter((task: any) => task.completed).length;
             this._store.dispatch(new fromSharedStore.TopbarPendingNotifications(this.remainingTasks));
             this.onBoardingTasks = this.homeConfig.onBoardingTasks.map((task: any, index: number) => {

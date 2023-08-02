@@ -6,6 +6,7 @@ import * as moment from 'moment';
 import * as fromStore from '@activity/store';
 import * as fromCoreStore from '@core/store';
 import * as fromHomeStore from '@home/store';
+import * as fromSharedStore from '@shared/store';
 import * as fromSharedServices from '@shared/services';
 
 @Component({
@@ -81,6 +82,8 @@ export class SymptomReportPage implements OnInit, OnDestroy {
             this._store.dispatch(new fromHomeStore.SetData({
               onBoardingTasks: onBoardingTasks,
             }));
+            const remainingTasks = this.homeConfig.onBoardingTasks.length - this.homeConfig.onBoardingTasks.filter((task: any) => task.completed).length;
+            this._store.dispatch(new fromSharedStore.TopbarPendingNotifications(remainingTasks));
           }
         }
       });
