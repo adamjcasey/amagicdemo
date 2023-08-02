@@ -58,8 +58,8 @@ export class DoseReportPage implements OnInit, OnDestroy {
                       }));
                       this.goTo(`activity/dose-report-detail`);
                     },
-                    asset: `assets/images/activity-highlights-dose-report-${dose.bodyPart.toLowerCase().replace(' ', '-')}.svg`,
-                    description: `This time you injected your <strong>${this._utils.humanizeBodyPartInjected(dose.bodyPart)}<strong>`
+                    asset: `assets/images/activity-highlights-dose-report-${dose.bodyPartInjected.toLowerCase().replace(' ', '-')}.svg`,
+                    description: `This time you injected your <strong>${this._utils.humanizeBodyPartInjected(dose.bodyPartInjected)}<strong>`
                   }
                 });
             }

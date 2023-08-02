@@ -22,8 +22,8 @@
         </div>
       </div>
       <ng-template #default>
-        <ion-button class="notifications-cta" (click)="goTo('notifications')" [disabled]="config.pendingNotifications === 0">
-          <div class="counter" *ngIf="config.pendingNotifications > 0">
+        <ion-button class="notifications-cta" (click)="goTo('notifications')" [disabled]="!homeConfig.allCompletedDoses">
+          <div class="counter" *ngIf="homeConfig.allCompletedDoses && config.pendingNotifications > 0">
             {{ config.pendingNotifications }}
           </div>
           <ion-icon slot="icon-only" src="/assets/icons/notifications.svg"></ion-icon>

@@ -5,6 +5,7 @@ import { Observable, Subject, takeUntil } from 'rxjs';
 
 import * as fromStore from '@shared/store';
 import * as fromCoreStore from '@core/store';
+import * as fromHomeStore from '@home/store';
 import * as fromActivityStore from '@activity/store';
 import * as fromResourcesStore from '@resources/store';
 import * as fromSharedStore from '@shared/store';
@@ -19,6 +20,8 @@ export class TopBarComponent implements OnInit, OnDestroy {
   public config: any;
   public layoutConfig$!: Observable<any>;
   public layoutConfig: any;
+  public homeConfig$!: Observable<any>;
+  public homeConfig: any;
   public activityConfig$!: Observable<any>;
   public activityConfig: any;
   public routerEvents$;
@@ -34,6 +37,7 @@ export class TopBarComponent implements OnInit, OnDestroy {
   ) {
     this.config$ = this._store.select(fromStore.getTopbarConfig);
     this.layoutConfig$ = this._store.select(fromCoreStore.getLayoutConfig);
+    this.homeConfig$ = this._store.select(fromHomeStore.getHomeConfig);
     this.activityConfig$ = this._store.select(fromActivityStore.getActivityConfig);
 
     this.routerEvents$ = this._router.events.subscribe(
@@ -121,6 +125,14 @@ export class TopBarComponent implements OnInit, OnDestroy {
       .subscribe(layoutConfig => {
         if (layoutConfig) {
           this.layoutConfig = layoutConfig;
+        }
+      });
+
+    this.homeConfig$
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(homeConfig => {
+        if (homeConfig) {
+          this.homeConfig = homeConfig;
         }
       });
 
