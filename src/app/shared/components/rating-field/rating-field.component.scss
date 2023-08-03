@@ -5,18 +5,6 @@
     pointer-events: none; 
   }
 
-  .rating-field__rates {
-    &:not(.with-icons) {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-
-      p {
-        margin: 0
-      }
-    }
-  }
-
   .rating-field__rate-line {
     position: relative;
     display: flex;
@@ -176,6 +164,50 @@
       &.is-marked {
         .checkpoint__line {
           background-color: transparent;
+        }
+      }
+    }
+  }
+
+  .rating-field__rates {
+    &:not(.with-icons) {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      p {
+        margin: 0
+      }
+    }
+
+    &.with-icons {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+
+      .icon {
+        text-align: center;
+      }
+
+      ion-icon {
+        font-size: var(--size-xl);
+      }
+
+      p {
+        @include paragraph-s;
+        margin: 0;
+        white-space: nowrap;
+      }
+    }
+
+    + .rating-field__rate-line {
+      margin-right: var(--size-xxs);
+      margin-left: var(--size-xxs);
+
+      .checkpoint {
+        &:nth-child(4) {
+          .checkpoint__line {
+            width: 70px;
+          }
         }
       }
     }

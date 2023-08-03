@@ -7,7 +7,22 @@
 
   <p class="field-label" *ngIf="label">{{ label }}</p>
   <div class="rating-field__rates" [ngClass]="{ 'with-icons': showIcons }">
-    <ion-img *ngIf="showIcons; else default" src="/assets/images/rating-fiel--icons-rate.svg"></ion-img>
+    <ng-container *ngIf="showIcons; else default">
+      <div 
+        class="icon" 
+        *ngFor="let point of [1, 2, 3, 4, 5]" 
+        (click)="updateValue(point)">
+
+        <ion-icon src="/assets/images/rating-field--icons-{{ point }}.svg"></ion-icon>
+        <p [ngSwitch]="point">
+          <span *ngSwitchCase="1">Very Poor</span>
+          <span *ngSwitchCase="2">Poor</span>
+          <span *ngSwitchCase="3">Average</span>
+          <span *ngSwitchCase="4">Good</span>
+          <span *ngSwitchCase="5">Very Good</span>
+        </p>
+      </div>
+    </ng-container>
     <ng-template #default>
       <p>{{ rates[0] }}</p>
       <p>{{ rates[1] }}</p>
@@ -21,8 +36,8 @@
         'is-selected': value === point || point <= value,
         'is-marked': (value === 2 && point === 1) || (value > 2 && value > point),
       }"
-      (click)="updateValue(point)"
-    >
+      (click)="updateValue(point)">
+
       <div class="checkpoint__line" *ngIf="point < 5"></div>
     </div>
   </div>
