@@ -281,7 +281,7 @@ export class StartGuidedDemoComponent implements OnInit, OnDestroy {
   }
 
   startExploring() {
-    this._store.dispatch(new fromSharedStore.BackdropClose);
+    this._store.dispatch(new fromSharedStore.BackdropHide);
     this._store.dispatch(new fromStore.SetData({
       allCompletedDoses: true
     }));
@@ -302,7 +302,7 @@ export class StartGuidedDemoComponent implements OnInit, OnDestroy {
           {
             label: 'Got it',
             action: () => {
-              this._store.dispatch(new fromSharedStore.BackdropClose());
+              this._store.dispatch(new fromSharedStore.BackdropHide);
             },
           }
         ]

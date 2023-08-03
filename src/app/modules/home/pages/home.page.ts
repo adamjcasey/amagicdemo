@@ -307,7 +307,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
                       label: 'Got it',
                       fill: 'outline',
                       action: () => { 
-                        this._store.dispatch(new fromSharedStore.AlertClose);
+                        this._store.dispatch(new fromSharedStore.AlertHide);
                         this._store.dispatch(new fromStore.SetData({
                           onBoardingDone: true,
                         }));
@@ -373,7 +373,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
         {
           label: 'Simulate flare-up',
           action: () => {
-            this._store.dispatch(new fromSharedStore.BackdropClose());
+            this._store.dispatch(new fromSharedStore.BackdropHide);
           },
         }
       ],
@@ -390,7 +390,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
               label: 'Ok, let’s go!',
               fill: 'outline',
               action: () => { 
-                this._store.dispatch(new fromSharedStore.AlertClose);
+                this._store.dispatch(new fromSharedStore.AlertHide);
               },
             }
           ],

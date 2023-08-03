@@ -97,7 +97,7 @@ export class StartDosePrepareWaitingToInjectComponent implements OnInit, AfterVi
             label: 'Ok, let’s go!',
             fill: 'outline',
             action: () => {
-              this._store.dispatch(new fromSharedStore.AlertClose());
+              this._store.dispatch(new fromSharedStore.AlertHide);
               this._store.dispatch(new fromSharedStore.SliderPageClear());
               this._store.dispatch(new fromCoreStore.Go({
                 path: ['/home/start-dose/ready-to-inject']

@@ -117,7 +117,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
       }));
     }
     else {
-      this._store.dispatch(new fromStore.BackdropClose);
+      this._store.dispatch(new fromStore.BackdropHide);
     }
   }
 

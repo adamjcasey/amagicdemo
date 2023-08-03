@@ -99,7 +99,7 @@ export class SetupRemindersPage implements OnInit, OnDestroy {
             {
               label: 'Ok, let’s go!',
               action: () => {
-                this._store.dispatch(new fromSharedStore.AlertClose());
+                this._store.dispatch(new fromSharedStore.AlertHide);
                 // hold on until Alert component is closed
                 setTimeout(() => {
                   // set as false first time dose property into home config

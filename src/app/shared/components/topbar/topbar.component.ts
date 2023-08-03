@@ -18,6 +18,8 @@ import * as fromSharedStore from '@shared/store';
 export class TopBarComponent implements OnInit, OnDestroy {
   public config$!: Observable<any>;
   public config: any;
+  public bottomToolbarConfig$!: Observable<any>;
+  public bottomToolbarConfig: any;
   public layoutConfig$!: Observable<any>;
   public layoutConfig: any;
   public homeConfig$!: Observable<any>;
@@ -36,6 +38,7 @@ export class TopBarComponent implements OnInit, OnDestroy {
     private _router: Router,
   ) {
     this.config$ = this._store.select(fromStore.getTopbarConfig);
+    this.bottomToolbarConfig$ = this._store.select(fromStore.getBottomToolbarConfig);
     this.layoutConfig$ = this._store.select(fromCoreStore.getLayoutConfig);
     this.homeConfig$ = this._store.select(fromHomeStore.getHomeConfig);
     this.activityConfig$ = this._store.select(fromActivityStore.getActivityConfig);
@@ -119,6 +122,14 @@ export class TopBarComponent implements OnInit, OnDestroy {
           this.config = config;
         }
       });
+
+    this.bottomToolbarConfig$
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(bottomToolbarConfig => {
+        if (bottomToolbarConfig) {
+          this.bottomToolbarConfig = bottomToolbarConfig;
+        }
+      });
     
     this.layoutConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
@@ -150,10 +161,12 @@ export class TopBarComponent implements OnInit, OnDestroy {
     this._ngUnsubscribe.complete();
   }
 
-  leftElementAction() {
+  leftElementHandler() {
     if (this.activityScope) {
       if (this.currentRoute.includes('activity/calendar')) {
-        this._store.dispatch(new fromSharedStore.BottomToolbarHide(false));
+        if (!this.bottomToolbarConfig.show) {
+          this._store.dispatch(new fromSharedStore.BottomToolbarShow());
+        }
         this.goTo('activity');
       }
 

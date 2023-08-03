@@ -61,9 +61,9 @@ export class SharedEffects {
       })
     )
   }, { dispatch: false });
-  backdropClose$ = createEffect(() => {
+  backdropHide$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(fromActions.ActionTypes.BackdropClose),
+      ofType(fromActions.ActionTypes.BackdropHide),
       withLatestFrom(this._store.pipe(select(fromReducer.getBackdropConfig))),
       map(([action, options]) => {
         this._backdropOptions = options;
@@ -234,9 +234,9 @@ export class SharedEffects {
       })
     )
   }, { dispatch: false });
-  alertClose$ = createEffect(() => {
+  alertHide$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(fromActions.ActionTypes.AlertClose),
+      ofType(fromActions.ActionTypes.AlertHide),
       withLatestFrom(this._store.pipe(select(fromReducer.getAlertConfig))),
       map(([action, options]) => {
         this._alertOptions = options;
@@ -264,55 +264,60 @@ export class SharedEffects {
     )
   }, { dispatch: false });
 
+  bottomToolbarShow$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(fromActions.ActionTypes.BottomToolbarShow),
+      map((action: fromActions.BottomToolbarShow) => action),
+      tap(() => {
+        const element = document.getElementById('bottom-toolbar') as HTMLElement;
+        if (element.style.getPropertyValue('display') === 'none') {
+          element.style.removeProperty('display');
+        }
+          
+        animate(
+          '#bottom-toolbar',
+          { y: [
+            `${(element?.clientHeight + 30)}px`,
+            `${(element?.clientHeight * 0.9)}px`,
+            `${(element?.clientHeight * 0.75)}px`,
+            `${(element?.clientHeight * 0.5)}px`,
+            `${(element?.clientHeight * 0.25)}px`,
+            `0px`,
+          ] },
+          { easing: spring({
+            stiffness: 80,
+            damping: 20,
+            mass: 1,
+            velocity: 800,
+          }) }
+        );
+      })
+    )
+  }, { dispatch: false });
   bottomToolbarHide$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(fromActions.ActionTypes.BottomToolbarHide),
-      map((action: fromActions.BottomToolbarHide) => action.payload),
-      tap((hide) => {
+      map((action: fromActions.BottomToolbarHide) => action),
+      tap(() => {
         const element = document.getElementById('bottom-toolbar') as HTMLElement;
-        if (hide) {
-          animate(
-            '#bottom-toolbar',
-            { y: [
-              '0px', 
-              '25%', 
-              '50%', 
-              '75%', 
-              `${(element?.clientHeight + 30)}px`,
-            ] },
-            { easing: spring({
-              stiffness: 80,
-              damping: 20,
-              mass: 1,
-              velocity: 800,
-            }) },
-          ).finished.then(() => {
-            element.style.display = 'none';
-          });
-        }
-        else {
-          if (element.style.getPropertyValue('display') === 'none') {
-            element.style.removeProperty('display');
-          }
-          
-          animate(
-            '#bottom-toolbar',
-            { y: [
-              `${(element?.clientHeight + 30)}px`,
-              `${(element?.clientHeight * 0.9)}px`,
-              `${(element?.clientHeight * 0.75)}px`,
-              `${(element?.clientHeight * 0.5)}px`,
-              `${(element?.clientHeight * 0.25)}px`,
-              `0px`,
-            ] },
-            { easing: spring({
-              stiffness: 80,
-              damping: 20,
-              mass: 1,
-              velocity: 800,
-            }) }
-          );
-        }
+        animate(
+          '#bottom-toolbar',
+          { y: [
+            '0px', 
+            '25%', 
+            '50%', 
+            '75%', 
+            `${(element?.clientHeight + 30)}px`,
+          ] },
+          { easing: spring({
+            stiffness: 80,
+            damping: 20,
+            mass: 1,
+            velocity: 800,
+          }) },
+        ).finished.then(() => {
+          element.style.display = 'none';
+        });
       })
     )
   }, { dispatch: false });

@@ -18,7 +18,7 @@ export function SharedReducer(
         },
       };
     }
-    case fromActions.ActionTypes.BackdropClose: {
+    case fromActions.ActionTypes.BackdropHide: {
       return {
         ...state,
         backdropConfig: {
@@ -106,7 +106,7 @@ export function SharedReducer(
         },
       };
     }
-    case fromActions.ActionTypes.AlertClose: {
+    case fromActions.ActionTypes.AlertHide: {
       return {
         ...state,
         alertConfig: {
@@ -127,11 +127,19 @@ export function SharedReducer(
       };
     }
 
+    case fromActions.ActionTypes.BottomToolbarShow: {
+      return {
+        ...state,
+        bottomToolbarConfig: {
+          show: true,
+        },
+      };
+    }
     case fromActions.ActionTypes.BottomToolbarHide: {
       return {
         ...state,
         bottomToolbarConfig: {
-          show: !action.payload,
+          show: false,
         },
       };
     }

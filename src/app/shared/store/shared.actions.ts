@@ -2,7 +2,7 @@ import { Action } from '@ngrx/store';
 
 export enum ActionTypes {
   BackdropShow = '[Backdrop] Show',
-  BackdropClose = '[Backdrop] Close',
+  BackdropHide = '[Backdrop] Close',
   BackdropSetConfig = '[Backdrop] Set Config',
   SliderPageSetHeader = '[SliderPage] Set Header',
   SliderPageSetHeaderOptions = '[SliderPage] Set Header Options',
@@ -10,8 +10,9 @@ export enum ActionTypes {
   SliderPageSetContentOptions = '[SliderPage] Set Content Options',
   SliderPageClear = '[SliderPage] Clear Component',
   AlertShow = '[Alert] Show',
-  AlertClose = '[Alert] Hide',
+  AlertHide = '[Alert] Hide',
   AlertSetConfig = '[Alert] Set Config',
+  BottomToolbarShow = '[BottomToolbar] Show',
   BottomToolbarHide = '[BottomToolbar] Hide',
   TopbarChangeColor = '[Topbar] Chnage Color',
   TopbarPendingNotifications = '[Topbar] Pending Notifications',
@@ -21,8 +22,8 @@ export class BackdropShow implements Action {
 
   constructor(public payload: any) {}
 }
-export class BackdropClose implements Action {
-  readonly type = ActionTypes.BackdropClose;
+export class BackdropHide implements Action {
+  readonly type = ActionTypes.BackdropHide;
 }
 export class BackdropSetConfig implements Action {
   readonly type = ActionTypes.BackdropSetConfig;
@@ -59,8 +60,8 @@ export class AlertShow implements Action {
 
   constructor(public payload: any) {}
 }
-export class AlertClose implements Action {
-  readonly type = ActionTypes.AlertClose;
+export class AlertHide implements Action {
+  readonly type = ActionTypes.AlertHide;
 }
 export class AlertSetConfig implements Action {
   readonly type = ActionTypes.AlertSetConfig;
@@ -68,10 +69,11 @@ export class AlertSetConfig implements Action {
   constructor(public payload: any) {}
 }
 
+export class BottomToolbarShow implements Action {
+  readonly type = ActionTypes.BottomToolbarShow;
+}
 export class BottomToolbarHide implements Action {
   readonly type = ActionTypes.BottomToolbarHide;
-  
-  constructor(public payload: boolean) {}
 }
 
 export class TopbarChangeColor implements Action {
@@ -87,7 +89,7 @@ export class TopbarPendingNotifications implements Action {
 
 export type ActionsUnion 
   = BackdropShow 
-  | BackdropClose
+  | BackdropHide
   | BackdropSetConfig
   | SliderPageSetHeader
   | SliderPageSetHeaderOptions
@@ -95,8 +97,9 @@ export type ActionsUnion
   | SliderPageSetContentOptions
   | SliderPageClear
   | AlertShow 
-  | AlertClose
+  | AlertHide
   | AlertSetConfig
+  | BottomToolbarShow
   | BottomToolbarHide
   | TopbarChangeColor
   | TopbarPendingNotifications;
