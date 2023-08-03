@@ -125,16 +125,13 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
             const markedDoses = this.homeConfig.doses.filter((dose: any) => dose.marked);
             // user has completed at least the first dose
             if (markedDoses.length > 0) {
-              console.log('tiene dosis, pone next dose');
               // only first dose completed
               if (markedDoses.length === 1) {
-                console.log('tiene solo 1 dosis');
                 if (!this.homeConfig.timeTravelingDemoDone) {
                   // update template in the hero component
                   const unMarkedDoses = this.homeConfig.doses.filter((dose: any) => !dose.marked);
                   const nextDose = unMarkedDoses[0];
                   const nextDoseDateFormatted = moment(nextDose.date).format('D MMMM YYYY');
-                  console.log('nextDoseDateFormatted ', nextDoseDateFormatted);
                   this.heroConfig.template = `
                     <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
                     <p>Your next Theryx® dose is scheduled for<br> <stong>${nextDoseDateFormatted}</stong></p>
@@ -248,7 +245,6 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
               }
             }
             else {
-              console.log('no tiene dosis, pone la default');
               this.heroConfig.template = `
                 <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
                 <h5>Welcome to wellness on your schedule.</h5>
@@ -291,31 +287,6 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
                   },
                 }
               });
-
-              this.completedTasks = this.homeConfig.onBoardingTasks.filter((task: any) => task.completed).length;
-              this._store.dispatch(new fromSharedStore.TopbarPendingNotifications(this.homeConfig.onBoardingTasks.length - this.completedTasks));
-              if (this.completedTasks === 6) {
-                this._store.dispatch(new fromSharedStore.AlertShow({
-                  mode: 'full',
-                  template: `
-                    <img src="assets/images/on-boarding-done.svg" />
-                    <h1 class="font-heading-1--bold">Onboarding complete!</h1>
-                    <p>Way to go! You’ve finished all of your onboarding tasks.</p>
-                  `,
-                  actions: [
-                    {
-                      label: 'Got it',
-                      fill: 'outline',
-                      action: () => { 
-                        this._store.dispatch(new fromSharedStore.AlertHide);
-                        this._store.dispatch(new fromStore.SetData({
-                          onBoardingDone: true,
-                        }));
-                      },
-                    }
-                  ]
-                }));
-              }
             }
           }
         }

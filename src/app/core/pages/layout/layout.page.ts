@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import * as fromStore from '@core/store';
 import * as fromSharedStore from '@shared/store';
 import * as fromHomeStore from '@home/store';
+import { GestureController } from '@shared/services/gestureController';
 
 @Component({
   selector: 'automagic-layout',
@@ -14,14 +15,16 @@ import * as fromHomeStore from '@home/store';
 export class LayoutPage implements OnInit {
   public config$: Observable<any>;
   public config: any;
+  public backdropConfig$: Observable<any>;
+  public backdropConfig: any;
   public homeConfig$: Observable<any>;
   public homeConfig: any;
-  @ViewChild('main') wrapper!: ElementRef;
 
   constructor(
     private _store: Store<fromStore.LayoutState>,
   ) {
     this.config$ = this._store.select(fromStore.getLayoutConfig);
+    this.backdropConfig$ = this._store.select(fromSharedStore.getBackdropConfig);
     this.homeConfig$ = this._store.select(fromHomeStore.getHomeConfig);
   }
 
@@ -32,10 +35,15 @@ export class LayoutPage implements OnInit {
       }
     });
 
+    this.backdropConfig$.subscribe(backdropConfig => {
+      if (backdropConfig) {
+        this.backdropConfig = backdropConfig;
+      }
+    });
+
     this.homeConfig$.subscribe(homeConfig => {
       if (homeConfig) {
         this.homeConfig = homeConfig;
-
         if (!this.homeConfig.onBoardingDone) {
           const completedTasks = this.homeConfig.onBoardingTasks.filter((task: any) => task.completed).length;
           this._store.dispatch(new fromSharedStore.TopbarPendingNotifications(this.homeConfig.onBoardingTasks.length - completedTasks));
@@ -64,5 +72,23 @@ export class LayoutPage implements OnInit {
         }
       }
     });
+    
+    const gc = new (GestureController as any)(document.body);
+    gc.on('up', () => {
+      if (this.backdropConfig.show) {
+        this._store.dispatch(new fromSharedStore.BackdropHide);
+      }
+    });
+    gc.on('down', (event: any) => {
+      if (!this.backdropConfig.show) {
+        this._store.dispatch(new fromSharedStore.BackdropShow({
+          transition: 'move',
+          header: true,
+        }));
+      }
+    });
+
+    // gc.on('left', d => alert('swiped left'));
+    // gc.on('right', d => alert('swiped right'));
   }
 }
