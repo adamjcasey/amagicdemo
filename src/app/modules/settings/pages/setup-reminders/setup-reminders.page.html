@@ -13,6 +13,7 @@
         <p class="field-label">Smart Reminders</p>
         <ion-toggle 
           color="purple"
+          class="action-to-highlight"
           (ionChange)="saveSmartReminders($event)"
           [checked]="settingsConfig.smartReminders"
         ></ion-toggle>

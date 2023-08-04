@@ -61,6 +61,7 @@ export function GestureController(options: any) {
     let r = g.element.getBoundingClientRect();
     let x = parseInt(touchEvent.touches[0].clientX);
     let y = parseInt(touchEvent.touches[0].clientY);
+    let target = touchEvent.target;
 
     w = setTimeout(() => {
       g.emit("hold");
@@ -91,6 +92,7 @@ export function GestureController(options: any) {
       edge: edge,
       angle: null,
       direction: null,
+      target: target,
       delta: {
         x: null,
         y: null,

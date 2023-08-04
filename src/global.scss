@@ -84,3 +84,15 @@
     font-size: var(--size-m);
   }
 }
+
+.is-highlighted {
+  @include highlighted-element;
+
+  &:is(ion-button) {
+    position: relative;
+
+    &::before {
+      top: -1px;
+    }
+  }
+}

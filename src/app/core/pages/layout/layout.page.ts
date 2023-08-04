@@ -23,6 +23,7 @@ export class LayoutPage implements OnInit {
 
   constructor(
     private _store: Store<fromStore.LayoutState>,
+    private _utilsService: fromSharedServices.UtilsService,
     private _bluetoothService: fromSharedServices.BluetoothService,
   ) {
     this.config$ = this._store.select(fromStore.getLayoutConfig);
@@ -89,9 +90,37 @@ export class LayoutPage implements OnInit {
         }));
       }
     });
+    gc.on('tap', (event: any) => {
+      const elementsToHighligh = document.querySelectorAll('.action-to-highlight');
+      const highlightElements = () => {
+        console.log('highlightElements');
+        Array.from(elementsToHighligh).forEach((element: any) => {
+          element.classList.add('is-highlighted');
+        });
 
-    // gc.on('left', d => alert('swiped left'));
-    // gc.on('right', d => alert('swiped right'));
+        setTimeout(() => {
+          Array.from(elementsToHighligh).forEach((element: any) => {
+            element.classList.remove('is-highlighted');
+          });
+        }, 1200);
+      }
+
+      if (event.target.classList.contains('action-to-highlight')) {
+        if (event.target.classList.contains('action-to-highlight--cancel')) {
+          highlightElements();
+        }
+      }
+      else {
+        if (
+          event.target.tagName !== 'INPUT' &&
+          event.target.tagName !== 'ION-CHECKBOX' &&
+          fromSharedServices.UtilsService.getParent(event.target, 'rating-field').length === 0 &&
+          fromSharedServices.UtilsService.getParent(event.target, 'add-photo-cta').length === 0
+        ) {
+          highlightElements();
+        }
+      }
+    });
 
     this.verifyBatterLevelOfDevice();
   }
