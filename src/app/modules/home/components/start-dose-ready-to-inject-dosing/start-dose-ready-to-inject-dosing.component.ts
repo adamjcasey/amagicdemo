@@ -11,6 +11,7 @@ import * as moment from 'moment';
 import * as fromStore from '@home/store';
 import * as fromCoreStore from '@core/store';
 import * as fromSharedStore from '@shared/store';
+import * as fromSharedServices from '@shared/services';
 
 @Component({
   selector: 'automagic-start-dose-ready-to-inject-dosing',
@@ -24,9 +25,12 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
   public homeConfig: any;
   public totalTime: number = 10; // 10 seconds
   public nextDose: any;
+  public startDosing: boolean = false;
+  public errorDosing: boolean = false;
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
+    private _bluetoothService: fromSharedServices.BluetoothService,
   ) {
     this.homeConfig$ = this._store.select(fromStore.getHomeConfig);
   }
@@ -48,71 +52,106 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
   }
 
   ngAfterViewInit() {
-    // hold on to start the dose
-    setTimeout(() => {
-      this.startDose();
-    }, 500);
+    this.startDose();
+    this.checkDosingProcess();
   }
 
   startDose() {
     this.title = 'Dosing...';
+    this.startDosing = true;
     const loop = setInterval(() => {
       this.totalTime--;
-      if (this.totalTime === 0) {
+      if (this.totalTime === 0 || this.errorDosing) {
+        clearInterval(loop);
+      }
+    }, 1000);
+  }
+
+  async checkDosingProcess() {
+    try {
+      const dosingProcess = await this._bluetoothService.checkDosing();
+      if (dosingProcess) {
         this.title = 'Full dose delivered!';
         this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-lime'));
         this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
           color: '--color-bg-pastel-lime',
         }));
 
-        // hold on 1s to show the alert
-        setTimeout(() => {
-          let nextDoseDateFormatted;
-          const markedDoses = this.homeConfig.doses.filter((dose: any) => dose.marked);
-          const unMarkedDoses = this.homeConfig.doses.filter((dose: any) => !dose.marked);
-          if (markedDoses.length === 0) {
-            const dateNextDose = moment(unMarkedDoses[1].date);
-            dateNextDose.set('hour', moment().get('hour'));
-            dateNextDose.set('minute', moment().get('minute'));
-            nextDoseDateFormatted = dateNextDose.format('D MMMM YYYY H:mm A');
-          }
+        let nextDoseDateFormatted;
+        const markedDoses = this.homeConfig.doses.filter((dose: any) => dose.marked);
+        const unMarkedDoses = this.homeConfig.doses.filter((dose: any) => !dose.marked);
+        if (markedDoses.length === 0) {
+          const dateNextDose = moment(unMarkedDoses[1].date);
+          dateNextDose.set('hour', moment().get('hour'));
+          dateNextDose.set('minute', moment().get('minute'));
+          nextDoseDateFormatted = dateNextDose.format('D MMMM YYYY H:mm A');
+        }
 
-          if (markedDoses.length === 5) {
-            const lastDose = unMarkedDoses[0];
-            const lastDoseDate = moment(lastDose.date);
-            lastDoseDate.set('hour', moment().get('hour'));
-            lastDoseDate.set('minute', moment().get('minute'));
-            lastDoseDate.add(2, 'weeks');
-            nextDoseDateFormatted = lastDoseDate.format('D MMMM YYYY H:mm A');
-          }
-          
-            
-          this._store.dispatch(new fromSharedStore.AlertShow({
-            mode: 'window',
-            template: `
-              <img src="assets/images/dose-delivered.svg" />
-              <h1 class="font-heading-1--bold">Full dose delivered!</h1>
-              <h3>Theryx®, 80mg</h3>
-              <p>Dose Completed:</p>
-              <p>${nextDoseDateFormatted}</p>
-            `,
-            actions: [
-              {
-                label: 'Ok, let’s go!',
-                fill: 'outline',
-                action: () => {
-                  this._store.dispatch(new fromSharedStore.AlertHide);
-                  this._store.dispatch(new fromSharedStore.SliderPageClear());
-                  this._store.dispatch(new fromCoreStore.Go({
-                    path: ['/home/start-dose/inject-done']
-                  }));
-                },
-              }
-            ],
-          }));
-        }, 1000);
-        clearInterval(loop);
+        if (markedDoses.length === 5) {
+          const lastDose = unMarkedDoses[0];
+          const lastDoseDate = moment(lastDose.date);
+          lastDoseDate.set('hour', moment().get('hour'));
+          lastDoseDate.set('minute', moment().get('minute'));
+          lastDoseDate.add(2, 'weeks');
+          nextDoseDateFormatted = lastDoseDate.format('D MMMM YYYY H:mm A');
+        }
+
+        this._store.dispatch(new fromSharedStore.AlertShow({
+          mode: 'window',
+          template: `
+            <img src="assets/images/dose-delivered.svg" />
+            <h1 class="font-heading-1--bold">Full dose delivered!</h1>
+            <h3>Theryx®, 80mg</h3>
+            <p>Dose Completed:</p>
+            <p>${nextDoseDateFormatted}</p>
+          `,
+          actions: [
+            {
+              label: 'Ok, let’s go!',
+              fill: 'outline',
+              action: () => {
+                this._store.dispatch(new fromSharedStore.AlertHide);
+                this._store.dispatch(new fromSharedStore.SliderPageClear());
+                this._store.dispatch(new fromCoreStore.Go({
+                  path: ['/home/start-dose/inject-done']
+                }));
+              },
+            }
+          ],
+        }));
       }
-    }, 1000);
+    }
+    catch (error) {
+      this.errorDosing = true;
+      this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-salmon'));
+      this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
+        color: '--color-bg-pastel-salmon',
+      }));
+      this._store.dispatch(new fromSharedStore.AlertShow({
+        mode: 'window',
+        template: `
+          <div class="dosing-error-alert">
+            <img src="assets/images/dose-dosing-error.svg" />
+            <h1 class="font-heading-1--bold">Oops!</h1>
+            <p>You lifted off early and the dose was only 65% administrated.</p>
+            <h5>Please contact your HCP for guidance.</h5><br>
+          </div>
+        `,
+        actions: [
+          {
+            label: 'Ok',
+            action: () => {
+              this._store.dispatch(new fromSharedStore.AlertHide);
+            },
+          },
+          {
+            label: 'My HCP',
+            action: () => {
+              this._store.dispatch(new fromSharedStore.AlertHide);
+            },
+          }
+        ],
+      }));
+    }
   }
 }

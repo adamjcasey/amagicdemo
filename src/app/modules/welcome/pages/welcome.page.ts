@@ -247,10 +247,15 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async allowBluetooth() {
-    const checkPermissions = await this._bluetoothService.checkPermissions();
-    if (checkPermissions === 'granted') {
-      this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
-      this.sliderPage.slideNext();
+    try {
+      const checkPermissions = await this._bluetoothService.checkPermissions();
+      if (checkPermissions === 'granted') {
+        this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
+        this.sliderPage.slideNext();
+      }
+    }
+    catch (error) {
+      console.log('allowBluetooth > error: ', error);
     }
   }
 
