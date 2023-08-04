@@ -666,6 +666,10 @@
         font-size: 40px;
         pointer-events: none;
       }
+
+      &.is-highlighted {
+        @include highlighted-element;
+      }
     }
   }
 

@@ -101,3 +101,30 @@
   grid-auto-rows: var(--size-xxs);
   gap: calc(var(--size-s) - 5px);
 }
+
+@mixin highlighted-element {
+  @keyframes fade {
+    from {
+      opacity:  0.6;
+    }
+    to {
+      opacity:  0;
+    }
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    border: 1px solid var(--color-primary-blue);
+    background-color: var(--color-primary-blue);
+    animation-name: fade;
+    animation-duration: 800ms;
+    animation-fill-mode: forwards;
+    animation-timing-function: linear;
+  }
+}

@@ -264,7 +264,16 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
           {
             label: 'Looks off',
             action: () => {
-              console.log('Looks off action');
+              const backdropToHighligh = document.querySelector('#backdrop .backdrop__fold ion-icon') as HTMLElement;
+              const sliderPageToHighligh = document.querySelector('.slider-page .wrapper-large__toolbar-actions ion-button:last-child') as HTMLElement;
+              if (!backdropToHighligh.classList.contains('is-highlighted')) {
+                backdropToHighligh.classList.add('is-highlighted');
+                sliderPageToHighligh.classList.add('is-highlighted');
+                setTimeout(() => {
+                  backdropToHighligh.classList.remove('is-highlighted');
+                  sliderPageToHighligh.classList.remove('is-highlighted');
+                }, 1000);
+              }
             },
           },
           {
