@@ -19,6 +19,7 @@
     <header class="backdrop__header" *ngIf="config.header">
       <div class="back-button" *ngIf="backButton">
         <ion-button 
+          class="action-to-highlight" 
           (click)="backButton.action($event)" 
           fill="clear" color="light" size="small">
 
@@ -44,7 +45,8 @@
 
       <div class="backdrop__actions" *ngIf="config.buttons">
         <ion-button 
-          *ngFor="let button of config.buttons; let i = index"
+          *ngFor="let button of config.buttons; let i = index" 
+          class="{{ button.cssClasses ? button.cssClasses : null }}"
           (click)="button.action ? button.action($event) : null" 
           fill="outline" color="light">
           {{ button.label }}
@@ -340,7 +342,7 @@
     </div>
 
     <ion-icon 
-      class="backdrop__close" 
+      class="backdrop__close action-to-highlight" 
       name="chevron-up-outline" 
       *ngIf="config.fullScreen && config.bgTemplate" 
       (click)="toggle()" 
@@ -348,8 +350,8 @@
 
     <div class="backdrop__fold" (click)="toggle()">
       <ion-img class="background" src="/assets/images/backdrop-fold-bg.svg"></ion-img>
-      <ion-icon class="info" src="/assets/icons/info.svg"></ion-icon>
-      <ion-icon class="close" name="chevron-up-outline"></ion-icon>
+      <ion-icon class="info action-to-highlight" src="/assets/icons/info.svg"></ion-icon>
+      <ion-icon class="close action-to-highlight" name="chevron-up-outline"></ion-icon>
     </div>
   </div>
 </section>

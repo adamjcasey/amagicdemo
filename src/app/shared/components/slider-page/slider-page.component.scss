@@ -314,17 +314,6 @@
           align-items: center;
           justify-content: center;
           gap: var(--size-xxxs);
-
-          ion-button {
-            &.is-highlighted {
-              @include highlighted-element;
-              position: relative;
-
-              &::before {
-                top: -1px;
-              }
-            }
-          }
         }
       }
     }

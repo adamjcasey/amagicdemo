@@ -65,6 +65,7 @@ export class StartDosePrepareTempTimerComponent implements OnInit, AfterViewInit
         buttons: [
           {
             label: 'Got it',
+            cssClasses: 'action-to-highlight',
             action: () => {
               this._store.dispatch(new fromSharedStore.BackdropHide);
             },

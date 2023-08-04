@@ -1,4 +1,4 @@
-<div class="card" [ngClass]="{
+<div class="card {{ card.cssClasses ? card.cssClasses : null }}" [ngClass]="{
   'is-rendered': card.renderClass,
   'card--stepper': card.type === 'stepper',
   'card--featured': card.type === 'featured',

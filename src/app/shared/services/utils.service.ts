@@ -86,4 +86,21 @@ export class UtilsService {
     }
     return color;
   }
+
+  static getParent(element: any, parentClass: any) {
+    let parents: any = [];
+    let nextParent = element.parentNode;
+
+    do {
+      const parent = nextParent;
+      if (parent.classList.contains(parentClass)) {
+        parents.push(parent);
+      }
+      nextParent = parent.parentNode;
+      if (nextParent === document.body) {
+        break;
+      }
+    } while (parents.length === 0);
+    return parents;
+  }
 }

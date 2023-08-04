@@ -11,6 +11,9 @@
       <div 
         class="icon" 
         *ngFor="let point of [1, 2, 3, 4, 5]" 
+        [ngClass]="{
+          'action-to-highlight': point === 5,
+        }"
         (click)="updateValue(point)">
 
         <ion-icon src="/assets/images/rating-field--icons-{{ point }}.svg"></ion-icon>
@@ -35,6 +38,7 @@
       [ngClass]="{
         'is-selected': value === point || point <= value,
         'is-marked': (value === 2 && point === 1) || (value > 2 && value > point),
+        'action-to-highlight': point === 5,
       }"
       (click)="updateValue(point)">
 

@@ -263,6 +263,7 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
         actions: [
           {
             label: 'Looks off',
+            cssClasses: 'action-to-highlight--cancel',
             action: () => {
               const backdropToHighligh = document.querySelector('#backdrop .backdrop__fold ion-icon') as HTMLElement;
               const sliderPageToHighligh = document.querySelector('.slider-page .wrapper-large__toolbar-actions ion-button:last-child') as HTMLElement;

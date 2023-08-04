@@ -186,6 +186,10 @@
 
       .icon {
         text-align: center;
+
+        &.action-to-highlight {
+          position: relative;
+        }
       }
 
       ion-icon {
