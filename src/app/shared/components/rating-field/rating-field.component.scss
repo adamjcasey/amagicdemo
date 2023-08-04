@@ -197,16 +197,16 @@
         margin: 0;
         white-space: nowrap;
       }
-    }
 
-    + .rating-field__rate-line {
-      margin-right: var(--size-xxs);
-      margin-left: var(--size-xxs);
-
-      .checkpoint {
-        &:nth-child(4) {
-          .checkpoint__line {
-            width: 70px;
+      + .rating-field__rate-line {
+        margin-right: var(--size-xxs);
+        margin-left: var(--size-xxs);
+  
+        .checkpoint {
+          &:nth-child(4) {
+            .checkpoint__line {
+              width: 70px;
+            }
           }
         }
       }
