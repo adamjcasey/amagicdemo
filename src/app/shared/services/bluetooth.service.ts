@@ -210,6 +210,23 @@ export class BluetoothService {
     }
   }
 
+  //--------------------------------------------------
+  async isDeviceConnected() {
+    if (Capacitor.isNativePlatform()) {
+      return new Promise((resolve, reject) => {
+        const controller = setInterval(() => {
+          // logic to detect if the device is connected
+        }, 500);
+      });
+    }
+    else {
+      // support for web, wait 10segs (duration of the dosing) to return a true;
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      return true;
+    }
+  }
+
+  //--------------------------------------------------
   async waitForDosingStart() {
     // start watching the press on the device
     if (Capacitor.isNativePlatform()) {
@@ -232,6 +249,7 @@ export class BluetoothService {
     }
   }
 
+  //--------------------------------------------------
   async checkDosing() {
     if (Capacitor.isNativePlatform()) {
       return new Promise((resolve, reject) => {
@@ -251,21 +269,6 @@ export class BluetoothService {
     else {
       // support for web, wait 10segs (duration of the dosing) to return a true;
       await new Promise(resolve => setTimeout(resolve, 10000));
-      return true;
-    }
-  }
-
-  async isDeviceConnected() {
-    if (Capacitor.isNativePlatform()) {
-      return new Promise((resolve, reject) => {
-        const controller = setInterval(() => {
-          // logic to detect if the device is connected
-        }, 500);
-      });
-    }
-    else {
-      // support for web, wait 10segs (duration of the dosing) to return a true;
-      await new Promise(resolve => setTimeout(resolve, 3000));
       return true;
     }
   }

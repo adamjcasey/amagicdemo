@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 
 import * as fromStore from '@core/store';
 import * as fromSharedStore from '@shared/store';
+import * as fromSharedServices from '@shared/services';
 import * as fromHomeStore from '@home/store';
 import { GestureController } from '@shared/services/gestureController';
 
@@ -22,6 +23,7 @@ export class LayoutPage implements OnInit {
 
   constructor(
     private _store: Store<fromStore.LayoutState>,
+    private _bluetoothService: fromSharedServices.BluetoothService,
   ) {
     this.config$ = this._store.select(fromStore.getLayoutConfig);
     this.backdropConfig$ = this._store.select(fromSharedStore.getBackdropConfig);
@@ -90,5 +92,34 @@ export class LayoutPage implements OnInit {
 
     // gc.on('left', d => alert('swiped left'));
     // gc.on('right', d => alert('swiped right'));
+
+    this.verifyBatterLevelOfDevice();
+  }
+
+  async verifyBatterLevelOfDevice() {
+    try {
+      const isDeviceConnected = await this._bluetoothService.isDeviceConnected();
+      if (isDeviceConnected) {
+        setInterval(() => {
+          const batteryLevel = this._bluetoothService.Battery;
+          if (batteryLevel < 10) {
+            this._store.dispatch(new fromSharedStore.BackdropShow({
+              transition: 'move',
+              header: true,
+              template: `
+                <br>
+                <img src="assets/images/battery-low.svg" />
+                <h1 class="font-heading-1--bold">Injector battery <br>low</h1>
+                <p>Unfortunately the demo injector has <br>a low battery and must be <br>recharged.</p>
+                <h5>Please follow the recharge <br>instructions included with the <br>USB-C cord in the shipping box.</h5>
+              `
+            }));
+          }
+        }, 60000);
+      }
+    }
+    catch (error) {
+      console.log('verifyBatterLevelOfDevice > error: ', error);
+    }
   }
 }

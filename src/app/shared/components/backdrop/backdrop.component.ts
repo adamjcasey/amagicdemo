@@ -33,6 +33,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
   public backButton!: any;
   public initialized: boolean = false;
   public initialSlide: number = 0;
+  public batteryLevel: number = 0;
   @ViewChild('sliderMainMenu', { static: false }) sliderMainMenu!: SwiperComponent;
   @ViewChild('sliderHighlights', { static: false }) sliderHighlights!: SwiperComponent;
   @ViewChild('sliderShareFlow', { static: false }) sliderShareFlow!: SwiperComponent;
@@ -42,6 +43,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
     private _store: Store<fromStore.SharedState>,
     private _sanitizer: DomSanitizer,
     private _utils: fromSharedServices.UtilsService,
+    private _bluetoothService: fromSharedServices.BluetoothService,
   ) {
     this.config$ = this._store.select(fromStore.getBackdropConfig);
   }
@@ -122,6 +124,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
   }
 
   onMenuInit() {
+    this.getBatteryLevel();
     if (this.config.showBackButton) {
       this.backButton = null;
     }
@@ -323,6 +326,10 @@ export class BackdropComponent implements OnInit, AfterViewInit {
       returnFlow: null,
     }));
     this.initialSlide = 1;
+  }
+
+  getBatteryLevel() {
+    this.batteryLevel = this._bluetoothService.Battery;
   }
 
   private _loadComponent(component: any) {
