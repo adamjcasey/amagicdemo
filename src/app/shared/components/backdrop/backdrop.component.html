@@ -87,6 +87,11 @@
                 <ion-label>Help! Something broke</ion-label>
                 <ion-icon name="chevron-forward-outline" slot="end" color="light"></ion-icon>
               </a>
+              <a class="link" (click)="goToSubmenu(4)">
+                <ion-icon src="/assets/icons/help.svg" slot="start" size="large"></ion-icon>
+                <ion-label>No Device Mode</ion-label>
+                <ion-icon name="chevron-forward-outline" slot="end" color="light"></ion-icon>
+              </a>
             </div>
           </ng-template>
 
@@ -134,6 +139,24 @@
 
               <ion-button fill="outline" expand="block" color="light">
                 View troubleshooting tips
+              </ion-button>
+            </div>
+          </ng-template>
+
+          <ng-template swiperSlide>
+            <h1 class="font-heading-1--bold">No Device Mode</h1>
+
+            <div class="buttons-container">
+              <ion-button fill="outline" expand="block" color="light">
+                Testing with No Device Mode
+              </ion-button>
+
+              <ion-button fill="outline" expand="block" color="light">
+                Testing of Oops Flow
+              </ion-button>
+
+              <ion-button fill="outline" expand="block" color="light">
+                Testing of Low Battery Flow
               </ion-button>
             </div>
           </ng-template>
