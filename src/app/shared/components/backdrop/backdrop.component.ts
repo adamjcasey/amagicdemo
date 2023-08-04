@@ -16,9 +16,10 @@ import { SwiperComponent } from 'swiper/angular';
 import SwiperCore, { EffectFade } from 'swiper';
 SwiperCore.use([EffectFade]);
 
-import { WelcomeSignUpComponent } from '@welcome/components';
 import * as fromStore from '@shared/store';
+import * as fromCoreStore from '@core/store';
 import * as fromSharedServices from '@shared/services';
+import * as fromWelcomeComponents from '@welcome/components';
 import * as fromHomeComponents from '@home/components';
 
 @Component({
@@ -30,6 +31,8 @@ import * as fromHomeComponents from '@home/components';
 export class BackdropComponent implements OnInit, AfterViewInit {
   public config$: Observable<any>;
   public config: any;
+  public layoutConfig$: Observable<any>;
+  public layoutConfig: any;
   public backButton!: any;
   public initialized: boolean = false;
   public initialSlide: number = 0;
@@ -40,12 +43,13 @@ export class BackdropComponent implements OnInit, AfterViewInit {
   @ViewChild('contentComponent', { read: ViewContainerRef }) contentComponent!: ViewContainerRef;
 
   constructor(
-    private _store: Store<fromStore.SharedState>,
+    private _store: Store<fromCoreStore.CoreState>,
     private _sanitizer: DomSanitizer,
     private _utils: fromSharedServices.UtilsService,
     private _bluetoothService: fromSharedServices.BluetoothService,
   ) {
     this.config$ = this._store.select(fromStore.getBackdropConfig);
+    this.layoutConfig$ = this._store.select(fromCoreStore.getLayoutConfig);
   }
 
   getType(): string {
@@ -103,6 +107,12 @@ export class BackdropComponent implements OnInit, AfterViewInit {
         if (!this.config.initialSlide || this.initialSlide > 0) {
           this.initialSlide = 0;
         }
+      }
+    });
+
+    this.layoutConfig$.subscribe(layoutConfig => {
+      if (layoutConfig) {
+        this.layoutConfig = layoutConfig;
       }
     });
   }
@@ -332,11 +342,28 @@ export class BackdropComponent implements OnInit, AfterViewInit {
     this.batteryLevel = this._bluetoothService.Battery;
   }
 
+  toggleNoDeviceMode() {
+    this._store.dispatch(new fromCoreStore.SetNoDeviceMode(!this.layoutConfig.noDeviceMode));
+  }
+
+  toggleNoDeviceOopsFlow() {
+    if (this.layoutConfig.noDeviceMode) {
+      this._store.dispatch(new fromCoreStore.SetNoDeviceModeOopsFlow(!this.layoutConfig.noDeviceModeOopsFlow));
+    }
+  }
+
+  toggleNoDeviceBatteryLowFlow() {
+    if (this.layoutConfig.noDeviceMode) {
+      this._store.dispatch(new fromCoreStore.SetNoDeviceModeBatteryLowFlow(!this.layoutConfig.noDeviceModeBatteryLowFlow));
+      this._bluetoothService.Battery = 5;
+    }
+  }
+
   private _loadComponent(component: any) {
     this.contentComponent.clear();
     switch(component) {
       case 'welcome-sign-up':
-        this.contentComponent.createComponent(WelcomeSignUpComponent);
+        this.contentComponent.createComponent(fromWelcomeComponents.WelcomeSignUpComponent);
         break;
       case 'start-guided-demo':
         this.contentComponent.createComponent(fromHomeComponents.StartGuidedDemoComponent);

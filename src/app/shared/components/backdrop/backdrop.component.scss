@@ -191,6 +191,13 @@
         &:last-child {
           margin-bottom: 0;
         }
+
+        &.is-active {
+          &::part(native) {
+            background: var(--color-white);
+            color: var(--color-text);
+          }
+        }
       }
     }
 

@@ -60,6 +60,27 @@ export function LayoutReducer(
       };
     }
 
+    case fromActions.ActionTypes.SetNoDeviceMode: {
+      return {
+        ...state,
+        noDeviceMode: action.payload,
+      };
+    }
+
+    case fromActions.ActionTypes.SetNoDeviceModeOopsFlow: {
+      return {
+        ...state,
+        noDeviceModeOopsFlow: action.payload,
+      };
+    }
+
+    case fromActions.ActionTypes.SetNoDeviceModeBatteryLowFlow: {
+      return {
+        ...state,
+        noDeviceModeBatteryLowFlow: action.payload,
+      };
+    }
+
     default: {
       return state;
     }

@@ -141,17 +141,75 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
           {
             label: 'Ok',
             action: () => {
+              this.restartDosing();
               this._store.dispatch(new fromSharedStore.AlertHide);
             },
           },
           {
             label: 'My HCP',
             action: () => {
+              this.restartDosing();
               this._store.dispatch(new fromSharedStore.AlertHide);
             },
           }
         ],
       }));
+    }
+  }
+
+  async restartDosing() {
+    this.errorDosing = false;
+    this.startDosing = false;
+    this.totalTime = 10;
+
+    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
+    this._store.dispatch(new fromSharedStore.SliderPageSlideTo(8));
+
+    let counter = 0;
+    const controller = setInterval(() => {
+      switch(counter) {
+        case 0:
+        case 3:
+        case 6:
+          this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple'));
+          this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
+            color: '--color-bg-pastel-purple'
+          }));
+          break;
+
+        case 1:
+        case 4:
+        case 7:
+          this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple'));
+          this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
+            color: '--color-bg-pastel-purple'
+          }));
+          break;
+
+        case 2:
+        case 5:
+        case 8:
+          this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-lime'));
+          this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
+            color: '--color-bg-pastel-lime'
+          }));
+          break;
+      }
+      counter++;
+    }, 2000);
+
+    try {
+      const startDosing = await this._bluetoothService.waitForDosingStart();
+      if (startDosing) {
+        clearInterval(controller);
+        this._store.dispatch(new fromSharedStore.SliderPageSlideTo(9));
+        this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple'));
+        this.startDose();
+        this.checkDosingProcess();
+      }
+    }
+    catch (error) {
+      console.log('restartDosing > error: ', error);
     }
   }
 }

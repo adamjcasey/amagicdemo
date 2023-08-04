@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 
@@ -23,7 +23,6 @@ export class LayoutPage implements OnInit {
 
   constructor(
     private _store: Store<fromStore.LayoutState>,
-    private _utilsService: fromSharedServices.UtilsService,
     private _bluetoothService: fromSharedServices.BluetoothService,
   ) {
     this.config$ = this._store.select(fromStore.getLayoutConfig);
@@ -93,7 +92,6 @@ export class LayoutPage implements OnInit {
     gc.on('tap', (event: any) => {
       const elementsToHighligh = document.querySelectorAll('.action-to-highlight');
       const highlightElements = () => {
-        console.log('highlightElements');
         Array.from(elementsToHighligh).forEach((element: any) => {
           element.classList.add('is-highlighted');
         });
@@ -132,19 +130,27 @@ export class LayoutPage implements OnInit {
         setInterval(() => {
           const batteryLevel = this._bluetoothService.Battery;
           if (batteryLevel < 10) {
-            this._store.dispatch(new fromSharedStore.BackdropShow({
-              transition: 'move',
-              header: true,
-              template: `
-                <br>
-                <img src="assets/images/battery-low.svg" />
-                <h1 class="font-heading-1--bold">Injector battery <br>low</h1>
-                <p>Unfortunately the demo injector has <br>a low battery and must be <br>recharged.</p>
-                <h5>Please follow the recharge <br>instructions included with the <br>USB-C cord in the shipping box.</h5>
-              `
-            }));
+            if (!this.backdropConfig.show) {
+              this._store.dispatch(new fromSharedStore.BackdropShow({
+                transition: 'move',
+                header: true,
+                template: `
+                  <br>
+                  <img src="assets/images/battery-low.svg" />
+                  <h1 class="font-heading-1--bold">Injector battery <br>low</h1>
+                  <p>Unfortunately the demo injector has <br>a low battery and must be <br>recharged.</p>
+                  <h5>Please follow the recharge <br>instructions included with the <br>USB-C cord in the shipping box.</h5>
+                `,
+                onClose: () => {
+                  if (this.config.noDeviceModeBatteryLowFlow) {
+                    this._store.dispatch(new fromStore.SetNoDeviceModeBatteryLowFlow(false));
+                    this._bluetoothService.Battery = 20;
+                  }
+                }
+              }));
+            }
           }
-        }, 60000);
+        }, 5000);
       }
     }
     catch (error) {
