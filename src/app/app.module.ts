@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 
-import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
+import { IonicModule, IonicRouteStrategy, GestureController } from '@ionic/angular';
 
 import * as fromCore from '@core/index';
 
@@ -15,10 +15,12 @@ import * as fromCore from '@core/index';
     }),
     fromCore.CoreModule
   ],
-  providers: [{ 
-    provide: RouteReuseStrategy, 
-    useClass: IonicRouteStrategy 
-  }],
+  providers: [
+    { 
+      provide: RouteReuseStrategy, 
+      useClass: IonicRouteStrategy 
+    },
+  ],
   bootstrap: [fromCore.LayoutPage],
 })
 export class AppModule {}

@@ -11,6 +11,7 @@ import { Observable, Subject, takeUntil } from 'rxjs';
 import * as fromStore from '@home/store';
 import * as fromSharedStore from '@shared/store';
 import * as fromSharedComponents from '@shared/components';
+import * as fromSharedServices from '@shared/services';
 import * as fromCoreStore from '@core/store';
 
 @Component({
@@ -30,6 +31,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
+    private _bluetoothService: fromSharedServices.BluetoothService,
   ) {
     this.sliderPageConfig$ = this._store.select(fromSharedStore.getSliderPageConfig);
     this.homeConfig$ = this._store.select(fromStore.getHomeConfig);
@@ -205,7 +207,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                               {
                                 label: 'Got it',
                                 action: () => {
-                                  this._store.dispatch(new fromSharedStore.BackdropClose());
+                                  this._store.dispatch(new fromSharedStore.BackdropHide);
                                 },
                               }
                             ],
@@ -393,30 +395,52 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
               },
               {
                 label: 'Next Step',
-                action: () => { 
+                action: async () => { 
                   this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
                   this.sliderPage.slideNext();
-                  // simulate Waiting for injection process
-                  // first, wait for 2seg to set bgColor as purple
-                  setTimeout(() => {
-                    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple'));
-                    this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
-                      color: '--color-bg-pastel-purple'
-                    }));
-                  }, 2000);
-    
-                  // second, wait for 4segs to set bgColor as lime
-                  setTimeout(() => {
-                    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-lime'));
-                    this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
-                      color: '--color-bg-pastel-lime'
-                    }));
-                  }, 4000);
-    
-                  // then, wait for 6.5segs to go to the next slide
-                  setTimeout(() => {
-                    this.sliderPage.slideNext();
-                  }, 6500);
+                  try {
+                    let counter = 0;
+                    const controller = setInterval(() => {
+                      switch(counter) {
+                        case 0:
+                        case 3:
+                        case 6:
+                          this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple'));
+                          this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
+                            color: '--color-bg-pastel-purple'
+                          }));
+                          break;
+
+                        case 1:
+                        case 4:
+                        case 7:
+                          this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple'));
+                          this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
+                            color: '--color-bg-pastel-purple'
+                          }));
+                          break;
+
+                        case 2:
+                        case 5:
+                        case 8:
+                          this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-lime'));
+                          this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
+                            color: '--color-bg-pastel-lime'
+                          }));
+                          break;
+                      }
+                      counter++;
+                    }, 2000);
+
+                    const startDosing = await this._bluetoothService.waitForDosingStart();
+                    if (startDosing) {
+                      clearInterval(controller);
+                      this.sliderPage.slideNext();
+                    }
+                  }
+                  catch (error) {
+                    console.log('slideNext > error: ', error);
+                  }
                 }
               }
             ],

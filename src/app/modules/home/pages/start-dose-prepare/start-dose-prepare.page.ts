@@ -11,6 +11,7 @@ import { Observable, Subject, takeUntil } from 'rxjs';
 import * as fromStore from '@home/store';
 import * as fromSharedStore from '@shared/store';
 import * as fromSharedComponents from '@shared/components';
+import * as fromSharedServices from '@shared/services';
 import * as fromCoreStore from '@core/store';
 
 @Component({
@@ -28,6 +29,7 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
+    private _bluetoothService: fromSharedServices.BluetoothService,
   ) {
     this.homeConfig$ = this._store.select(fromStore.getHomeConfig);
     this.slides = [
@@ -129,17 +131,21 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
     this._ngUnsubscribe.complete();
   }
 
-  slideNext(sliders: any) {
+  async slideNext(sliders: any) {
     sliders.asset.slideNext(500);
     sliders.content.slideNext(500);
 
     const currentSlide = sliders.content.activeIndex;
     if (currentSlide === 1) {
-      // TODO: refactor this, make the Bluetooth connection to the device.
-      // simulate bluetooth connection process.
-      setTimeout(() => {
-        this.sliderPage.slideNext()
-      }, 3000);
+      try {
+        const isDeviceConnected = await this._bluetoothService.isDeviceConnected();
+        if (isDeviceConnected) {
+          this.sliderPage.slideNext();
+        }
+      }
+      catch (error) {
+        console.log('slideNext > error: ', error);
+      }
     }
   }
 

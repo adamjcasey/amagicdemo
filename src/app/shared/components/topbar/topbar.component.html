@@ -1,7 +1,10 @@
-<ion-header class="topbar" [style.background-color]="'var(' + config?.bgColor + ')'">
+<ion-header 
+  class="topbar" 
+  [style.background-color]="'var(' + config?.bgColor + ')'">
+
   <ion-toolbar class="topbar__toolbar">
     <ion-buttons slot="start">
-      <ion-button (click)="leftElementAction()">
+      <ion-button (click)="leftElementHandler()">
         <ng-container *ngIf="!activityScope && !settingsScope && !resourcesScope">
           <ion-icon slot="icon-only" src="/assets/icons/user.svg"></ion-icon>
         </ng-container>
@@ -22,7 +25,13 @@
         </div>
       </div>
       <ng-template #default>
-        <ion-button class="notifications-cta" (click)="goTo('notifications')" [disabled]="!homeConfig.allCompletedDoses">
+        <ion-button 
+          class="notifications-cta" 
+          (click)="goTo('notifications')" 
+          [disabled]="
+            !homeConfig.allCompletedDoses || 
+            config.pendingNotifications === 0">
+
           <div class="counter" *ngIf="homeConfig.allCompletedDoses && config.pendingNotifications > 0">
             {{ config.pendingNotifications }}
           </div>

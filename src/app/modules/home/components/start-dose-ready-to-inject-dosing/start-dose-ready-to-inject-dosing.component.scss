@@ -5,6 +5,23 @@
   --dosing-box-indicator-size: 88px;
 }
 
+@keyframes dosingAnimateIndicator {
+  from {
+    top: 0;
+  }
+  to {
+    top: calc(100% - var(--dosing-box-indicator-size));
+  }
+}
+@keyframes dosingAnimateBar {
+  from {
+    height: 95%;
+  }
+  to {
+    height: 20%;
+  }
+}
+
 .start-dose-ready-to-inject__dosing {
   .dosing-counter {
     height: 130px;
@@ -58,9 +75,6 @@
       height: 100%;
       background-color: var(--color-primary-purple);
       border-radius: 40px;
-      transition-property: height;
-      transition-duration: 300ms;
-      transition-timing-function: ease;
       overflow: hidden;
     }
 
@@ -72,116 +86,35 @@
       width: 88px;
       height: 88px;
       object-fit: cover;
-      transition-property: top;
-      transition-duration: 300ms;
-      transition-timing-function: ease;
     }
   }
 
-  &.time-9 {
+  &.is-dosing {
     .dosing-box {
       &::before {
-        height: 95%;
+        animation-name: dosingAnimateBar;
+        animation-duration: 10000ms;
+        animation-fill-mode: forwards;
+        animation-timing-function: linear;
       }
 
       .dosing-box__indicator {
-        top: 5%;
+        animation-name: dosingAnimateIndicator;
+        animation-duration: 10000ms;
+        animation-fill-mode: forwards;
+        animation-timing-function: linear;
       }
     }
-  }
 
-  &.time-8 {
-    .dosing-box {
-      &::before {
-        height: 85%;
-      }
-
-      .dosing-box__indicator {
-        top: 15%;
-      }
-    }
-  }
-
-  &.time-7 {
-    .dosing-box {
-      &::before {
-        height: 75%;
-      }
-
-      .dosing-box__indicator {
-        top: calc(30% - calc(var(--dosing-box-indicator-size) / 2));
-      }
-    }
-  }
-
-  &.time-6 {
-    .dosing-box {
-      &::before {
-        height: 65%;
-      }
-
-      .dosing-box__indicator {
-        top: calc(40% - calc(var(--dosing-box-indicator-size) / 2));
-      }
-    }
-  }
-
-  &.time-5 {
-    .dosing-box {
-      &::before {
-        height: 55%;
-      }
-
-      .dosing-box__indicator {
-        top: calc(50% - calc(var(--dosing-box-indicator-size) / 2));
-      }
-    }
-  }
-
-  &.time-4 {
-    .dosing-box {
-      &::before {
-        height: 45%;
-      }
-
-      .dosing-box__indicator {
-        top: calc(60% - calc(var(--dosing-box-indicator-size) / 2));
-      }
-    }
-  }
-
-  &.time-3 {
-    .dosing-box {
-      &::before {
-        height: 35%;
-      }
-
-      .dosing-box__indicator {
-        top: calc(70% - calc(var(--dosing-box-indicator-size) / 2));
-      }
-    }
-  }
-
-  &.time-2 {
-    .dosing-box {
-      &::before {
-        height: 25%;
-      }
-
-      .dosing-box__indicator {
-        top: calc(80% - calc(var(--dosing-box-indicator-size) / 2));
-      }
-    }
-  }
-
-  &.time-1 {
-    .dosing-box {
-      &::before {
-        height: 20%;
-      }
-
-      .dosing-box__indicator {
-        top: calc(90% - calc(var(--dosing-box-indicator-size) / 2));
+    &.is-error-dosing {
+      .dosing-box {
+        &::before {
+          animation-play-state: paused;
+        }
+  
+        .dosing-box__indicator {
+          animation-play-state: paused;
+        }
       }
     }
   }
@@ -194,15 +127,9 @@
         border-color: var(--color-primary-green);
       }
     }
-
-    .dosing-box {
-      &::before {
-        height: 20%;
-      }
-
-      .dosing-box__indicator {
-        top: calc(90% - calc(var(--dosing-box-indicator-size) / 2));
-      }
-    }
   }
+}
+
+.dosing-error-alert {
+  max-width: 300px;
 }

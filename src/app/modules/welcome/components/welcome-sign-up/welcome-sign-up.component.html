@@ -1,5 +1,5 @@
 <form [formGroup]="signUpFormGroup" class="welcome-sign-up" (ngSubmit)="registerUser()" autocomplete="off">
-  <h1 class="font-heading-1--bold">This is demo is for internal use.</h1>
+  <h1 class="font-heading-1--bold">This demo is for internal use.</h1>
   <ion-img class="logo" src="/assets/images/welcome-sign-up.svg"></ion-img>
   <p *ngIf="!pinInvalid">Enter 4 digit code printed on the autoinjector box to access</p>
   <automagic-pin-input 

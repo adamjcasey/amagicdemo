@@ -1,6 +1,11 @@
-<div class="start-dose-ready-to-inject__dosing time-{{ totalTime }}" [ngClass]="{
-  'is-done': totalTime === 0
-}">
+<div 
+  class="start-dose-ready-to-inject__dosing" 
+  [ngClass]="{
+    'is-done': totalTime === 0,
+    'is-dosing': startDosing,
+    'is-error-dosing': errorDosing,
+  }">
+
   <h1 class="font-heading-1--bold">{{ title }}</h1>
   <div class="dosing-counter">
     <div class="dosing-counter__wrapper">

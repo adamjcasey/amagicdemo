@@ -43,6 +43,6 @@ export class TimeTravelingComponent {
   }
 
   closeBackdrop() {
-    this._store.dispatch(new fromSharedStore.BackdropClose());
+    this._store.dispatch(new fromSharedStore.BackdropHide);
   }
 }

@@ -66,7 +66,7 @@ export class StartDosePrepareTempTimerComponent implements OnInit, AfterViewInit
           {
             label: 'Got it',
             action: () => {
-              this._store.dispatch(new fromSharedStore.BackdropClose());
+              this._store.dispatch(new fromSharedStore.BackdropHide());
             },
           }
         ]

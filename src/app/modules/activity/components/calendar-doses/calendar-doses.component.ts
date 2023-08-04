@@ -45,7 +45,7 @@ export class CalendarDosesComponent implements OnInit, OnDestroy {
 
   onEditSchedule() {
     this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-white'));
-    this._store.dispatch(new fromSharedStore.BottomToolbarHide(true));
+    this._store.dispatch(new fromSharedStore.BottomToolbarHide);
     this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
       hide: false,
       isExpanded: true,
@@ -56,7 +56,7 @@ export class CalendarDosesComponent implements OnInit, OnDestroy {
             label: 'Cancel',
             action: () => {
               this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple'));
-              this._store.dispatch(new fromSharedStore.BottomToolbarHide(false));
+              this._store.dispatch(new fromSharedStore.BottomToolbarShow());
               this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
                 hide: true,
                 isExpanded: false,
@@ -68,7 +68,7 @@ export class CalendarDosesComponent implements OnInit, OnDestroy {
             label: 'Save',
             action: () => {
               this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple'));
-              this._store.dispatch(new fromSharedStore.BottomToolbarHide(false));
+              this._store.dispatch(new fromSharedStore.BottomToolbarShow());
               this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
                 hide: true,
                 isExpanded: false,
