@@ -19,7 +19,7 @@
     <header class="backdrop__header" *ngIf="config.header">
       <div class="back-button" *ngIf="backButton">
         <ion-button 
-          class="action-to-highlight" 
+          class="hotspot-element" 
           (click)="backButton.action($event)" 
           fill="clear" color="light" size="small">
 
@@ -46,7 +46,7 @@
       <div class="backdrop__actions" *ngIf="config.buttons">
         <ion-button 
           *ngFor="let button of config.buttons; let i = index" 
-          class="{{ button.cssClasses ? button.cssClasses : null }}"
+          class="hotspot-element {{ button.cssClasses ? button.cssClasses : null }}"
           (click)="button.action ? button.action($event) : null" 
           fill="outline" color="light">
           {{ button.label }}
@@ -72,22 +72,22 @@
             </div>
 
             <div class="links-container">
-              <a class="link" (click)="goToSubmenu(1)">
+              <a class="link hotspot-element" (click)="goToSubmenu(1)">
                 <ion-icon src="/assets/icons/flag.svg" slot="start" size="large"></ion-icon>
                 <ion-label>I’m all done with the demo</ion-label>
                 <ion-icon name="chevron-forward-outline" slot="end" color="light"></ion-icon>
               </a>
-              <a class="link" (click)="goToSubmenu(2)">
+              <a class="link hotspot-element" (click)="goToSubmenu(2)">
                 <ion-icon src="/assets/icons/time-loader.svg" slot="start" size="large"></ion-icon>
                 <ion-label>Reset the demo</ion-label>
                 <ion-icon name="chevron-forward-outline" slot="end" color="light"></ion-icon>
               </a>
-              <a class="link" (click)="goToSubmenu(3)">
+              <a class="link hotspot-element" (click)="goToSubmenu(3)">
                 <ion-icon src="/assets/icons/help.svg" slot="start" size="large"></ion-icon>
                 <ion-label>Help! Something broke</ion-label>
                 <ion-icon name="chevron-forward-outline" slot="end" color="light"></ion-icon>
               </a>
-              <a class="link" (click)="goToSubmenu(4)">
+              <a class="link hotspot-element" (click)="goToSubmenu(4)">
                 <ion-icon name="construct-outline" slot="start" size="large" color="light"></ion-icon>
                 <ion-label>No Device Mode</ion-label>
                 <ion-icon name="chevron-forward-outline" slot="end" color="light"></ion-icon>
@@ -99,17 +99,17 @@
             <h1 class="font-heading-1--bold">I’m all done</h1>
 
             <div class="buttons-container">
-              <ion-button fill="outline" expand="block" color="light">
+              <ion-button class="hotspot-element" fill="outline" expand="block" color="light">
                 Share feedback
                 <ion-icon name="chevron-forward-outline" slot="end" color="light"></ion-icon>
               </ion-button>
 
-              <ion-button fill="outline" expand="block" color="light" (click)="showShareFlow()">
+              <ion-button class="hotspot-element" fill="outline" expand="block" color="light" (click)="showShareFlow()">
                 Share this demo kit
                 <ion-icon name="chevron-forward-outline" slot="end" color="light"></ion-icon>
               </ion-button>
 
-              <ion-button fill="outline" expand="block" color="light" (click)="showReturnFlow()">
+              <ion-button class="hotspot-element" fill="outline" expand="block" color="light" (click)="showReturnFlow()">
                 Pack up and return
               </ion-button>
             </div>
@@ -119,11 +119,11 @@
             <h1 class="font-heading-1--bold">Reset the demo</h1>
 
             <div class="buttons-container">
-              <ion-button fill="outline" expand="block" color="light">
+              <ion-button class="hotspot-element" fill="outline" expand="block" color="light">
                 Do another injection
               </ion-button>
 
-              <ion-button fill="outline" expand="block" color="light">
+              <ion-button class="hotspot-element" fill="outline" expand="block" color="light">
                 Restart from the beginning
               </ion-button>
             </div>
@@ -133,11 +133,11 @@
             <h1 class="font-heading-1--bold">Help! Something broke!</h1>
 
             <div class="buttons-container">
-              <ion-button fill="outline" expand="block" color="light">
+              <ion-button class="hotspot-element" fill="outline" expand="block" color="light">
                 Pack up and return
               </ion-button>
 
-              <ion-button fill="outline" expand="block" color="light">
+              <ion-button class="hotspot-element" fill="outline" expand="block" color="light">
                 View troubleshooting tips
               </ion-button>
             </div>
@@ -148,6 +148,7 @@
 
             <div class="buttons-container">
               <ion-button 
+                class="hotspot-element"
                 [ngClass]="{
                   'is-active': layoutConfig.noDeviceMode
                 }"
@@ -157,6 +158,7 @@
               </ion-button>
 
               <ion-button 
+                class="hotspot-element"
                 [ngClass]="{
                   'is-active': layoutConfig.noDeviceModeOopsFlow
                 }"
@@ -166,6 +168,7 @@
               </ion-button>
 
               <ion-button 
+                class="hotspot-element"
                 [ngClass]="{
                   'is-active': layoutConfig.noDeviceModeBatteryLowFlow
                 }"
@@ -189,7 +192,14 @@
           <ng-template swiperSlide>
             <h1 class="font-heading-1--bold">Highlights Tour</h1>
             <div class="cards-container masonry-layout">
-              <automagic-card *ngFor="let section of config.highlights; let i = index" [card]="section" (click)="goToSubmenu(i + 1)"></automagic-card>
+              <automagic-card 
+                *ngFor="let section of config.highlights; let i = index" 
+                [card]="section" 
+                [ngClass]="{
+                  'hotspot-element': i === 0,
+                }"
+                (click)="goToSubmenu(i + 1)">
+              </automagic-card>
             </div>
           </ng-template>
           
@@ -218,10 +228,10 @@
               </div>
 
               <div class="return-flow__actions">
-                <ion-button fill="outline" color="light" (click)="cancelCustomFlows()">
+                <ion-button class="hotspot-element" fill="outline" color="light" (click)="cancelCustomFlows()">
                   Cancel
                 </ion-button>
-                <ion-button fill="outline" color="light" (click)="sliderReturnFlow.swiperRef.slideNext()">
+                <ion-button class="hotspot-element" fill="outline" color="light" (click)="sliderReturnFlow.swiperRef.slideNext()">
                   Got it
                 </ion-button>
               </div>
@@ -236,10 +246,10 @@
               </div>
 
               <div class="return-flow__actions">
-                <ion-button fill="outline" color="light" (click)="sliderReturnFlow.swiperRef.slidePrev()">
+                <ion-button class="hotspot-element" fill="outline" color="light" (click)="sliderReturnFlow.swiperRef.slidePrev()">
                   Cancel
                 </ion-button>
-                <ion-button fill="outline" color="light" (click)="sliderReturnFlow.swiperRef.slideNext()">
+                <ion-button class="hotspot-element" fill="outline" color="light" (click)="sliderReturnFlow.swiperRef.slideNext()">
                   Got it
                 </ion-button>
               </div>
@@ -254,10 +264,10 @@
               </div>
 
               <div class="return-flow__actions">
-                <ion-button fill="outline" color="light" (click)="sliderReturnFlow.swiperRef.slidePrev()">
+                <ion-button class="hotspot-element" fill="outline" color="light" (click)="sliderReturnFlow.swiperRef.slidePrev()">
                   Cancel
                 </ion-button>
-                <ion-button fill="outline" color="light" (click)="sliderReturnFlow.swiperRef.slideNext()">
+                <ion-button class="hotspot-element" fill="outline" color="light" (click)="sliderReturnFlow.swiperRef.slideNext()">
                   Next
                 </ion-button>
               </div>
@@ -272,10 +282,10 @@
               </div>
 
               <div class="return-flow__actions">
-                <ion-button fill="outline" color="light" (click)="sliderReturnFlow.swiperRef.slidePrev()">
+                <ion-button class="hotspot-element" fill="outline" color="light" (click)="sliderReturnFlow.swiperRef.slidePrev()">
                   Cancel
                 </ion-button>
-                <ion-button fill="outline" color="light" (click)="sliderReturnFlow.swiperRef.slideNext()">
+                <ion-button class="hotspot-element" fill="outline" color="light" (click)="sliderReturnFlow.swiperRef.slideNext()">
                   Next
                 </ion-button>
               </div>
@@ -290,7 +300,7 @@
               </div>
 
               <div class="return-flow__actions">
-                <ion-button fill="outline" color="light" (click)="toggle()">
+                <ion-button class="hotspot-element" fill="outline" color="light" (click)="toggle()">
                   Done
                 </ion-button>
               </div>
@@ -315,10 +325,10 @@
               </div>
 
               <div class="share-flow__actions" (click)="cancelCustomFlows()">
-                <ion-button fill="outline" color="light">
+                <ion-button class="hotspot-element" fill="outline" color="light">
                   Cancel
                 </ion-button>
-                <ion-button fill="outline" color="light" (click)="slideNextShareFlow($event)">
+                <ion-button class="hotspot-element" fill="outline" color="light" (click)="slideNextShareFlow($event)">
                   Ok
                 </ion-button>
               </div>
@@ -333,10 +343,10 @@
               </div>
 
               <div class="return-flow__actions">
-                <ion-button fill="outline" color="light" (click)="sliderShareFlow.swiperRef.slidePrev()">
+                <ion-button class="hotspot-element" fill="outline" color="light" (click)="sliderShareFlow.swiperRef.slidePrev()">
                   Cancel
                 </ion-button>
-                <ion-button fill="outline" color="light" (click)="sliderShareFlow.swiperRef.slideNext()">
+                <ion-button class="hotspot-element" fill="outline" color="light" (click)="sliderShareFlow.swiperRef.slideNext()">
                   Got it
                 </ion-button>
               </div>
@@ -351,10 +361,10 @@
               </div>
 
               <div class="return-flow__actions">
-                <ion-button fill="outline" color="light" (click)="sliderShareFlow.swiperRef.slidePrev()">
+                <ion-button class="hotspot-element" fill="outline" color="light" (click)="sliderShareFlow.swiperRef.slidePrev()">
                   Cancel
                 </ion-button>
-                <ion-button fill="outline" color="light" (click)="sliderShareFlow.swiperRef.slideNext()">
+                <ion-button class="hotspot-element" fill="outline" color="light" (click)="sliderShareFlow.swiperRef.slideNext()">
                   Next
                 </ion-button>
               </div>
@@ -369,7 +379,7 @@
               </div>
 
               <div class="return-flow__actions">
-                <ion-button fill="outline" color="light" (click)="toggle()">
+                <ion-button class="hotspot-element" fill="outline" color="light" (click)="toggle()">
                   Done
                 </ion-button>
               </div>
@@ -380,7 +390,7 @@
     </div>
 
     <ion-icon 
-      class="backdrop__close action-to-highlight" 
+      class="backdrop__close hotspot-element" 
       name="chevron-up-outline" 
       *ngIf="config.fullScreen && config.bgTemplate" 
       (click)="toggle()" 
@@ -388,8 +398,8 @@
 
     <div class="backdrop__fold" (click)="toggle()">
       <ion-img class="background" src="/assets/images/backdrop-fold-bg.svg"></ion-img>
-      <ion-icon class="info action-to-highlight" src="/assets/icons/info.svg"></ion-icon>
-      <ion-icon class="close action-to-highlight" name="chevron-up-outline"></ion-icon>
+      <ion-icon class="info hotspot-element" src="/assets/icons/info.svg"></ion-icon>
+      <ion-icon class="close hotspot-element" name="chevron-up-outline"></ion-icon>
     </div>
   </div>
 </section>

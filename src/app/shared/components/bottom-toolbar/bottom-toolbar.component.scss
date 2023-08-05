@@ -28,9 +28,15 @@ automagic-bottom-toolbar {
     &:nth-child(3) {
       position: relative;
       bottom: 18px;
+
+      ion-button {
+        &.is-blocked {
+          pointer-events: none;
+        }
+      }
     }
 
-    &::before {
+    &::after {
       content: '';
       position: absolute;
       top: 0;
@@ -45,7 +51,7 @@ automagic-bottom-toolbar {
     &.is-active {
       color: var(--color-primary-dark-blue);
 
-      &::before {
+      &::after {
         height: 4px;
       }
     }

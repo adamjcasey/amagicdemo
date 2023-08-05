@@ -16,10 +16,11 @@
       <ng-container *ngIf="homeConfig.allCompletedDoses">
         <div class="home-page__section" *ngIf="onBoardingTasks && completedTasks <= 6">
           <h3>
-            Onboarding Tasks<div class="tasks-counter">{{ (6 - completedTasks) }}</div>
+            Onboarding Tasks<div class="tasks-counter">{{ (onBoardingTasks.length - completedTasks) }}</div>
           </h3>
           <automagic-accordion 
-            *ngFor="let task of onBoardingTasks; let i = index"
+            *ngFor="let task of onBoardingTasks; let i = index" 
+            class="hotspot-element" 
             [config]="task"
           ></automagic-accordion>
         </div>

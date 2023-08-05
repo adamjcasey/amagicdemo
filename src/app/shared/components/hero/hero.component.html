@@ -15,7 +15,7 @@
     <div *ngIf="actions.length > 0" class="hero__actions">
       <ion-button 
         *ngFor="let button of actions; let i = index" 
-        class="action-to-highlight" 
+        class="hotspot-element" 
         color="purple" 
         (click)="button.action ? button.action($event) : null" 
         [fill]="i % 2 === 1 && actions.length > 1 ? 'outline': null">

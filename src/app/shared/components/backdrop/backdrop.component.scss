@@ -217,6 +217,14 @@
           border-bottom: none;
         }
 
+        &.hotspot-element {
+          position: relative;
+
+          &::before {
+            top: -8px;
+          }
+        }
+
         ion-icon[slot="start"] {
           grid-column: 1;
         }
@@ -318,6 +326,12 @@
       .cards-container {
         @include masonry-layout;
         min-height: 1010px;
+
+        automagic-card {
+          &.hotspot-element {
+            position: relative;
+          }
+        }
 
         .card {
           .card__wrapper {

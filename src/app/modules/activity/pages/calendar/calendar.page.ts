@@ -5,7 +5,6 @@ import { Observable, Subject, takeUntil } from 'rxjs';
 import * as fromStore from '@activity/store';
 import * as fromCoreStore from '@core/store';
 import * as fromHomeStore from '@home/store';
-import * as fromSharedStore from '@shared/store';
 
 @Component({
   selector: 'automagic-calendar',

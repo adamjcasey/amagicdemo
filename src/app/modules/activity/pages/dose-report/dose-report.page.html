@@ -9,7 +9,11 @@
     </div>
 
     <div class="dose-report__doses">
-      <automagic-accordion [config]="report" *ngFor="let report of reports | reverse"></automagic-accordion>
+      <automagic-accordion 
+        [config]="report" 
+        class="hotspot-element" 
+        *ngFor="let report of reports | reverse">
+      </automagic-accordion>
     </div>
   </section>
 </ion-content>

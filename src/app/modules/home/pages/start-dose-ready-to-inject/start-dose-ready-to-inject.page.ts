@@ -186,7 +186,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                       }
                     },
                     {
-                      label: 'Next Step',
+                      label: this.homeConfig.firstTimeDose ? 'Next Step' : 'Inject when ready',
                       disabled: true,
                       action: () => {
                         this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-blue'));

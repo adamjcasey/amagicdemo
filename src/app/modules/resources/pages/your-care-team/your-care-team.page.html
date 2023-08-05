@@ -13,7 +13,10 @@
       <h1 class="font-heading-1--bold">Hi {{ name }}</h1>
       <p>You can add your providers, caregivers and care locations - providing each different levels of access to your tracking and symptoms data</p>
 
-      <ion-button fill="outline" color="purple" (click)="goTo('resources/your-care-team/list')">
+      <ion-button 
+        class="hotspot-element" 
+        (click)="goTo('resources/your-care-team/list')" 
+        fill="outline" color="purple">
         Add to your Care Team 
       </ion-button>
     </div>

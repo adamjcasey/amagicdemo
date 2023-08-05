@@ -9,8 +9,9 @@
       <div class="field-wrapper field--slider">
         <p class="field-label">Automatic Refills</p>
         <ion-toggle 
-          color="purple"
-          (ionChange)="saveAutomaticRefills($event)"
+          color="purple" 
+          class="hotspot-element" 
+          (ionChange)="saveAutomaticRefills($event)" 
           [checked]="settingsConfig.automaticRefiils"
         ></ion-toggle>
       </div>

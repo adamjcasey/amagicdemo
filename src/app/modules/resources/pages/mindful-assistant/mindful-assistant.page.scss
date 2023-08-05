@@ -12,8 +12,10 @@
       grid-template-columns: 1fr 1fr;
       gap: var(--size-xxs);
   
-      automagic-card:last-child {
-        grid-column: 1 / -1;
+      automagic-card {
+        &:last-child {
+          grid-column: 1 / -1;
+        }
       }
     }  
   }

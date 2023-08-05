@@ -69,6 +69,10 @@
   ion-icon {
     font-size: var(--size-l);
   }
+
+  &.hotspot-element {
+    position: relative;
+  }
 }
 
 .button--only-icon {
@@ -85,14 +89,18 @@
   }
 }
 
-.is-highlighted {
-  @include highlighted-element;
-
-  &:is(ion-button) {
-    position: relative;
-
-    &::before {
-      top: -1px;
+.hotspot-element {
+  &.is-highlighted {
+    @include hotspot-element;
+  
+    &:is(ion-button),
+    &:is(automagic-accordion),
+    &:is(ion-tab-button) {
+      position: relative;
+  
+      &::before {
+        top: -1px;
+      }
     }
   }
 }

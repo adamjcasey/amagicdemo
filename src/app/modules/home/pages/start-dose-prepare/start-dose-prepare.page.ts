@@ -23,9 +23,9 @@ import * as fromCoreStore from '@core/store';
 export class StartDosePreparePage implements OnInit, OnDestroy {
   public homeConfig$!: Observable<any>;
   public homeConfig: any;
+  private _ngUnsubscribe: Subject<void> = new Subject<void>();
   public slides: Array<any> = [];
   @ViewChild('sliderPage', { static: false }) sliderPage!: fromSharedComponents.SliderPageComponent;
-  private _ngUnsubscribe: Subject<void> = new Subject<void>();
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
@@ -96,7 +96,7 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
           ],
         },
       },
-    ]
+    ];
   }
 
   ngOnInit() {
@@ -263,19 +263,7 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
         actions: [
           {
             label: 'Looks off',
-            cssClasses: 'action-to-highlight--cancel',
-            action: () => {
-              const backdropToHighligh = document.querySelector('#backdrop .backdrop__fold ion-icon') as HTMLElement;
-              const sliderPageToHighligh = document.querySelector('.slider-page .wrapper-large__toolbar-actions ion-button:last-child') as HTMLElement;
-              if (!backdropToHighligh.classList.contains('is-highlighted')) {
-                backdropToHighligh.classList.add('is-highlighted');
-                sliderPageToHighligh.classList.add('is-highlighted');
-                setTimeout(() => {
-                  backdropToHighligh.classList.remove('is-highlighted');
-                  sliderPageToHighligh.classList.remove('is-highlighted');
-                }, 1000);
-              }
-            },
+            cssClasses: 'dispatch-hotspots hotspot-element--cancel',
           },
           {
             label: 'Looks good',

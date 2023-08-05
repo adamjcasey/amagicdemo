@@ -16,4 +16,8 @@
 .resources-page__container {
   @include masonry-layout;
   gap: calc(var(--size-xs) - 5px);
+
+  automagic-card  {
+    position: relative;
+  }
 }

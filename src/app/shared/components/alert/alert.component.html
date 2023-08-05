@@ -18,7 +18,7 @@
     <div class="alert__actions" *ngIf="config.actions">
       <ion-button 
         *ngFor="let button of config.actions; let i = index" 
-        class="action-to-highlight"
+        class="hotspot-element"
         color="purple" 
         size="large" 
         [disabled]="button.disabled ? true : null"

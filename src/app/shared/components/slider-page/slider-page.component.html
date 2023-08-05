@@ -105,7 +105,7 @@
           <div class="actions-wrapper" *ngIf="config.content?.actions">
             <ion-button 
               *ngFor="let button of config.content.actions; let i = index"
-              class="action-to-highlight {{ button.cssClasses ? button.cssClasses : null }}"
+              class="hotspot-element {{ button.cssClasses ? button.cssClasses : null }}"
               color="purple" 
               size="large" 
               [ngClass]="{ 'is-hidden': button.hidden }"
@@ -153,7 +153,7 @@
         <div class="wrapper-large__toolbar-actions" *ngIf="config.content?.toolbar?.actions">
           <ion-button 
             *ngFor="let button of config.content.toolbar.actions; let i = index" 
-            class="action-to-highlight" 
+            class="hotspot-element {{ button.cssClasses ? button.cssClasses : null }}"
             color="purple" 
             size="large" 
             [disabled]="button.disabled ? true : null" 

@@ -102,7 +102,7 @@
   gap: calc(var(--size-s) - 5px);
 }
 
-@mixin highlighted-element {
+@mixin hotspot-element {
   @keyframes fade {
     from {
       opacity:  0.6;

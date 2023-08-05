@@ -15,7 +15,6 @@ export class NotificationsPage implements OnInit, OnDestroy {
   public homeConfig$!: Observable<any>;
   public homeConfig: any;
   private _ngUnsubscribe: Subject<void> = new Subject<void>();
-  public remainingTasks: number = 0;
   public onBoardingTasks!: any[];
   public pendingOnBoardingTask!: any[];
 
