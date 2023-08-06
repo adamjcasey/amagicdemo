@@ -87,7 +87,7 @@ export class UtilsService {
     return color;
   }
 
-  static getParent(element: any, parentClass: any) {
+  static getParentByClass(element: any, parentClass: any) {
     let parents: any = [];
     let nextParent = element.parentNode;
 
@@ -101,6 +101,6 @@ export class UtilsService {
         break;
       }
     } while (parents.length === 0);
-    return parents;
+    return parents[0];
   }
 }

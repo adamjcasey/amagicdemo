@@ -107,16 +107,17 @@ export class LayoutPage implements OnInit {
         }, 1200);
       }
 
-      if (!event.target.classList.contains('hotspot-element') || event.target.classList.contains('dispatch-hotspots')) {
-        if (
-          event.target.tagName !== 'INPUT' &&
-          event.target.tagName !== 'ION-CHECKBOX' && 
-          fromSharedServices.UtilsService.getParent(event.target, 'hotspot-element').length === 0 &&
-          fromSharedServices.UtilsService.getParent(event.target, 'rating-field').length === 0 &&
-          fromSharedServices.UtilsService.getParent(event.target, 'add-photo-cta').length === 0
-        ) {
-          highlightElements();
-        }
+      if (
+        event.target.tagName !== 'INPUT' &&
+        event.target.tagName !== 'ION-CHECKBOX' && 
+        !event.target.classList.contains('hotspot-element') && 
+        !event.target.classList.contains('body-shape') &&
+        !fromSharedServices.UtilsService.getParentByClass(event.target, 'hotspot-element') &&
+        !fromSharedServices.UtilsService.getParentByClass(event.target, 'rating-field') &&
+        !fromSharedServices.UtilsService.getParentByClass(event.target, 'add-photo-cta') && 
+        !fromSharedServices.UtilsService.getParentByClass(event.target, 'backdrop__fold')
+      ) {
+        highlightElements();
       }
     });
 
