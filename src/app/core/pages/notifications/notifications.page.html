@@ -1,10 +1,14 @@
 <ion-content [fullscreen]="true" class="ion-padding">
   <section class="notifications-page">
     <h1 class="font-heading-1--bold">Notifications</h1>
-    <ng-container *ngIf="remainingTasks > 0">
-      <h3 class="notifications-page__counter">Onboarding Tasks <span class="tasks-counter">{{ remainingTasks }}</span></h3>
+    <ng-container *ngIf="pendingOnBoardingTask.length > 0">
+      <h3 class="notifications-page__counter">Onboarding Tasks <span class="tasks-counter">{{ pendingOnBoardingTask.length }}</span></h3>
       <div class="notifications-page__content">
-        <div class="notification" *ngFor="let task of pendingOnBoardingTask; let i = index" (click)="task.onClick()">
+        <div 
+          class="notification hotspot-element" 
+          *ngFor="let task of pendingOnBoardingTask; let i = index" 
+          (click)="task.onClick()">
+
           <ion-img class="notification__asset" src="{{ task.asset }}"></ion-img>
           <div class="notification__content">
             <h5>{{ task.title }}</h5>

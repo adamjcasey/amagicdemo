@@ -7,5 +7,5 @@
     (onError)="getPinError($event)" 
     [allowedCodes]="allowedCodes"
   ></automagic-pin-input>
-  <ion-button type="submit" class="action-to-highlight" color="light" fill="outline" [disabled]="!signUpFormGroup.valid || pinInvalid">{{ pinInvalid ? 'Try Again' : 'Submit' }}</ion-button>
+  <ion-button type="submit" class="hotspot-element" color="light" fill="outline" [disabled]="!signUpFormGroup.valid || pinInvalid">{{ pinInvalid ? 'Try Again' : 'Submit' }}</ion-button>
 </form>

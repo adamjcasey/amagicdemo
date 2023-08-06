@@ -2,6 +2,10 @@
   <section class="activity-page">
     <h1 class="font-heading-1--bold">Activity</h1>
 
-    <automagic-accordion [config]="activity" *ngFor="let activity of widgets"></automagic-accordion>
+    <automagic-accordion 
+      class="hotspot-element" 
+      *ngFor="let activity of widgets" 
+      [config]="activity">
+    </automagic-accordion>
   </section>
 </ion-content>

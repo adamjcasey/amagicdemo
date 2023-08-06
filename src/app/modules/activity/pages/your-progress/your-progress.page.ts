@@ -5,7 +5,6 @@ import { Observable, Subject, takeUntil } from 'rxjs';
 import * as fromStore from '@activity/store';
 import * as fromCoreStore from '@core/store';
 import * as fromHomeStore from '@home/store';
-import * as fromSharedStore from '@shared/store';
 
 @Component({
   selector: 'automagic-your-progress',
@@ -56,6 +55,7 @@ export class YourProgressPage implements OnInit, OnDestroy {
         `,
         button: {
           label: 'Import data from Apple Health',
+          cssClasses: 'hotspot-element',
           icon: '/assets/icons/import.svg',
           fill: 'outline',
           action: () => {

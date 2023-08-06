@@ -1,39 +1,61 @@
 import { Injectable, NgZone } from '@angular/core';
 import { BleClient, ScanResult } from '@capacitor-community/bluetooth-le';
 import { Capacitor } from '@capacitor/core';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
+
+import * as fromCoreStore from '@core/store';
 
 const AUTOMAGIC_SERVICE = 'EDFEC62E-9910-0BAC-5241-D8BDA6932A2F';
 const AUTOMAGIC_STATE_CHARACTERISTIC = '5A87B4EF-3BFA-76A8-E642-92933C31434F';
-
 
 @Injectable({
   providedIn: 'root'
 })
 export class BluetoothService {
-
-  private uuid_: string = "";
-  private rssi_: number = 0;
-  private name_: string = "";
-  private state_: number = 0;
-  private battery_: number = 0;
-  private dosage_: number = 0;
+  private uuid_: string;
+  private rssi_: number;
+  private name_: string;
+  private state_: number;
+  private battery_: number;
+  private dosage_: number;
+  private isConnected_: boolean;
   private interval_id_: any;
   private peripheral_: any;
-  private isConnected_: boolean = false;
 
   // Variables for mocking
   private mock_state: number = 1;
   private mock_battery: number = 100;
   private mock_dosing: number = 0;
 
-  constructor(private ngZone: NgZone) { }
+  public layoutConfig$: Observable<any>;
+  public layoutConfig: any;
 
+  constructor(
+    private _store: Store<fromCoreStore.LayoutState>,
+  ) {
+    // Initialize your properties here, if needed.
+    this.uuid_ = '';
+    this.rssi_ = 0;
+    this.name_ = '';
+    this.state_ = 0;
+    this.battery_ = 20;
+    this.dosage_ = 0;
+    this.isConnected_ = false;
 
+    this.layoutConfig$ = this._store.select(fromCoreStore.getLayoutConfig);
+    this.layoutConfig$.subscribe(layoutConfig => {
+      if (layoutConfig) {
+        this.layoutConfig = layoutConfig;
+      }
+    });
+  }
 
   //--------------------------------------------------
   // Properties
   //--------------------------------------------------
 
+  // Getters
   get UUID(): string {
     return this.uuid_;
   }
@@ -62,14 +84,40 @@ export class BluetoothService {
     return this.isConnected_;
   }
 
+  // Setters
+  set UUID(uuid: string) {
+    this.uuid_ = uuid;
+  }
+
+  set Name(name: string) {
+    this.name_ = name;
+  }
+
+  set RSSI(rssi: number) {
+    this.rssi_ = rssi;
+  }
+
+  set State(state: number) {
+    this.state_ = state;
+  }
+
+  set Battery(battery: number) {
+    this.battery_ = battery;
+  }
+
+  set Dosage(dosage: number) {
+    this.dosage_ = dosage;
+  }
+
+  set IsConnected(isConnected: boolean) {
+    this.isConnected_ = isConnected;
+  }
+
   //--------------------------------------------------
   // Bluetooth Actions
   //--------------------------------------------------
-
-  // -----------------------------------------------------------------------------------
   async checkPermissions() {
-    console.log("bluetooth.service.ts checkPermissions");
-    if (Capacitor.isNativePlatform()) {
+    if (Capacitor.isNativePlatform() && !this.layoutConfig.noDeviceMode) {
       await BleClient.initialize();
       const isEnabled = await BleClient.isEnabled();
       return new Promise((resolve, reject) => {
@@ -81,7 +129,6 @@ export class BluetoothService {
         }
       });
     }
-
     else {
       return new Promise((resolve) => {
         resolve('granted');
@@ -89,67 +136,9 @@ export class BluetoothService {
     }
   }
 
-  //--------------------------------------------------
-  async scan() {
-
-    if (Capacitor.isNativePlatform()) {
-      console.log("Is Native Capacitor bluetooth.service.ts scan");
-
-      try {
-        await BleClient.requestLEScan(
-          { allowDuplicates: true },
-          this.onDeviceDiscovered.bind(this)
-        );
-      }
-      catch (error) {
-        console.error('scan', error);
-      }
-    }
-    else {
-      // Not using an actual mobile device, therefore running on the browser
-      // Mock this with fake found devices
-      console.log("Is Not Native Capacitor: scan");
-
-      let peripheral_mock_1 =
-      {
-        localName: "Something else",
-        device: { name: "Something else", deviceId: "ecb16f02-e281-4128-aea9-6c552910f250" },
-        rssi: -45,
-      };
-      let peripheral_mock_2 =
-      {
-        localName: "AutoMagic",
-        device: { name: "AutoMagic", deviceId: "cec50777-de5a-4884-a6a1-b247efa53231" },
-        rssi: -90
-      };
-      let peripheral_mock_3 =
-      {
-        localName: "AutoMagic",
-        device: { name: "AutoMagic", deviceId: "c702af3e-cef1-4858-a40a-d0a2e8280a88" },
-        rssi: -45
-      };
-
-      this.onDeviceDiscovered(peripheral_mock_1);
-      this.onDeviceDiscovered(peripheral_mock_2);
-      this.onDeviceDiscovered(peripheral_mock_3);
-    }
-  }
-
-  //--------------------------------------------------
-  async stop() {
-
-    console.log('Stopped reading and disconnected');
-    clearInterval(this.interval_id_);
-    this.isConnected_ = false;
-    if (Capacitor.isNativePlatform()) {
-      await BleClient.disconnect(this.peripheral_.device.deviceId);
-    }
-  }
-
-  //--------------------------------------------------
   async waitForDosingStart() {
     // start watching the press on the device
-    if (Capacitor.isNativePlatform()) {
+    if (Capacitor.isNativePlatform()  && !this.layoutConfig.noDeviceMode) {
       if (this.state_ === 1) {
         return new Promise((resolve) => {
           const controller = setInterval(() => {
@@ -169,9 +158,8 @@ export class BluetoothService {
     }
   }
 
-  //--------------------------------------------------
   async checkDosing() {
-    if (Capacitor.isNativePlatform()) {
+    if (Capacitor.isNativePlatform()  && !this.layoutConfig.noDeviceMode) {
       return new Promise((resolve, reject) => {
         const controller = setInterval(() => {
           if (this.state_ === 3) {
@@ -188,17 +176,21 @@ export class BluetoothService {
     }
     else {
       // support for web, wait 10segs (duration of the dosing) to return a true;
-      await new Promise(resolve => setTimeout(resolve, 10000));
+      if (this.layoutConfig.noDeviceModeOopsFlow) {
+        await new Promise((resolve, reject) => setTimeout(reject, 4000));
+      }
+      else {
+        await new Promise(resolve => setTimeout(resolve, 10000));
+      }
       return true;
     }
   }
 
-  //--------------------------------------------------
   async isDeviceConnected() {
-    if (Capacitor.isNativePlatform()) {
+    if (Capacitor.isNativePlatform()  && !this.layoutConfig.noDeviceMode) {
       return new Promise((resolve) => {
         const controller = setInterval(() => {
-          if (this.isConnected_) {
+          if (this.isConnected_ || this.layoutConfig.noDeviceMode) {
             clearInterval(controller);
             resolve(true);
           }
@@ -211,7 +203,6 @@ export class BluetoothService {
       return true;
     }
   }
-
 
   //--------------------------------------------------
   // Bluetooth Callbacks
@@ -276,6 +267,55 @@ export class BluetoothService {
           console.error('Error in interval callback:', error);
         }
       }, intervalDuration);
+    }
+  }
+
+  //--------------------------------------------------
+  async scan() {
+    if (Capacitor.isNativePlatform() && !this.layoutConfig.noDeviceMode) {
+      console.log("Is Native Capacitor bluetooth.service.ts scan");
+
+      try {
+        await BleClient.requestLEScan(
+          { allowDuplicates: true },
+          this.onDeviceDiscovered.bind(this)
+        );
+      }
+      catch (error) {
+        console.error('scan', error);
+      }
+    }
+    else {
+      // Not using an actual mobile device, therefore running on the browser
+      // Mock this with fake found devices
+      let peripheral_mock_1 = {
+        localName: "Something else",
+        device: { name: "Something else", deviceId: "ecb16f02-e281-4128-aea9-6c552910f250" },
+        rssi: -45,
+      };
+      let peripheral_mock_2 = {
+        localName: "AutoMagic",
+        device: { name: "AutoMagic", deviceId: "cec50777-de5a-4884-a6a1-b247efa53231" },
+        rssi: -90
+      };
+      let peripheral_mock_3 = {
+        localName: "AutoMagic",
+        device: { name: "AutoMagic", deviceId: "c702af3e-cef1-4858-a40a-d0a2e8280a88" },
+        rssi: -45
+      };
+
+      this.onDeviceDiscovered(peripheral_mock_1);
+      this.onDeviceDiscovered(peripheral_mock_2);
+      this.onDeviceDiscovered(peripheral_mock_3);
+    }
+  }
+
+  //--------------------------------------------------
+  async stop() {
+    clearInterval(this.interval_id_);
+    this.isConnected_ = false;
+    if (Capacitor.isNativePlatform()) {
+      await BleClient.disconnect(this.peripheral_.device.deviceId);
     }
   }
 }

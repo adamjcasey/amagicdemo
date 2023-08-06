@@ -70,13 +70,17 @@
 }
 
 .card__link {
-  display: block;
+  display: inline-block;
   margin-top: var(--size-xxxs);
   color: var(--color-primary-purple);
   font-weight: var(--font-weight-bold);
 
   &.card__link--color-salmon {
     color: var(--color-primary-salmon);
+  }
+
+  &.hotspot-element {
+    position: relative;
   }
 }
 

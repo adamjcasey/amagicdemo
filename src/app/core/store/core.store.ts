@@ -9,9 +9,15 @@ export interface CoreState {
 export interface LayoutState {
   fullScreen: boolean;
   rightCornerEl: any,
+  noDeviceMode: boolean;
+  noDeviceModeOopsFlow: boolean;
+  noDeviceModeBatteryLowFlow: boolean;
 }
 
 export const initialState: LayoutState = {
   fullScreen: false,
   rightCornerEl: null,
+  noDeviceMode: false,
+  noDeviceModeOopsFlow: false,
+  noDeviceModeBatteryLowFlow: false,
 }

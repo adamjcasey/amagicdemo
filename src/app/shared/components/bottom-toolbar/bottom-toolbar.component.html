@@ -11,6 +11,7 @@
   <ion-tab-button tab="home" [ngClass]="{
     'is-active': isActivePath('home'), 
     'is-blocked': homeConfig.firstTimeDose,
+    'hotspot-element': homeConfig.onBoardingTasks[0].completed,
   }">
     <ion-icon size="medium" src="/assets/icons/home.svg"></ion-icon>
     Home
@@ -18,13 +19,22 @@
   <ion-tab-button tab="activity" [ngClass]="{
     'is-active': isActivePath('activity'), 
     'is-blocked': homeConfig.firstTimeDose,
+    'hotspot-element': homeConfig.allCompletedDoses,
   }">
-    <ion-icon size="medium" src="/assets/icons/activity.svg"></ion-icon>
+    <ion-icon 
+      size="medium" src="/assets/icons/activity.svg">
+    </ion-icon>
     Activity
   </ion-tab-button>
 
   <ion-tab-button>
-    <ion-button (click)="toggle()" fill="solid" shape="circle" color="purple" size="large">
+    <ion-button 
+      [ngClass]="{
+        'hotspot-element': homeConfig.flareUpsDemoDone,
+        'is-blocked': !homeConfig.flareUpsDemoDone,
+      }" 
+      (click)="toggle()" 
+      fill="solid" shape="circle" color="purple" size="large">
       <ion-icon slot="icon-only" [name]="isOpen ? 'close-outline' : 'add-outline'"></ion-icon>
     </ion-button>
   </ion-tab-button>
@@ -32,6 +42,7 @@
   <ion-tab-button tab="resources" [ngClass]="{
     'is-active': isActivePath('resources'), 
     'is-blocked': homeConfig.firstTimeDose,
+    'hotspot-element': homeConfig.allCompletedDoses,
   }">
     <ion-icon size="medium" src="/assets/icons/resources.svg"></ion-icon>
     Resources
@@ -39,6 +50,7 @@
   <ion-tab-button tab="settings" [ngClass]="{
     'is-active': isActivePath('settings'), 
     'is-blocked': homeConfig.firstTimeDose,
+    'hotspot-element': homeConfig.allCompletedDoses,
   }">
     <ion-icon size="medium" src="/assets/icons/settings.svg"></ion-icon>
     Settings

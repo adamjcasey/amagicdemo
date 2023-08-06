@@ -235,7 +235,7 @@ export class StartDoseInjectDonePage implements OnInit {
                       },
                       {
                         title: 'Like a smart reminder?',
-                        cssClasses: 'action-to-highligh',
+                        cssClasses: 'hotspot-element',
                         asset: '/assets/images/start-dose-inject-done-notification.svg',
                         description: 'Smart reminders can notify you at the right time and place by using calendar and location data to improve recommendations.',
                       }

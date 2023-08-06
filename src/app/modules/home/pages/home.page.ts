@@ -8,7 +8,6 @@ import * as fromCoreStore from '@core/store';
 import * as fromSharedStore from '@shared/store';
 import * as fromWelcomeStore from '@welcome/store';
 import * as fromServicesShared from '@shared/services';
-import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'automagic-home',
@@ -185,7 +184,6 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
                 }
               }
               else {
-                console.log('tiene mas de 1 dosis');
                 // user has completed 6 doses
                 if (markedDoses.length === 6) {
                   if (!this.homeConfig.allCompletedDoses) {
@@ -255,6 +253,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
 
           if (!this.homeConfig.onBoardingDone) {
             if (this.homeConfig.onBoardingTasks) {
+              this.completedTasks = this.homeConfig.onBoardingTasks.filter((task: any) => task.completed).length;
               this.onBoardingTasks = this.homeConfig.onBoardingTasks.map((task: any, index: number) => {
                 return {
                   completed: task.completed,

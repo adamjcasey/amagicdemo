@@ -7,7 +7,7 @@
     ></automagic-hero>
 
     <div class="your-care-team-list__actions">
-      <div class="action">
+      <div class="action hotspot-element">
         <ion-icon src="/assets/icons/add.svg" size="extra-large"></ion-icon>
         <p>Add member</p>
       </div>
@@ -15,12 +15,20 @@
 
     <div class="your-care-team-list__section ion-padding">
       <h5>My Care Team</h5>
-      <automagic-accordion [config]="contact" *ngFor="let contact of myTeam"></automagic-accordion>
+      <automagic-accordion 
+        *ngFor="let contact of myTeam" 
+        [config]="contact" 
+        class="hotspot-element">
+      </automagic-accordion>
     </div>
 
     <div class="your-care-team-list__section ion-padding">
       <h5>Caregivers</h5>
-      <automagic-accordion [config]="contact" *ngFor="let contact of caregivers"></automagic-accordion>
+      <automagic-accordion 
+        *ngFor="let contact of caregivers"
+        [config]="contact"
+        class="hotspot-element">
+      </automagic-accordion>
     </div>
   </section>
 </ion-content>

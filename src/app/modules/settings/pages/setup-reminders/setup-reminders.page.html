@@ -13,7 +13,7 @@
         <p class="field-label">Smart Reminders</p>
         <ion-toggle 
           color="purple"
-          class="action-to-highlight"
+          class="hotspot-element"
           (ionChange)="saveSmartReminders($event)"
           [checked]="settingsConfig.smartReminders"
         ></ion-toggle>
@@ -77,11 +77,11 @@
     </div>
 
     <div class="setup-reminders-page__controls">
-      <ion-button fill="outline" color="purple" (click)="goTo('settings')">
+      <ion-button class="hotspot-element" fill="outline" color="purple" (click)="goTo('settings')">
         Cancel
       </ion-button>
 
-      <ion-button color="purple" (click)="saveSettings()">
+      <ion-button class="hotspot-element" color="purple" (click)="saveSettings()">
         Save
       </ion-button>
     </div>

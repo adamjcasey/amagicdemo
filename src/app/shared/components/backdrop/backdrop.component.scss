@@ -191,6 +191,13 @@
         &:last-child {
           margin-bottom: 0;
         }
+
+        &.is-active {
+          &::part(native) {
+            background: var(--color-white);
+            color: var(--color-text);
+          }
+        }
       }
     }
 
@@ -208,6 +215,14 @@
         &:last-child {
           margin-bottom: 0;
           border-bottom: none;
+        }
+
+        &.hotspot-element {
+          position: relative;
+
+          &::before {
+            top: -8px;
+          }
         }
 
         ion-icon[slot="start"] {
@@ -311,6 +326,12 @@
       .cards-container {
         @include masonry-layout;
         min-height: 1010px;
+
+        automagic-card {
+          &.hotspot-element {
+            position: relative;
+          }
+        }
 
         .card {
           .card__wrapper {

@@ -26,6 +26,7 @@ export class SettingsPage implements OnInit, OnDestroy {
       description: 'Smart reminders can use data to improve recommendations.',
       link: {
         label: 'Let’s start',
+        cssClasses: 'hotspot-element',
         action: () => {
           this.goTo('settings/setup-reminders');
         }

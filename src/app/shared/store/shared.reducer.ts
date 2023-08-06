@@ -95,6 +95,24 @@ export function SharedReducer(
         }
       };
     }
+    case fromActions.ActionTypes.SliderPageSlideTo: {
+      return {
+        ...state,
+        sliderPageConfig: {
+          ...state.sliderPageConfig,
+          moveTo: action.payload,
+        }
+      };
+    }
+    case fromActions.ActionTypes.SliderPageClearMovement: {
+      return {
+        ...state,
+        sliderPageConfig: {
+          ...state.sliderPageConfig,
+          moveTo: null,
+        }
+      };
+    }
 
     case fromActions.ActionTypes.AlertShow: {
       return {
@@ -153,7 +171,6 @@ export function SharedReducer(
         },
       };
     }
-
     case fromActions.ActionTypes.TopbarPendingNotifications: {
       return {
         ...state,

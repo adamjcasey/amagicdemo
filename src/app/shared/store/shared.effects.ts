@@ -197,6 +197,15 @@ export class SharedEffects {
       })
     )
   }, { dispatch: false });
+  sliderPageSlideTo$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(fromActions.ActionTypes.SliderPageSlideTo),
+      map((action: fromActions.BackdropShow) => action),
+      tap(() => {
+        this._store.dispatch(new fromActions.SliderPageClearMovement);
+      })
+    )
+  }, { dispatch: false });
 
   alertShow$ = createEffect(() => {
     return this.actions$.pipe(

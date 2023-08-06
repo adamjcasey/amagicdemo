@@ -4,7 +4,9 @@
 
   <ion-toolbar class="topbar__toolbar">
     <ion-buttons slot="start">
-      <ion-button (click)="leftElementHandler()">
+      <ion-button (click)="leftElementHandler()" [ngClass]="{
+        'hotspot-element': activityScope || settingsScope || resourcesScope,
+      }">
         <ng-container *ngIf="!activityScope && !settingsScope && !resourcesScope">
           <ion-icon slot="icon-only" src="/assets/icons/user.svg"></ion-icon>
         </ng-container>
@@ -27,12 +29,13 @@
       <ng-template #default>
         <ion-button 
           class="notifications-cta" 
+          [ngClass]="{
+            'hotspot-element': config.pendingNotifications > 0,
+          }" 
           (click)="goTo('notifications')" 
-          [disabled]="
-            !homeConfig.allCompletedDoses || 
-            config.pendingNotifications === 0">
+          [disabled]="config.pendingNotifications === 0">
 
-          <div class="counter" *ngIf="homeConfig.allCompletedDoses && config.pendingNotifications > 0">
+          <div class="counter" *ngIf="config.pendingNotifications > 0">
             {{ config.pendingNotifications }}
           </div>
           <ion-icon slot="icon-only" src="/assets/icons/notifications.svg"></ion-icon>

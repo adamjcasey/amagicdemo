@@ -12,7 +12,7 @@
         class="icon" 
         *ngFor="let point of [1, 2, 3, 4, 5]" 
         [ngClass]="{
-          'action-to-highlight': point === 5,
+          'hotspot-element': point === 5,
         }"
         (click)="updateValue(point)">
 
@@ -38,7 +38,7 @@
       [ngClass]="{
         'is-selected': value === point || point <= value,
         'is-marked': (value === 2 && point === 1) || (value > 2 && value > point),
-        'action-to-highlight': point === 5,
+        'hotspot-element': point === 5,
       }"
       (click)="updateValue(point)">
 

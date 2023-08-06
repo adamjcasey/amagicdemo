@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 
@@ -23,7 +23,6 @@ export class LayoutPage implements OnInit {
 
   constructor(
     private _store: Store<fromStore.LayoutState>,
-    private _utilsService: fromSharedServices.UtilsService,
     private _bluetoothService: fromSharedServices.BluetoothService,
   ) {
     this.config$ = this._store.select(fromStore.getLayoutConfig);
@@ -47,7 +46,7 @@ export class LayoutPage implements OnInit {
     this.homeConfig$.subscribe(homeConfig => {
       if (homeConfig) {
         this.homeConfig = homeConfig;
-        if (!this.homeConfig.onBoardingDone) {
+        if (!this.homeConfig.onBoardingDone && this.homeConfig.allCompletedDoses) {
           const completedTasks = this.homeConfig.onBoardingTasks.filter((task: any) => task.completed).length;
           this._store.dispatch(new fromSharedStore.TopbarPendingNotifications(this.homeConfig.onBoardingTasks.length - completedTasks));
           if (completedTasks === 6) {
@@ -82,7 +81,7 @@ export class LayoutPage implements OnInit {
         this._store.dispatch(new fromSharedStore.BackdropHide);
       }
     });
-    gc.on('down', (event: any) => {
+    gc.on('down', () => {
       if (!this.backdropConfig.show) {
         this._store.dispatch(new fromSharedStore.BackdropShow({
           transition: 'move',
@@ -91,29 +90,28 @@ export class LayoutPage implements OnInit {
       }
     });
     gc.on('tap', (event: any) => {
-      const elementsToHighligh = document.querySelectorAll('.action-to-highlight');
+      const elementsToHighligh = document.querySelectorAll('.hotspot-element');
       const highlightElements = () => {
-        console.log('highlightElements');
         Array.from(elementsToHighligh).forEach((element: any) => {
-          element.classList.add('is-highlighted');
+          if (!element.classList.contains('hotspot-element--cancel')) {
+            element.classList.add('is-highlighted');
+          }
         });
 
         setTimeout(() => {
           Array.from(elementsToHighligh).forEach((element: any) => {
-            element.classList.remove('is-highlighted');
+            if (element.classList.contains('is-highlighted')) {
+              element.classList.remove('is-highlighted');
+            }
           });
         }, 1200);
       }
 
-      if (event.target.classList.contains('action-to-highlight')) {
-        if (event.target.classList.contains('action-to-highlight--cancel')) {
-          highlightElements();
-        }
-      }
-      else {
+      if (!event.target.classList.contains('hotspot-element') || event.target.classList.contains('dispatch-hotspots')) {
         if (
           event.target.tagName !== 'INPUT' &&
-          event.target.tagName !== 'ION-CHECKBOX' &&
+          event.target.tagName !== 'ION-CHECKBOX' && 
+          fromSharedServices.UtilsService.getParent(event.target, 'hotspot-element').length === 0 &&
           fromSharedServices.UtilsService.getParent(event.target, 'rating-field').length === 0 &&
           fromSharedServices.UtilsService.getParent(event.target, 'add-photo-cta').length === 0
         ) {
@@ -132,19 +130,27 @@ export class LayoutPage implements OnInit {
         setInterval(() => {
           const batteryLevel = this._bluetoothService.Battery;
           if (batteryLevel < 10) {
-            this._store.dispatch(new fromSharedStore.BackdropShow({
-              transition: 'move',
-              header: true,
-              template: `
-                <br>
-                <img src="assets/images/battery-low.svg" />
-                <h1 class="font-heading-1--bold">Injector battery <br>low</h1>
-                <p>Unfortunately the demo injector has <br>a low battery and must be <br>recharged.</p>
-                <h5>Please follow the recharge <br>instructions included with the <br>USB-C cord in the shipping box.</h5>
-              `
-            }));
+            if (!this.backdropConfig.show) {
+              this._store.dispatch(new fromSharedStore.BackdropShow({
+                transition: 'move',
+                header: true,
+                template: `
+                  <br>
+                  <img src="assets/images/battery-low.svg" />
+                  <h1 class="font-heading-1--bold">Injector battery <br>low</h1>
+                  <p>Unfortunately the demo injector has <br>a low battery and must be <br>recharged.</p>
+                  <h5>Please follow the recharge <br>instructions included with the <br>USB-C cord in the shipping box.</h5>
+                `,
+                onClose: () => {
+                  if (this.config.noDeviceModeBatteryLowFlow) {
+                    this._store.dispatch(new fromStore.SetNoDeviceModeBatteryLowFlow(false));
+                    this._bluetoothService.Battery = 20;
+                  }
+                }
+              }));
+            }
           }
-        }, 60000);
+        }, 5000);
       }
     }
     catch (error) {

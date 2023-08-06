@@ -50,6 +50,7 @@ export class MindfulAssistantPage {
         link: {
           label: 'Let’s start',
           color: 'salmon',
+          cssClasses: 'hotspot-element',
           action: () => {
             this.goTo('resources/mindful-assistant/start');
           }

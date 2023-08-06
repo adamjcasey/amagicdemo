@@ -133,6 +133,10 @@ export class SliderPageComponent implements OnInit {
               );
             }
           }
+
+          if (this.config.moveTo) {
+            this.slideTo(this.config.moveTo);
+          }
         }
       });
 
