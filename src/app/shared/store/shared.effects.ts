@@ -70,60 +70,62 @@ export class SharedEffects {
         return action;
       }),
       tap(() => {
-        const wrapper = document.querySelector('#backdrop .backdrop__wrapper') as HTMLElement;
-        if (this._backdropOptions.transition === 'move') {
-          if (this._backdropOptions.fullScreen) {
-            animate(
-              `#backdrop`,
-              { top: `${(wrapper.clientHeight) * -1}px` },
-              { easing: spring({
-                stiffness: 80,
-                damping: 20,
-                mass: 1,
-                velocity: 800,
-              }) },
-            ).finished.then(() => {
-              if (typeof this._backdropOptions.onClose === 'function') {
-                this._backdropOptions.onClose();
-              }
-              // clear inline-styles for wrapper element
-              wrapper.style.removeProperty('height');
-            });
+        if (!this._backdropOptions.blockClosing) {
+          const wrapper = document.querySelector('#backdrop .backdrop__wrapper') as HTMLElement;
+          if (this._backdropOptions.transition === 'move') {
+            if (this._backdropOptions.fullScreen) {
+              animate(
+                `#backdrop`,
+                { top: `${(wrapper.clientHeight) * -1}px` },
+                { easing: spring({
+                  stiffness: 80,
+                  damping: 20,
+                  mass: 1,
+                  velocity: 800,
+                }) },
+              ).finished.then(() => {
+                if (typeof this._backdropOptions.onClose === 'function') {
+                  this._backdropOptions.onClose();
+                }
+                // clear inline-styles for wrapper element
+                wrapper.style.removeProperty('height');
+              });
+            }
+            else {
+              animate(
+                `#backdrop`,
+                { top: `${(wrapper.offsetHeight) * -1}px` },
+                {
+                  easing: 'ease-in-out',
+                  duration: 0.6,
+                } 
+              ).finished.then(() => {
+                if (typeof this._backdropOptions.onClose === 'function') {
+                  this._backdropOptions.onClose();
+                }
+
+                // clear inline-styles for wrapper element
+                wrapper.style.removeProperty('height');
+              });
+            }
           }
           else {
             animate(
               `#backdrop`,
-              { top: `${(wrapper.offsetHeight) * -1}px` },
-              {
-                easing: 'ease-in-out',
-                duration: 0.6,
-              } 
+              { opacity: [ 0.8, 0.5, 0 ] }, 
+              { duration: 1 }
             ).finished.then(() => {
+              animate(
+                `#backdrop`,
+                { top: `${(wrapper.clientHeight) * -1}px` }, 
+              );
               if (typeof this._backdropOptions.onClose === 'function') {
                 this._backdropOptions.onClose();
               }
-
               // clear inline-styles for wrapper element
               wrapper.style.removeProperty('height');
-            });
+            })
           }
-        }
-        else {
-          animate(
-            `#backdrop`,
-            { opacity: [ 0.8, 0.5, 0 ] }, 
-            { duration: 1 }
-          ).finished.then(() => {
-            animate(
-              `#backdrop`,
-              { top: `${(wrapper.clientHeight) * -1}px` }, 
-            );
-            if (typeof this._backdropOptions.onClose === 'function') {
-              this._backdropOptions.onClose();
-            }
-            // clear inline-styles for wrapper element
-            wrapper.style.removeProperty('height');
-          })
         }
       })
     )

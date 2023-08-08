@@ -60,6 +60,7 @@ export class WelcomeSignUpComponent {
       transition: 'move',
       header: true,
       showBackButton: false,
+      blockClosing: false,
       template: `
         <div class="welcome-backdrop-message">
           <h1 class="font-heading-1--bold">Welcome</h1>

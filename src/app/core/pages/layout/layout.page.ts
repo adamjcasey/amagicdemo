@@ -75,9 +75,9 @@ export class LayoutPage implements OnInit {
       }
     });
     
-    const gc = new (GestureController as any)(document.body);
+    const gc = new (GestureController as any)();
     gc.on('up', () => {
-      if (this.backdropConfig.show) {
+      if (this.backdropConfig.show && !this.backdropConfig.blockClosing) {
         this._store.dispatch(new fromSharedStore.BackdropHide);
       }
     });

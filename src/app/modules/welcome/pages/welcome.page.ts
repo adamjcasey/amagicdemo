@@ -212,6 +212,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
         header: false,
         contentCentered: true,
         showBackButton: false,
+        blockClosing: true,
         component: 'welcome-sign-up',
       }));
 
