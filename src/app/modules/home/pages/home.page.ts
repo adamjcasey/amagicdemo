@@ -336,7 +336,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
         <div class="simulate-flares-up-message">
           <img src="assets/images/flare-up-backdrop-image.svg" />
           <h1 class="font-heading-1--bold">Pretend you’ve got a flare-up...</h1>
-          <p>To demonstrate the capabilities of a connected ecosystem, we’re going to simulate a symptom flare-up that can be detected by your watch.</p>
+          <p>Before you take today's dose, we're going to simulate a symptom flare-up that could be detected by your smart watch to demonstrate the capabilities of a connected ecosystem.</p>
         </div>
       `,
       buttons: [
