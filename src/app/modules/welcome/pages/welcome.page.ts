@@ -114,6 +114,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
           asset: '/assets/images/welcome-step-2.svg',
         },
         content: {
+          hideNavigation: null,
           template: `
             <h1 class="font-heading-1--bold">Let's get connected.</h1>
             <p>To get the most out of your connected autoinjector and enable dose tracking and help with your injection experience, please enable bluetooth.</p>
