@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 
@@ -22,6 +23,7 @@ export class LayoutPage implements OnInit {
   public homeConfig: any;
 
   constructor(
+    private _router: Router,
     private _store: Store<fromStore.LayoutState>,
     private _bluetoothService: fromSharedServices.BluetoothService,
   ) {
@@ -156,6 +158,24 @@ export class LayoutPage implements OnInit {
     }
     catch (error) {
       console.log('verifyBatterLevelOfDevice > error: ', error);
+    }
+  }
+
+  setRootTab(event: any): void {
+    console.log('setRootTab ', event);
+    switch (event?.tab) {
+      case 'activity':
+        this._router.navigateByUrl('activity');
+        break;
+
+      case 'resources':
+        this._router.navigateByUrl('resources');
+        break;
+      
+      case 'settings':
+        this._router.navigateByUrl('settings');
+        break;
+      default:
     }
   }
 }

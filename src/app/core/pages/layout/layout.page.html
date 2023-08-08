@@ -10,7 +10,7 @@
     }">
 
     <ion-router-outlet></ion-router-outlet>
-    <ion-tabs>
+    <ion-tabs (ionTabsDidChange)="setRootTab($event)">
       <automagic-bottom-toolbar></automagic-bottom-toolbar>
     </ion-tabs>
   </main>
