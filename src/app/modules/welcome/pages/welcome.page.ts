@@ -256,7 +256,17 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
       }
     }
     catch (error) {
-      console.log('allowBluetooth > error: ', error);
+      this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
+        actions: [
+          {
+            label: 'Open Settings to Allow Bluetooth',
+            action: () => { 
+              this._bluetoothService.openSettingsApp();
+              this.sliderPage.slideNext();
+            }
+          },
+        ],
+      }));
     }
   }
 

@@ -19,9 +19,10 @@ export class BluetoothService {
   private state_: number;
   private battery_: number;
   private dosage_: number;
-  private isConnected_: boolean;
   private interval_id_: any;
   private peripheral_: any;
+  private isConnected_: boolean;
+  private isScanning_: boolean;
 
   // Variables for mocking
   private mock_state: number = 1;
@@ -42,6 +43,7 @@ export class BluetoothService {
     this.battery_ = 20;
     this.dosage_ = 0;
     this.isConnected_ = false;
+    this.isScanning_ = false;
 
     this.layoutConfig$ = this._store.select(fromCoreStore.getLayoutConfig);
     this.layoutConfig$.subscribe(layoutConfig => {
@@ -188,9 +190,17 @@ export class BluetoothService {
 
   async isDeviceConnected() {
     if (Capacitor.isNativePlatform()  && !this.layoutConfig.noDeviceMode) {
+      if (!this.isScanning_) {
+        await this.scan();
+      }
+
       return new Promise((resolve) => {
         const controller = setInterval(() => {
           if (this.isConnected_ || this.layoutConfig.noDeviceMode) {
+            clearInterval(controller);
+            resolve(true);
+          }
+          if (this.isConnected_){
             clearInterval(controller);
             resolve(true);
           }
@@ -204,6 +214,12 @@ export class BluetoothService {
     }
   }
 
+  async openSettingsApp() {
+    if (Capacitor.isNativePlatform()) {
+      await BleClient.openAppSettings();
+    }
+  }
+
   //--------------------------------------------------
   // Bluetooth Callbacks
   //--------------------------------------------------
@@ -214,6 +230,7 @@ export class BluetoothService {
       (peripheral.device.name == "AutoMagic"))
       && (peripheral.rssi > -60)) {
       this.isConnected_ = true;
+      this.isScanning_ = false;
       this.peripheral_ = peripheral;
       console.log("AutoMagic Discovered: ");
       console.log(peripheral);
@@ -276,6 +293,7 @@ export class BluetoothService {
       console.log("Is Native Capacitor bluetooth.service.ts scan");
 
       try {
+        this.isScanning_ = true;
         await BleClient.requestLEScan(
           { allowDuplicates: true },
           this.onDeviceDiscovered.bind(this)
@@ -283,6 +301,7 @@ export class BluetoothService {
       }
       catch (error) {
         console.error('scan', error);
+        this.isScanning_ = false;
       }
     }
     else {
