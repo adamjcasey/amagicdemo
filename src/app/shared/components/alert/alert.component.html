@@ -11,10 +11,6 @@
       [innerHTML]="sanitizeContent(config.template)"
     ></div>
 
-    <div class="alert__component">
-      <ng-template #contentComponent></ng-template>
-    </div>
-
     <div class="alert__actions" *ngIf="config.actions">
       <ion-button 
         *ngFor="let button of config.actions; let i = index" 
