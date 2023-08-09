@@ -4,6 +4,7 @@ import { Observable, Subject, takeUntil } from 'rxjs';
 
 import * as fromStore from '@resources/store';
 import * as fromCoreStore from '@core/store';
+import * as fromHomeStore from '@home/store';
 
 @Component({
   selector: 'automagic-your-care-team-list',
@@ -13,6 +14,8 @@ import * as fromCoreStore from '@core/store';
 export class YourCareTeamListPage implements OnInit, OnDestroy {
   public resourcesConfig$!: Observable<any>;
   public config: any;
+  public homeConfig$!: Observable<any>;
+  public homeConfig: any;
   private _ngUnsubscribe: Subject<void> = new Subject<void>();
   public heroConfig: any;
   public myTeam: any;
@@ -22,6 +25,7 @@ export class YourCareTeamListPage implements OnInit, OnDestroy {
     private _store: Store<fromCoreStore.CoreState>,
   ) {
     this.resourcesConfig$ = this._store.select(fromStore.getResourcesConfig);
+    this.homeConfig$ = this._store.select(fromHomeStore.getHomeConfig);
     this.heroConfig = {
       color: '--color-bg-pastel-blue',
       template: `
@@ -31,10 +35,30 @@ export class YourCareTeamListPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.homeConfig$
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(homeConfig => {
+        if (homeConfig) {
+          this.homeConfig = homeConfig;
+        }
+      });
+
     this.resourcesConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe(resourcesConfig => {
         if (resourcesConfig) {
+          if (!resourcesConfig.yourCareTeamPageVisited && this.homeConfig) {
+            const onBoardingTasks = this.homeConfig.onBoardingTasks.map((task: any) => {
+              return {
+                ...task,
+              }
+            });
+            onBoardingTasks[5].completed = true;
+            this._store.dispatch(new fromHomeStore.SetData({
+              onBoardingTasks: onBoardingTasks,
+            }));
+          }
+
           this.config = resourcesConfig.yourCareTeam;
           if (this.config) {
             this.myTeam = this.config.myTeam.map((member: any) => {

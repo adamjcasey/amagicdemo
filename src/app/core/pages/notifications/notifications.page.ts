@@ -4,7 +4,7 @@ import { Observable, Subject, takeUntil } from 'rxjs';
 
 import * as fromStore from '@core/store';
 import * as fromHomeStore from '@home/store';
-import * as fromSharedStore from '@shared/store';
+import * as fromResourcesStore from '@resources/store';
 
 @Component({
   selector: 'automagic-notifications',
@@ -14,6 +14,8 @@ import * as fromSharedStore from '@shared/store';
 export class NotificationsPage implements OnInit, OnDestroy {
   public homeConfig$!: Observable<any>;
   public homeConfig: any;
+  public resourcesConfig$!: Observable<any>;
+  public resourcesConfig: any;
   private _ngUnsubscribe: Subject<void> = new Subject<void>();
   public onBoardingTasks!: any[];
   public pendingOnBoardingTask!: any[];
@@ -22,6 +24,7 @@ export class NotificationsPage implements OnInit, OnDestroy {
     private _store: Store<fromStore.CoreState>,
   ) {
     this.homeConfig$ = this._store.select(fromHomeStore.getHomeConfig);
+    this.resourcesConfig$ = this._store.select(fromResourcesStore.getResourcesConfig);
   }
 
   ngOnInit() {
@@ -58,7 +61,12 @@ export class NotificationsPage implements OnInit, OnDestroy {
                       this.goTo('resources');
                       break;
                     case 5:
-                      this.goTo('resources/your-care-team');
+                      let path = 'resources/your-care-team';
+                      const yourCareTeam = this.resourcesConfig.yourCareTeam;
+                      if (yourCareTeam.myTeam.length || yourCareTeam.caregivers.length) {
+                        path += '/list';
+                      }
+                      this.goTo(path);
                       break;
                   }
                 },
@@ -66,6 +74,14 @@ export class NotificationsPage implements OnInit, OnDestroy {
             });
             this.pendingOnBoardingTask = this.onBoardingTasks.filter((task: any) => !task.completed);
           }
+        }
+      });
+
+    this.resourcesConfig$
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(resourcesConfig => {
+        if (resourcesConfig) {
+          this.resourcesConfig = resourcesConfig;
         }
       });
   }

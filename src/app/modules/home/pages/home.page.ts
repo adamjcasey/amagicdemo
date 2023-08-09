@@ -7,6 +7,7 @@ import * as fromStore from '@home/store';
 import * as fromCoreStore from '@core/store';
 import * as fromSharedStore from '@shared/store';
 import * as fromWelcomeStore from '@welcome/store';
+import * as fromResourcesStore from '@resources/store';
 import * as fromServicesShared from '@shared/services';
 
 @Component({
@@ -21,6 +22,8 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   public backdropConfig: any;
   public homeConfig$!: Observable<any>;
   public homeConfig: any;
+  public resourcesConfig$!: Observable<any>;
+  public resourcesConfig: any;
   public heroConfig: any;
   public card: any;
   public name: string = '';
@@ -36,7 +39,9 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   ) {
     this.welcomeState$ = this._store.select(fromWelcomeStore.getWelcomeConfig);
     this.backdropConfig$ = this._store.select(fromSharedStore.getBackdropConfig);
+  
     this.homeConfig$ = this._store.select(fromStore.getHomeConfig);
+    this.resourcesConfig$ = this._store.select(fromResourcesStore.getResourcesConfig);
 
     this.heroConfig = {
       color: '--color-bg-pastel-green',
@@ -98,6 +103,14 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
       .subscribe(backdropConfig => {
         if (backdropConfig) {
           this.backdropConfig = backdropConfig;
+        }
+      });
+
+    this.resourcesConfig$
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(resourcesConfig => {
+        if (resourcesConfig) {
+          this.resourcesConfig = resourcesConfig;
         }
       });
 
@@ -280,7 +293,12 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
                         this.goTo('resources');
                         break;
                       case 5:
-                        this.goTo('resources/your-care-team');
+                        let path = 'resources/your-care-team';
+                        const yourTeamCare = this.resourcesConfig.yourCareTeam;
+                        if (yourTeamCare.myTeam.length || yourTeamCare.caregivers.length ) {
+                          path += '/list';
+                        }
+                        this.goTo(path);
                         break;
                     }
                   },
