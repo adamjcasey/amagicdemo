@@ -47,6 +47,11 @@ export class AddSymptomPage implements OnInit, OnDestroy {
               {
                 label: 'Cancel',
                 action: () => {
+                  if (!this.homeConfig.flareUpsDemoDone) {
+                    this._store.dispatch(new fromStore.SetData({
+                      flareUpsDemoDone: true
+                    }));
+                  }
                   this.goTo('home');
                   this._store.dispatch(new fromSharedStore.SliderPageClear());
                 },
