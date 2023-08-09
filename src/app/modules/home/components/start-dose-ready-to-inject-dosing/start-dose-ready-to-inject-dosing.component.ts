@@ -142,7 +142,7 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
           <div class="dosing-error-alert">
             <img src="assets/images/dose-dosing-error.svg" />
             <h1 class="font-heading-1--bold">Oops!</h1>
-            <p>You lifted off early and the dose was only 65% administrated.</p>
+            <p>You lifted off early and the dose was only 65% of dose administered.</p>
             <h5>Please contact your HCP for guidance.</h5><br>
           </div>
         `,
