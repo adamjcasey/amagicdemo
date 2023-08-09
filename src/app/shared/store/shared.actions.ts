@@ -10,6 +10,8 @@ export enum ActionTypes {
   SliderPageSetContentOptions = '[SliderPage] Set Content Options',
   SliderPageClear = '[SliderPage] Clear Component',
   SliderPageSlideTo = '[SliderPage] Go Slide To',
+  SliderPageSlidePrev = '[SliderPage] Go Slide Prev',
+  SliderPageSlideNext = '[SliderPage] Go Slide Next',
   SliderPageClearMovement = '[SliderPage] Clear Movements',
   AlertShow = '[Alert] Show',
   AlertHide = '[Alert] Hide',
@@ -61,6 +63,12 @@ export class SliderPageSlideTo implements Action {
 
   constructor(public payload: number) {}
 }
+export class SliderPageSlidePrev implements Action {
+  readonly type = ActionTypes.SliderPageSlidePrev;
+}
+export class SliderPageSlideNext implements Action {
+  readonly type = ActionTypes.SliderPageSlideNext;
+}
 export class SliderPageClearMovement implements Action {
   readonly type = ActionTypes.SliderPageClearMovement;
 }
@@ -107,6 +115,8 @@ export type ActionsUnion
   | SliderPageSetContentOptions
   | SliderPageClear
   | SliderPageSlideTo
+  | SliderPageSlidePrev
+  | SliderPageSlideNext
   | SliderPageClearMovement
   | AlertShow 
   | AlertHide

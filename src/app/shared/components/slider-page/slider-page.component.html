@@ -1,15 +1,16 @@
 <div 
-  *ngIf="config$ | async as config"
-  #wrapper
+  *ngIf="config$ | async as config" 
+  #wrapper 
   class="slider-page" 
-  [style.background-color]="config.header?.color 
-    ? 'var(' + config.header.color + ')' 
-    : 'var(--color-white)'"
   [ngClass]="{ 
     'is-content-hidden': config.content?.hide, 
     'is-content-expanded': config.content?.isExpanded, 
     'is-full-size': config.header?.fullSize, 
-  }">
+  }" 
+  [style.background-color]="config.header?.color 
+    ? 'var(' + config.header.color + ')' 
+    : 'var(--color-white)'
+  ">
 
   <div 
     class="slider-page__header" 
@@ -18,6 +19,7 @@
       'has-template': config.header?.template, 
       'has-component': config.header?.component, 
       'has-timeline': config.content?.timeline,
+      'no-scroll': config.header?.noScroll,
     }">
 
     <swiper #sliderHeader effect="fade" [allowTouchMove]="false">
@@ -29,9 +31,10 @@
         <div class="content-wrapper">
           <div 
             class="template-wrapper" 
-            *ngIf="config.header?.template || slide.header?.template" 
-            [innerHTML]="sanitizeContent(config.header?.template ? config.header?.template : slide.header?.template)"
+            *ngIf="config.header?.template" 
+            [dinamicInnerHtml]="config.header?.template"
           ></div>
+          <!-- [innerHTML]="sanitizeContent(config.header?.template)" -->
 
           <div class="cards-wrapper" *ngIf="slide.header?.cards">
             <automagic-card *ngFor="let card of slide.header.cards" [card]="card"></automagic-card>
@@ -129,7 +132,8 @@
       class="wrapper-large" 
       [style.background-color]="config.content?.bgColor 
         ? 'var(' + config.content.bgColor + ')' 
-        : 'var(--color-white)'">
+        : 'var(--color-white)'
+      ">
 
       <div class="wrapper-large__content">
         <div 

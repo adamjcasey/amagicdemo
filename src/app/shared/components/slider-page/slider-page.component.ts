@@ -40,15 +40,18 @@ export class SliderPageComponent implements OnInit {
   public homeConfig: any;
   public previousConfig: any;
   public config: any;
-  public prevSlide: any;
+  public isMoving: boolean = false;
   public currentSlide: any;
+
+  public configHeaderTemplate: any;
+
   @Input() slides!: Array<any>;
   @Output() onPrevSlide = new EventEmitter<any>();
   @Output() onNextSlide = new EventEmitter<any>();
   @ViewChild('wrapper') wrapper!: ElementRef;
   @ViewChild('sliderHeader', { static: false }) sliderHeader!: SwiperComponent;
-  @ViewChildren('componentHeader', { read: ViewContainerRef }) componentsHeader!: QueryList<ViewContainerRef>;
   @ViewChild('sliderContent', { static: false }) sliderContent!: SwiperComponent;
+  @ViewChildren('componentHeader', { read: ViewContainerRef }) componentsHeader!: QueryList<ViewContainerRef>;
   @ViewChild('componentContent', { read: ViewContainerRef }) componentContent!: ViewContainerRef;
   private _ngUnsubscribe: Subject<void> = new Subject<void>();
 
@@ -137,6 +140,12 @@ export class SliderPageComponent implements OnInit {
           if (this.config.moveTo) {
             this.slideTo(this.config.moveTo);
           }
+          if (this.config.movePrev && !this.isMoving) {
+            this.slidePrev();
+          }
+          if (this.config.moveNext && !this.isMoving) {
+            this.slideNext();
+          }
         }
       });
 
@@ -192,9 +201,14 @@ export class SliderPageComponent implements OnInit {
         form: null,
       }));
     }
+
+    if (this.currentSlide.onLoad) {
+      this.currentSlide.onLoad();
+    }
   }
 
   slidePrev() {
+    this.isMoving = true;
     const activeIndex = this.sliderContent.swiperRef.activeIndex;
     if (this.slides[activeIndex].header?.component !== null) {
       this.componentsHeader?.toArray()[activeIndex].clear();
@@ -210,6 +224,11 @@ export class SliderPageComponent implements OnInit {
       this.sliderHeader.swiperRef.slidePrev(500);
       this.sliderContent.swiperRef.slidePrev(500);
     }
+
+    setTimeout(() => {
+      this.isMoving = false;
+      this._store.dispatch(new fromStore.SliderPageClearMovement);
+    }, 500);
   }
 
   slideNext() {
@@ -228,6 +247,11 @@ export class SliderPageComponent implements OnInit {
       this.sliderHeader.swiperRef.slideNext(500);
       this.sliderContent.swiperRef.slideNext(500);
     }
+
+    setTimeout(() => {
+      this.isMoving = false;
+      this._store.dispatch(new fromStore.SliderPageClearMovement);
+    }, 500);
   }
 
   slideTo(index: number) {

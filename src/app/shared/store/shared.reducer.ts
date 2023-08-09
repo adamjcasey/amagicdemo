@@ -95,6 +95,24 @@ export function SharedReducer(
         }
       };
     }
+    case fromActions.ActionTypes.SliderPageSlidePrev: {
+      return {
+        ...state,
+        sliderPageConfig: {
+          ...state.sliderPageConfig,
+          movePrev: true,
+        }
+      };
+    }
+    case fromActions.ActionTypes.SliderPageSlideNext: {
+      return {
+        ...state,
+        sliderPageConfig: {
+          ...state.sliderPageConfig,
+          moveNext: true,
+        }
+      };
+    }
     case fromActions.ActionTypes.SliderPageSlideTo: {
       return {
         ...state,
@@ -110,6 +128,8 @@ export function SharedReducer(
         sliderPageConfig: {
           ...state.sliderPageConfig,
           moveTo: null,
+          movePrev: null,
+          moveNext: null,
         }
       };
     }

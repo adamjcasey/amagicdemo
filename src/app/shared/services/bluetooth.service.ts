@@ -138,7 +138,7 @@ export class BluetoothService {
     }
   }
 
-  async waitForDosingStart() {
+  async waitForDosingStart(continueDose?: boolean) {
     // start watching the press on the device
     if (Capacitor.isNativePlatform()  && !this.layoutConfig.noDeviceMode) {
       if (this.state_ === 1) {
@@ -155,12 +155,12 @@ export class BluetoothService {
     }
     else {
       // support for web, wait 10segs (duration of the dosing) to return a true;
-      await new Promise(resolve => setTimeout(resolve, 6500));
+      await new Promise(resolve => setTimeout(resolve, continueDose ? 0 : 6500));
       return true;
     }
   }
 
-  async checkDosing() {
+  async checkDosing(remainingDose?: number) {
     if (Capacitor.isNativePlatform()  && !this.layoutConfig.noDeviceMode) {
       return new Promise((resolve, reject) => {
         const controller = setInterval(() => {
@@ -179,10 +179,10 @@ export class BluetoothService {
     else {
       // support for web, wait 10segs (duration of the dosing) to return a true;
       if (this.layoutConfig.noDeviceModeOopsFlow) {
-        await new Promise((resolve, reject) => setTimeout(reject, 4000));
+        await new Promise((resolve, reject) => setTimeout(reject, remainingDose ? remainingDose : 4000));
       }
       else {
-        await new Promise(resolve => setTimeout(resolve, 10000));
+        await new Promise(resolve => setTimeout(resolve, remainingDose ? remainingDose : 10000));
       }
       return true;
     }

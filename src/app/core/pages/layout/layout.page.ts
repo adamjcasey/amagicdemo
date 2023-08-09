@@ -162,7 +162,6 @@ export class LayoutPage implements OnInit {
   }
 
   setRootTab(event: any): void {
-    console.log('setRootTab ', event);
     switch (event?.tab) {
       case 'activity':
         this._router.navigateByUrl('activity');

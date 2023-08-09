@@ -22,12 +22,13 @@ import * as fromCoreStore from '@core/store';
 })
 export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
   public homeConfig$!: Observable<any>;
-  public homeConfig: any;
   public sliderPageConfig$!: Observable<any>;
+  private _ngUnsubscribe: Subject<void> = new Subject<void>();
+  public homeConfig: any;
   public sliderPageConfig: any;
   public slides: Array<any> = [];
+
   @ViewChild('sliderPage', { static: false }) sliderPage!: fromSharedComponents.SliderPageComponent;
-  private _ngUnsubscribe: Subject<void> = new Subject<void>();
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
@@ -186,12 +187,12 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                       }
                     },
                     {
-                      label: this.homeConfig.firstTimeDose ? 'Next Step' : 'Inject when ready',
+                      label: this.homeConfig.firstTimeDose ? 'Next Step' : 'Ready to inject',
                       disabled: true,
                       action: () => {
-                        this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-blue'));
                         this.sliderPage.slideNext();
                         if (this.homeConfig.firstTimeDose) {
+                          this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-blue'));
                           this._store.dispatch(new fromSharedStore.BackdropShow({
                             transition: 'move',
                             fullScreen: true,
@@ -395,73 +396,11 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
               },
               {
                 label: 'Next Step',
-                action: async () => { 
-                  this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
+                action: () => {
                   this.sliderPage.slideNext();
-                  try {
-                    let counter = 0;
-                    const controller = setInterval(() => {
-                      switch(counter) {
-                        case 0:
-                        case 3:
-                        case 6:
-                          this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple'));
-                          this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
-                            color: '--color-bg-pastel-purple'
-                          }));
-                          break;
-
-                        case 1:
-                        case 4:
-                        case 7:
-                          this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple'));
-                          this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
-                            color: '--color-bg-pastel-purple'
-                          }));
-                          break;
-
-                        case 2:
-                        case 5:
-                        case 8:
-                          this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-lime'));
-                          this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
-                            color: '--color-bg-pastel-lime'
-                          }));
-                          break;
-                      }
-                      counter++;
-                    }, 2000);
-
-                    const startDosing = await this._bluetoothService.waitForDosingStart();
-                    if (startDosing) {
-                      clearInterval(controller);
-                      this.sliderPage.slideNext();
-                    }
-                  }
-                  catch (error) {
-                    console.log('slideNext > error: ', error);
-                  }
                 }
               }
             ],
-          },
-        },
-        {
-          header: {
-            color: '--color-bg-pastel-honey-yellow',
-            template: `
-              <div class="start-dose-ready-to-inject__content">
-                <h1 class="font-heading-1--bold">We’re ready for you.</h1>
-                <p>Pinch about an inch of skin at the injection site, then press and hold the injector down to start the dose. The app will detect when you start.</p>
-                <img src="assets/images/start-dose-ready-to-inject-waiting-for-injection.gif">
-                <h4>Waiting for you to begin injection</h4>
-                <div class="loader"></div>
-                <p>The app will <strong>detect when you inject</strong> and <strong>advance automatically.</strong></p>
-              </div>
-            `,
-          },
-          content: {
-            hide: true,
           },
         },
       );
@@ -471,15 +410,44 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
     this.slides.push(
       {
         header: {
+          color: '--color-bg-pastel-honey-yellow',
+          fullSize: true,
+          template: `
+            <div class="we-are-ready-to-inject-screen">
+              <h1 class="font-heading-1--bold">We’re ready for you.</h1>
+              <p>Pinch about an inch of skin at the injection site, then press and hold the injector down to start the dose. The app will detect when you start.</p>
+              <video 
+                id="we-are-ready-to-inject-video"
+                src="/assets/videos/we-are-ready-to-inject-video.mp4" 
+                playsinline
+                autoplay
+                loop
+              ></video>
+              <h4>Waiting for you to begin injection</h4>
+              <div class="loader"></div>
+              <p>The app will <strong>detect when you inject</strong> and <strong>advance automatically.</strong></p>
+            </div>
+          `,
+        },
+        content: {
+          hide: true,
+        },
+        onLoad: () => {
+          this.startWaitingForStartDosing();
+        },
+      },
+      {
+        header: {
           color: '--color-bg-pastel-purple',
           template: null,
+          fullSize: false,
           component: 'start-dose-ready-to-inject-dosing',
         },
         content: {
           hide: true,
         },
       },
-    )
+    );
   }
 
   ngOnDestroy() {
@@ -490,7 +458,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
   playVideo() {
     const continueButtonOnSliderPage = document.querySelector('.slider-page .wrapper-small .swiper-slide-active .actions-wrapper ion-button.is-hidden') as HTMLElement;
     continueButtonOnSliderPage?.click();
-  };
+  }
 
   showNoNeedlessMessage() {
     this._store.dispatch(new fromSharedStore.BackdropShow({
@@ -506,5 +474,18 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
         </div>
       `,
     }));
+  }
+
+  async startWaitingForStartDosing() {
+    try {
+      this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-transparent'));
+      const startDosing = await this._bluetoothService.waitForDosingStart();
+      if (startDosing) {
+        this.sliderPage.slideNext();
+      }
+    }
+    catch (error) {
+      console.log('startWaitingForStartDosing > error: ', error);
+    }
   }
 }

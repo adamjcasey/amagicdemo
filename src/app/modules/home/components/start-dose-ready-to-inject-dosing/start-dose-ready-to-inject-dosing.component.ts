@@ -21,6 +21,8 @@ import * as fromSharedServices from '@shared/services';
 })
 export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewInit {
   public title: string = 'Starting...';
+  public layoutConfig$!: Observable<any>;
+  public layoutConfig: any;
   public homeConfig$!: Observable<any>;
   public homeConfig: any;
   public totalTime: number = 10; // 10 seconds
@@ -32,6 +34,7 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
     private _store: Store<fromCoreStore.CoreState>,
     private _bluetoothService: fromSharedServices.BluetoothService,
   ) {
+    this.layoutConfig$ = this._store.select(fromCoreStore.getLayoutConfig);
     this.homeConfig$ = this._store.select(fromStore.getHomeConfig);
   }
 
@@ -49,6 +52,12 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
         }
       }
     });
+
+    this.layoutConfig$.subscribe(layoutConfig => {
+      if (layoutConfig) {
+        this.layoutConfig = layoutConfig;
+      }
+    });
   }
 
   ngAfterViewInit() {
@@ -62,14 +71,15 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
     const loop = setInterval(() => {
       this.totalTime--;
       if (this.totalTime === 0 || this.errorDosing) {
+        console.log('hace clear in interval startdose');
         clearInterval(loop);
       }
     }, 1000);
   }
 
-  async checkDosingProcess() {
+  async checkDosingProcess(continueDose?: boolean) {
     try {
-      const dosingProcess = await this._bluetoothService.checkDosing();
+      const dosingProcess = await this._bluetoothService.checkDosing(continueDose ? this.totalTime * 1000 : undefined);
       if (dosingProcess) {
         this.title = 'Full dose delivered!';
         this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-lime'));
@@ -122,6 +132,7 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
       }
     }
     catch (error) {
+      console.log('checkDosingProcess en el catch');
       this.errorDosing = true;
       this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-salmon'));
       this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
@@ -141,15 +152,21 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
           {
             label: 'Ok',
             action: () => {
-              this.restartDosing();
+              if (this.layoutConfig.noDeviceModeOopsFlow) {
+                this._store.dispatch(new fromCoreStore.SetNoDeviceModeOopsFlow(false));
+              }
               this._store.dispatch(new fromSharedStore.AlertHide);
+              this.continueDosing();
             },
           },
           {
             label: 'My HCP',
             action: () => {
-              this.restartDosing();
+              if (this.layoutConfig.noDeviceModeOopsFlow) {
+                this._store.dispatch(new fromCoreStore.SetNoDeviceModeOopsFlow(false));
+              }
               this._store.dispatch(new fromSharedStore.AlertHide);
+              this.continueDosing();
             },
           }
         ],
@@ -157,58 +174,23 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
     }
   }
 
-  async restartDosing() {
+  async continueDosing() {
+    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple'));
+    this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
+      color: '--color-bg-pastel-purple',
+    }));
     this.errorDosing = false;
-    this.startDosing = false;
-    this.totalTime = 10;
-
-    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
-    this._store.dispatch(new fromSharedStore.SliderPageSlideTo(8));
-
-    let counter = 0;
-    const controller = setInterval(() => {
-      switch(counter) {
-        case 0:
-        case 3:
-        case 6:
-          this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple'));
-          this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
-            color: '--color-bg-pastel-purple'
-          }));
-          break;
-
-        case 1:
-        case 4:
-        case 7:
-          this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple'));
-          this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
-            color: '--color-bg-pastel-purple'
-          }));
-          break;
-
-        case 2:
-        case 5:
-        case 8:
-          this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-lime'));
-          this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
-            color: '--color-bg-pastel-lime'
-          }));
-          break;
-      }
-      counter++;
-    }, 2000);
 
     try {
-      const startDosing = await this._bluetoothService.waitForDosingStart();
+      const startDosing = await this._bluetoothService.waitForDosingStart(true);
       if (startDosing) {
-        clearInterval(controller);
-        this._store.dispatch(new fromSharedStore.SliderPageSlideTo(9));
-        this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple'));
+        this.totalTime += 1;
         this.startDose();
-        this.checkDosingProcess();
+        this.checkDosingProcess(true);    
       }
     }
     catch (error) {
+      console.log('into catch');
       console.log('restartDosing > error: ', error);
     }
   }
