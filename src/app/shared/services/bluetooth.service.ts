@@ -148,7 +148,7 @@ export class BluetoothService {
               clearInterval(controller);
               resolve(true);
             }
-          }, 500);
+          }, 100);
         });
       }
       return new Error('waitForDosingStart > state of the device is not 1.');
@@ -173,7 +173,7 @@ export class BluetoothService {
             clearInterval(controller);
             reject(new Error('unpressed action device during dosing.'));
           }
-        }, 500);
+        }, 100);
       });
     }
     else {
