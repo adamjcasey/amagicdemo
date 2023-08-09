@@ -34,6 +34,7 @@ export class DatepickerComponent implements OnInit {
   public weekdays: string[] = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];; // Array to hold the weekdays data
   public isFirstMonth: boolean = true;
   public idDatePicker?: number;
+  public monthsToGenerate: number = 2;
 
   constructor() {}
 
@@ -43,6 +44,13 @@ export class DatepickerComponent implements OnInit {
   }
 
   generateMonths(): any[] {
+    if (this.selectedDates) {
+      const lastDate = this.selectedDates[this.selectedDates.length - 1];
+      const lastMonthToGenerate = lastDate.getMonth();
+      const currentMonth = new Date().getMonth();
+      this.monthsToGenerate = (lastMonthToGenerate - currentMonth) + 1;
+    }
+
     const currentDate = new Date();
     const currentMonth = currentDate.getMonth();
     const currentYear = currentDate.getFullYear();
@@ -50,7 +58,7 @@ export class DatepickerComponent implements OnInit {
     const months: any[] = [];
     let date = new Date(currentYear, currentMonth);
 
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < this.monthsToGenerate; i++) {
       const monthName = date.toLocaleString('default', { month: 'long' });
       const year = date.getFullYear();
       const weeks = this.generateWeeks(date);
