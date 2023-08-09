@@ -34,7 +34,6 @@
             *ngIf="config.header?.template" 
             [dinamicInnerHtml]="config.header?.template"
           ></div>
-          <!-- [innerHTML]="sanitizeContent(config.header?.template)" -->
 
           <div class="cards-wrapper" *ngIf="slide.header?.cards">
             <automagic-card *ngFor="let card of slide.header.cards" [card]="card"></automagic-card>

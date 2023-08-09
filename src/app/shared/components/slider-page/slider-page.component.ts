@@ -339,6 +339,9 @@ export class SliderPageComponent implements OnInit {
       case 'start-dose-ready-to-inject-body-part-selector':
         componentRef = element.createComponent(fromHomeComponents.StartDoseReadyToInjectBodyPartSelectorComponent);
         break;
+      case 'start-dose-ready-to-inject-waiting-to-start-injection':
+        componentRef = element.createComponent(fromHomeComponents.StartDoseReadyToInjectWaitingToStartInjectionComponent);
+        break;
       case 'start-dose-ready-to-inject-dosing':
         componentRef = element.createComponent(fromHomeComponents.StartDoseReadyToInjectDosingComponent);
         break;

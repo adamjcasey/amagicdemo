@@ -412,22 +412,8 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
         header: {
           color: '--color-bg-pastel-honey-yellow',
           fullSize: true,
-          template: `
-            <div class="we-are-ready-to-inject-screen">
-              <h1 class="font-heading-1--bold">We’re ready for you.</h1>
-              <p>Pinch about an inch of skin at the injection site, then press and hold the injector down to start the dose. The app will detect when you start.</p>
-              <video 
-                id="we-are-ready-to-inject-video"
-                src="/assets/videos/we-are-ready-to-inject-video.mp4" 
-                playsinline
-                autoplay
-                loop
-              ></video>
-              <h4>Waiting for you to begin injection</h4>
-              <div class="loader"></div>
-              <p>The app will <strong>detect when you inject</strong> and <strong>advance automatically.</strong></p>
-            </div>
-          `,
+          template: null,
+          component: 'start-dose-ready-to-inject-waiting-to-start-injection',
         },
         content: {
           hide: true,
@@ -439,7 +425,6 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
       {
         header: {
           color: '--color-bg-pastel-purple',
-          template: null,
           fullSize: false,
           component: 'start-dose-ready-to-inject-dosing',
         },

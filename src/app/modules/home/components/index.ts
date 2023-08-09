@@ -6,6 +6,7 @@ import { StartDosePrepareWaitingToInjectComponent } from './start-dose-prepare-w
 import { StartDoseReadyToInjectFirstTimeUserComponent } from './start-dose-ready-to-inject-first-time-user/start-dose-ready-to-inject-first-time-user.component';
 import { StartDoseReadyToInjectVideoComponent } from './start-dose-ready-to-inject-video/start-dose-ready-to-inject-video.component';
 import { StartDoseReadyToInjectBodyPartSelectorComponent } from './start-dose-ready-to-inject-body-part-selector/start-dose-ready-to-inject-body-part-selector.component';
+import { StartDoseReadyToInjectWaitingToStartInjectionComponent } from './start-dose-ready-to-inject-waiting-to-start-injection/start-dose-ready-to-inject-waiting-to-start-injection.component';
 import { StartDoseReadyToInjectDosingComponent } from './start-dose-ready-to-inject-dosing/start-dose-ready-to-inject-dosing.component';
 
 import { StartDoseInjectDoneProgressComponent } from './start-dose-inject-done-progress/start-dose-inject-done-progress.component';
@@ -24,6 +25,7 @@ export const components: any[] = [
   StartDoseReadyToInjectFirstTimeUserComponent,
   StartDoseReadyToInjectVideoComponent,
   StartDoseReadyToInjectBodyPartSelectorComponent,
+  StartDoseReadyToInjectWaitingToStartInjectionComponent,
   StartDoseReadyToInjectDosingComponent,
 
   StartDoseInjectDoneProgressComponent,
@@ -42,6 +44,7 @@ export * from './start-dose-prepare-waiting-to-inject/start-dose-prepare-waiting
 export * from './start-dose-ready-to-inject-first-time-user/start-dose-ready-to-inject-first-time-user.component';
 export * from './start-dose-ready-to-inject-video/start-dose-ready-to-inject-video.component';
 export * from './start-dose-ready-to-inject-body-part-selector/start-dose-ready-to-inject-body-part-selector.component';
+export * from './start-dose-ready-to-inject-waiting-to-start-injection/start-dose-ready-to-inject-waiting-to-start-injection.component';
 export * from './start-dose-ready-to-inject-dosing/start-dose-ready-to-inject-dosing.component';
 
 export * from './start-dose-inject-done-progress/start-dose-inject-done-progress.component';
