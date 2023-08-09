@@ -21,6 +21,7 @@ export class LayoutPage implements OnInit {
   public backdropConfig: any;
   public homeConfig$: Observable<any>;
   public homeConfig: any;
+  public minBatterLevel: number = 5;
 
   constructor(
     private _router: Router,
@@ -132,7 +133,7 @@ export class LayoutPage implements OnInit {
       if (isDeviceConnected) {
         setInterval(() => {
           const batteryLevel = this._bluetoothService.Battery;
-          if (batteryLevel < 10) {
+          if (batteryLevel < this.minBatterLevel) {
             if (!this.backdropConfig.show) {
               this._store.dispatch(new fromSharedStore.BackdropShow({
                 transition: 'move',
@@ -161,20 +162,20 @@ export class LayoutPage implements OnInit {
     }
   }
 
-  setRootTab(event: any): void {
-    switch (event?.tab) {
-      case 'activity':
-        this._router.navigateByUrl('activity');
-        break;
+  // setRootTab(event: any): void {
+  //   switch (event?.tab) {
+  //     case 'activity':
+  //       this._router.navigateByUrl('activity');
+  //       break;
 
-      case 'resources':
-        this._router.navigateByUrl('resources');
-        break;
+  //     case 'resources':
+  //       this._router.navigateByUrl('resources');
+  //       break;
       
-      case 'settings':
-        this._router.navigateByUrl('settings');
-        break;
-      default:
-    }
-  }
+  //     case 'settings':
+  //       this._router.navigateByUrl('settings');
+  //       break;
+  //     default:
+  //   }
+  // }
 }
