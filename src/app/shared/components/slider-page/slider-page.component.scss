@@ -71,8 +71,6 @@
       max-height: 100%;
       overflow-y: auto;
 
-      
-
       &.swiper-slide-active {
         .cards-wrapper {
           automagic-card {
@@ -100,7 +98,25 @@
     }
 
     &.has-timeline {
-      max-height: calc(100vh - 160px);
+      max-height: calc(100vh - 130px);
+
+      + .slider-page__content {
+        bottom: 16px;
+        height: calc(100% + 16px);
+
+        .wrapper-small__slide {
+          grid-template-rows: auto;
+          
+          .content-wrapper {
+            display: none;
+          }
+
+          .actions-wrapper {
+            grid-row: 1;
+            align-items: center;
+          }
+        }
+      }
     }
   }
 
@@ -228,9 +244,10 @@
             display: flex;
             gap: var(--size-xxs);
             justify-content: center;
+            min-height: 48px;
           }
     
-          .template-wrapper {    
+          .template-wrapper {
             h1 {
               margin-bottom: 24px;
             }
@@ -343,8 +360,12 @@
 
       swiper {
         height: 100%;
+
+        .swiper-wrapper {
+          max-height: 100vh;
+        }
       }
-      
+
       .content-wrapper {
         padding-right: 0;
         padding-left: 0;

@@ -55,7 +55,6 @@ export class YourProgressPage implements OnInit, OnDestroy {
         `,
         button: {
           label: 'Import data from Apple Health',
-          cssClasses: 'hotspot-element',
           icon: '/assets/icons/import.svg',
           fill: 'outline',
           action: () => {

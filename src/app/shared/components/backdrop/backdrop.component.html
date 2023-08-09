@@ -181,13 +181,13 @@
         </swiper>
       </div>
 
-      <div class="highlights-menu" *ngIf="getType() === 'highlights-menu'">
+      <div class="highlights-tour" *ngIf="getType() === 'highlights-tour'">
         <swiper 
           #sliderHighlights 
           effect="fade" 
           [allowTouchMove]="false" 
-          (swiper)="onHighlightsInit()" 
-          (slideChange)="onHighlightsChange()" 
+          (swiper)="onHighlightsTourInit()" 
+          (slideChange)="onHighlightsTourChange()" 
           [autoHeight]="true">
           <ng-template swiperSlide>
             <h1 class="font-heading-1--bold">Highlights Tour</h1>
@@ -204,7 +204,7 @@
           </ng-template>
           
           <ng-container *ngFor="let section of config.highlights; let i = index">
-            <ng-template swiperSlide *ngIf="section.detail" class="highlights-menu__slide">
+            <ng-template swiperSlide *ngIf="section.detail" class="highlights-tour__slide">
               <div 
                 class="highlights__detail" 
                 [innerHTML]="sanitizeContent(section.detail)">
@@ -228,7 +228,7 @@
               </div>
 
               <div class="return-flow__actions">
-                <ion-button class="hotspot-element" fill="outline" color="light" (click)="cancelCustomFlows()">
+                <ion-button class="hotspot-element" fill="outline" color="light" (click)="goBackToMenu()">
                   Cancel
                 </ion-button>
                 <ion-button class="hotspot-element" fill="outline" color="light" (click)="sliderReturnFlow.swiperRef.slideNext()">
@@ -324,7 +324,7 @@
                 <h5>It will turn itself off in 5 minutes</h5>
               </div>
 
-              <div class="share-flow__actions" (click)="cancelCustomFlows()">
+              <div class="share-flow__actions" (click)="goBackToMenu()">
                 <ion-button class="hotspot-element" fill="outline" color="light">
                   Cancel
                 </ion-button>

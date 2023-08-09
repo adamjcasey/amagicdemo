@@ -38,7 +38,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
   public initialSlide: number = 0;
   public batteryLevel: number = 0;
   @ViewChild('sliderMainMenu', { static: false }) sliderMainMenu!: SwiperComponent;
-  @ViewChild('sliderHighlights', { static: false }) sliderHighlights!: SwiperComponent;
+  @ViewChild('sliderHighlightsTour', { static: false }) sliderHighlightsTour!: SwiperComponent;
   @ViewChild('sliderShareFlow', { static: false }) sliderShareFlow!: SwiperComponent;
   @ViewChild('contentComponent', { read: ViewContainerRef }) contentComponent!: ViewContainerRef;
 
@@ -55,7 +55,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
   getType(): string {
     let type = '';
     if (this.config.highlights) {
-      type = 'highlights-menu';
+      type = 'highlights-tour';
     }
     else if (this.config.returnFlow) {
       type = 'return-flow';
@@ -88,7 +88,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
 
           if (this.getType() === 'dinamic') {
             if (this.config.showBackButton) {
-              this.goBackToMenu();
+              this.setGoBackMenuButton();
             }
           }
         }
@@ -116,7 +116,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
       }
     });
   }
-  
+
   ngAfterViewInit() {
     this.initialized = true;
   }
@@ -159,34 +159,38 @@ export class BackdropComponent implements OnInit, AfterViewInit {
       this.sliderMainMenu?.swiperRef.slideTo(step);
     }
 
-    if (this.sliderHighlights) {
-      this.sliderHighlights?.swiperRef.slideTo(step);
+    if (this.sliderHighlightsTour) {
+      this.sliderHighlightsTour?.swiperRef.slideTo(step);
     }
   }
 
   goBackToMenu() {
+    if (this.config.fullScreen) {
+      this.animateFullScreenToDefault();
+    }
+
+    this.backButton = null;
+    this.contentComponent?.clear();
+    this._store.dispatch(new fromStore.BackdropSetConfig({
+      transition: 'move',
+      header: true,
+      bgTemplate: this.config.bgTemplate ? null : null,
+      fullScreen: this.config.fullScreen ? false : null,
+      template: null,
+      component: null,
+    }));
+  }
+
+  setGoBackMenuButton() {
     this.backButton = {
       label: 'Menu',
       action: () => {
-        if (this.config.fullScreen) {
-          this.animateFullScreenToDefault();
-        }
-
-        this.backButton = null;
-        this.contentComponent?.clear();
-        this._store.dispatch(new fromStore.BackdropSetConfig({
-          transition: 'move',
-          header: true,
-          bgTemplate: this.config.bgTemplate ? null : null,
-          fullScreen: this.config.fullScreen ? false : null,
-          template: null,
-          component: null,
-        }));
+        this.goBackToMenu();
       }
     }
   }
 
-  onHighlightsInit() {
+  onHighlightsTourInit() {
     if (this.config.showBackButton) {
       this.backButton = {
         label: 'Back',
@@ -207,20 +211,20 @@ export class BackdropComponent implements OnInit, AfterViewInit {
       };
     }
 
-    const wrapper = this.sliderHighlights.swiperRef.slides[0].querySelector('.masonry-layout');
+    const wrapper = this.sliderHighlightsTour.swiperRef.slides[0].querySelector('.masonry-layout');
     if (wrapper) {
       this._utils.createMasonryLayout(wrapper);
     }
   }
 
-  onHighlightsChange() {
-    const activeIndex = this.sliderHighlights.swiperRef.activeIndex;
+  onHighlightsTourChange() {
+    const activeIndex = this.sliderHighlightsTour.swiperRef.activeIndex;
     if (activeIndex > 0) {
       if (this.config.showBackButton) {
         this.backButton = {
           label: 'Back',
           action: () => {
-            this.sliderHighlights.swiperRef.slideTo(0);
+            this.sliderHighlightsTour.swiperRef.slideTo(0);
           }
         };
       }
@@ -246,41 +250,6 @@ export class BackdropComponent implements OnInit, AfterViewInit {
     }
   }
 
-  sanitizeContent(htmlContent: string): SafeHtml {
-    return this._sanitizer.bypassSecurityTrustHtml(htmlContent);
-  }
-
-  animateFullScreenToDefault() {
-    if (this.config.transition === 'fade') {
-      animate(
-        '#backdrop',
-        { opacity: 1 },
-        {
-          easing: 'ease-in-out',
-          duration: 0.2,
-        },
-      );
-    }
-
-    animate(
-      '#backdrop .backdrop__wrapper',
-      {
-        height: [
-          `${window.innerHeight}px`,
-          `${(window.innerHeight) * 0.9}px`,
-          `${(window.innerHeight) * 0.8}px`,
-          `${(window.innerHeight) * 0.75}px`,
-        ],
-      },
-      { easing: spring({
-        stiffness: 100,
-        damping: 15,
-        mass: 1,
-        velocity: 800,
-      }) }
-    );
-  }
-
   showShareFlow() {
     const element = document.querySelector('#backdrop .backdrop__wrapper') as HTMLElement;
     element.style.removeProperty('height');
@@ -304,6 +273,12 @@ export class BackdropComponent implements OnInit, AfterViewInit {
     }
   }
 
+  slideNextShareFlow(event: any) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    this.sliderShareFlow.swiperRef.slideNext();
+  }
+
   showReturnFlow() {
     this._store.dispatch(new fromStore.BackdropSetConfig({
       returnFlow: true,
@@ -324,18 +299,37 @@ export class BackdropComponent implements OnInit, AfterViewInit {
     }
   }
 
-  slideNextShareFlow(event: any) {
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    this.sliderShareFlow.swiperRef.slideNext();
+  sanitizeContent(htmlContent: string): SafeHtml {
+    return this._sanitizer.bypassSecurityTrustHtml(htmlContent);
   }
 
-  cancelCustomFlows() {
-    this._store.dispatch(new fromStore.BackdropSetConfig({
-      shareFlow: null,
-      returnFlow: null,
-    }));
-    this.initialSlide = 1;
+  animateFullScreenToDefault() {
+    if (this.config.transition === 'fade') {
+      animate(
+        '#backdrop',
+        { opacity: 1 },
+        {
+          easing: 'ease-in-out',
+          duration: 0.2,
+        },
+      );
+    }
+
+    animate(
+      '#backdrop .backdrop__wrapper',
+      { height: [
+          `${window.innerHeight}px`,
+          `${(window.innerHeight) * 0.9}px`,
+          `${(window.innerHeight) * 0.8}px`,
+          `${(window.innerHeight) * 0.75}px`,
+      ] },
+      { easing: spring({
+        stiffness: 100,
+        damping: 15,
+        mass: 1,
+        velocity: 800,
+      }) }
+    );
   }
 
   getBatteryLevel() {

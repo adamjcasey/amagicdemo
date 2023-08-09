@@ -71,7 +71,6 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
     const loop = setInterval(() => {
       this.totalTime--;
       if (this.totalTime === 0 || this.errorDosing) {
-        console.log('hace clear in interval startdose');
         clearInterval(loop);
       }
     }, 1000);
@@ -132,7 +131,6 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
       }
     }
     catch (error) {
-      console.log('checkDosingProcess en el catch');
       this.errorDosing = true;
       this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-salmon'));
       this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
@@ -190,7 +188,6 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
       }
     }
     catch (error) {
-      console.log('into catch');
       console.log('restartDosing > error: ', error);
     }
   }
