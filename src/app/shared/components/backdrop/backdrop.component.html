@@ -89,7 +89,7 @@
               </a>
               <a class="link hotspot-element" (click)="goToSubmenu(4)">
                 <ion-icon name="construct-outline" slot="start" size="large" color="light"></ion-icon>
-                <ion-label>No Device Mode</ion-label>
+                <ion-label>Debugging</ion-label>
                 <ion-icon name="chevron-forward-outline" slot="end" color="light"></ion-icon>
               </a>
             </div>
@@ -144,7 +144,7 @@
           </ng-template>
 
           <ng-template swiperSlide>
-            <h1 class="font-heading-1--bold">No Device Mode</h1>
+            <h1 class="font-heading-1--bold">Debugging</h1>
 
             <div class="buttons-container">
               <ion-button 
@@ -176,6 +176,16 @@
                 fill="outline" expand="block" color="light">
                 Testing of Low Battery Flow
               </ion-button>
+
+              <ion-button 
+                class="hotspot-element"
+                [ngClass]="{
+                  'is-active': layoutConfig.noDeviceModeBatteryLowFlow
+                }"
+                (click)="toggleDebuggingDevice()"
+                fill="outline" expand="block" color="light">
+                Testing of Low Battery Flow
+              </ion-button>
             </div>
           </ng-template>
         </swiper>
@@ -183,7 +193,7 @@
 
       <div class="highlights-tour" *ngIf="getType() === 'highlights-tour'">
         <swiper 
-          #sliderHighlights 
+          #sliderHighlightsTour 
           effect="fade" 
           [allowTouchMove]="false" 
           (swiper)="onHighlightsTourInit()" 
@@ -228,7 +238,7 @@
               </div>
 
               <div class="return-flow__actions">
-                <ion-button class="hotspot-element" fill="outline" color="light" (click)="goBackToMenu()">
+                <ion-button class="hotspot-element" fill="outline" color="light" (click)="goBackToMenu(1)">
                   Cancel
                 </ion-button>
                 <ion-button class="hotspot-element" fill="outline" color="light" (click)="sliderReturnFlow.swiperRef.slideNext()">
@@ -324,7 +334,7 @@
                 <h5>It will turn itself off in 5 minutes</h5>
               </div>
 
-              <div class="share-flow__actions" (click)="goBackToMenu()">
+              <div class="share-flow__actions" (click)="goBackToMenu(1)">
                 <ion-button class="hotspot-element" fill="outline" color="light">
                   Cancel
                 </ion-button>

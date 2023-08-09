@@ -97,9 +97,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
           if (this.initialized) {
             setTimeout(() => {
               this.contentComponent?.clear();
-              if (this.getType() === 'main-menu') {
-                this.goToSubmenu(0);
-              }
+              this.goToSubmenu(0);
             }, 800);
           }
         }
@@ -137,6 +135,16 @@ export class BackdropComponent implements OnInit, AfterViewInit {
     this.getBatteryLevel();
     if (this.config.showBackButton) {
       this.backButton = null;
+      
+      if (this.initialSlide > 0) {
+        this.backButton = {
+          label: 'Back',
+          action: () => {
+            this.sliderMainMenu.swiperRef.slideTo(0);
+            this.backButton = null;
+          }
+        };
+      }
     }
   }
 
@@ -164,7 +172,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
     }
   }
 
-  goBackToMenu() {
+  goBackToMenu(stepToGo?: number) {
     if (this.config.fullScreen) {
       this.animateFullScreenToDefault();
     }
@@ -178,7 +186,14 @@ export class BackdropComponent implements OnInit, AfterViewInit {
       fullScreen: this.config.fullScreen ? false : null,
       template: null,
       component: null,
+      highlights: null,
+      returnFlow: null,
+      shareFlow: null,
     }));
+
+    if (stepToGo) {
+      this.initialSlide = stepToGo;
+    }
   }
 
   setGoBackMenuButton() {
@@ -264,6 +279,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
       this.backButton = {
         label: 'Back',
         action: () => {
+          console.log('click in back share flow');
           this._store.dispatch(new fromStore.BackdropSetConfig({
             shareFlow: null,
           }));
@@ -290,6 +306,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
       this.backButton = {
         label: 'Back',
         action: () => {
+          console.log('click in back share flow');
           this._store.dispatch(new fromStore.BackdropSetConfig({
             returnFlow: null,
           }));
@@ -350,6 +367,12 @@ export class BackdropComponent implements OnInit, AfterViewInit {
     if (this.layoutConfig.noDeviceMode) {
       this._store.dispatch(new fromCoreStore.SetNoDeviceModeBatteryLowFlow(!this.layoutConfig.noDeviceModeBatteryLowFlow));
       this._bluetoothService.Battery = 5;
+    }
+  }
+
+  toggleDebuggingDevice() {
+    if (this.layoutConfig.debuggingDeviceMode) {
+      this._store.dispatch(new fromCoreStore.SetNoDeviceModeBatteryLowFlow(!this.layoutConfig.debuggingDeviceMode));
     }
   }
 
