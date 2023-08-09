@@ -104,3 +104,23 @@
     }
   }
 }
+
+@keyframes spinner-animation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loader {
+  width: 48px;
+  height: 48px;
+  border: 5px solid var(--color-primary-dark-blue);
+  border-bottom-color: rgba(var(--color-primary-dark-blue--rgb), 0.3);
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: spinner-animation 1s linear infinite;
+}

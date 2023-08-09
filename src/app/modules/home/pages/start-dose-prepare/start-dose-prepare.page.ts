@@ -64,7 +64,10 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
           hideNavigation: true,
           actions: null,
           template: `
-            <h1 class="font-heading-1--bold">Connecting...</h1>
+            <div class="start-dose-prepare__connecting">
+              <h1 class="font-heading-1--bold">Connecting...</h1>
+              <div class="loader"></div>
+            </div>
           `,
         },
       },
