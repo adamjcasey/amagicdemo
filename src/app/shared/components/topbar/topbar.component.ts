@@ -26,6 +26,8 @@ export class TopBarComponent implements OnInit, OnDestroy {
   public homeConfig: any;
   public activityConfig$!: Observable<any>;
   public activityConfig: any;
+  public resourcesConfig$!: Observable<any>;
+  public resourcesConfig: any;
   public routerEvents$;
   public activityScope: boolean = false;
   public settingsScope: boolean = false;
@@ -42,6 +44,7 @@ export class TopBarComponent implements OnInit, OnDestroy {
     this.layoutConfig$ = this._store.select(fromCoreStore.getLayoutConfig);
     this.homeConfig$ = this._store.select(fromHomeStore.getHomeConfig);
     this.activityConfig$ = this._store.select(fromActivityStore.getActivityConfig);
+    this.resourcesConfig$ = this._store.select(fromResourcesStore.getResourcesConfig);
 
     this.routerEvents$ = this._router.events.subscribe(
       (event: RoutingEvent) => {
@@ -154,6 +157,14 @@ export class TopBarComponent implements OnInit, OnDestroy {
           this.activityConfig = activityConfig;
         }
       });
+
+    this.resourcesConfig$
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(resourcesConfig => {
+        if (resourcesConfig) {
+          this.resourcesConfig = resourcesConfig;
+        }
+      });
   }
 
   ngOnDestroy() {
@@ -211,7 +222,12 @@ export class TopBarComponent implements OnInit, OnDestroy {
       }
 
       if (this.currentRoute.includes('resources/your-care-team/list')) {
-        this.goTo('resources/your-care-team');
+        const yourCareteam = this.resourcesConfig.yourCareTeam;
+        let path = 'resources/your-care-team';
+        if (yourCareteam.myTeam.length > 0 || yourCareteam.caregivers.length > 0) {
+          path = 'resources';
+        }
+        this.goTo(path);
       }
 
       if (this.currentRoute.includes('resources/your-care-team/detail')) {
