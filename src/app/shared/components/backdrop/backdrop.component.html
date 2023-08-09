@@ -119,11 +119,18 @@
             <h1 class="font-heading-1--bold">Reset the demo</h1>
 
             <div class="buttons-container">
-              <ion-button class="hotspot-element" fill="outline" expand="block" color="light">
+              <ion-button 
+                class="hotspot-element" 
+                (click)="doAnotherInjection()" 
+                fill="outline" expand="block" color="light">
                 Do another injection
               </ion-button>
 
-              <ion-button class="hotspot-element" fill="outline" expand="block" color="light">
+              <ion-button 
+                class="hotspot-element" 
+                (click)="resetDemo()" 
+                fill="outline" expand="block" color="light">
+
                 Restart from the beginning
               </ion-button>
             </div>
@@ -152,7 +159,7 @@
                 [ngClass]="{
                   'is-active': layoutConfig.noDeviceMode
                 }"
-                (click)="toggleNoDeviceMode()"
+                (click)="toggleDebuggingOptions('no-device-mode')"
                 fill="outline" expand="block" color="light">
                 Testing with No Device Mode
               </ion-button>
@@ -162,7 +169,7 @@
                 [ngClass]="{
                   'is-active': layoutConfig.noDeviceModeOopsFlow
                 }"
-                (click)="toggleNoDeviceOopsFlow()"
+                (click)="toggleDebuggingOptions('oops-flow')"
                 fill="outline" expand="block" color="light">
                 Testing of Oops Flow
               </ion-button>
@@ -172,7 +179,7 @@
                 [ngClass]="{
                   'is-active': layoutConfig.noDeviceModeBatteryLowFlow
                 }"
-                (click)="toggleNoDeviceBatteryLowFlow()"
+                (click)="toggleDebuggingOptions('battery-low')"
                 fill="outline" expand="block" color="light">
                 Testing of Low Battery Flow
               </ion-button>
@@ -182,9 +189,9 @@
                 [ngClass]="{
                   'is-active': layoutConfig.noDeviceModeBatteryLowFlow
                 }"
-                (click)="toggleDebuggingDevice()"
+                (click)="toggleDebuggingOptions('device-debugging')"
                 fill="outline" expand="block" color="light">
-                Testing of Low Battery Flow
+                Enable Device Debugging
               </ion-button>
             </div>
           </ng-template>

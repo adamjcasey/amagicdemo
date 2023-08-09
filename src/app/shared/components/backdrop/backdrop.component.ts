@@ -20,6 +20,7 @@ import * as fromStore from '@shared/store';
 import * as fromCoreStore from '@core/store';
 import * as fromSharedServices from '@shared/services';
 import * as fromWelcomeComponents from '@welcome/components';
+import * as fromHomeStore from '@home/store';
 import * as fromHomeComponents from '@home/components';
 
 @Component({
@@ -33,6 +34,8 @@ export class BackdropComponent implements OnInit, AfterViewInit {
   public config: any;
   public layoutConfig$: Observable<any>;
   public layoutConfig: any;
+  public homeConfig$: Observable<any>;
+  public homeConfig: any;
   public backButton!: any;
   public initialized: boolean = false;
   public initialSlide: number = 0;
@@ -50,6 +53,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
   ) {
     this.config$ = this._store.select(fromStore.getBackdropConfig);
     this.layoutConfig$ = this._store.select(fromCoreStore.getLayoutConfig);
+    this.homeConfig$ = this._store.select(fromHomeStore.getHomeConfig);
   }
 
   getType(): string {
@@ -111,6 +115,12 @@ export class BackdropComponent implements OnInit, AfterViewInit {
     this.layoutConfig$.subscribe(layoutConfig => {
       if (layoutConfig) {
         this.layoutConfig = layoutConfig;
+      }
+    });
+
+    this.homeConfig$.subscribe(homeConfig => {
+      if (homeConfig) {
+        this.homeConfig = homeConfig;
       }
     });
   }
@@ -353,27 +363,77 @@ export class BackdropComponent implements OnInit, AfterViewInit {
     this.batteryLevel = this._bluetoothService.Battery;
   }
 
-  toggleNoDeviceMode() {
-    this._store.dispatch(new fromCoreStore.SetNoDeviceMode(!this.layoutConfig.noDeviceMode));
+  doAnotherInjection() {
+    this._store.dispatch(new fromHomeStore.SetData({
+      firstTimeDose: false,
+      doses: this.homeConfig.doses.map((dose: any, index: number) => {
+        return {
+          marked: index === 0 ? dose.marked : false,
+          date: dose.date,
+          bodyPartInjected: index === 0 ? dose.bodyPartInjected : '',
+          notes: index === 0 ? dose.notes : null,
+        }
+      }),
+      timeTravelingDemoDone: true,
+      flareUpsDemoDone: true,
+      allCompletedDoses: false,
+    }));
+    this.toggle();
+    this.goTo('home/start-dose/prepare');
   }
 
-  toggleNoDeviceOopsFlow() {
-    if (this.layoutConfig.noDeviceMode) {
-      this._store.dispatch(new fromCoreStore.SetNoDeviceModeOopsFlow(!this.layoutConfig.noDeviceModeOopsFlow));
+  resetDemo() {
+    this._store.dispatch(new fromHomeStore.SetData({
+      firstTimeDose: true,
+      doses: this.homeConfig.doses.map(() => {
+        return {
+          marked: false,
+          date: '',
+          bodyPartInjected: '',
+          notes: null,
+        }
+      }),
+      timeTravelingDemoDone: false,
+      flareUpsDemoDone: false,
+      allCompletedDoses: false,
+      onBoardingTasks: this.homeConfig.onBoardingTasks.map((task: any) => {
+        return {
+          ...task,
+          completed: false,
+        }
+      }),
+      onBoardingDone: false,
+    }));
+    this.toggle();
+    this.goTo('welcome');
+  }
+
+  toggleDebuggingOptions(option: string) {
+    switch (option) {
+      case 'no-device-mode':
+        this._store.dispatch(new fromCoreStore.SetNoDeviceMode(!this.layoutConfig.noDeviceMode));
+        break;
+      case 'oops-flow':
+        if (this.layoutConfig.noDeviceMode) {
+          this._store.dispatch(new fromCoreStore.SetNoDeviceModeOopsFlow(!this.layoutConfig.noDeviceModeOopsFlow));
+        }
+        break;
+      case 'battery-low':
+        if (this.layoutConfig.noDeviceMode) {
+          this._store.dispatch(new fromCoreStore.SetNoDeviceModeBatteryLowFlow(!this.layoutConfig.noDeviceModeBatteryLowFlow));
+          this._bluetoothService.Battery = 5;
+        }
+        break;
+      case 'device-debugging':
+        this._store.dispatch(new fromCoreStore.SetDeviceDebugging(!this.layoutConfig.debuggingDeviceMode));
+        break;
     }
   }
 
-  toggleNoDeviceBatteryLowFlow() {
-    if (this.layoutConfig.noDeviceMode) {
-      this._store.dispatch(new fromCoreStore.SetNoDeviceModeBatteryLowFlow(!this.layoutConfig.noDeviceModeBatteryLowFlow));
-      this._bluetoothService.Battery = 5;
-    }
-  }
-
-  toggleDebuggingDevice() {
-    if (this.layoutConfig.debuggingDeviceMode) {
-      this._store.dispatch(new fromCoreStore.SetNoDeviceModeBatteryLowFlow(!this.layoutConfig.debuggingDeviceMode));
-    }
+  goTo(path: string) {
+    this._store.dispatch(new fromCoreStore.Go({
+      path: [path]
+    }));
   }
 
   private _loadComponent(component: any) {
