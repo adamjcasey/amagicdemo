@@ -69,6 +69,33 @@
       margin: var(--size-s) auto 0;
     }
 
+    .battery-indicator__wrapper {
+      grid-row: 1;
+      grid-column: 3;
+      text-align: center;
+
+      .battery-indicator {
+        position: relative;
+        display: inline-block; 
+      }
+
+      ion-icon {
+        font-size: 48px;
+      }
+
+      .battery-indicator__value {
+        position: absolute;
+        margin: 0;
+        width: 40px;
+        text-align: center;
+        left: calc(50% - 20px);
+        bottom: 6px;
+        color: var(--color-white);
+        font-size: var(--font-size-paragraph-xs);
+        font-weight: var(--font-weight-semibold);
+      }
+    }
+
     .background {
       grid-row: 1;
       grid-column: 1 / -1;

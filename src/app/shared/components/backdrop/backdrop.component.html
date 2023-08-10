@@ -30,6 +30,12 @@
       <ion-img class="logo" src="/assets/images/backdrop-header-logo.svg"></ion-img>
       <div class="background"></div>
       <ion-img class="ellipse" src="/assets/images/backdrop-header-ellipse.svg"></ion-img>
+      <div class="battery-indicator__wrapper" *ngIf="batteryLevel <= 5">
+        <div class="battery-indicator">
+          <ion-icon src="/assets/icons/battery-indicator.svg"></ion-icon>
+          <p class="battery-indicator__value">{{ batteryLevel }}%</p>
+        </div>
+      </div>
     </header>
 
     <div class="backdrop__content">
