@@ -81,6 +81,13 @@ export function LayoutReducer(
       };
     }
 
+    case fromActions.ActionTypes.SetDeviceDebugging: {
+      return {
+        ...state,
+        debuggingDeviceMode: action.payload,
+      };
+    }
+
     default: {
       return state;
     }

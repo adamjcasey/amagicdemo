@@ -12,6 +12,13 @@
     font-size: 44px;
   }
 
+  .debugging-cta {
+    ion-icon {
+      color: var(--color-text);
+      font-size: var(--size-m);
+    }
+  }
+
   .timer {
     display: flex;
     align-items: center;
@@ -30,6 +37,7 @@
       line-height: var(--font-line-height-heading-5);
     }
   }
+
   .notifications-cta {
     .counter {
       position: absolute;

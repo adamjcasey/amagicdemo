@@ -40,7 +40,7 @@ export class BluetoothService {
     this.rssi_ = 0;
     this.name_ = '';
     this.state_ = 0;
-    this.battery_ = 20;
+    this.battery_ = 0;
     this.dosage_ = 0;
     this.isConnected_ = false;
     this.isScanning_ = false;
@@ -139,11 +139,19 @@ export class BluetoothService {
   }
 
   async waitForDosingStart(continueDose?: boolean) {
+    if (this.layoutConfig.debuggingDeviceMode) {
+      this.renderDebuggingVerboose('waitForDosingStart');
+    }
+
     // start watching the press on the device
     if (Capacitor.isNativePlatform()  && !this.layoutConfig.noDeviceMode) {
       if (this.state_ === 1) {
         return new Promise((resolve) => {
           const controller = setInterval(() => {
+            if (this.layoutConfig.debuggingDeviceMode) {
+              this.renderDebuggingVerboose('waitForDosingStart');
+            }
+
             if (this.state_ === 2) {
               clearInterval(controller);
               resolve(true);
@@ -154,6 +162,10 @@ export class BluetoothService {
       return new Error('waitForDosingStart > state of the device is not 1.');
     }
     else {
+      if (this.layoutConfig.debuggingDeviceMode) {
+        this.renderDebuggingVerboose('waitForDosingStart');
+      }
+
       // support for web, wait 10segs (duration of the dosing) to return a true;
       await new Promise(resolve => setTimeout(resolve, continueDose ? 0 : 6500));
       return true;
@@ -161,9 +173,17 @@ export class BluetoothService {
   }
 
   async checkDosing(remainingDose?: number) {
+    if (this.layoutConfig.debuggingDeviceMode) {
+      this.renderDebuggingVerboose('checkDosing');
+    }
+
     if (Capacitor.isNativePlatform()  && !this.layoutConfig.noDeviceMode) {
       return new Promise((resolve, reject) => {
         const controller = setInterval(() => {
+          if (this.layoutConfig.debuggingDeviceMode) {
+            this.renderDebuggingVerboose('checkDosing');
+          }
+
           if (this.state_ === 3) {
             clearInterval(controller);
             resolve(true);
@@ -189,6 +209,10 @@ export class BluetoothService {
   }
 
   async isDeviceConnected() {
+    if (this.layoutConfig.debuggingDeviceMode) {
+      this.renderDebuggingVerboose('isDeviceConnected');
+    }
+
     if (Capacitor.isNativePlatform()  && !this.layoutConfig.noDeviceMode) {
       if (!this.isScanning_) {
         await this.scan();
@@ -196,6 +220,10 @@ export class BluetoothService {
 
       return new Promise((resolve) => {
         const controller = setInterval(() => {
+          if (this.layoutConfig.debuggingDeviceMode) {
+            this.renderDebuggingVerboose('isDeviceConnected');
+          }
+
           if (this.isConnected_ || this.layoutConfig.noDeviceMode) {
             clearInterval(controller);
             resolve(true);
@@ -289,6 +317,10 @@ export class BluetoothService {
 
   //--------------------------------------------------
   async scan() {
+    if (this.layoutConfig.debuggingDeviceMode) {
+      this.renderDebuggingVerboose('scan');
+    }
+
     if (Capacitor.isNativePlatform() && !this.layoutConfig.noDeviceMode) {
       console.log("Is Native Capacitor bluetooth.service.ts scan");
 
@@ -331,10 +363,31 @@ export class BluetoothService {
 
   //--------------------------------------------------
   async stop() {
+    if (this.layoutConfig.debuggingDeviceMode) {
+      this.renderDebuggingVerboose('stop');
+    }
+
     clearInterval(this.interval_id_);
     this.isConnected_ = false;
     if (Capacitor.isNativePlatform()) {
       await BleClient.disconnect(this.peripheral_.device.deviceId);
+    }
+  }
+
+  renderDebuggingVerboose(method: string) {
+    const wrapper = document.getElementById('device-debugging-content');
+    if (wrapper) {
+      wrapper.innerHTML = `
+        <h5>Method: ${method}</h5>
+        <p>UUID: ${this.uuid_}</p>
+        <p>RSSI: ${this.rssi_}</p>
+        <p>Name: ${this.name_}</p>
+        <p>State: ${this.state_}</p>
+        <p>Battery: ${this.battery_}</p>
+        <p>Dosage: ${this.dosage_}</p>
+        <p>Is Connected?: ${this.isConnected_}</p>
+        <p>Is Scanning?: ${this.isScanning_}</p>
+      `;
     }
   }
 }
