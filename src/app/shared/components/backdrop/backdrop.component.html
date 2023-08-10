@@ -224,7 +224,7 @@
             <ng-template swiperSlide *ngIf="section.detail" class="highlights-tour__slide">
               <div 
                 class="highlights__detail" 
-                [innerHTML]="sanitizeContent(section.detail)">
+                [dinamicInnerHtml]="section.detail">
               </div>
             </ng-template>
           </ng-container>

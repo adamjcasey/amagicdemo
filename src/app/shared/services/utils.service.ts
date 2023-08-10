@@ -3,35 +3,35 @@ import { Injectable } from "@angular/core";
 @Injectable()
 export class UtilsService {
   createMasonryLayout(wrapper: Element) {
-    const resizeGridItem = (item: any) => {
-      const rowHeight = parseInt(window.getComputedStyle(wrapper).getPropertyValue('grid-auto-rows'));
-      const rowGap = parseInt(window.getComputedStyle(wrapper).getPropertyValue('grid-row-gap'));
-      const rowSpan = Math.ceil((item.firstChild.clientHeight + rowGap) / (rowHeight + rowGap));
-      item.style.gridRowEnd = `span ${rowSpan}`;
-    }
-
-    const items = wrapper.children;
-    const resizeItems = () => {
-      for(let i = 0; i < items.length; i++) {
-        resizeGridItem(items[i]);
+    const applyMasonry = () => {
+      const resizeGridItem = (item: any) => {
+        const rowHeight = 12;
+        const rowGap = parseInt(window.getComputedStyle(wrapper).getPropertyValue('grid-row-gap'));
+        const rowSpan = Math.ceil((item.firstChild.clientHeight + rowGap) / (rowHeight + rowGap));
+        item.style.gridRowEnd = `span ${rowSpan}`;
       }
+  
+      const items = wrapper.children;
+      const resizeItems = () => {
+        for(let i = 0; i < items.length; i++) {
+          resizeGridItem(items[i]);
+        }
+      }
+      resizeItems();
+      window.addEventListener('resize', resizeItems);
     }
 
-    let loadedItems = 0;
-    const controller = setInterval(() => {
-      Array.from(items).forEach((element: any, index: number) => {
-        const image = element.querySelector('.card__image ion-img');
-        if (image && image.offsetHeight !== 0) {
-          loadedItems++;
+    const images = wrapper.querySelectorAll('.card .card__image img');
+    let loadedImages = 0;
+    images.forEach(image => {
+      image.addEventListener('load', () => {
+        loadedImages++;
+        if (loadedImages === images.length) {
+          wrapper.classList.add('layout-loaded');
+          applyMasonry();
         }
       });
-
-      if (loadedItems === items.length) {
-        resizeItems();
-        clearInterval(controller);
-      }
-    }, 200);
-    window.addEventListener('resize', resizeItems);
+    });
   }
 
   humanizeBodyPartInjected(bodyPart: string) {

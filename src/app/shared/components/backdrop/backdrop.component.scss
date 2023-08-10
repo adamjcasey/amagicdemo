@@ -328,6 +328,8 @@
         min-height: 1010px;
 
         automagic-card {
+          // min-height: 290px;
+
           &.hotspot-element {
             position: relative;
           }
@@ -371,7 +373,7 @@
 
       .highlights__detail {
         color: var(--color-white);
-        min-height: 6800px;
+        // min-height: 6800px;
 
         h1 {
           margin-bottom: var(--size-xxl);

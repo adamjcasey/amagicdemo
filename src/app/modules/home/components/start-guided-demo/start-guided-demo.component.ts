@@ -81,7 +81,7 @@ export class StartGuidedDemoComponent implements OnInit, OnDestroy {
             <div class="highlights__detail-section color-salmon">
               <h2>Patient-centric approach</h2>
               <ion-img src="/assets/images/take-benefits-1.svg"></ion-img>
-          
+
               <div class="box-wrapper">
                 <p class="indicator">1</p>
                 <h3>Supporting the holistic treatment experience</h3>
@@ -89,21 +89,21 @@ export class StartGuidedDemoComponent implements OnInit, OnDestroy {
                 <p>Supporting the holistic treatment experience at all stages of the journey (patient centricity goes beyond
                   providing a treatment/drug).</p>
               </div>
-          
+
               <div class="box-wrapper">
                 <p class="indicator">2</p>
                 <h3>Improving and Verifying Patient Outcomes</h3>
                   <p class="eyebrow">Patient</p>
                   <p>Improving patient patient outcomes by ensuring a full dose every time. </p>
               </div>
-          
+
               <div class="box-wrapper">
                 <p class="indicator">3</p>
                 <h3>Real world patient data informs the business</h3>
                 <p class="eyebrow">Patient</p>
                 <p>Better understanding of the patient population with increased direct feedback and real-world data.</p>
               </div>
-          
+
               <div class="box-wrapper">
                 <p class="indicator">4</p>
                 <h3>Increased patient access</h3>
@@ -111,18 +111,18 @@ export class StartGuidedDemoComponent implements OnInit, OnDestroy {
                 <p>Increased patient access to therapies through at-home, confident dosing.</p>
               </div>
             </div>
-          
+
             <div class="highlights__detail-section color-honey-yellow">
               <h2>We collect, analyze, and act on real-world data</h2>
               <ion-img src="/assets/images/take-benefits-2.svg"></ion-img>
-          
+
               <div class="box-wrapper">
                 <p class="indicator">1</p>
                 <h3>Strategic roadmap</h3>
                 <p class="eyebrow">Business</p>
                 <p>Informing our strategic roadmap to help leadership make data-driven decisions.</p>
               </div>
-          
+
               <div class="box-wrapper">
                 <p class="indicator">2</p>
                 <h3>Iterative refinement</h3>
@@ -130,7 +130,7 @@ export class StartGuidedDemoComponent implements OnInit, OnDestroy {
                 <p>Collecting data that helps us iteratively refine our therapies, technologies, delivery systems, and the patient
                   experience.</p>
               </div>
-          
+
               <div class="box-wrapper">
                 <p class="indicator">3</p>
                 <h3>Privacy center</h3>
@@ -139,25 +139,25 @@ export class StartGuidedDemoComponent implements OnInit, OnDestroy {
                   minimizing manner; gathering more and richer longitudinal patient data.</p>
               </div>
             </div>
-          
+
             <div class="highlights__detail-section color-green">
               <h2>Prepared for Value-Based Care</h2>
               <ion-img src="/assets/images/take-benefits-3.svg"></ion-img>
-          
+
               <div class="box-wrapper">
                 <p class="indicator">1</p>
                 <h3>Actionable data</h3>
                 <p class="eyebrow">Business</p>
                 <p>Collecting comprehensive, nuanced, and actionable data to meet requirements.</p>
               </div>
-          
+
               <div class="box-wrapper">
                 <p class="indicator">2</p>
                 <h3>Patient protection</h3>
                   <p class="eyebrow">Reputation</p>
                   <p>Gathering data in a responsible way that protects patients.</p>
               </div>
-          
+
               <div class="box-wrapper">
                 <p class="indicator">3</p>
                 <h3>Improved delivery experience</h3>
@@ -166,11 +166,11 @@ export class StartGuidedDemoComponent implements OnInit, OnDestroy {
                 </p>
               </div>
             </div>
-          
+
             <div class="highlights__detail-section color-tiffany-blue">
               <h2>Takeda is a bioTECH innovation leader</h2>
               <ion-img src="/assets/images/take-benefits-4.svg"></ion-img>
-          
+
               <div class="box-wrapper">
                 <p class="indicator">1</p>
                 <h3>Consumer tech quality</h3>
