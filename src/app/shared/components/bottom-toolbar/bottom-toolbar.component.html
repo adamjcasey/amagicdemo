@@ -11,7 +11,7 @@
   <ion-tab-button tab="home" [ngClass]="{
     'is-active': isActivePath('home'), 
     'is-blocked': homeConfig.firstTimeDose,
-    'hotspot-element': homeConfig.onBoardingTasks[0].completed,
+    'hotspot-element': onBoardingTasksCompleted > 0,
   }">
     <ion-icon size="medium" src="/assets/icons/home.svg"></ion-icon>
     Home
