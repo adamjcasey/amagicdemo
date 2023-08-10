@@ -193,26 +193,28 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                         this.sliderPage.slideNext();
                         if (this.homeConfig.firstTimeDose) {
                           this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-blue'));
-                          this._store.dispatch(new fromSharedStore.BackdropShow({
-                            transition: 'move',
-                            fullScreen: true,
-                            header: true,
-                            bgTemplate: 'top-hole',
-                            template: `
-                              <div class="no-need-to-clean-message">
-                                <h1 class="font-heading-1--bold">No need to clean!</h1>
-                                <p>For this demo you will not need to use an alcohol swab.</p>
-                              </div>
-                            `,
-                            buttons: [
-                              {
-                                label: 'Got it',
-                                action: () => {
-                                  this._store.dispatch(new fromSharedStore.BackdropHide);
-                                },
-                              }
-                            ],
-                          }));
+                          setTimeout(() => {
+                            this._store.dispatch(new fromSharedStore.BackdropShow({
+                              transition: 'move',
+                              fullScreen: true,
+                              header: true,
+                              bgTemplate: 'top-hole',
+                              template: `
+                                <div class="no-need-to-clean-message">
+                                  <h1 class="font-heading-1--bold">No need to clean!</h1>
+                                  <p>For this demo you will not need to use an alcohol swab.</p>
+                                </div>
+                              `,
+                              buttons: [
+                                {
+                                  label: 'Got it',
+                                  action: () => {
+                                    this._store.dispatch(new fromSharedStore.BackdropHide);
+                                  },
+                                }
+                              ],
+                            }));
+                          }, 3000);
                         }
                       }
                     }

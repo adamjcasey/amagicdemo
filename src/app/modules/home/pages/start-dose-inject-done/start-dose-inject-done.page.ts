@@ -160,26 +160,28 @@ export class StartDoseInjectDonePage implements OnInit {
                         label: 'Got it',
                         action: () => {
                           this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-blue'));
-                          this._store.dispatch(new fromSharedStore.BackdropShow({
-                            transition: 'move',
-                            fullScreen: true,
-                            header: true,
-                            bgTemplate: 'top-hole',
-                            template: `
-                              <div class="start-dose-inject-done-message">
-                                <h1 class="font-heading-1--bold">Do not discard!</h1>
-                                <p>We will reuse this connected autoinjector for future demonstrations</p>
-                              </div>
-                            `,
-                            buttons: [
-                              {
-                                label: 'Got it',
-                                action: () => {
-                                  this._store.dispatch(new fromSharedStore.BackdropHide);
-                                },
-                              }
-                            ]
-                          }));
+                          setTimeout(() => {
+                            this._store.dispatch(new fromSharedStore.BackdropShow({
+                              transition: 'move',
+                              fullScreen: true,
+                              header: true,
+                              bgTemplate: 'top-hole',
+                              template: `
+                                <div class="start-dose-inject-done-message">
+                                  <h1 class="font-heading-1--bold">Do not discard!</h1>
+                                  <p>We will reuse this connected autoinjector for future demonstrations</p>
+                                </div>
+                              `,
+                              buttons: [
+                                {
+                                  label: 'Got it',
+                                  action: () => {
+                                    this._store.dispatch(new fromSharedStore.BackdropHide);
+                                  },
+                                }
+                              ]
+                            }));
+                          }, 3000);
                           this.sliderPage.slideNext();
                         }
                       }
