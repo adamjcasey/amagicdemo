@@ -4,7 +4,9 @@ import {
   EventEmitter, 
   ViewEncapsulation, 
   AfterViewInit,
-  Input
+  Input,
+  ViewChild,
+  ElementRef
 } from '@angular/core';
 
 @Component({
@@ -18,6 +20,10 @@ export class PinInputComponent implements AfterViewInit {
   @Output() onError = new EventEmitter<boolean>();
   @Input() error!: any;
   @Input() allowedCodes!: string[];
+  @ViewChild('digit1') digit1!: ElementRef;
+  @ViewChild('digit2') digit2!: ElementRef;
+  @ViewChild('digit3') digit3!: ElementRef;
+  @ViewChild('digit4') digit4!: ElementRef;
 
   constructor() {}
 
@@ -32,28 +38,25 @@ export class PinInputComponent implements AfterViewInit {
     event.target.value = input.charAt(0);
   }
 
-  onDigit(event: any, digit: number) {
-    const currentDigit = document.getElementById(`digit-${digit}`);
-    const previousDigit = digit > 1 ? document.getElementById(`digit-${digit - 1}`) : null;
-    const nextDigit = digit < 4 ? document.getElementById(`digit-${digit + 1}`) : null;
+  onDigit(event: any) {
+    const currentDigit = event.target;
+    const previousDigit = currentDigit.previousSibling;
+    const nextDigit = currentDigit.nextSibling;
     if (event.code === 'Backspace') {
-      if (digit > 1) {
-        currentDigit?.setAttribute('disabled', 'true');
+      debugger
+      if (previousDigit) {
+        previousDigit?.removeAttribute('disabled');
         previousDigit?.focus();
       }
     }
     else {
-      if (event.target.value !== '') {
+      if (currentDigit.value !== '') {
         nextDigit?.removeAttribute('disabled');
         nextDigit?.focus();
       }
     }
 
-    const digit1 = (document.getElementById('digit-1') as HTMLInputElement)
-    const digit2 = (document.getElementById('digit-2') as HTMLInputElement);
-    const digit3 = (document.getElementById('digit-3') as HTMLInputElement);
-    const digit4 = (document.getElementById('digit-4') as HTMLInputElement);
-    const output = `${digit1?.value}${digit2?.value}${digit3?.value}${digit4?.value}`;
+    const output = `${this.digit1?.nativeElement.value}${this.digit2?.nativeElement.value}${this.digit3?.nativeElement.value}${this.digit4?.nativeElement.value}`;
     if (this.allowedCodes) {
       if (output.length === 4) {
         if (!this.allowedCodes.includes(output)) {
