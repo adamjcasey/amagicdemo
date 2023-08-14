@@ -9,6 +9,7 @@ export interface CoreState {
 export interface LayoutState {
   fullScreen: boolean;
   rightCornerEl: any,
+  welcomeFlowDone: boolean;
   noDeviceMode: boolean;
   noDeviceModeOopsFlow: boolean;
   noDeviceModeBatteryLowFlow: boolean;
@@ -18,6 +19,7 @@ export interface LayoutState {
 export const initialState: LayoutState = {
   fullScreen: false,
   rightCornerEl: null,
+  welcomeFlowDone: false,
   noDeviceMode: false,
   noDeviceModeOopsFlow: false,
   noDeviceModeBatteryLowFlow: false,

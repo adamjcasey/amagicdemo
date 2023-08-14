@@ -18,7 +18,6 @@ export const initialState: SharedState = {
     showBackButton: true,
     highlights: null,
     contentCentered: false,
-    blockClosing: false,
   },
   sliderPageConfig: {
     header: {

@@ -352,11 +352,10 @@
 
       .cards-container {
         @include masonry-layout;
-        min-height: 1010px;
+        max-width: 340px;
+        margin: 0 auto;
 
         automagic-card {
-          // min-height: 290px;
-
           &.hotspot-element {
             position: relative;
           }

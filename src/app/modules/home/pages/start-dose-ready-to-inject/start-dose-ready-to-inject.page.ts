@@ -214,7 +214,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                                 }
                               ],
                             }));
-                          }, 3000);
+                          }, 1500);
                         }
                       }
                     }

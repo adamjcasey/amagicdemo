@@ -166,7 +166,8 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
             {
               label: 'Continue',
               action: () => {
-                this._store.dispatch(new fromSharedStore.SliderPageClear());
+                this._store.dispatch(new fromSharedStore.SliderPageClear);
+                this._store.dispatch(new fromCoreStore.SetWelcomeFlowAsDone);
                 this.goTo('home');
               }
             }
@@ -213,7 +214,6 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
         header: false,
         contentCentered: true,
         showBackButton: false,
-        blockClosing: true,
         component: 'welcome-sign-up',
       }));
 

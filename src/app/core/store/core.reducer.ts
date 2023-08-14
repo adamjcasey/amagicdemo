@@ -88,6 +88,13 @@ export function LayoutReducer(
       };
     }
 
+    case fromActions.ActionTypes.SetWelcomeFlowAsDone: {
+      return {
+        ...state,
+        welcomeFlowDone: true,
+      };
+    }
+
     default: {
       return state;
     }
