@@ -172,23 +172,39 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
     }
   }
 
-  async continueDosing() {
-    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple'));
-    this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
-      color: '--color-bg-pastel-purple',
-    }));
-    this.errorDosing = false;
-
-    try {
-      const startDosing = await this._bluetoothService.waitForDosingStart(true);
-      if (startDosing) {
-        this.totalTime += 1;
-        this.startDose();
-        this.checkDosingProcess(true);    
+  async continueDosing() {    
+    this._store.dispatch(new fromSharedStore.BackdropShow({
+      transition: 'move',
+      header: true,
+      template: `
+        <div class="dosing-demo-try-again-message">
+          <h1 class="font-heading-1--bold">For this demo let’s try that again</h1>
+          <img src="assets/images/dosing-try-again.svg">
+          <p>Now you’ve seen what happens if you lift the injector too early.</p>
+          <p>For the correct injection experience, follow the app prompts and <br><strong>hold the injector down until the <br>app shows a completed injection <br>(10 seconds).</strong></p>
+        </div>
+      `,
+      onClose: async () => {
+        this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple'));
+        this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
+          color: '--color-bg-pastel-purple',
+        }));
+        this.errorDosing = false;
+        this._store.dispatch(new fromSharedStore.SliderPageSlidePrev);
+        
+        // to continue with the dose flow
+        // try {
+        //   const startDosing = await this._bluetoothService.waitForDosingStart(true);
+        //   if (startDosing) {
+        //     this.totalTime += 1;
+        //     this.startDose();
+        //     this.checkDosingProcess(true);    
+        //   }
+        // }
+        // catch (error) {
+        //   console.log('restartDosing > error: ', error);
+        // }
       }
-    }
-    catch (error) {
-      console.log('restartDosing > error: ', error);
-    }
+    }));
   }
 }
