@@ -14,6 +14,7 @@ export interface LayoutState {
   noDeviceModeOopsFlow: boolean;
   noDeviceModeBatteryLowFlow: boolean;
   debuggingDeviceMode: boolean;
+  deviceModel?: string;
 }
 
 export const initialState: LayoutState = {

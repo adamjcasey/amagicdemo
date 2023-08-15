@@ -95,6 +95,13 @@ export function LayoutReducer(
       };
     }
 
+    case fromActions.ActionTypes.SetDeviceModelInfo: {
+      return {
+        ...state,
+        deviceModel: action.payload,
+      };
+    }
+
     default: {
       return state;
     }

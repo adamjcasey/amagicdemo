@@ -30,7 +30,7 @@
       <ion-img class="logo" src="/assets/images/backdrop-header-logo.svg"></ion-img>
       <div class="background"></div>
       <ion-img class="ellipse" src="/assets/images/backdrop-header-ellipse.svg"></ion-img>
-      <div class="battery-indicator__wrapper" *ngIf="batteryLevel <= 5">
+      <div class="battery-indicator__wrapper" *ngIf="batteryLevel <= 5 && layoutConfig.welcomeFlowDone">
         <div class="battery-indicator">
           <ion-icon src="/assets/icons/battery-indicator.svg"></ion-icon>
           <p class="battery-indicator__value">{{ batteryLevel }}%</p>
@@ -420,7 +420,17 @@
     ></ion-icon>
 
     <div class="backdrop__fold" (click)="toggle()">
-      <ion-img class="background" src="/assets/images/backdrop-fold-bg.svg"></ion-img>
+      <ng-container *ngIf="layoutConfig.deviceModel" [ngSwitch]="layoutConfig.deviceModel">
+        <ion-img *ngSwitchCase="'iphone-x'" class="background" src="/assets/images/backdrop-fold-bg--iphone-x.svg"></ion-img>
+        <ion-img *ngSwitchCase="'iphone-11'" class="background" src="/assets/images/backdrop-fold-bg--iphone-11.svg"></ion-img>
+        <ion-img *ngSwitchCase="'iphone-12'" class="background" src="/assets/images/backdrop-fold-bg--iphone-12.svg"></ion-img>
+        <ion-img *ngSwitchCase="'iphone-13'" class="background" src="/assets/images/backdrop-fold-bg--iphone-13.svg"></ion-img>
+        <ion-img *ngSwitchCase="'iphone-14'" class="background" src="/assets/images/backdrop-fold-bg--iphone-14.svg"></ion-img>
+        <ion-img *ngSwitchCase="'iphone-14-pro'" class="background" src="/assets/images/backdrop-fold-bg--iphone-14-pro.svg"></ion-img>
+      </ng-container>
+      <ng-container *ngIf="!layoutConfig.deviceModel">
+        <ion-img class="background" src="/assets/images/backdrop-fold-bg.svg"></ion-img>
+      </ng-container>
       <ion-icon class="info hotspot-element" src="/assets/icons/info.svg"></ion-icon>
       <ion-icon class="close hotspot-element" name="chevron-up-outline"></ion-icon>
     </div>

@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
+import { Device } from '@capacitor/device';
 
 import * as fromStore from '@core/store';
 import * as fromSharedStore from '@shared/store';
 import * as fromSharedServices from '@shared/services';
 import * as fromHomeStore from '@home/store';
 import { GestureController } from '@shared/services/gestureController';
+import { Capacitor } from '@capacitor/core';
 
 @Component({
   selector: 'automagic-layout',
@@ -23,9 +24,9 @@ export class LayoutPage implements OnInit {
   public homeConfig: any;
   public minBatterLevel: number = 5;
   public batteryLowMessageShowed: boolean = false;
+  public deviceInfo: any;
 
   constructor(
-    private _router: Router,
     private _store: Store<fromStore.LayoutState>,
     private _bluetoothService: fromSharedServices.BluetoothService,
   ) {
@@ -135,60 +136,60 @@ export class LayoutPage implements OnInit {
     });
 
     this.verifyBatterLevelOfDevice();
-  }
-
-  async verifyBatterLevelOfDevice() {
-    if (this.config.welcomeFlowDone) {
-      try {
-        const isDeviceConnected = await this._bluetoothService.isDeviceConnected();
-        if (isDeviceConnected) {
-          setInterval(() => {
-            const batteryLevel = this._bluetoothService.Battery;
-            if (batteryLevel < this.minBatterLevel) {
-              if (!this.backdropConfig.show && !this.batteryLowMessageShowed) {
-                this.batteryLowMessageShowed = true;
-                this._store.dispatch(new fromSharedStore.BackdropShow({
-                  transition: 'move',
-                  header: true,
-                  template: `
-                    <br>
-                    <img src="assets/images/battery-low.svg" />
-                    <h1 class="font-heading-1--bold">Injector battery <br>low</h1>
-                    <p>Unfortunately the demo injector has <br>a low battery and must be <br>recharged.</p>
-                    <h5>Please follow the recharge <br>instructions included with the <br>USB-C cord in the shipping box.</h5>
-                  `,
-                  onClose: () => {
-                    if (this.config.noDeviceModeBatteryLowFlow) {
-                      this._store.dispatch(new fromStore.SetNoDeviceModeBatteryLowFlow(false));
-                      this._bluetoothService.Battery = 20;
-                    }
-                  }
-                }));
-              }
-            }
-          }, 5000);
-        }
-      }
-      catch (error) {
-        console.log('verifyBatterLevelOfDevice > error: ', error);
-      }
+    if (Capacitor.isNativePlatform()) {
+      this.getDeviceInfo();
     }
   }
 
-  // setRootTab(event: any): void {
-  //   switch (event?.tab) {
-  //     case 'activity':
-  //       this._router.navigateByUrl('activity');
-  //       break;
+  async verifyBatterLevelOfDevice() {
+    const controller = setInterval(async () => {
+      if (this.config.welcomeFlowDone) {
+        try {
+          const isDeviceConnected = await this._bluetoothService.isDeviceConnected();
+          if (isDeviceConnected) {
+            clearInterval(controller);
+            setInterval(() => {
+              const batteryLevel = this._bluetoothService.Battery;
+              if (batteryLevel < this.minBatterLevel) {
+                if (!this.backdropConfig.show && !this.batteryLowMessageShowed) {
+                  this.batteryLowMessageShowed = true;
+                  this._store.dispatch(new fromSharedStore.BackdropShow({
+                    transition: 'move',
+                    header: true,
+                    template: `
+                      <br>
+                      <img src="assets/images/battery-low.svg" />
+                      <h1 class="font-heading-1--bold">Injector battery <br>low</h1>
+                      <p>Unfortunately the demo injector has <br>a low battery and must be <br>recharged.</p>
+                      <h5>Please follow the recharge <br>instructions included with the <br>USB-C cord in the shipping box.</h5>
+                    `,
+                    onClose: () => {
+                      if (this.config.noDeviceModeBatteryLowFlow) {
+                        this._store.dispatch(new fromStore.SetNoDeviceModeBatteryLowFlow(false));
+                        this._bluetoothService.Battery = 20;
+                      }
+                    }
+                  }));
+                }
+              }
+            }, 5000);
+          }
+        }
+        catch (error) {
+          console.log('verifyBatterLevelOfDevice > error: ', error);
+        }
+      }
+    }, 500);
+  }
 
-  //     case 'resources':
-  //       this._router.navigateByUrl('resources');
-  //       break;
-      
-  //     case 'settings':
-  //       this._router.navigateByUrl('settings');
-  //       break;
-  //     default:
-  //   }
-  // }
+  async getDeviceInfo() {
+    try {
+      this.deviceInfo = await Device.getInfo();
+      console.log('model: ', this.deviceInfo.name.toLowerCase().replace(' ', '-'));
+      this._store.dispatch(new fromStore.SetDeviceModelInfo(this.deviceInfo.name.toLowerCase().replace(' ', '-')));
+    }
+    catch(error: any) {
+      console.log('getDeviceInfo > error: ', error)
+    }
+  }
 }
