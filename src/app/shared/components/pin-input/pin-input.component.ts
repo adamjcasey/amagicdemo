@@ -8,6 +8,9 @@ import {
   ViewChild,
   ElementRef
 } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
+import { Keyboard } from '@capacitor/keyboard';
+import { animate, spring } from 'motion';
 
 @Component({
   selector: 'automagic-pin-input',
@@ -25,11 +28,45 @@ export class PinInputComponent implements AfterViewInit {
   @ViewChild('digit3') digit3!: ElementRef;
   @ViewChild('digit4') digit4!: ElementRef;
 
-  constructor() {}
-
-  ngAfterViewInit(): void {
-    const digit1 = document.getElementById('digit-1');
-    // digit1?.focus();
+  constructor() {
+    if (Capacitor.isNativePlatform()) {
+      Keyboard.addListener('keyboardWillShow', info => {
+        const inputPosition = this.digit1.nativeElement.getBoundingClientRect();
+        const positionY = inputPosition.top + inputPosition.height;
+        const remainingScreenSpace = window.innerHeight - info.keyboardHeight;
+        if (positionY > remainingScreenSpace) {
+          animate(
+            `#backdrop`,
+            { 
+              y: `-${(positionY - remainingScreenSpace) + 30}px`,
+              height: `${window.innerHeight + ((positionY - remainingScreenSpace) + 30)}px`,
+            },
+            { easing: spring({
+              stiffness: 80,
+              damping: 20,
+              mass: 1,
+              velocity: 800,
+            }) }
+          );
+        }
+      });
+  
+      Keyboard.addListener('keyboardWillHide', () => {
+        animate(
+          `#backdrop`,
+          { 
+            y: `0px`,
+            height: `${window.innerHeight}px`,
+          },
+          { easing: spring({
+            stiffness: 80,
+            damping: 20,
+            mass: 1,
+            velocity: 800,
+          }) }
+        );
+      });
+    }
   }
 
   limitToOneDigit(event: any) {
@@ -76,5 +113,4 @@ export class PinInputComponent implements AfterViewInit {
 
     this.onChange.emit(output);
   }
-
 }
