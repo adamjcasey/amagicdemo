@@ -116,7 +116,7 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
           `,
           actions: [
             {
-              label: 'Ok, let’s go!',
+              label: 'Done',
               fill: 'outline',
               action: () => {
                 this._store.dispatch(new fromSharedStore.AlertHide);
