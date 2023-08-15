@@ -83,6 +83,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
       if (config) {
         this.config = config;
         if (this.config.show) {
+          this.getBatteryLevel();
           if (this.config.component !== null) {
             this._loadComponent(this.config.component);
           }
@@ -142,10 +143,8 @@ export class BackdropComponent implements OnInit, AfterViewInit {
   }
 
   onMenuInit() {
-    this.getBatteryLevel();
     if (this.config.showBackButton) {
       this.backButton = null;
-      
       if (this.initialSlide > 0) {
         this.backButton = {
           label: 'Back',

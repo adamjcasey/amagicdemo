@@ -252,7 +252,6 @@ export class StartDoseInjectDonePage implements OnInit {
           // if the user has completed the 6 doses we will show the Dose report
           const markedDoses = this.homeConfig?.doses.filter((dose: any) => dose.marked);
           if (markedDoses.length === 6) {
-            console.log('tiene 6 doses, pone report');
             this.slides.push({
               content: {
                 isExpanded: true,

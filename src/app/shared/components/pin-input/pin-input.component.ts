@@ -3,7 +3,6 @@ import {
   Output, 
   EventEmitter, 
   ViewEncapsulation, 
-  AfterViewInit,
   Input,
   ViewChild,
   ElementRef
@@ -18,7 +17,7 @@ import { animate, spring } from 'motion';
   styleUrls: ['pin-input.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class PinInputComponent implements AfterViewInit {
+export class PinInputComponent {
   @Output() onChange = new EventEmitter<string>();
   @Output() onError = new EventEmitter<boolean>();
   @Input() error!: any;

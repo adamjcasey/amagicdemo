@@ -1,5 +1,5 @@
-import { Injectable, NgZone } from '@angular/core';
-import { BleClient, ScanResult } from '@capacitor-community/bluetooth-le';
+import { Injectable } from '@angular/core';
+import { BleClient } from '@capacitor-community/bluetooth-le';
 import { Capacitor } from '@capacitor/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
@@ -119,14 +119,24 @@ export class BluetoothService {
   // Bluetooth Actions
   //--------------------------------------------------
   async checkPermissions() {
+    if (this.layoutConfig.debuggingDeviceMode) {
+      this.renderDebuggingVerboose('checkPermissions');
+    }
+
     if (Capacitor.isNativePlatform() && !this.layoutConfig.noDeviceMode) {
       await BleClient.initialize();
-      const isEnabled = await BleClient.isEnabled();
+      const isEnabled: any = await BleClient.isEnabled();
       return new Promise((resolve, reject) => {
         if (isEnabled) {
+          if (this.layoutConfig.debuggingDeviceMode) {
+            this.renderDebuggingVerboose('BleClient is enabled? ', isEnabled);
+          }
           resolve('granted');
         }
         else {
+          if (this.layoutConfig.debuggingDeviceMode) {
+            this.renderDebuggingVerboose('BleClient is not Allowed');
+          }
           reject('not-allowed');
         }
       });
@@ -210,7 +220,7 @@ export class BluetoothService {
 
   async isDeviceConnected() {
     if (this.layoutConfig.debuggingDeviceMode) {
-      this.renderDebuggingVerboose('isDeviceConnected');
+      this.renderDebuggingVerboose('isDeviceConnected?');
     }
 
     if (Capacitor.isNativePlatform()  && !this.layoutConfig.noDeviceMode) {
@@ -220,15 +230,11 @@ export class BluetoothService {
 
       return new Promise((resolve) => {
         const controller = setInterval(() => {
-          if (this.layoutConfig.debuggingDeviceMode) {
-            this.renderDebuggingVerboose('isDeviceConnected');
-          }
-
           if (this.isConnected_ || this.layoutConfig.noDeviceMode) {
-            clearInterval(controller);
-            resolve(true);
-          }
-          if (this.isConnected_){
+            if (this.layoutConfig.debuggingDeviceMode) {
+              this.renderDebuggingVerboose('Device is connected');
+            }
+
             clearInterval(controller);
             resolve(true);
           }
@@ -243,6 +249,10 @@ export class BluetoothService {
   }
 
   async openSettingsApp() {
+    if (this.layoutConfig.debuggingDeviceMode) {
+      this.renderDebuggingVerboose('openSettingsApp');
+    }
+
     if (Capacitor.isNativePlatform()) {
       await BleClient.openAppSettings();
     }
@@ -254,24 +264,34 @@ export class BluetoothService {
 
   //--------------------------------------------------
   async onDeviceDiscovered(peripheral: any) {
-    if (((peripheral.localName == "AutoMagic") ||
-      (peripheral.device.name == "AutoMagic"))
-      && (peripheral.rssi > -60)) {
+    if (this.layoutConfig.debuggingDeviceMode) {
+      this.renderDebuggingVerboose('Connected to device');
+    }
+
+    if (
+      peripheral.localName == 'AutoMagic' || 
+      peripheral.device.name == 'AutoMagic' && 
+      peripheral.rssi > -60
+    ) {
       this.isConnected_ = true;
       this.isScanning_ = false;
       this.peripheral_ = peripheral;
-      console.log("AutoMagic Discovered: ");
-      console.log(peripheral);
-      console.log("Name: " + peripheral.name_);
-      console.log("RSSI: " + peripheral.rssi_);
       this.rssi_ = peripheral.rssi;
       this.uuid_ = peripheral.device.deviceId;
+
+      if (this.layoutConfig.debuggingDeviceMode) {
+        this.renderDebuggingVerboose('AutoMagic Discovered ', JSON.stringify(this.peripheral_));
+      }
 
       if (Capacitor.isNativePlatform()) {
         await BleClient.stopLEScan();
         await BleClient.connect(peripheral.device.deviceId);
       }
       console.log('Connected to device', peripheral.device.deviceId);
+
+      if (this.layoutConfig.debuggingDeviceMode) {
+        this.renderDebuggingVerboose('Connected to device');
+      }
 
       // Once connected, read the characteristic every 250ms.  
       // Discriminate state, battery, and dosing values
@@ -308,8 +328,12 @@ export class BluetoothService {
           console.log("Battery: " + this.battery_);
           console.log("Dosing: " + this.dosage_);
         }
-        catch (error) {
-          console.error('Error in interval callback:', error);
+        catch (error: any) {
+          console.error('onDeviceDiscovered - error: ', error);
+
+          if (this.layoutConfig.debuggingDeviceMode) {
+            this.renderDebuggingVerboose('onDeviceDiscovered', error);
+          }
         }
       }, intervalDuration);
     }
@@ -322,8 +346,6 @@ export class BluetoothService {
     }
 
     if (Capacitor.isNativePlatform() && !this.layoutConfig.noDeviceMode) {
-      console.log("Is Native Capacitor bluetooth.service.ts scan");
-
       try {
         this.isScanning_ = true;
         await BleClient.requestLEScan(
@@ -331,9 +353,12 @@ export class BluetoothService {
           this.onDeviceDiscovered.bind(this)
         );
       }
-      catch (error) {
-        console.error('scan', error);
+      catch (error: any) {
         this.isScanning_ = false;
+
+        if (this.layoutConfig.debuggingDeviceMode) {
+          this.renderDebuggingVerboose('scan - error', error);
+        }
       }
     }
     else {
@@ -371,14 +396,23 @@ export class BluetoothService {
     this.isConnected_ = false;
     if (Capacitor.isNativePlatform()) {
       await BleClient.disconnect(this.peripheral_.device.deviceId);
+
+      if (this.layoutConfig.debuggingDeviceMode) {
+        this.renderDebuggingVerboose('stop', `Device disconnected ${this.peripheral_.device.deviceId}`);
+      }
     }
   }
 
-  renderDebuggingVerboose(method: string) {
+  renderDebuggingVerboose(action: string, message?: string) {
     const wrapper = document.getElementById('device-debugging-content');
     if (wrapper) {
       wrapper.innerHTML = `
-        <h5>Method: ${method}</h5>
+        <h5>Action: ${action}</h5>
+        ${ message ?`
+          <h5>Log</h5>
+          <p>${message}</p>
+          <hr>
+        `: null }
         <p>UUID: ${this.uuid_}</p>
         <p>RSSI: ${this.rssi_}</p>
         <p>Name: ${this.name_}</p>

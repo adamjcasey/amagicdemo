@@ -16,32 +16,22 @@ import { Capacitor } from '@capacitor/core';
 export class StartDoseReadyToInjectWaitingToStartInjectionComponent implements OnInit, AfterViewInit {
   @ViewChild('videoTag') videoTag!: ElementRef;
 
-  constructor() {
+  constructor() { }
 
-  }
-
-  ngOnInit() {
-    console.log('StartDoseReadyToInjectWaitingToStartInjectionComponent ngOnInit');
-  }
+  ngOnInit() { }
 
   ngAfterViewInit() {
-    console.log('StartDoseReadyToInjectWaitingToStartInjectionComponent ngAfterViewInit');
     this.playVideo();
   }
 
   async playVideo() {
-    console.log('playVideo');
     const videoElement = this.videoTag.nativeElement;
     if (videoElement) {
-      console.log('videoElement ', videoElement);
       if (Capacitor.getPlatform() === 'web') {
         videoElement.muted = true;
       }
 
       videoElement.play();
-    }
-    else {
-      console.log('no esta el element');
     }
   }
 }
