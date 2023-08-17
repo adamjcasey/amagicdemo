@@ -47,6 +47,10 @@ ion-button {
     --padding-start: 6px;
     height: 35px;
   }
+
+  &.is-blocked {
+    pointer-events: none;
+  }
 }
 
 ion-input {

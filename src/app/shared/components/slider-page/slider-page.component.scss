@@ -407,4 +407,24 @@
       overflow: hidden;
     }
   }
+
+  &.is-iphone-x {
+    .slider-page__header {
+      &.has-asset {
+        .asset-wrapper img {
+          max-width: 320px;
+        }
+      }      
+    }
+  }
+  &.is-iphone-13,
+  &.is-iphone-12 {
+    .slider-page__header {
+      &.has-asset {
+        .asset-wrapper img {
+          max-width: 340px;
+        }
+      }      
+    }
+  }
 }

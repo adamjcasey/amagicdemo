@@ -177,6 +177,7 @@ export class StartDoseInjectDonePage implements OnInit {
                 },
                 content: {
                   hideNavigation: true,
+                  blockNavigationFor: 2000,
                   actions: [
                     {
                       label: 'Got it',
@@ -202,8 +203,7 @@ export class StartDoseInjectDonePage implements OnInit {
             );
 
             if (this.homeConfig.firstTimeDose) {
-              const markedDoses = this.homeConfig?.doses.filter((dose: any) => dose.marked);
-              const nextDose = this.homeConfig.doses[markedDoses.length];
+              const nextDose = this.homeConfig.doses[1];
               this.slides.push(
                 {
                   header: {
@@ -234,6 +234,7 @@ export class StartDoseInjectDonePage implements OnInit {
                   },
                   content: {
                     hideNavigation: true,
+                    blockNavigationFor: null,
                     actions: [
                       {
                         label: 'Set up smart reminders',
@@ -256,6 +257,7 @@ export class StartDoseInjectDonePage implements OnInit {
               content: {
                 isExpanded: true,
                 component: 'start-dose-inject-done-report',
+                blockNavigationFor: null,
                 toolbar: { 
                   actions: [
                     {

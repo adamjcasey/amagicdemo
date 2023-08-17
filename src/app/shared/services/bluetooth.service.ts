@@ -190,10 +190,6 @@ export class BluetoothService {
     if (Capacitor.isNativePlatform()  && !this.layoutConfig.noDeviceMode) {
       return new Promise((resolve, reject) => {
         const controller = setInterval(() => {
-          if (this.layoutConfig.debuggingDeviceMode) {
-            this.renderDebuggingVerboose('checkDosing');
-          }
-
           if (this.state_ === 3) {
             clearInterval(controller);
             resolve(true);
@@ -235,6 +231,7 @@ export class BluetoothService {
               this.renderDebuggingVerboose('Device is connected');
             }
 
+            this._store.dispatch(new fromCoreStore.SetIsDeviceConnected(true));
             clearInterval(controller);
             resolve(true);
           }
@@ -265,7 +262,7 @@ export class BluetoothService {
   //--------------------------------------------------
   async onDeviceDiscovered(peripheral: any) {
     if (this.layoutConfig.debuggingDeviceMode) {
-      this.renderDebuggingVerboose('Connected to device');
+      this.renderDebuggingVerboose('onDeviceDiscovered');
     }
 
     if (
@@ -287,10 +284,9 @@ export class BluetoothService {
         await BleClient.stopLEScan();
         await BleClient.connect(peripheral.device.deviceId);
       }
-      console.log('Connected to device', peripheral.device.deviceId);
 
       if (this.layoutConfig.debuggingDeviceMode) {
-        this.renderDebuggingVerboose('Connected to device');
+        this.renderDebuggingVerboose('Connected to device', `Device ID: ${peripheral.device.deviceId}`);
       }
 
       // Once connected, read the characteristic every 250ms.  
@@ -318,19 +314,30 @@ export class BluetoothService {
             if (this.mock_dosing >= 101)
               this.mock_dosing = 0;
           }
-          console.log("From device: " + data);
+
+          if (this.layoutConfig.debuggingDeviceMode) {
+            const bytes = [];
+            while (data > 0) { 
+              bytes.unshift(data & 0xFF); data >>= 8; 
+            };
+            this.renderDebuggingVerboose('onDeviceDiscovered', `
+              Data from Device: ${bytes.join(', ')}
+            `);
+          }
 
           this.state_ = ((data >> 24) & 0xFF);
           this.battery_ = ((data >> 16) & 0xFF);
           this.dosage_ = ((data >> 8) & 0xFF);
 
-          console.log("State: " + this.state_);
-          console.log("Battery: " + this.battery_);
-          console.log("Dosing: " + this.dosage_);
+          if (this.layoutConfig.debuggingDeviceMode) {
+            this.renderDebuggingVerboose('onDeviceDiscovered', `
+              State: ${this.state_}
+              Battery: ${this.battery_}
+              Dosing: ${this.dosage_}
+            `);
+          }
         }
         catch (error: any) {
-          console.error('onDeviceDiscovered - error: ', error);
-
           if (this.layoutConfig.debuggingDeviceMode) {
             this.renderDebuggingVerboose('onDeviceDiscovered', error);
           }
@@ -400,19 +407,22 @@ export class BluetoothService {
       if (this.layoutConfig.debuggingDeviceMode) {
         this.renderDebuggingVerboose('stop', `Device disconnected ${this.peripheral_.device.deviceId}`);
       }
+
+      this._store.dispatch(new fromCoreStore.SetIsDeviceConnected(false));
     }
   }
 
   renderDebuggingVerboose(action: string, message?: string) {
     const wrapper = document.getElementById('device-debugging-content');
     if (wrapper) {
-      wrapper.innerHTML = `
+      wrapper.innerHTML = wrapper.innerHTML + `
+        <hr>
         <h5>Action: ${action}</h5>
         ${ message ?`
           <h5>Log</h5>
           <p>${message}</p>
           <hr>
-        `: null }
+        `: '' }
         <p>UUID: ${this.uuid_}</p>
         <p>RSSI: ${this.rssi_}</p>
         <p>Name: ${this.name_}</p>

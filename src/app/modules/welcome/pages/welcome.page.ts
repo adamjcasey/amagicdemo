@@ -57,7 +57,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
         content: {
           hideNavigation: true,
           template: `
-            <h1 class="font-heading-1--bold">Welcome to AutoMagic for Theryx.</h1>
+            <h1 class="font-heading-1--bold">Welcome to <br>AutoMagic for Theryx.</h1>
             <p>The AutoMagic connected ecosystem empowers you to make the most of your Theryx prescription</p>
           `,
           actions: [

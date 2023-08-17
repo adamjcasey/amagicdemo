@@ -360,6 +360,9 @@ export class BackdropComponent implements OnInit, AfterViewInit {
 
   getBatteryLevel() {
     this.batteryLevel = this._bluetoothService.Battery;
+    if (this.config.debuggingDeviceMode) {
+      this._bluetoothService.renderDebuggingVerboose('getBatteryLevel', `Battery Level: ${this.batteryLevel}`);
+    }
   }
 
   doAnotherInjection() {

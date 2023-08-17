@@ -21,6 +21,7 @@ import SwiperCore, { Pagination, EffectFade } from 'swiper';
 SwiperCore.use([Pagination, EffectFade]);
 
 import * as fromStore from '@shared/store';
+import * as fromCoreStore from '@core/store';
 import * as fromWelcomeStore from '@welcome/store';
 import * as fromWelcomeComponents from '@welcome/components';
 import * as fromHomeStore from '@home/store';
@@ -36,13 +37,15 @@ import * as fromCoreComponents from '@core/components';
 })
 export class SliderPageComponent implements OnInit {
   public config$: Observable<any>;
+  public layoutConfig$: Observable<any>;
+  public layoutConfig: any;
   public homeConfig$: Observable<any>;
   public homeConfig: any;
   public previousConfig: any;
   public config: any;
   public isMoving: boolean = false;
   public currentSlide: any;
-
+  public blockNavigation: boolean = false;
   public configHeaderTemplate: any;
 
   @Input() slides!: Array<any>;
@@ -56,11 +59,12 @@ export class SliderPageComponent implements OnInit {
   private _ngUnsubscribe: Subject<void> = new Subject<void>();
 
   constructor(
-    private _store: Store<fromStore.SharedState>,
+    private _store: Store<fromCoreStore.CoreState>,
     private _sanitizer: DomSanitizer
   ) {
     this.config$ = this._store.select(fromStore.getSliderPageConfig);
     this.homeConfig$ = this._store.select(fromHomeStore.getHomeConfig);
+    this.layoutConfig$ = this._store.select(fromCoreStore.getLayoutConfig);
   }
 
   ngOnInit() {
@@ -156,6 +160,14 @@ export class SliderPageComponent implements OnInit {
           this.homeConfig = homeConfig;
         }
       });
+
+    this.layoutConfig$
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(layoutConfig => {
+        if (layoutConfig) {
+          this.layoutConfig = layoutConfig;
+        }
+      });
   }
 
   ngOnDestroy() {
@@ -186,6 +198,7 @@ export class SliderPageComponent implements OnInit {
   onSlideChange() {
     const swiperActiveIndex = this.sliderContent.swiperRef.activeIndex;
     this.currentSlide = this.slides[swiperActiveIndex];
+
     if (this.currentSlide.header) {
       // update config for header section based on the currentSlide
       this._store.dispatch(new fromStore.SliderPageSetHeaderOptions({
@@ -205,53 +218,66 @@ export class SliderPageComponent implements OnInit {
     if (this.currentSlide.onLoad) {
       this.currentSlide.onLoad();
     }
+
+    if (this.config.content.blockNavigationFor) {
+      this.blockNavigation = true;
+      setTimeout(() => {
+        this.blockNavigation = false;
+      }, this.config.content.blockNavigationFor);
+    }
   }
 
   slidePrev() {
-    this.isMoving = true;
-    const activeIndex = this.sliderContent.swiperRef.activeIndex;
-    if (this.slides[activeIndex].header?.component !== null) {
-      this.componentsHeader?.toArray()[activeIndex].clear();
-    }
+    if (!this.blockNavigation) {
+      this.isMoving = true;
+      const activeIndex = this.sliderContent.swiperRef.activeIndex;
+      if (this.slides[activeIndex].header?.component !== null) {
+        this.componentsHeader?.toArray()[activeIndex].clear();
+      }
 
-    if (this.onPrevSlide.observers.length > 0) {
-      this.onPrevSlide.emit({
-        asset: this.sliderHeader.swiperRef,
-        content: this.sliderContent.swiperRef,
-      })
-    }
-    else {
-      this.sliderHeader.swiperRef.slidePrev(500);
-      this.sliderContent.swiperRef.slidePrev(500);
-    }
+      if (this.onPrevSlide.observers.length > 0) {
+        this.onPrevSlide.emit({
+          asset: this.sliderHeader.swiperRef,
+          content: this.sliderContent.swiperRef,
+        })
+      }
+      else {
+        this.sliderHeader.swiperRef.slidePrev(500);
+        this.sliderContent.swiperRef.slidePrev(500);
+      }
 
-    setTimeout(() => {
-      this.isMoving = false;
-      this._store.dispatch(new fromStore.SliderPageClearMovement);
-    }, 500);
+      setTimeout(() => {
+        this.isMoving = false;
+        this._store.dispatch(new fromStore.SliderPageClearMovement);
+      }, 500);
+    }
   }
 
   slideNext() {
-    const activeIndex = this.sliderContent.swiperRef.activeIndex;
-    if (this.slides[activeIndex].header?.component !== null) {
-      this.componentsHeader?.toArray()[activeIndex].clear();
-    }
+    if (!this.blockNavigation) {
+      console.log('blockNavigation ', this.blockNavigation);
+      console.log('slideNext entra');
+      const activeIndex = this.sliderContent.swiperRef.activeIndex;
+      if (this.slides[activeIndex].header?.component !== null) {
+        this.componentsHeader?.toArray()[activeIndex].clear();
+      }
 
-    if (this.onNextSlide.observers.length > 0) {
-      this.onNextSlide.emit({
-        asset: this.sliderHeader.swiperRef,
-        content: this.sliderContent.swiperRef,
-      })
-    }
-    else {
-      this.sliderHeader.swiperRef.slideNext(500);
-      this.sliderContent.swiperRef.slideNext(500);
-    }
+      if (this.onNextSlide.observers.length > 0) {
+        this.onNextSlide.emit({
+          asset: this.sliderHeader.swiperRef,
+          content: this.sliderContent.swiperRef,
+        })
+      }
+      else {
+        this.sliderHeader.swiperRef.slideNext(500);
+        this.sliderContent.swiperRef.slideNext(500);
+      }
 
-    setTimeout(() => {
-      this.isMoving = false;
-      this._store.dispatch(new fromStore.SliderPageClearMovement);
-    }, 500);
+      setTimeout(() => {
+        this.isMoving = false;
+        this._store.dispatch(new fromStore.SliderPageClearMovement);
+      }, 500);
+    }
   }
 
   slideTo(index: number) {

@@ -13,7 +13,8 @@ export enum ActionTypes {
   SetNoDeviceModeBatteryLowFlow = '[Layout] Set No Device Mode Battery Low Flow',
   SetDeviceDebugging = '[Layout] Set Device Debugging',
   SetWelcomeFlowAsDone = '[Layout] Set Welcome Flow as Done',
-  SetDeviceModelInfo = '[Layout] Set Device Model Info',
+  SetDeviceInfo = '[Layout] Set Device Model Info',
+  SetIsDeviceConnected = '[Layout] Set Is Device Connected',
 }
 
 export class Go implements Action {
@@ -73,9 +74,14 @@ export class SetWelcomeFlowAsDone implements Action {
 }
 
 
-export class SetDeviceModelInfo implements Action {
-  readonly type = ActionTypes.SetDeviceModelInfo;
-  constructor(public payload: string) {}
+export class SetDeviceInfo implements Action {
+  readonly type = ActionTypes.SetDeviceInfo;
+  constructor(public payload: any) {}
+}
+
+export class SetIsDeviceConnected implements Action {
+  readonly type = ActionTypes.SetIsDeviceConnected;
+  constructor(public payload: boolean) {}
 }
 
 export type ActionsUnion 
@@ -90,4 +96,5 @@ export type ActionsUnion
   | SetNoDeviceModeBatteryLowFlow
   | SetWelcomeFlowAsDone
   | SetDeviceDebugging
-  | SetDeviceModelInfo;
+  | SetIsDeviceConnected
+  | SetDeviceInfo;

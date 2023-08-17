@@ -14,7 +14,8 @@ export interface LayoutState {
   noDeviceModeOopsFlow: boolean;
   noDeviceModeBatteryLowFlow: boolean;
   debuggingDeviceMode: boolean;
-  deviceModel?: string;
+  deviceModel?: any;
+  isDeviceConnected: boolean;
 }
 
 export const initialState: LayoutState = {
@@ -25,4 +26,9 @@ export const initialState: LayoutState = {
   noDeviceModeOopsFlow: false,
   noDeviceModeBatteryLowFlow: false,
   debuggingDeviceMode: false,
+  isDeviceConnected: false,
+  deviceModel: {
+    name: 'iphone-14-pro',
+    model: 'iphone15,2'
+  }
 }

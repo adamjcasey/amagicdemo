@@ -18,7 +18,7 @@ import { animate, spring } from 'motion';
   encapsulation: ViewEncapsulation.None
 })
 export class PinInputComponent {
-  @Output() onChange = new EventEmitter<string>();
+  @Output() onChange = new EventEmitter<any>();
   @Output() onError = new EventEmitter<boolean>();
   @Input() error!: any;
   @Input() allowedCodes!: string[];
@@ -26,6 +26,7 @@ export class PinInputComponent {
   @ViewChild('digit2') digit2!: ElementRef;
   @ViewChild('digit3') digit3!: ElementRef;
   @ViewChild('digit4') digit4!: ElementRef;
+  public value!: string;
 
   constructor() {
     if (Capacitor.isNativePlatform()) {
@@ -79,10 +80,19 @@ export class PinInputComponent {
     const previousDigit = currentDigit.previousSibling;
     const nextDigit = currentDigit.nextSibling;
     if (event.code === 'Backspace') {
-      debugger
       if (previousDigit) {
         previousDigit?.removeAttribute('disabled');
         previousDigit?.focus();
+      }
+    }
+    else if (event.code === 'Enter') {
+      console.log('hace enter');
+      const nextDigit = currentDigit.nextSibling;
+      if (nextDigit) {
+        nextDigit.focus();
+      }
+      else {
+        this.validateValue(true);
       }
     }
     else {
@@ -92,16 +102,24 @@ export class PinInputComponent {
       }
     }
 
-    const output = `${this.digit1?.nativeElement.value}${this.digit2?.nativeElement.value}${this.digit3?.nativeElement.value}${this.digit4?.nativeElement.value}`;
+    this.value = `${this.digit1?.nativeElement.value}${this.digit2?.nativeElement.value}${this.digit3?.nativeElement.value}${this.digit4?.nativeElement.value}`;
+    this.validateValue();
+  }
+
+  validateValue(submit?: boolean) {
     if (this.allowedCodes) {
-      if (output.length === 4) {
-        if (!this.allowedCodes.includes(output)) {
+      if (this.value.length === 4) {
+        if (!this.allowedCodes.includes(this.value)) {
           this.error = 'Invalid digital code';
           this.onError.emit(true);
         }
         else {
           this.error = null;
           this.onError.emit(false);
+          this.onChange.emit({
+            value: this.value,
+            submit: submit,
+          });
         }
       }
       else {
@@ -109,7 +127,5 @@ export class PinInputComponent {
         this.onError.emit(false);
       }
     }
-
-    this.onChange.emit(output);
   }
 }

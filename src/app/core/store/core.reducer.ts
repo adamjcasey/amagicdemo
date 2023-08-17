@@ -95,10 +95,17 @@ export function LayoutReducer(
       };
     }
 
-    case fromActions.ActionTypes.SetDeviceModelInfo: {
+    case fromActions.ActionTypes.SetDeviceInfo: {
       return {
         ...state,
         deviceModel: action.payload,
+      };
+    }
+
+    case fromActions.ActionTypes.SetIsDeviceConnected: {
+      return {
+        ...state,
+        isDeviceConnected: action.payload,
       };
     }
 

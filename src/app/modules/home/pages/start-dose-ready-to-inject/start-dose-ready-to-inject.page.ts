@@ -308,6 +308,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
             component: null,
           },
           content: {
+            blockNavigationFor: 1500,
             actions: [
               {
                 label: 'Previous step',
@@ -337,6 +338,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
             `,
           },
           content: {
+            blockNavigationFor: null,
             actions: [
               {
                 label: 'Previous step',

@@ -76,9 +76,9 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
     }, 1000);
   }
 
-  async checkDosingProcess(continueDose?: boolean) {
+  async checkDosingProcess() {
     try {
-      const dosingProcess = await this._bluetoothService.checkDosing(continueDose ? this.totalTime * 1000 : undefined);
+      const dosingProcess = await this._bluetoothService.checkDosing();
       if (dosingProcess) {
         this.title = 'Full dose delivered!';
         this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-lime'));
@@ -86,23 +86,30 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
           color: '--color-bg-pastel-lime',
         }));
 
-        let nextDoseDateFormatted;
+        let doseDateFormatted = moment().format('D MMMM YYYY H:mm A');
         const markedDoses = this.homeConfig.doses.filter((dose: any) => dose.marked);
         const unMarkedDoses = this.homeConfig.doses.filter((dose: any) => !dose.marked);
-        if (markedDoses.length === 0) {
-          const dateNextDose = moment(unMarkedDoses[1].date);
-          dateNextDose.set('hour', moment().get('hour'));
-          dateNextDose.set('minute', moment().get('minute'));
-          nextDoseDateFormatted = dateNextDose.format('D MMMM YYYY H:mm A');
-        }
+        // if (markedDoses.length === 0) {
+        //   const dateNextDose = moment(unMarkedDoses[1].date);
+        //   dateNextDose.set('hour', moment().get('hour'));
+        //   dateNextDose.set('minute', moment().get('minute'));
+        //   nextDoseDateFormatted = dateNextDose.format('D MMMM YYYY H:mm A');
+        // }
 
-        if (markedDoses.length === 5) {
-          const lastDose = unMarkedDoses[0];
-          const lastDoseDate = moment(lastDose.date);
-          lastDoseDate.set('hour', moment().get('hour'));
-          lastDoseDate.set('minute', moment().get('minute'));
-          lastDoseDate.add(2, 'weeks');
-          nextDoseDateFormatted = lastDoseDate.format('D MMMM YYYY H:mm A');
+        // if (markedDoses.length === 5) {
+        //   const lastDose = unMarkedDoses[0];
+        //   const lastDoseDate = moment(lastDose.date);
+        //   lastDoseDate.set('hour', moment().get('hour'));
+        //   lastDoseDate.set('minute', moment().get('minute'));
+        //   lastDoseDate.add(2, 'weeks');
+        //   doseDateFormatted = lastDoseDate.format('D MMMM YYYY H:mm A');
+        // }
+
+        if (markedDoses.length > 0) {
+          const currentDoseDate = moment(unMarkedDoses[0].date);
+          currentDoseDate.set('hour', moment().get('hour'));
+          currentDoseDate.set('minute', moment().get('minute'));
+          doseDateFormatted = currentDoseDate.format('D MMMM YYYY H:mm A');
         }
 
         this._store.dispatch(new fromSharedStore.AlertShow({
@@ -112,7 +119,7 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
             <h1 class="font-heading-1--bold">Full dose delivered!</h1>
             <h3>Theryx®, 80mg</h3>
             <p>Dose Completed:</p>
-            <p>${nextDoseDateFormatted}</p>
+            <p>${doseDateFormatted}</p>
           `,
           actions: [
             {
@@ -131,6 +138,7 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
       }
     }
     catch (error) {
+      debugger
       this.errorDosing = true;
       this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-salmon'));
       this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
