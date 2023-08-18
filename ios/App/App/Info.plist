@@ -23,7 +23,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>The App uses BLE to read data from the Auto Injector device.</string>
+	<string>This will enable "AutoMagic" to find and connect to your Theryx AutoMagic injector to track and help manage your therapy</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>bluetooth-central</string>

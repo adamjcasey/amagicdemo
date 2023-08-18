@@ -5,6 +5,7 @@ import { IonicModule } from '@ionic/angular';
 import { SwiperModule } from 'swiper/angular';
 
 import * as fromComponents from './components';
+import * as fromDirectives from './directives';
 import * as fromPipes from './pipes';
 import * as fromServices from './services';
 
@@ -18,10 +19,12 @@ import * as fromServices from './services';
   ],
   declarations: [
     fromComponents.components,
+    fromDirectives.directives,
     fromPipes.pipes,
   ],
   exports: [
     fromComponents.components,
+    fromDirectives.directives,
     fromPipes.pipes,
   ],
   providers: [

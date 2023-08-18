@@ -1,5 +1,5 @@
-import { Injectable, NgZone } from '@angular/core';
-import { BleClient, ScanResult } from '@capacitor-community/bluetooth-le';
+import { Injectable } from '@angular/core';
+import { BleClient } from '@capacitor-community/bluetooth-le';
 import { Capacitor } from '@capacitor/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
@@ -19,9 +19,10 @@ export class BluetoothService {
   private state_: number;
   private battery_: number;
   private dosage_: number;
-  private isConnected_: boolean;
   private interval_id_: any;
   private peripheral_: any;
+  private isConnected_: boolean;
+  private isScanning_: boolean;
 
   // Variables for mocking
   private mock_state: number = 1;
@@ -39,9 +40,10 @@ export class BluetoothService {
     this.rssi_ = 0;
     this.name_ = '';
     this.state_ = 0;
-    this.battery_ = 20;
+    this.battery_ = 0;
     this.dosage_ = 0;
     this.isConnected_ = false;
+    this.isScanning_ = false;
 
     this.layoutConfig$ = this._store.select(fromCoreStore.getLayoutConfig);
     this.layoutConfig$.subscribe(layoutConfig => {
@@ -117,14 +119,24 @@ export class BluetoothService {
   // Bluetooth Actions
   //--------------------------------------------------
   async checkPermissions() {
+    if (this.layoutConfig.debuggingDeviceMode) {
+      this.renderDebuggingVerboose('checkPermissions');
+    }
+
     if (Capacitor.isNativePlatform() && !this.layoutConfig.noDeviceMode) {
       await BleClient.initialize();
-      const isEnabled = await BleClient.isEnabled();
+      const isEnabled: any = await BleClient.isEnabled();
       return new Promise((resolve, reject) => {
         if (isEnabled) {
+          if (this.layoutConfig.debuggingDeviceMode) {
+            this.renderDebuggingVerboose('BleClient is enabled? ', isEnabled);
+          }
           resolve('granted');
         }
         else {
+          if (this.layoutConfig.debuggingDeviceMode) {
+            this.renderDebuggingVerboose('BleClient is not Allowed');
+          }
           reject('not-allowed');
         }
       });
@@ -136,29 +148,45 @@ export class BluetoothService {
     }
   }
 
-  async waitForDosingStart() {
+  async waitForDosingStart(continueDose?: boolean) {
+    if (this.layoutConfig.debuggingDeviceMode) {
+      this.renderDebuggingVerboose('waitForDosingStart');
+    }
+
     // start watching the press on the device
     if (Capacitor.isNativePlatform()  && !this.layoutConfig.noDeviceMode) {
       if (this.state_ === 1) {
         return new Promise((resolve) => {
           const controller = setInterval(() => {
+            if (this.layoutConfig.debuggingDeviceMode) {
+              this.renderDebuggingVerboose('waitForDosingStart');
+            }
+
             if (this.state_ === 2) {
               clearInterval(controller);
               resolve(true);
             }
-          }, 500);
+          }, 100);
         });
       }
       return new Error('waitForDosingStart > state of the device is not 1.');
     }
     else {
+      if (this.layoutConfig.debuggingDeviceMode) {
+        this.renderDebuggingVerboose('waitForDosingStart');
+      }
+
       // support for web, wait 10segs (duration of the dosing) to return a true;
-      await new Promise(resolve => setTimeout(resolve, 6500));
+      await new Promise(resolve => setTimeout(resolve, continueDose ? 0 : 6500));
       return true;
     }
   }
 
-  async checkDosing() {
+  async checkDosing(remainingDose?: number) {
+    if (this.layoutConfig.debuggingDeviceMode) {
+      this.renderDebuggingVerboose('checkDosing');
+    }
+
     if (Capacitor.isNativePlatform()  && !this.layoutConfig.noDeviceMode) {
       return new Promise((resolve, reject) => {
         const controller = setInterval(() => {
@@ -171,26 +199,39 @@ export class BluetoothService {
             clearInterval(controller);
             reject(new Error('unpressed action device during dosing.'));
           }
-        }, 500);
+        }, 100);
       });
     }
     else {
       // support for web, wait 10segs (duration of the dosing) to return a true;
       if (this.layoutConfig.noDeviceModeOopsFlow) {
-        await new Promise((resolve, reject) => setTimeout(reject, 4000));
+        await new Promise((resolve, reject) => setTimeout(reject, remainingDose ? remainingDose : 4000));
       }
       else {
-        await new Promise(resolve => setTimeout(resolve, 10000));
+        await new Promise(resolve => setTimeout(resolve, remainingDose ? remainingDose : 10000));
       }
       return true;
     }
   }
 
   async isDeviceConnected() {
+    if (this.layoutConfig.debuggingDeviceMode) {
+      this.renderDebuggingVerboose('isDeviceConnected?');
+    }
+
     if (Capacitor.isNativePlatform()  && !this.layoutConfig.noDeviceMode) {
+      if (!this.isScanning_) {
+        await this.scan();
+      }
+
       return new Promise((resolve) => {
         const controller = setInterval(() => {
           if (this.isConnected_ || this.layoutConfig.noDeviceMode) {
+            if (this.layoutConfig.debuggingDeviceMode) {
+              this.renderDebuggingVerboose('Device is connected');
+            }
+
+            this._store.dispatch(new fromCoreStore.SetIsDeviceConnected(true));
             clearInterval(controller);
             resolve(true);
           }
@@ -204,29 +245,49 @@ export class BluetoothService {
     }
   }
 
+  async openSettingsApp() {
+    if (this.layoutConfig.debuggingDeviceMode) {
+      this.renderDebuggingVerboose('openSettingsApp');
+    }
+
+    if (Capacitor.isNativePlatform()) {
+      await BleClient.openAppSettings();
+    }
+  }
+
   //--------------------------------------------------
   // Bluetooth Callbacks
   //--------------------------------------------------
 
   //--------------------------------------------------
   async onDeviceDiscovered(peripheral: any) {
-    if (((peripheral.localName == "AutoMagic") ||
-      (peripheral.device.name == "AutoMagic"))
-      && (peripheral.rssi > -60)) {
+    if (this.layoutConfig.debuggingDeviceMode) {
+      this.renderDebuggingVerboose('onDeviceDiscovered');
+    }
+
+    if (
+      peripheral.localName == 'AutoMagic' || 
+      peripheral.device.name == 'AutoMagic' && 
+      peripheral.rssi > -60
+    ) {
       this.isConnected_ = true;
+      this.isScanning_ = false;
       this.peripheral_ = peripheral;
-      console.log("AutoMagic Discovered: ");
-      console.log(peripheral);
-      console.log("Name: " + peripheral.name_);
-      console.log("RSSI: " + peripheral.rssi_);
       this.rssi_ = peripheral.rssi;
       this.uuid_ = peripheral.device.deviceId;
+
+      if (this.layoutConfig.debuggingDeviceMode) {
+        this.renderDebuggingVerboose('AutoMagic Discovered ', JSON.stringify(this.peripheral_));
+      }
 
       if (Capacitor.isNativePlatform()) {
         await BleClient.stopLEScan();
         await BleClient.connect(peripheral.device.deviceId);
       }
-      console.log('Connected to device', peripheral.device.deviceId);
+
+      if (this.layoutConfig.debuggingDeviceMode) {
+        this.renderDebuggingVerboose('Connected to device', `Device ID: ${peripheral.device.deviceId}`);
+      }
 
       // Once connected, read the characteristic every 250ms.  
       // Discriminate state, battery, and dosing values
@@ -253,18 +314,33 @@ export class BluetoothService {
             if (this.mock_dosing >= 101)
               this.mock_dosing = 0;
           }
-          console.log("From device: " + data);
+
+          if (this.layoutConfig.debuggingDeviceMode) {
+            const bytes = [];
+            while (data > 0) { 
+              bytes.unshift(data & 0xFF); data >>= 8; 
+            };
+            this.renderDebuggingVerboose('onDeviceDiscovered', `
+              Data from Device: ${bytes.join(', ')}
+            `);
+          }
 
           this.state_ = ((data >> 24) & 0xFF);
           this.battery_ = ((data >> 16) & 0xFF);
           this.dosage_ = ((data >> 8) & 0xFF);
 
-          console.log("State: " + this.state_);
-          console.log("Battery: " + this.battery_);
-          console.log("Dosing: " + this.dosage_);
+          if (this.layoutConfig.debuggingDeviceMode) {
+            this.renderDebuggingVerboose('onDeviceDiscovered', `
+              State: ${this.state_}
+              Battery: ${this.battery_}
+              Dosing: ${this.dosage_}
+            `);
+          }
         }
-        catch (error) {
-          console.error('Error in interval callback:', error);
+        catch (error: any) {
+          if (this.layoutConfig.debuggingDeviceMode) {
+            this.renderDebuggingVerboose('onDeviceDiscovered', error);
+          }
         }
       }, intervalDuration);
     }
@@ -272,17 +348,24 @@ export class BluetoothService {
 
   //--------------------------------------------------
   async scan() {
-    if (Capacitor.isNativePlatform() && !this.layoutConfig.noDeviceMode) {
-      console.log("Is Native Capacitor bluetooth.service.ts scan");
+    if (this.layoutConfig.debuggingDeviceMode) {
+      this.renderDebuggingVerboose('scan');
+    }
 
+    if (Capacitor.isNativePlatform() && !this.layoutConfig.noDeviceMode) {
       try {
+        this.isScanning_ = true;
         await BleClient.requestLEScan(
           { allowDuplicates: true },
           this.onDeviceDiscovered.bind(this)
         );
       }
-      catch (error) {
-        console.error('scan', error);
+      catch (error: any) {
+        this.isScanning_ = false;
+
+        if (this.layoutConfig.debuggingDeviceMode) {
+          this.renderDebuggingVerboose('scan - error', error);
+        }
       }
     }
     else {
@@ -312,10 +395,43 @@ export class BluetoothService {
 
   //--------------------------------------------------
   async stop() {
+    if (this.layoutConfig.debuggingDeviceMode) {
+      this.renderDebuggingVerboose('stop');
+    }
+
     clearInterval(this.interval_id_);
     this.isConnected_ = false;
     if (Capacitor.isNativePlatform()) {
       await BleClient.disconnect(this.peripheral_.device.deviceId);
+
+      if (this.layoutConfig.debuggingDeviceMode) {
+        this.renderDebuggingVerboose('stop', `Device disconnected ${this.peripheral_.device.deviceId}`);
+      }
+
+      this._store.dispatch(new fromCoreStore.SetIsDeviceConnected(false));
+    }
+  }
+
+  renderDebuggingVerboose(action: string, message?: string) {
+    const wrapper = document.getElementById('device-debugging-content');
+    if (wrapper) {
+      wrapper.innerHTML = wrapper.innerHTML + `
+        <hr>
+        <h5>Action: ${action}</h5>
+        ${ message ?`
+          <h5>Log</h5>
+          <p>${message}</p>
+          <hr>
+        `: '' }
+        <p>UUID: ${this.uuid_}</p>
+        <p>RSSI: ${this.rssi_}</p>
+        <p>Name: ${this.name_}</p>
+        <p>State: ${this.state_}</p>
+        <p>Battery: ${this.battery_}</p>
+        <p>Dosage: ${this.dosage_}</p>
+        <p>Is Connected?: ${this.isConnected_}</p>
+        <p>Is Scanning?: ${this.isScanning_}</p>
+      `;
     }
   }
 }

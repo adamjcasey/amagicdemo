@@ -52,21 +52,8 @@ export class StartDoseInjectDonePage implements OnInit {
             {
               label: 'Done',
               action: () => { 
-                if (this.homeConfig.firstTimeDose) {
-                  this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-mint'));
-                  this.sliderPage.slideTo(2);
-                }
-                else {
-                  const markedDoses = this.homeConfig?.doses.filter((dose: any) => dose.marked);
-                  if (markedDoses.length === 6) {
-                    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-white'));
-                    this.sliderPage.slideTo(this.slides.length - 1);
-                  }
-                  else {
-                    this.goTo('home');
-                    this._store.dispatch(new fromSharedStore.SliderPageClear());
-                  }
-                }
+                this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-mint'));
+                this.sliderPage.slideTo(2);
               }
             }
           ],
@@ -97,21 +84,8 @@ export class StartDoseInjectDonePage implements OnInit {
                 label: 'Proceed',
                 // disabled: true,
                 action: () => {
-                  if (this.homeConfig.firstTimeDose) {
-                    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-mint'));
-                    this.sliderPage.slideNext();
-                  }
-                  else {
-                    const markedDoses = this.homeConfig?.doses.filter((dose: any) => dose.marked);
-                    if (markedDoses.length === 6) {
-                      this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-white'));
-                      this.sliderPage.slideNext();
-                    }
-                    else {
-                      this.goTo('home');
-                      this._store.dispatch(new fromSharedStore.SliderPageClear());
-                    }
-                  }
+                  this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-mint'));
+                  this.sliderPage.slideNext();
                 },
               },
             ]
@@ -137,29 +111,29 @@ export class StartDoseInjectDonePage implements OnInit {
         if (homeConfig) {
           this.homeConfig = homeConfig;
 
-          // if this is the first dose to be injected, add extra instructions (slides)
-          if (this.homeConfig.firstTimeDose) {
-            if (this.slides.length === 2) {
-              const nextDose = this.homeConfig.doses[1];
-              this.slides.push(
-                {
-                  header: {
-                    color: '--color-bg-pastel-mint',
-                    template: `
-                      <div class="start-dose-inject-done">
-                        <h1 class="font-heading-1--bold">Replace safety cap.</h1>
-                        <img src="assets/images/start-dose-inject-done-replace-cap.gif">
-                      </div>
-                    `,
-                  },
-                  content: {
-                    isExpanded: false,
-                    hideNavigation: true,
-                    actions: [
-                      {
-                        label: 'Got it',
-                        action: () => {
-                          this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-blue'));
+          // add extra instructions (slides)
+          if (this.slides.length === 2) {
+            this.slides.push(
+              {
+                header: {
+                  color: '--color-bg-pastel-mint',
+                  template: `
+                    <div class="start-dose-inject-done">
+                      <h1 class="font-heading-1--bold">Replace safety cap.</h1>
+                      <img src="assets/images/start-dose-inject-done-replace-cap.gif">
+                    </div>
+                  `,
+                },
+                content: {
+                  isExpanded: false,
+                  hideNavigation: true,
+                  actions: [
+                    {
+                      label: 'Got it',
+                      action: () => {
+                        this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-blue'));
+                        this.sliderPage.slideNext();
+                        setTimeout(() => {
                           this._store.dispatch(new fromSharedStore.BackdropShow({
                             transition: 'move',
                             fullScreen: true,
@@ -178,42 +152,59 @@ export class StartDoseInjectDonePage implements OnInit {
                                   this._store.dispatch(new fromSharedStore.BackdropHide);
                                 },
                               }
-                            ]
+                            ],
                           }));
-                          this.sliderPage.slideNext();
-                        }
+                        }, 1500);
                       }
-                    ],
-                  },
+                    }
+                  ],
                 },
-                {
-                  header: {
-                    color: '--color-bg-pastel-blue',
-                    template: `
-                      <div class="start-dose-inject-done">
-                        <h1 class="font-heading-1--bold">Safely discard injector.</h1>
-                        <img src="assets/images/start-dose-inject-done-discard-inject.svg">
-                        <div class="pro-tip">
-                          <ion-icon name="information-circle-outline"></ion-icon>
-                          <p><strong>Pro Tip</strong></p>
-                          <p>Discard injector in your sharps “take-back” bin for recycling.</p>
-                        </div>
+              },
+              {
+                header: {
+                  color: '--color-bg-pastel-blue',
+                  template: `
+                    <div class="start-dose-inject-done">
+                      <h1 class="font-heading-1--bold">Safely discard injector.</h1>
+                      <img src="assets/images/start-dose-inject-done-discard-inject.svg">
+                      <div class="pro-tip">
+                        <ion-icon name="information-circle-outline"></ion-icon>
+                        <p><strong>Pro Tip</strong></p>
+                        <p>Discard injector in your sharps “take-back” bin for recycling.</p>
                       </div>
-                    `,
-                  },
-                  content: {
-                    hideNavigation: true,
-                    actions: [
-                      {
-                        label: 'Got it',
-                        action: () => { 
+                    </div>
+                  `,
+                },
+                content: {
+                  hideNavigation: true,
+                  blockNavigationFor: 2000,
+                  actions: [
+                    {
+                      label: 'Got it',
+                      action: () => {
+                        const markedDoses = this.homeConfig?.doses.filter((dose: any) => dose.marked);
+                        if (this.homeConfig.firstTimeDose) {
                           this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-green'));
                           this.sliderPage.slideNext();
                         }
+                        else if (markedDoses.length === 6) {
+                          this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-white'));
+                          this.sliderPage.slideNext();
+                        }
+                        else {
+                          this.goTo('home');
+                          this._store.dispatch(new fromSharedStore.SliderPageClear());
+                        }
                       }
-                    ],
-                  },
+                    }
+                  ],
                 },
+              },
+            );
+
+            if (this.homeConfig.firstTimeDose) {
+              const nextDose = this.homeConfig.doses[1];
+              this.slides.push(
                 {
                   header: {
                     color: '--color-bg-pastel-green',
@@ -243,6 +234,7 @@ export class StartDoseInjectDonePage implements OnInit {
                   },
                   content: {
                     hideNavigation: true,
+                    blockNavigationFor: null,
                     actions: [
                       {
                         label: 'Set up smart reminders',
@@ -258,28 +250,27 @@ export class StartDoseInjectDonePage implements OnInit {
             }
           }
 
-          const markedDoses = this.homeConfig?.doses.filter((dose: any) => dose.marked);
           // if the user has completed the 6 doses we will show the Dose report
+          const markedDoses = this.homeConfig?.doses.filter((dose: any) => dose.marked);
           if (markedDoses.length === 6) {
-            if (this.slides.length === 2) {
-              this.slides.push({
-                content: {
-                  isExpanded: true,
-                  component: 'start-dose-inject-done-report',
-                  toolbar: { 
-                    actions: [
-                      {
-                        label: 'Cool!',
-                        action: () => {
-                          this.goTo('home');
-                          this._store.dispatch(new fromSharedStore.SliderPageClear());
-                        },
+            this.slides.push({
+              content: {
+                isExpanded: true,
+                component: 'start-dose-inject-done-report',
+                blockNavigationFor: null,
+                toolbar: { 
+                  actions: [
+                    {
+                      label: 'Cool!',
+                      action: () => {
+                        this.goTo('home');
+                        this._store.dispatch(new fromSharedStore.SliderPageClear());
                       },
-                    ]
-                  } 
-                }
-              });
-            }
+                    },
+                  ]
+                } 
+              }
+            });
           }
         }
       });

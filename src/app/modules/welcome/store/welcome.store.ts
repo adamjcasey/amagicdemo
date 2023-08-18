@@ -18,14 +18,7 @@ if (environment.production) {
 else {
   initialState = {
     name: 'Developer',
-    doses: [
-      new Date(moment().toString()),
-      new Date(moment().add(1, 'week').toString()),
-      new Date(moment().add(2, 'weeks').toString()),
-      new Date(moment().add(3, 'weeks').toString()),
-      new Date(moment().add(5, 'weeks').toString()),
-      new Date(moment().add(7, 'weeks').toString()),
-    ],
+    doses: [],
   }
 }
 

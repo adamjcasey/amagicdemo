@@ -118,6 +118,13 @@ export class ResourcesPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goTo(path: string) {
+    if (path === 'resources/your-care-team') {
+      const yourCareteam = this.resourcesConfig.yourCareTeam;
+      if (yourCareteam.myTeam.length > 0 || yourCareteam.caregivers.length > 0) {
+        path += '/list';
+      }
+    }
+
     this._store.dispatch(new fromCoreStore.Go({
       path: [path]
     }));

@@ -36,28 +36,6 @@ export class AlertComponent implements OnInit {
   ngOnInit() {
     this.config$.subscribe(config => {
       if (config) {
-        if (config.show) {
-          // if the most recent config don't have a configured component
-          // clean up content component element
-          if (config.component === null) {
-            this.contentComponent?.clear();
-          }
-          else {
-            // if the one step back config don't have a configured component
-            // load the component of the most recent config
-            if (this.config.component === null) {
-              this._loadComponent(config.component);
-            }
-            else {
-              // If in both configs there is a configured component, 
-              // validate if they are different component, if they 
-              // are different load the component on the most recent config
-              if (config.component !== this.config.component) {
-                this._loadComponent(config.component);  
-              }
-            }
-          }
-        }
         this.config = config;
       }
     });
@@ -65,15 +43,5 @@ export class AlertComponent implements OnInit {
 
   sanitizeContent(htmlContent: string): SafeHtml {
     return this._sanitizer.bypassSecurityTrustHtml(htmlContent);
-  }
-
-  private _loadComponent(component: any) {
-    this.contentComponent.clear();
-    // add the each component that you want to support into an AlertComponent
-    // switch(component) {
-    //   case 'welcome-sign-up':
-    //     this.contentComponent.createComponent(WelcomeSignUpComponent);
-    //     break;
-    // }
   }
 }

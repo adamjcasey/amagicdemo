@@ -2,7 +2,8 @@
 
 .start-dose-ready-to-inject-video {
   width: 100vw;
-  height: calc(100vh - calc(var(--slider-page-content-min-size) + 48px));
+  height: calc(100vh - 130px);
+  overflow: hidden;
 
   video {
     width: 100%;

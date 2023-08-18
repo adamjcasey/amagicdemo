@@ -3,9 +3,13 @@ import {
   Output, 
   EventEmitter, 
   ViewEncapsulation, 
-  AfterViewInit,
-  Input
+  Input,
+  ViewChild,
+  ElementRef
 } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
+import { Keyboard } from '@capacitor/keyboard';
+import { animate, spring } from 'motion';
 
 @Component({
   selector: 'automagic-pin-input',
@@ -13,17 +17,56 @@ import {
   styleUrls: ['pin-input.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class PinInputComponent implements AfterViewInit {
-  @Output() onChange = new EventEmitter<string>();
+export class PinInputComponent {
+  @Output() onChange = new EventEmitter<any>();
   @Output() onError = new EventEmitter<boolean>();
   @Input() error!: any;
   @Input() allowedCodes!: string[];
+  @ViewChild('digit1') digit1!: ElementRef;
+  @ViewChild('digit2') digit2!: ElementRef;
+  @ViewChild('digit3') digit3!: ElementRef;
+  @ViewChild('digit4') digit4!: ElementRef;
+  public value!: string;
 
-  constructor() {}
-
-  ngAfterViewInit(): void {
-    const digit1 = document.getElementById('digit-1');
-    // digit1?.focus();
+  constructor() {
+    if (Capacitor.isNativePlatform()) {
+      Keyboard.addListener('keyboardWillShow', info => {
+        const inputPosition = this.digit1.nativeElement.getBoundingClientRect();
+        const positionY = inputPosition.top + inputPosition.height;
+        const remainingScreenSpace = window.innerHeight - info.keyboardHeight;
+        if (positionY > remainingScreenSpace) {
+          animate(
+            `#backdrop`,
+            { 
+              y: `-${(positionY - remainingScreenSpace) + 30}px`,
+              height: `${window.innerHeight + ((positionY - remainingScreenSpace) + 30)}px`,
+            },
+            { easing: spring({
+              stiffness: 80,
+              damping: 20,
+              mass: 1,
+              velocity: 800,
+            }) }
+          );
+        }
+      });
+  
+      Keyboard.addListener('keyboardWillHide', () => {
+        animate(
+          `#backdrop`,
+          { 
+            y: `0px`,
+            height: `${window.innerHeight}px`,
+          },
+          { easing: spring({
+            stiffness: 80,
+            damping: 20,
+            mass: 1,
+            velocity: 800,
+          }) }
+        );
+      });
+    }
   }
 
   limitToOneDigit(event: any) {
@@ -32,37 +75,51 @@ export class PinInputComponent implements AfterViewInit {
     event.target.value = input.charAt(0);
   }
 
-  onDigit(event: any, digit: number) {
-    const currentDigit = document.getElementById(`digit-${digit}`);
-    const previousDigit = digit > 1 ? document.getElementById(`digit-${digit - 1}`) : null;
-    const nextDigit = digit < 4 ? document.getElementById(`digit-${digit + 1}`) : null;
+  onDigit(event: any) {
+    const currentDigit = event.target;
+    const previousDigit = currentDigit.previousSibling;
+    const nextDigit = currentDigit.nextSibling;
     if (event.code === 'Backspace') {
-      if (digit > 1) {
-        currentDigit?.setAttribute('disabled', 'true');
+      if (previousDigit) {
+        previousDigit?.removeAttribute('disabled');
         previousDigit?.focus();
       }
     }
+    else if (event.code === 'Enter') {
+      console.log('hace enter');
+      const nextDigit = currentDigit.nextSibling;
+      if (nextDigit) {
+        nextDigit.focus();
+      }
+      else {
+        this.validateValue(true);
+      }
+    }
     else {
-      if (event.target.value !== '') {
+      if (currentDigit.value !== '') {
         nextDigit?.removeAttribute('disabled');
         nextDigit?.focus();
       }
     }
 
-    const digit1 = (document.getElementById('digit-1') as HTMLInputElement)
-    const digit2 = (document.getElementById('digit-2') as HTMLInputElement);
-    const digit3 = (document.getElementById('digit-3') as HTMLInputElement);
-    const digit4 = (document.getElementById('digit-4') as HTMLInputElement);
-    const output = `${digit1?.value}${digit2?.value}${digit3?.value}${digit4?.value}`;
+    this.value = `${this.digit1?.nativeElement.value}${this.digit2?.nativeElement.value}${this.digit3?.nativeElement.value}${this.digit4?.nativeElement.value}`;
+    this.validateValue();
+  }
+
+  validateValue(submit?: boolean) {
     if (this.allowedCodes) {
-      if (output.length === 4) {
-        if (!this.allowedCodes.includes(output)) {
+      if (this.value.length === 4) {
+        if (!this.allowedCodes.includes(this.value)) {
           this.error = 'Invalid digital code';
           this.onError.emit(true);
         }
         else {
           this.error = null;
           this.onError.emit(false);
+          this.onChange.emit({
+            value: this.value,
+            submit: submit,
+          });
         }
       }
       else {
@@ -70,8 +127,5 @@ export class PinInputComponent implements AfterViewInit {
         this.onError.emit(false);
       }
     }
-
-    this.onChange.emit(output);
   }
-
 }

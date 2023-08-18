@@ -1,4 +1,17 @@
-<ion-app class="automagic">
+<ion-menu contentId="automagic" *ngIf="config.debuggingDeviceMode">
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>Device Debugging</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content class="ion-padding">
+    <ion-menu-toggle>
+      <div id="device-debugging-content"></div>
+    </ion-menu-toggle>
+  </ion-content>
+</ion-menu>
+
+<ion-app id="automagic" class="automagic">
   <automagic-alert></automagic-alert>
   <automagic-topbar></automagic-topbar>
   <main 

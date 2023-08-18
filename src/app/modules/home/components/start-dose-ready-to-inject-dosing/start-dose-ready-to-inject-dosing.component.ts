@@ -21,6 +21,8 @@ import * as fromSharedServices from '@shared/services';
 })
 export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewInit {
   public title: string = 'Starting...';
+  public layoutConfig$!: Observable<any>;
+  public layoutConfig: any;
   public homeConfig$!: Observable<any>;
   public homeConfig: any;
   public totalTime: number = 10; // 10 seconds
@@ -32,6 +34,7 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
     private _store: Store<fromCoreStore.CoreState>,
     private _bluetoothService: fromSharedServices.BluetoothService,
   ) {
+    this.layoutConfig$ = this._store.select(fromCoreStore.getLayoutConfig);
     this.homeConfig$ = this._store.select(fromStore.getHomeConfig);
   }
 
@@ -47,6 +50,12 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
           const markedDoses = this.homeConfig?.doses.filter((dose: any) => dose.marked);
           this.nextDose = this.homeConfig.doses[markedDoses];
         }
+      }
+    });
+
+    this.layoutConfig$.subscribe(layoutConfig => {
+      if (layoutConfig) {
+        this.layoutConfig = layoutConfig;
       }
     });
   }
@@ -77,23 +86,30 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
           color: '--color-bg-pastel-lime',
         }));
 
-        let nextDoseDateFormatted;
+        let doseDateFormatted = moment().format('D MMMM YYYY H:mm A');
         const markedDoses = this.homeConfig.doses.filter((dose: any) => dose.marked);
         const unMarkedDoses = this.homeConfig.doses.filter((dose: any) => !dose.marked);
-        if (markedDoses.length === 0) {
-          const dateNextDose = moment(unMarkedDoses[1].date);
-          dateNextDose.set('hour', moment().get('hour'));
-          dateNextDose.set('minute', moment().get('minute'));
-          nextDoseDateFormatted = dateNextDose.format('D MMMM YYYY H:mm A');
-        }
+        // if (markedDoses.length === 0) {
+        //   const dateNextDose = moment(unMarkedDoses[1].date);
+        //   dateNextDose.set('hour', moment().get('hour'));
+        //   dateNextDose.set('minute', moment().get('minute'));
+        //   nextDoseDateFormatted = dateNextDose.format('D MMMM YYYY H:mm A');
+        // }
 
-        if (markedDoses.length === 5) {
-          const lastDose = unMarkedDoses[0];
-          const lastDoseDate = moment(lastDose.date);
-          lastDoseDate.set('hour', moment().get('hour'));
-          lastDoseDate.set('minute', moment().get('minute'));
-          lastDoseDate.add(2, 'weeks');
-          nextDoseDateFormatted = lastDoseDate.format('D MMMM YYYY H:mm A');
+        // if (markedDoses.length === 5) {
+        //   const lastDose = unMarkedDoses[0];
+        //   const lastDoseDate = moment(lastDose.date);
+        //   lastDoseDate.set('hour', moment().get('hour'));
+        //   lastDoseDate.set('minute', moment().get('minute'));
+        //   lastDoseDate.add(2, 'weeks');
+        //   doseDateFormatted = lastDoseDate.format('D MMMM YYYY H:mm A');
+        // }
+
+        if (markedDoses.length > 0) {
+          const currentDoseDate = moment(unMarkedDoses[0].date);
+          currentDoseDate.set('hour', moment().get('hour'));
+          currentDoseDate.set('minute', moment().get('minute'));
+          doseDateFormatted = currentDoseDate.format('D MMMM YYYY H:mm A');
         }
 
         this._store.dispatch(new fromSharedStore.AlertShow({
@@ -103,11 +119,11 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
             <h1 class="font-heading-1--bold">Full dose delivered!</h1>
             <h3>Theryx®, 80mg</h3>
             <p>Dose Completed:</p>
-            <p>${nextDoseDateFormatted}</p>
+            <p>${doseDateFormatted}</p>
           `,
           actions: [
             {
-              label: 'Ok, let’s go!',
+              label: 'Done',
               fill: 'outline',
               action: () => {
                 this._store.dispatch(new fromSharedStore.AlertHide);
@@ -122,6 +138,7 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
       }
     }
     catch (error) {
+      debugger
       this.errorDosing = true;
       this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-salmon'));
       this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
@@ -133,7 +150,7 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
           <div class="dosing-error-alert">
             <img src="assets/images/dose-dosing-error.svg" />
             <h1 class="font-heading-1--bold">Oops!</h1>
-            <p>You lifted off early and the dose was only 65% administrated.</p>
+            <p>You lifted off early and the dose was only 65% administered.</p>
             <h5>Please contact your HCP for guidance.</h5><br>
           </div>
         `,
@@ -141,15 +158,21 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
           {
             label: 'Ok',
             action: () => {
-              this.restartDosing();
+              if (this.layoutConfig.noDeviceModeOopsFlow) {
+                this._store.dispatch(new fromCoreStore.SetNoDeviceModeOopsFlow(false));
+              }
               this._store.dispatch(new fromSharedStore.AlertHide);
+              this.continueDosing();
             },
           },
           {
             label: 'My HCP',
             action: () => {
-              this.restartDosing();
+              if (this.layoutConfig.noDeviceModeOopsFlow) {
+                this._store.dispatch(new fromCoreStore.SetNoDeviceModeOopsFlow(false));
+              }
               this._store.dispatch(new fromSharedStore.AlertHide);
+              this.continueDosing();
             },
           }
         ],
@@ -157,59 +180,39 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
     }
   }
 
-  async restartDosing() {
-    this.errorDosing = false;
-    this.startDosing = false;
-    this.totalTime = 10;
-
-    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
-    this._store.dispatch(new fromSharedStore.SliderPageSlideTo(8));
-
-    let counter = 0;
-    const controller = setInterval(() => {
-      switch(counter) {
-        case 0:
-        case 3:
-        case 6:
-          this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple'));
-          this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
-            color: '--color-bg-pastel-purple'
-          }));
-          break;
-
-        case 1:
-        case 4:
-        case 7:
-          this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple'));
-          this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
-            color: '--color-bg-pastel-purple'
-          }));
-          break;
-
-        case 2:
-        case 5:
-        case 8:
-          this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-lime'));
-          this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
-            color: '--color-bg-pastel-lime'
-          }));
-          break;
-      }
-      counter++;
-    }, 2000);
-
-    try {
-      const startDosing = await this._bluetoothService.waitForDosingStart();
-      if (startDosing) {
-        clearInterval(controller);
-        this._store.dispatch(new fromSharedStore.SliderPageSlideTo(9));
+  async continueDosing() {    
+    this._store.dispatch(new fromSharedStore.BackdropShow({
+      transition: 'move',
+      header: true,
+      template: `
+        <div class="dosing-demo-try-again-message">
+          <h1 class="font-heading-1--bold">For this demo let’s try that again</h1>
+          <img src="assets/images/dosing-try-again.svg">
+          <p>Now you’ve seen what happens if you lift the injector too early.</p>
+          <p>For the correct injection experience, follow the app prompts and <br><strong>hold the injector down until the <br>app shows a completed injection <br>(10 seconds).</strong></p>
+        </div>
+      `,
+      onClose: async () => {
         this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple'));
-        this.startDose();
-        this.checkDosingProcess();
+        this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
+          color: '--color-bg-pastel-purple',
+        }));
+        this.errorDosing = false;
+        this._store.dispatch(new fromSharedStore.SliderPageSlidePrev);
+        
+        // to continue with the dose flow
+        // try {
+        //   const startDosing = await this._bluetoothService.waitForDosingStart(true);
+        //   if (startDosing) {
+        //     this.totalTime += 1;
+        //     this.startDose();
+        //     this.checkDosingProcess(true);    
+        //   }
+        // }
+        // catch (error) {
+        //   console.log('restartDosing > error: ', error);
+        // }
       }
-    }
-    catch (error) {
-      console.log('restartDosing > error: ', error);
-    }
+    }));
   }
 }

@@ -1,15 +1,24 @@
 <div 
-  *ngIf="config$ | async as config"
-  #wrapper
+  *ngIf="config$ | async as config" 
+  #wrapper 
   class="slider-page" 
-  [style.background-color]="config.header?.color 
-    ? 'var(' + config.header.color + ')' 
-    : 'var(--color-white)'"
   [ngClass]="{ 
     'is-content-hidden': config.content?.hide, 
     'is-content-expanded': config.content?.isExpanded, 
     'is-full-size': config.header?.fullSize, 
-  }">
+    'is-iphone-x': this.layoutConfig.deviceModel?.model.includes('iphone-x'),
+    'is-iphone-11': this.layoutConfig.deviceModel?.model.includes('iphone-11'),
+    'is-iphone-12': this.layoutConfig.deviceModel?.model.includes('iphone-12'),
+    'is-iphone-13': this.layoutConfig.deviceModel?.model.includes('iphone-13'),
+    'is-iphone-14': this.layoutConfig.deviceModel?.model.includes('iphone14,7'),
+    'is-iphone-14-plus': this.layoutConfig.deviceModel?.model.includes('iphone14,8'),
+    'is-iphone-14-pro': this.layoutConfig.deviceModel?.model.includes('iphone15,2'),
+    'is-iphone-14-pro-max': this.layoutConfig.deviceModel?.model.includes('iphone15,3'),
+  }" 
+  [style.background-color]="config.header?.color 
+    ? 'var(' + config.header.color + ')' 
+    : 'var(--color-white)'
+  ">
 
   <div 
     class="slider-page__header" 
@@ -18,6 +27,7 @@
       'has-template': config.header?.template, 
       'has-component': config.header?.component, 
       'has-timeline': config.content?.timeline,
+      'no-scroll': config.header?.noScroll,
     }">
 
     <swiper #sliderHeader effect="fade" [allowTouchMove]="false">
@@ -29,8 +39,8 @@
         <div class="content-wrapper">
           <div 
             class="template-wrapper" 
-            *ngIf="config.header?.template || slide.header?.template" 
-            [innerHTML]="sanitizeContent(config.header?.template ? config.header?.template : slide.header?.template)"
+            *ngIf="config.header?.template" 
+            [dinamicInnerHtml]="config.header?.template"
           ></div>
 
           <div class="cards-wrapper" *ngIf="slide.header?.cards">
@@ -108,7 +118,7 @@
               class="hotspot-element {{ button.cssClasses ? button.cssClasses : null }}"
               color="purple" 
               size="large" 
-              [ngClass]="{ 'is-hidden': button.hidden }"
+              [ngClass]="{ 'is-hidden': button.hidden, 'is-blocked': blockNavigation }"
               [disabled]="button.disabled ? true : null" 
               (click)="button.action ? button.action($event) : null" 
               [fill]="
@@ -129,7 +139,8 @@
       class="wrapper-large" 
       [style.background-color]="config.content?.bgColor 
         ? 'var(' + config.content.bgColor + ')' 
-        : 'var(--color-white)'">
+        : 'var(--color-white)'
+      ">
 
       <div class="wrapper-large__content">
         <div 
@@ -154,6 +165,7 @@
           <ion-button 
             *ngFor="let button of config.content.toolbar.actions; let i = index" 
             class="hotspot-element {{ button.cssClasses ? button.cssClasses : null }}"
+            [ngClass]="{ 'is-blocked': blockNavigation }"
             color="purple" 
             size="large" 
             [disabled]="button.disabled ? true : null" 

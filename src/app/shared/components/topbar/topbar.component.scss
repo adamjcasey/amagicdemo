@@ -3,6 +3,7 @@
 .topbar__toolbar {
   --background: transparent;
   --border-width: 0 !important;
+  // z-index: 300;
 
   ion-button {
     height: auto;
@@ -10,6 +11,13 @@
 
   ion-icon {
     font-size: 44px;
+  }
+
+  .debugging-cta {
+    ion-icon {
+      color: var(--color-text);
+      font-size: var(--size-m);
+    }
   }
 
   .timer {
@@ -30,6 +38,7 @@
       line-height: var(--font-line-height-heading-5);
     }
   }
+
   .notifications-cta {
     .counter {
       position: absolute;

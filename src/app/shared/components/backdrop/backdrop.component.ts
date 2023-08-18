@@ -20,6 +20,7 @@ import * as fromStore from '@shared/store';
 import * as fromCoreStore from '@core/store';
 import * as fromSharedServices from '@shared/services';
 import * as fromWelcomeComponents from '@welcome/components';
+import * as fromHomeStore from '@home/store';
 import * as fromHomeComponents from '@home/components';
 
 @Component({
@@ -33,12 +34,14 @@ export class BackdropComponent implements OnInit, AfterViewInit {
   public config: any;
   public layoutConfig$: Observable<any>;
   public layoutConfig: any;
+  public homeConfig$: Observable<any>;
+  public homeConfig: any;
   public backButton!: any;
   public initialized: boolean = false;
   public initialSlide: number = 0;
   public batteryLevel: number = 0;
   @ViewChild('sliderMainMenu', { static: false }) sliderMainMenu!: SwiperComponent;
-  @ViewChild('sliderHighlights', { static: false }) sliderHighlights!: SwiperComponent;
+  @ViewChild('sliderHighlightsTour', { static: false }) sliderHighlightsTour!: SwiperComponent;
   @ViewChild('sliderShareFlow', { static: false }) sliderShareFlow!: SwiperComponent;
   @ViewChild('contentComponent', { read: ViewContainerRef }) contentComponent!: ViewContainerRef;
 
@@ -50,12 +53,13 @@ export class BackdropComponent implements OnInit, AfterViewInit {
   ) {
     this.config$ = this._store.select(fromStore.getBackdropConfig);
     this.layoutConfig$ = this._store.select(fromCoreStore.getLayoutConfig);
+    this.homeConfig$ = this._store.select(fromHomeStore.getHomeConfig);
   }
 
   getType(): string {
     let type = '';
     if (this.config.highlights) {
-      type = 'highlights-menu';
+      type = 'highlights-tour';
     }
     else if (this.config.returnFlow) {
       type = 'return-flow';
@@ -79,6 +83,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
       if (config) {
         this.config = config;
         if (this.config.show) {
+          this.getBatteryLevel();
           if (this.config.component !== null) {
             this._loadComponent(this.config.component);
           }
@@ -88,7 +93,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
 
           if (this.getType() === 'dinamic') {
             if (this.config.showBackButton) {
-              this.goBackToMenu();
+              this.setGoBackMenuButton();
             }
           }
         }
@@ -97,9 +102,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
           if (this.initialized) {
             setTimeout(() => {
               this.contentComponent?.clear();
-              if (this.getType() === 'main-menu') {
-                this.goToSubmenu(0);
-              }
+              this.goToSubmenu(0);
             }, 800);
           }
         }
@@ -115,8 +118,14 @@ export class BackdropComponent implements OnInit, AfterViewInit {
         this.layoutConfig = layoutConfig;
       }
     });
+
+    this.homeConfig$.subscribe(homeConfig => {
+      if (homeConfig) {
+        this.homeConfig = homeConfig;
+      }
+    });
   }
-  
+
   ngAfterViewInit() {
     this.initialized = true;
   }
@@ -134,9 +143,17 @@ export class BackdropComponent implements OnInit, AfterViewInit {
   }
 
   onMenuInit() {
-    this.getBatteryLevel();
     if (this.config.showBackButton) {
       this.backButton = null;
+      if (this.initialSlide > 0) {
+        this.backButton = {
+          label: 'Back',
+          action: () => {
+            this.sliderMainMenu.swiperRef.slideTo(0);
+            this.backButton = null;
+          }
+        };
+      }
     }
   }
 
@@ -159,34 +176,45 @@ export class BackdropComponent implements OnInit, AfterViewInit {
       this.sliderMainMenu?.swiperRef.slideTo(step);
     }
 
-    if (this.sliderHighlights) {
-      this.sliderHighlights?.swiperRef.slideTo(step);
+    if (this.sliderHighlightsTour) {
+      this.sliderHighlightsTour?.swiperRef.slideTo(step);
     }
   }
 
-  goBackToMenu() {
+  goBackToMenu(stepToGo?: number) {
+    if (this.config.fullScreen) {
+      this.animateFullScreenToDefault();
+    }
+
+    this.backButton = null;
+    this.contentComponent?.clear();
+    this._store.dispatch(new fromStore.BackdropSetConfig({
+      transition: 'move',
+      header: true,
+      bgTemplate: this.config.bgTemplate ? null : null,
+      fullScreen: this.config.fullScreen ? false : null,
+      template: null,
+      component: null,
+      highlights: null,
+      returnFlow: null,
+      shareFlow: null,
+    }));
+
+    if (stepToGo) {
+      this.initialSlide = stepToGo;
+    }
+  }
+
+  setGoBackMenuButton() {
     this.backButton = {
       label: 'Menu',
       action: () => {
-        if (this.config.fullScreen) {
-          this.animateFullScreenToDefault();
-        }
-
-        this.backButton = null;
-        this.contentComponent?.clear();
-        this._store.dispatch(new fromStore.BackdropSetConfig({
-          transition: 'move',
-          header: true,
-          bgTemplate: this.config.bgTemplate ? null : null,
-          fullScreen: this.config.fullScreen ? false : null,
-          template: null,
-          component: null,
-        }));
+        this.goBackToMenu();
       }
     }
   }
 
-  onHighlightsInit() {
+  onHighlightsTourInit() {
     if (this.config.showBackButton) {
       this.backButton = {
         label: 'Back',
@@ -207,20 +235,20 @@ export class BackdropComponent implements OnInit, AfterViewInit {
       };
     }
 
-    const wrapper = this.sliderHighlights.swiperRef.slides[0].querySelector('.masonry-layout');
+    const wrapper = this.sliderHighlightsTour.swiperRef.slides[0].querySelector('.masonry-layout');
     if (wrapper) {
       this._utils.createMasonryLayout(wrapper);
     }
   }
 
-  onHighlightsChange() {
-    const activeIndex = this.sliderHighlights.swiperRef.activeIndex;
+  onHighlightsTourChange() {
+    const activeIndex = this.sliderHighlightsTour.swiperRef.activeIndex;
     if (activeIndex > 0) {
       if (this.config.showBackButton) {
         this.backButton = {
           label: 'Back',
           action: () => {
-            this.sliderHighlights.swiperRef.slideTo(0);
+            this.sliderHighlightsTour.swiperRef.slideTo(0);
           }
         };
       }
@@ -246,6 +274,57 @@ export class BackdropComponent implements OnInit, AfterViewInit {
     }
   }
 
+  showShareFlow() {
+    const element = document.querySelector('#backdrop .backdrop__wrapper') as HTMLElement;
+    element.style.removeProperty('height');
+
+    this._store.dispatch(new fromStore.BackdropSetConfig({
+      shareFlow: true,
+      returnFlow: null,
+      contentCentered: null,
+    }));
+
+    if (this.config.showBackButton) {
+      this.backButton = {
+        label: 'Back',
+        action: () => {
+          console.log('click in back share flow');
+          this._store.dispatch(new fromStore.BackdropSetConfig({
+            shareFlow: null,
+          }));
+          this.initialSlide = 1;
+        }
+      };
+    }
+  }
+
+  slideNextShareFlow(event: any) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    this.sliderShareFlow.swiperRef.slideNext();
+  }
+
+  showReturnFlow() {
+    this._store.dispatch(new fromStore.BackdropSetConfig({
+      returnFlow: true,
+      shareFlow: null,
+      contentCentered: null,
+    }));
+
+    if (this.config.showBackButton) {
+      this.backButton = {
+        label: 'Back',
+        action: () => {
+          console.log('click in back share flow');
+          this._store.dispatch(new fromStore.BackdropSetConfig({
+            returnFlow: null,
+          }));
+          this.initialSlide = 1;
+        }
+      };
+    }
+  }
+
   sanitizeContent(htmlContent: string): SafeHtml {
     return this._sanitizer.bypassSecurityTrustHtml(htmlContent);
   }
@@ -264,14 +343,12 @@ export class BackdropComponent implements OnInit, AfterViewInit {
 
     animate(
       '#backdrop .backdrop__wrapper',
-      {
-        height: [
+      { height: [
           `${window.innerHeight}px`,
           `${(window.innerHeight) * 0.9}px`,
           `${(window.innerHeight) * 0.8}px`,
           `${(window.innerHeight) * 0.75}px`,
-        ],
-      },
+      ] },
       { easing: spring({
         stiffness: 100,
         damping: 15,
@@ -281,82 +358,84 @@ export class BackdropComponent implements OnInit, AfterViewInit {
     );
   }
 
-  showShareFlow() {
-    const element = document.querySelector('#backdrop .backdrop__wrapper') as HTMLElement;
-    element.style.removeProperty('height');
-
-    this._store.dispatch(new fromStore.BackdropSetConfig({
-      shareFlow: true,
-      returnFlow: null,
-      contentCentered: null,
-    }));
-
-    if (this.config.showBackButton) {
-      this.backButton = {
-        label: 'Back',
-        action: () => {
-          this._store.dispatch(new fromStore.BackdropSetConfig({
-            shareFlow: null,
-          }));
-          this.initialSlide = 1;
-        }
-      };
-    }
-  }
-
-  showReturnFlow() {
-    this._store.dispatch(new fromStore.BackdropSetConfig({
-      returnFlow: true,
-      shareFlow: null,
-      contentCentered: null,
-    }));
-
-    if (this.config.showBackButton) {
-      this.backButton = {
-        label: 'Back',
-        action: () => {
-          this._store.dispatch(new fromStore.BackdropSetConfig({
-            returnFlow: null,
-          }));
-          this.initialSlide = 1;
-        }
-      };
-    }
-  }
-
-  slideNextShareFlow(event: any) {
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    this.sliderShareFlow.swiperRef.slideNext();
-  }
-
-  cancelCustomFlows() {
-    this._store.dispatch(new fromStore.BackdropSetConfig({
-      shareFlow: null,
-      returnFlow: null,
-    }));
-    this.initialSlide = 1;
-  }
-
   getBatteryLevel() {
     this.batteryLevel = this._bluetoothService.Battery;
-  }
-
-  toggleNoDeviceMode() {
-    this._store.dispatch(new fromCoreStore.SetNoDeviceMode(!this.layoutConfig.noDeviceMode));
-  }
-
-  toggleNoDeviceOopsFlow() {
-    if (this.layoutConfig.noDeviceMode) {
-      this._store.dispatch(new fromCoreStore.SetNoDeviceModeOopsFlow(!this.layoutConfig.noDeviceModeOopsFlow));
+    if (this.config.debuggingDeviceMode) {
+      this._bluetoothService.renderDebuggingVerboose('getBatteryLevel', `Battery Level: ${this.batteryLevel}`);
     }
   }
 
-  toggleNoDeviceBatteryLowFlow() {
-    if (this.layoutConfig.noDeviceMode) {
-      this._store.dispatch(new fromCoreStore.SetNoDeviceModeBatteryLowFlow(!this.layoutConfig.noDeviceModeBatteryLowFlow));
-      this._bluetoothService.Battery = 5;
+  doAnotherInjection() {
+    this._store.dispatch(new fromHomeStore.SetData({
+      firstTimeDose: false,
+      doses: this.homeConfig.doses.map((dose: any, index: number) => {
+        return {
+          marked: index === 0 ? dose.marked : false,
+          date: dose.date,
+          bodyPartInjected: index === 0 ? dose.bodyPartInjected : '',
+          notes: index === 0 ? dose.notes : null,
+        }
+      }),
+      timeTravelingDemoDone: true,
+      flareUpsDemoDone: true,
+      allCompletedDoses: false,
+    }));
+    this.toggle();
+    this.goTo('home/start-dose/prepare');
+  }
+
+  resetDemo() {
+    this._store.dispatch(new fromHomeStore.SetData({
+      firstTimeDose: true,
+      doses: this.homeConfig.doses.map(() => {
+        return {
+          marked: false,
+          date: '',
+          bodyPartInjected: '',
+          notes: null,
+        }
+      }),
+      timeTravelingDemoDone: false,
+      flareUpsDemoDone: false,
+      allCompletedDoses: false,
+      onBoardingTasks: this.homeConfig.onBoardingTasks.map((task: any) => {
+        return {
+          ...task,
+          completed: false,
+        }
+      }),
+      onBoardingDone: false,
+    }));
+    this.toggle();
+    this.goTo('welcome');
+  }
+
+  toggleDebuggingOptions(option: string) {
+    switch (option) {
+      case 'no-device-mode':
+        this._store.dispatch(new fromCoreStore.SetNoDeviceMode(!this.layoutConfig.noDeviceMode));
+        break;
+      case 'oops-flow':
+        if (this.layoutConfig.noDeviceMode) {
+          this._store.dispatch(new fromCoreStore.SetNoDeviceModeOopsFlow(!this.layoutConfig.noDeviceModeOopsFlow));
+        }
+        break;
+      case 'battery-low':
+        if (this.layoutConfig.noDeviceMode) {
+          this._store.dispatch(new fromCoreStore.SetNoDeviceModeBatteryLowFlow(!this.layoutConfig.noDeviceModeBatteryLowFlow));
+          this._bluetoothService.Battery = 5;
+        }
+        break;
+      case 'device-debugging':
+        this._store.dispatch(new fromCoreStore.SetDeviceDebugging(!this.layoutConfig.debuggingDeviceMode));
+        break;
     }
+  }
+
+  goTo(path: string) {
+    this._store.dispatch(new fromCoreStore.Go({
+      path: [path]
+    }));
   }
 
   private _loadComponent(component: any) {

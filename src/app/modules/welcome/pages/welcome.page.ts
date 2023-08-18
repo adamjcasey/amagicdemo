@@ -57,7 +57,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
         content: {
           hideNavigation: true,
           template: `
-            <h1 class="font-heading-1--bold">Welcome to AutoMagic for Theryx.</h1>
+            <h1 class="font-heading-1--bold">Welcome to <br>AutoMagic for Theryx.</h1>
             <p>The AutoMagic connected ecosystem empowers you to make the most of your Theryx prescription</p>
           `,
           actions: [
@@ -114,6 +114,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
           asset: '/assets/images/welcome-step-2.svg',
         },
         content: {
+          hideNavigation: null,
           template: `
             <h1 class="font-heading-1--bold">Let's get connected.</h1>
             <p>To get the most out of your connected autoinjector and enable dose tracking and help with your injection experience, please enable bluetooth.</p>
@@ -165,7 +166,8 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
             {
               label: 'Continue',
               action: () => {
-                this._store.dispatch(new fromSharedStore.SliderPageClear());
+                this._store.dispatch(new fromSharedStore.SliderPageClear);
+                this._store.dispatch(new fromCoreStore.SetWelcomeFlowAsDone);
                 this.goTo('home');
               }
             }
@@ -255,7 +257,17 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
       }
     }
     catch (error) {
-      console.log('allowBluetooth > error: ', error);
+      this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
+        actions: [
+          {
+            label: 'Open Settings to Allow Bluetooth',
+            action: () => { 
+              this._bluetoothService.openSettingsApp();
+              this.sliderPage.slideNext();
+            }
+          },
+        ],
+      }));
     }
   }
 

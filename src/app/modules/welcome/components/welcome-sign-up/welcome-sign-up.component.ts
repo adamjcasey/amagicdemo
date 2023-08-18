@@ -40,10 +40,14 @@ export class WelcomeSignUpComponent {
     });
   }
 
-  getPinCode(code: string) {
+  getPinCode(data: any) {
     this.signUpFormGroup.patchValue({
-      code: code
+      code: data.value
     });
+
+    if (data.submit) {
+      this.registerUser();
+    }
   }
 
   getPinError(error: boolean) {

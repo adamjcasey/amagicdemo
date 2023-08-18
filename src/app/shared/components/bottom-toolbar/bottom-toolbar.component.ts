@@ -19,6 +19,7 @@ export class BottomToolbarComponent implements OnInit {
   public currentRoute: string = '';
   public excludedPaths: Array<string>;
   public isOpen: boolean = false;
+  public onBoardingTasksCompleted: number = 0;
 
   constructor(
     private _router: Router,
@@ -50,6 +51,7 @@ export class BottomToolbarComponent implements OnInit {
     this.homeConfig$.subscribe(homeConfig => {
       if (homeConfig) {
         this.homeConfig = homeConfig;
+        this.onBoardingTasksCompleted = this.homeConfig.onBoardingTasks.filter((task: any) => task.completed).length;
       }
     });
   }

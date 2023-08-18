@@ -1,0 +1,23 @@
+@import 'src/theme/base/mixins';
+
+.start-dose-ready-to-inject-waiting-to-start-injection {
+  padding: var(--topbar-size) var(--size-m) var(--size-m);
+
+  > *:not(video) {
+    position: relative;
+    z-index: 50;
+  }
+
+  h4 {
+    margin-top: 45vh;
+  }
+
+  video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+  }
+}

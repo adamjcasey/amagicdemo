@@ -11,6 +11,10 @@ export enum ActionTypes {
   SetNoDeviceMode = '[Layout] Set No Device Mode',
   SetNoDeviceModeOopsFlow = '[Layout] Set No Device Mode Oops Flow',
   SetNoDeviceModeBatteryLowFlow = '[Layout] Set No Device Mode Battery Low Flow',
+  SetDeviceDebugging = '[Layout] Set Device Debugging',
+  SetWelcomeFlowAsDone = '[Layout] Set Welcome Flow as Done',
+  SetDeviceInfo = '[Layout] Set Device Model Info',
+  SetIsDeviceConnected = '[Layout] Set Is Device Connected',
 }
 
 export class Go implements Action {
@@ -33,13 +37,11 @@ export class Forward implements Action {
 
 export class SetFullScreen implements Action {
   readonly type = ActionTypes.SetFullScreen;
-
   constructor(public payload: boolean) {}
 }
 
 export class SetRightCornerEl implements Action {
   readonly type = ActionTypes.SetRightCornerEl;
-
   constructor(public payload: any) {}
 }
 
@@ -49,19 +51,36 @@ export class ClearRightCornerEl implements Action {
 
 export class SetNoDeviceMode implements Action {
   readonly type = ActionTypes.SetNoDeviceMode;
-
   constructor(public payload: boolean) {}
 }
 
 export class SetNoDeviceModeOopsFlow implements Action {
   readonly type = ActionTypes.SetNoDeviceModeOopsFlow;
-
   constructor(public payload: boolean) {}
 }
 
 export class SetNoDeviceModeBatteryLowFlow implements Action {
   readonly type = ActionTypes.SetNoDeviceModeBatteryLowFlow;
+  constructor(public payload: boolean) {}
+}
 
+export class SetDeviceDebugging implements Action {
+  readonly type = ActionTypes.SetDeviceDebugging;
+  constructor(public payload: boolean) {}
+}
+
+export class SetWelcomeFlowAsDone implements Action {
+  readonly type = ActionTypes.SetWelcomeFlowAsDone;
+}
+
+
+export class SetDeviceInfo implements Action {
+  readonly type = ActionTypes.SetDeviceInfo;
+  constructor(public payload: any) {}
+}
+
+export class SetIsDeviceConnected implements Action {
+  readonly type = ActionTypes.SetIsDeviceConnected;
   constructor(public payload: boolean) {}
 }
 
@@ -74,4 +93,8 @@ export type ActionsUnion
   | ClearRightCornerEl
   | SetNoDeviceMode
   | SetNoDeviceModeOopsFlow
-  | SetNoDeviceModeBatteryLowFlow;
+  | SetNoDeviceModeBatteryLowFlow
+  | SetWelcomeFlowAsDone
+  | SetDeviceDebugging
+  | SetIsDeviceConnected
+  | SetDeviceInfo;

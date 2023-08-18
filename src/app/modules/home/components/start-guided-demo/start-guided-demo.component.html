@@ -2,10 +2,16 @@
   <h1 class="font-heading-1--bold">That’s it for the guided portion of the demo!</h1>
   <p>This  app has many more features and benefits to check out.</p>
   <div class="buttons-container">
-    <ion-button fill="outline" expand="block" color="light" (click)="showHighlightsTour()">
+    <ion-button 
+      class="hotspot-element"
+      (click)="showHighlightsTour()"
+      fill="outline" expand="block" color="light">
       Just show me the highlights
     </ion-button>
-    <ion-button fill="outline" expand="block" color="light" (click)="startExploring()">
+    <ion-button 
+      class="hotspot-element" 
+      (click)="startExploring()" 
+      fill="outline" expand="block" color="light">
       Let me explore like I’m a user
     </ion-button>
   </div>

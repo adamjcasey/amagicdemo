@@ -10,6 +10,7 @@ import { Observable, Subject, takeUntil } from 'rxjs';
 import * as fromStore from '@home/store';
 import * as fromSharedStore from '@shared/store';
 import * as fromCoreStore from '@core/store';
+import * as fromSharedService from '@shared/services';
 
 @Component({
   selector: 'automagic-start-dose-ready-to-inject-body-part-selector',
@@ -24,10 +25,12 @@ export class StartDoseReadyToInjectBodyPartSelectorComponent implements OnInit, 
   public sliderPageConfig: any;
   public homeConfig$!: Observable<any>;
   public homeConfig: any;
+  public lastMarkedDose: any;
   private _ngUnsubscribe: Subject<void> = new Subject<void>();
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
+    private _utils: fromSharedService.UtilsService,
   ) {
     this.sliderPageConfig$ = this._store.select(fromSharedStore.getSliderPageConfig);
     this.homeConfig$ = this._store.select(fromStore.getHomeConfig);
@@ -49,8 +52,8 @@ export class StartDoseReadyToInjectBodyPartSelectorComponent implements OnInit, 
           this.homeConfig = homeConfig;
           const markedDoses = this.homeConfig?.doses.filter((dose: any) => dose.marked);
           if (markedDoses.length) {
-            const lastMarkedDose = markedDoses[markedDoses.length - 1];
-            this.bodyPartPreviousSelected = lastMarkedDose.bodyPartInjected;
+            this.lastMarkedDose = markedDoses[markedDoses.length - 1];
+            this.bodyPartPreviousSelected = this.lastMarkedDose.bodyPartInjected;
           }
         }
       });
@@ -123,5 +126,9 @@ export class StartDoseReadyToInjectBodyPartSelectorComponent implements OnInit, 
         }
       ]
     }));
+  }
+
+  humanizeBodyPartInjected(bodyPartInjected: string) {
+    return this._utils.humanizeBodyPartInjected(bodyPartInjected);
   }
 }
