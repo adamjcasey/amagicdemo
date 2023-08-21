@@ -6,7 +6,19 @@
   </ion-header>
   <ion-content class="ion-padding">
     <ion-menu-toggle>
-      <div id="device-debugging-content"></div>
+      <div class="device-debugging">
+        <div id="device-debugging-logs"></div>
+        <div id="device-debugging-stats">
+          <p class="uuid"><strong>UUID:</strong> <span></span></p>
+          <p class="rssi"><strong>RSSI:</strong> <span></span></p>
+          <p class="name"><strong>Name:</strong> <span></span></p>
+          <p class="state"><strong>State:</strong> <span></span></p>
+          <p class="battery"><strong>Battery:</strong> <span></span></p>
+          <p class="dosage"><strong>Dosage:</strong> <span></span></p>
+          <p class="is-connected"><strong>Is Connected?:</strong> <span></span></p>
+          <p class="is-scanning"><strong>Is Scanning?:</strong> <span></span></p>
+        </div>
+      </div>
     </ion-menu-toggle>
   </ion-content>
 </ion-menu>
