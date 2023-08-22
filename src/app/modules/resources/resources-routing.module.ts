@@ -31,11 +31,12 @@ const routes: Routes = [
   {
     path: 'mindful-assistant',
     component: fromPages.MindfulAssistantPage
-  },  
-  {
-    path: 'mindful-assistant/start',
-    component: fromPages.MindfulAssistantStartPage
-  },  
+  },
+  // Old version
+  // {
+  //   path: 'mindful-assistant/start',
+  //   component: fromPages.MindfulAssistantStartPage
+  // },
   {
     path: 'one-path',
     component: fromPages.OnePathPage
