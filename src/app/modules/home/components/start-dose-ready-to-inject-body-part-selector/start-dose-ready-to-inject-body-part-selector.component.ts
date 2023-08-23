@@ -50,6 +50,7 @@ export class StartDoseReadyToInjectBodyPartSelectorComponent implements OnInit, 
       .subscribe(homeConfig => {
         if (homeConfig) {
           this.homeConfig = homeConfig;
+          this.bodyPartSelected = this.homeConfig.bodyPartSelected;
           const markedDoses = this.homeConfig?.doses.filter((dose: any) => dose.marked);
           if (markedDoses.length) {
             this.lastMarkedDose = markedDoses[markedDoses.length - 1];
