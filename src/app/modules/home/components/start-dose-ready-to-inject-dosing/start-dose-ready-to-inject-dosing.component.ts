@@ -113,6 +113,9 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
               action: () => {
                 this._store.dispatch(new fromSharedStore.AlertHide);
                 this._store.dispatch(new fromSharedStore.SliderPageClear());
+                this._store.dispatch(new fromStore.SetData({
+                  dosingStarted: false
+                }));
                 this._store.dispatch(new fromCoreStore.Go({
                   path: ['/home/start-dose/inject-done']
                 }));

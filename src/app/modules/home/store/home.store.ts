@@ -6,6 +6,7 @@ export interface HomeState {
   firstTimeDose: boolean;
   doses: any[];
   bodyPartSelected: string;
+  dosingStarted: boolean;
   timeTravelingDemoDone: boolean;
   flareUpsDemoDone: boolean;
   allCompletedDoses: boolean;
@@ -55,6 +56,7 @@ if (environment.production) {
       }
     ],
     bodyPartSelected: '',
+    dosingStarted: false,
     timeTravelingDemoDone: false,
     flareUpsDemoDone: false,
     allCompletedDoses: false,
@@ -99,49 +101,11 @@ else {
     firstTimeDose: false,
     // to skip welcome flow just fill the date of the doses
     // to skip start dose flow just fill body part and marked properties of the doses
-    // doses: [
-    //   {
-    //     marked: true, // false
-    //     date: new Date(moment.now()),
-    //     bodyPartInjected: 'top-right', // '', 
-    //     notes: null, // { painful: 2, mood: 3, symptoms: ['Redness', 'Itching'], note: 'Custom Note', }
-    //   },
-    //   {
-    //     marked: true, // false
-    //     date: new Date(moment().add(1, 'week').calendar()),
-    //     bodyPartInjected: 'top-left', // '', 
-    //     notes: null, // { painful: 3, mood: 1, symptoms: ['Swelling', 'No Reaction'], note: 'Custom Note', }
-    //   },
-    //   {
-    //     marked: true, // false
-    //     date: new Date(moment().add(2, 'week').calendar()),
-    //     bodyPartInjected: 'bottom-right', // '', 
-    //     notes: null, // { painful: 5, mood: 4, symptoms: ['Redness', 'Itching'], note: 'Custom Note', }
-    //   },
-    //   {
-    //     marked: true, // false
-    //     date: new Date(moment().add(3, 'weeks').toString()),
-    //     bodyPartInjected: 'bottom-left', // '', 
-    //     notes: null, // { painful: 2, mood: 5, symptoms: ['Swelling', 'No Reaction'], note: 'Custom Note', }
-    //   },
-    //   {
-    //     marked: true, // false
-    //     date: new Date(moment().add(5, 'week').calendar()),
-    //     bodyPartInjected: 'top-right', // '', 
-    //     notes: null, // { painful: 2, mood: 3, symptoms: ['Redness', 'Itching'], note: 'Custom Note', }
-    //   },
-    //   {
-    //     marked: true, // false
-    //     date: new Date(moment().add(7, 'week').calendar()),
-    //     bodyPartInjected: 'bottom-left', // '', 
-    //     notes: null, // { painful: 1, mood: 4, symptoms: ['Swelling', 'No Reaction'], note: 'Custom Note', }
-    //   }
-    // ],
     doses: [
       {
         marked: true, // false
         date: new Date(moment.now()), // '',
-        bodyPartInjected: 'top-right', // '', 
+        bodyPartInjected: 'top-left', // '', 
         notes: null, // { painful: 2, mood: 3, symptoms: ['Redness', 'Itching'], note: 'Custom Note', }
       },
       {
@@ -176,6 +140,7 @@ else {
       }
     ],
     bodyPartSelected: '',
+    dosingStarted: false,
     timeTravelingDemoDone: true,
     flareUpsDemoDone: true,
     // to skip start dose flow just set as true

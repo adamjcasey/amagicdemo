@@ -131,14 +131,16 @@ export class BackdropComponent implements OnInit, AfterViewInit {
   }
 
   toggle() {
-    if (!this.config.show) {
-      this._store.dispatch(new fromStore.BackdropShow({
-        transition: 'move',
-        header: true,
-      }));
-    }
-    else {
-      this._store.dispatch(new fromStore.BackdropHide);
+    if (!this.homeConfig.dosingStarted) {
+      if (!this.config.show) {
+        this._store.dispatch(new fromStore.BackdropShow({
+          transition: 'move',
+          header: true,
+        }));
+      }
+      else {
+        this._store.dispatch(new fromStore.BackdropHide);
+      }
     }
   }
 
@@ -358,10 +360,10 @@ export class BackdropComponent implements OnInit, AfterViewInit {
     );
   }
 
-  getBatteryLevel() {
-    this.batteryLevel = this._bluetoothService.Battery;
+  async getBatteryLevel() {
+    this.batteryLevel = await this._bluetoothService.getBattery();
     if (this.config.debuggingDeviceMode) {
-      this._bluetoothService.renderDebuggingVerboose('getBatteryLevel', `Battery Level: ${this.batteryLevel}`);
+      this._bluetoothService.logger('getBatteryLevel from Backdrop', `Battery Level: ${this.batteryLevel}`);
     }
   }
 
@@ -423,7 +425,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
       case 'battery-low':
         if (this.layoutConfig.noDeviceMode) {
           this._store.dispatch(new fromCoreStore.SetNoDeviceModeBatteryLowFlow(!this.layoutConfig.noDeviceModeBatteryLowFlow));
-          this._bluetoothService.Battery = 5;
+          this._bluetoothService.setBattery(5);
         }
         break;
       case 'device-debugging':
