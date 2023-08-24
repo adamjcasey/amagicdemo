@@ -3,6 +3,8 @@ import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { Capacitor } from '@capacitor/core';
 import { Device } from '@capacitor/device';
+import { Clipboard } from '@capacitor/clipboard';
+import * as moment from 'moment';
 
 import * as fromStore from '@core/store';
 import * as fromSharedStore from '@shared/store';
@@ -36,16 +38,9 @@ export class LayoutPage implements OnInit {
   }
 
   ngOnInit() {
-    this.config$.subscribe(config => {
+    this.config$.subscribe(async config => {
       if (config) {
         this.config = config;
-        if (this.config.noDeviceModeBatteryLowFlow) {
-          this.batteryLowMessageShowed = false;
-        }
-
-        if (this.config.isDeviceConnected) {
-          this.verifyBatterLevelOfDevice();
-        }
       }
     });
 
@@ -146,42 +141,68 @@ export class LayoutPage implements OnInit {
 
   async verifyBatterLevelOfDevice() {
     if (this.config.debuggingDeviceMode) {
-      this._bluetoothService.renderDebuggingVerboose('verifyBatterLevelOfDevice');
+      this._bluetoothService.logger('verifyBatterLevelOfDevice');
     }
 
-    if (this.config.isDeviceConnected) {
-      if (this.config.debuggingDeviceMode) {
-        this._bluetoothService.renderDebuggingVerboose('verifyBatterLevelOfDevice ', 'The device is connected');
-        setTimeout(() => {
-          this._bluetoothService.renderDebuggingVerboose('verifyBatterLevelOfDevice ', `Current Battery Level: ${this._bluetoothService.Battery}`);
-        }, 2000);
-      }
+    try {
+      const isDeviceConnected = await this._bluetoothService.isDeviceConnected();
+      if (isDeviceConnected) {
+        if (this.config.debuggingDeviceMode) {
+          this._bluetoothService.logger('verifyBatterLevelOfDevice from Layout', 'The device is connected');
+        }
 
-      setInterval(() => {
-        const batteryLevel = this._bluetoothService.Battery;
-        if (batteryLevel < this.minBatteryLevel) {
-          if (!this.backdropConfig.show && !this.batteryLowMessageShowed) {
-            this.batteryLowMessageShowed = true;
-            this._store.dispatch(new fromSharedStore.BackdropShow({
-              transition: 'move',
-              header: true,
-              template: `
-                <br>
-                <img src="assets/images/battery-low.svg" />
-                <h1 class="font-heading-1--bold">Injector battery <br>low</h1>
-                <p>Unfortunately the demo injector has <br>a low battery and must be <br>recharged.</p>
-                <h5>Please follow the recharge <br>instructions included with the <br>USB-C cord in the shipping box.</h5>
-              `,
-              onClose: () => {
-                if (this.config.noDeviceModeBatteryLowFlow) {
-                  this._store.dispatch(new fromStore.SetNoDeviceModeBatteryLowFlow(false));
-                  this._bluetoothService.Battery = 20;
+        const showBatterLowAlert = () => {
+          this._store.dispatch(new fromSharedStore.BackdropShow({
+            transition: 'move',
+            header: true,
+            template: `
+              <br>
+              <img src="assets/images/battery-low.svg" />
+              <h1 class="font-heading-1--bold">Injector battery <br>low</h1>
+              <p>Unfortunately the demo injector has <br>a low battery and must be <br>recharged.</p>
+              <h5>Please follow the recharge <br>instructions included with the <br>USB-C cord in the shipping box.</h5>
+            `,
+            onClose: async () => {
+              this._store.dispatch(new fromStore.SetBatteryLowAlertShownAt(moment().toDate()));
+              if (this.config.noDeviceModeBatteryLowFlow) {
+                this._store.dispatch(new fromStore.SetNoDeviceModeBatteryLowFlow(false));
+                if (!Capacitor.isNativePlatform()) {
+                  this._bluetoothService.setBattery(20);
                 }
               }
-            }));
-          }
+            }
+          }));
         }
-      }, 5000);
+
+        setInterval(async () => {
+          const batteryLevel = await this._bluetoothService.getBattery();
+          if (this.config.batteryLowAlertShownAt) {
+            const lastDateShown = moment(this.config.batteryLowAlertShownAt);
+            if (lastDateShown.diff(moment(), 'minutes') >= 30) {
+              this._store.dispatch(new fromStore.SetBatteryLowAlertShownAt(null));
+              if (batteryLevel < this.minBatteryLevel) {
+                if (!this.backdropConfig.show) {
+                  showBatterLowAlert();
+                }
+              }
+            }
+          }
+          else {
+            if (batteryLevel < this.minBatteryLevel) {
+              if (!this.backdropConfig.show) {
+                showBatterLowAlert();
+              }            
+            }
+          }
+        }, 5000);
+      }
+    }
+    catch(error: any) {
+      console.log('error: ', error);
+
+      if (this.config.debuggingDeviceMode) {
+        this._bluetoothService.logger('verifyBatterLevelOfDevice Error', error);
+      }
     }
   }
 
@@ -196,5 +217,12 @@ export class LayoutPage implements OnInit {
     catch(error: any) {
       console.log('getDeviceInfo > error: ', error)
     }
+  }
+
+  async copyDebuggingLogs() {
+    const logs = document.getElementById('device-debugging-logs') as HTMLElement;
+    await Clipboard.write({
+      string: logs.innerHTML
+    });
   }
 }
