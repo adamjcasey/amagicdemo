@@ -41,6 +41,9 @@ export class LayoutPage implements OnInit {
     this.config$.subscribe(async config => {
       if (config) {
         this.config = config;
+        if (this.config.isDeviceConnected) {
+          this.verifyBatterLevelOfDevice();
+        }
       }
     });
 
@@ -174,32 +177,35 @@ export class LayoutPage implements OnInit {
           }));
         }
 
-        setInterval(async () => {
-          const batteryLevel = await this._bluetoothService.getBattery();
-          if (this.config.batteryLowAlertShownAt) {
-            const lastDateShown = moment(this.config.batteryLowAlertShownAt);
-            if (lastDateShown.diff(moment(), 'minutes') >= 30) {
-              this._store.dispatch(new fromStore.SetBatteryLowAlertShownAt(null));
+        const controller = setInterval(async () => {
+          if (this.config.isDeviceConnected) {
+            const batteryLevel = await this._bluetoothService.getBattery();
+            if (this.config.batteryLowAlertShownAt) {
+              const lastDateShown = moment(this.config.batteryLowAlertShownAt);
+              if (lastDateShown.diff(moment(), 'minutes') >= 30) {
+                this._store.dispatch(new fromStore.SetBatteryLowAlertShownAt(null));
+                if (batteryLevel < this.minBatteryLevel) {
+                  if (!this.backdropConfig.show) {
+                    showBatterLowAlert();
+                  }
+                }
+              }
+            }
+            else {
               if (batteryLevel < this.minBatteryLevel) {
                 if (!this.backdropConfig.show) {
                   showBatterLowAlert();
-                }
+                }            
               }
             }
           }
           else {
-            if (batteryLevel < this.minBatteryLevel) {
-              if (!this.backdropConfig.show) {
-                showBatterLowAlert();
-              }            
-            }
+            clearInterval(controller);
           }
         }, 5000);
       }
     }
     catch(error: any) {
-      console.log('error: ', error);
-
       if (this.config.debuggingDeviceMode) {
         this._bluetoothService.logger('verifyBatterLevelOfDevice Error', error);
       }

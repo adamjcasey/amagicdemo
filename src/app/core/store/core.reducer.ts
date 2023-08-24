@@ -60,6 +60,13 @@ export function LayoutReducer(
       };
     }
 
+    case fromActions.ActionTypes.SetBatteryLowAlertShownAt: {
+      return {
+        ...state,
+        batteryLowAlertShownAt: action.payload,
+      };
+    }
+
     case fromActions.ActionTypes.SetNoDeviceMode: {
       return {
         ...state,

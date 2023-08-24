@@ -10,6 +10,7 @@ export interface LayoutState {
   fullScreen: boolean;
   rightCornerEl: any,
   welcomeFlowDone: boolean;
+  batteryLowAlertShownAt?: any;
   noDeviceMode: boolean;
   noDeviceModeOopsFlow: boolean;
   noDeviceModeBatteryLowFlow: boolean;
@@ -29,6 +30,6 @@ export const initialState: LayoutState = {
   isDeviceConnected: false,
   deviceModel: {
     name: 'iphone-14-pro',
-    model: 'iphone15,2'
+    model: 'iphone13,5'
   }
 }

@@ -8,6 +8,7 @@ export enum ActionTypes {
   SetFullScreen = '[Layout] Set FullScreen',
   SetRightCornerEl = '[Layout] Set Right Corner Element',
   ClearRightCornerEl = '[Layout] Clear Right Corner Element',
+  SetBatteryLowAlertShownAt = '[Layout] Set Battery Low Alert At',
   SetNoDeviceMode = '[Layout] Set No Device Mode',
   SetNoDeviceModeOopsFlow = '[Layout] Set No Device Mode Oops Flow',
   SetNoDeviceModeBatteryLowFlow = '[Layout] Set No Device Mode Battery Low Flow',
@@ -47,6 +48,11 @@ export class SetRightCornerEl implements Action {
 
 export class ClearRightCornerEl implements Action {
   readonly type = ActionTypes.ClearRightCornerEl;
+}
+
+export class SetBatteryLowAlertShownAt implements Action {
+  readonly type = ActionTypes.SetBatteryLowAlertShownAt;
+  constructor(public payload: any) {}
 }
 
 export class SetNoDeviceMode implements Action {
@@ -91,6 +97,7 @@ export type ActionsUnion
   | SetFullScreen
   | SetRightCornerEl
   | ClearRightCornerEl
+  | SetBatteryLowAlertShownAt
   | SetNoDeviceMode
   | SetNoDeviceModeOopsFlow
   | SetNoDeviceModeBatteryLowFlow
