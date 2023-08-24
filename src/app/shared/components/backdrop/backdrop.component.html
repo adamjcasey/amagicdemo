@@ -32,12 +32,14 @@
       <div class="background"></div>
       <ion-img class="ellipse" src="/assets/images/backdrop-header-ellipse.svg"></ion-img>
 
-      <div class="battery-indicator__wrapper" *ngIf="batteryLevel <= 5 && layoutConfig.isDeviceConnected">
-        <div class="battery-indicator">
-          <ion-icon src="/assets/icons/battery-indicator.svg"></ion-icon>
-          <p class="battery-indicator__value">{{ batteryLevel }}%</p>
+      <ng-container *ngIf="layoutConfig?.isDeviceConnected">
+        <div class="battery-indicator__wrapper" *ngIf="batteryLevel <= 5 && layoutConfig.isDeviceConnected">
+          <div class="battery-indicator">
+            <ion-icon src="/assets/icons/battery-indicator-{{ getPercentageBatteryAsset(batteryLevel) }}.svg"></ion-icon>
+            <p class="battery-indicator__value">{{ batteryLevel }}%</p>
+          </div>
         </div>
-      </div>
+      </ng-container>
     </header>
 
     <div class="backdrop__content">
@@ -73,9 +75,9 @@
           <ng-template swiperSlide>
             <h1 class="font-heading-1--bold">Demo Menu</h1>
             <p>Here you’ll find guidance on resetting, packing, and sharing this demo experience.</p>
-            <div class="battery-indicator">
+            <div *ngIf="layoutConfig?.isDeviceConnected" class="battery-indicator">
               <p>AutoMagic Injector Battery:</p>
-              <ion-icon src="/assets/icons/battery-indicator.svg"></ion-icon>
+              <ion-icon src="/assets/icons/battery-indicator-{{ getPercentageBatteryAsset(batteryLevel) }}.svg"></ion-icon>
               <span class="battery-indicator__value">{{ batteryLevel }}%</span>
             </div>
 

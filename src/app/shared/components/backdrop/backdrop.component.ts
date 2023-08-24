@@ -216,6 +216,26 @@ export class BackdropComponent implements OnInit, AfterViewInit {
     }
   }
 
+  getPercentageBatteryAsset(battery: number) {
+    let percentage = 100;
+    if (battery > 50 && battery <= 75) {
+      percentage = 75;
+    }
+    else if (battery > 25 && battery <= 50) {
+      percentage = 50;
+    }
+    else if (battery > 5 && battery <= 25) {
+      percentage = 25;
+    }
+    else if (battery <= 5) {
+      percentage = 5;
+    }
+    else if (battery === 0) {
+      percentage = 0;
+    }
+    return percentage.toString();
+  }
+
   onHighlightsTourInit() {
     if (this.config.showBackButton) {
       this.backButton = {
