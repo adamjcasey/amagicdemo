@@ -7,6 +7,10 @@
   <ion-content class="ion-padding">
     <ion-menu-toggle>
       <div class="device-debugging">
+        <ion-button (click)="copyDebuggingLogs()" class="copy" color="light">
+          <ion-icon slot="icon-only" size="medium" name="copy-outline"></ion-icon>
+        </ion-button>
+
         <div id="device-debugging-logs"></div>
         <div id="device-debugging-stats">
           <p class="uuid"><strong>UUID:</strong> <span></span></p>

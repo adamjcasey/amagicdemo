@@ -9,6 +9,13 @@
   grid-template-rows: auto max-content;
   height: 100%;
 
+  .copy {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    color: var(--color-text);
+  }
+
   #device-debugging-logs {
     grid-row: 1;
     max-height: 100%;
