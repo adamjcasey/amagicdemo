@@ -83,7 +83,6 @@ export class BackdropComponent implements OnInit, AfterViewInit {
       if (config) {
         this.config = config;
         if (this.config.show) {
-          this.getBatteryLevel();
           if (this.config.component !== null) {
             this._loadComponent(this.config.component);
           }
@@ -116,6 +115,9 @@ export class BackdropComponent implements OnInit, AfterViewInit {
     this.layoutConfig$.subscribe(layoutConfig => {
       if (layoutConfig) {
         this.layoutConfig = layoutConfig;
+        if (this.layoutConfig.isDeviceConnected) {
+          this.batteryLevel = this.layoutConfig.batteryLevel;
+        }
       }
     });
 
@@ -131,16 +133,16 @@ export class BackdropComponent implements OnInit, AfterViewInit {
   }
 
   toggle() {
-    if (!this.homeConfig.dosingStarted) {
-      if (!this.config.show) {
+    if (!this.config.show) {
+      if (!this.homeConfig.dosingStarted) {
         this._store.dispatch(new fromStore.BackdropShow({
           transition: 'move',
           header: true,
         }));
       }
-      else {
-        this._store.dispatch(new fromStore.BackdropHide);
-      }
+    }
+    else {
+      this._store.dispatch(new fromStore.BackdropHide);
     }
   }
 
@@ -380,13 +382,6 @@ export class BackdropComponent implements OnInit, AfterViewInit {
     );
   }
 
-  async getBatteryLevel() {
-    this.batteryLevel = await this._bluetoothService.getBattery();
-    if (this.config.debuggingDeviceMode) {
-      this._bluetoothService.logger('getBatteryLevel from Backdrop', `Battery Level: ${this.batteryLevel}`);
-    }
-  }
-
   doAnotherInjection() {
     this._store.dispatch(new fromHomeStore.SetData({
       firstTimeDose: false,
@@ -458,6 +453,11 @@ export class BackdropComponent implements OnInit, AfterViewInit {
     this._store.dispatch(new fromCoreStore.Go({
       path: [path]
     }));
+  }
+
+  getModelDeviceNumber(model: any) {
+    model = model.replaceAll(/[a-z]/g, '');
+    return parseFloat(model);
   }
 
   private _loadComponent(component: any) {

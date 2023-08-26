@@ -11,6 +11,7 @@ import * as fromSharedStore from '@shared/store';
 import * as fromSharedServices from '@shared/services';
 import * as fromHomeStore from '@home/store';
 import { GestureController } from '@shared/services/gestureController';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'automagic-layout',
@@ -31,6 +32,7 @@ export class LayoutPage implements OnInit {
   constructor(
     private _store: Store<fromStore.LayoutState>,
     private _bluetoothService: fromSharedServices.BluetoothService,
+    private _alertController: AlertController,
   ) {
     this.config$ = this._store.select(fromStore.getLayoutConfig);
     this.backdropConfig$ = this._store.select(fromSharedStore.getBackdropConfig);
@@ -42,7 +44,56 @@ export class LayoutPage implements OnInit {
       if (config) {
         this.config = config;
         if (this.config.isDeviceConnected) {
-          this.verifyBatterLevelOfDevice();
+          const batteryLevel = this.config.batteryLevel;
+          if (this.config.batteryLowAlertShownAt) {
+            const lastDateShown = moment(this.config.batteryLowAlertShownAt);
+            if (lastDateShown.diff(moment(), 'minutes') >= 30) {
+              this._store.dispatch(new fromStore.SetBatteryLowAlertShownAt(null));
+              if (batteryLevel < this.minBatteryLevel) {
+                if (!this.backdropConfig.show) {
+                  this.showBatterLowAlert();
+                }
+              }
+            }
+          }
+          else {
+            if (batteryLevel < this.minBatteryLevel) {
+              if (!this.backdropConfig.show) {
+                this.showBatterLowAlert();
+              }            
+            }
+          }
+        }
+        else {
+          if (this.config.noDeviceModeBatteryLowFlow) {
+            this._bluetoothService.setBattery(5);
+            this.showBatterLowAlert();
+          }
+        }
+
+        if (this.config.device) {
+          const model = this.config.device.model.replaceAll(/[a-z]/g, '');
+          if (parseFloat(model) < 9) {
+            console.log('entra');
+            const alert = await this._alertController.create({
+              header: 'Your device is not supported',
+              message: 'This application is designed for iPhone 11+. <br><br>This unsupported device will not demonstrate the intended screen layout and user experience.',
+              buttons: [
+                {
+                  text: 'Continue',
+                  role: 'cancel',
+                },
+                // {
+                //   text: 'Quit',
+                //   handler: () => {
+                //     console.log('quit');
+                //     App.exitApp();
+                //   },
+                // }
+              ],
+            });
+            await alert.present();
+          }
         }
       }
     });
@@ -142,74 +193,25 @@ export class LayoutPage implements OnInit {
     }
   }
 
-  async verifyBatterLevelOfDevice() {
-    if (this.config.debuggingDeviceMode) {
-      this._bluetoothService.logger('verifyBatterLevelOfDevice');
-    }
-
-    try {
-      const isDeviceConnected = await this._bluetoothService.isDeviceConnected();
-      if (isDeviceConnected) {
-        if (this.config.debuggingDeviceMode) {
-          this._bluetoothService.logger('verifyBatterLevelOfDevice from Layout', 'The device is connected');
+  showBatterLowAlert() {
+    this._store.dispatch(new fromSharedStore.BackdropShow({
+      transition: 'move',
+      header: true,
+      template: `
+        <br>
+        <img src="assets/images/battery-low.svg" />
+        <h1 class="font-heading-1--bold">Injector battery <br>low</h1>
+        <p>Unfortunately the demo injector has <br>a low battery and must be <br>recharged.</p>
+        <h5>Please follow the recharge <br>instructions included with the <br>USB-C cord in the shipping box.</h5>
+      `,
+      onClose: async () => {
+        this._store.dispatch(new fromStore.SetBatteryLowAlertShownAt(moment().toDate()));
+        if (this.config.noDeviceModeBatteryLowFlow) {
+          this._store.dispatch(new fromStore.SetNoDeviceModeBatteryLowFlow(false));
+          this._bluetoothService.setBattery(20);
         }
-
-        const showBatterLowAlert = () => {
-          this._store.dispatch(new fromSharedStore.BackdropShow({
-            transition: 'move',
-            header: true,
-            template: `
-              <br>
-              <img src="assets/images/battery-low.svg" />
-              <h1 class="font-heading-1--bold">Injector battery <br>low</h1>
-              <p>Unfortunately the demo injector has <br>a low battery and must be <br>recharged.</p>
-              <h5>Please follow the recharge <br>instructions included with the <br>USB-C cord in the shipping box.</h5>
-            `,
-            onClose: async () => {
-              this._store.dispatch(new fromStore.SetBatteryLowAlertShownAt(moment().toDate()));
-              if (this.config.noDeviceModeBatteryLowFlow) {
-                this._store.dispatch(new fromStore.SetNoDeviceModeBatteryLowFlow(false));
-                if (!Capacitor.isNativePlatform()) {
-                  this._bluetoothService.setBattery(20);
-                }
-              }
-            }
-          }));
-        }
-
-        const controller = setInterval(async () => {
-          if (this.config.isDeviceConnected) {
-            const batteryLevel = await this._bluetoothService.getBattery();
-            if (this.config.batteryLowAlertShownAt) {
-              const lastDateShown = moment(this.config.batteryLowAlertShownAt);
-              if (lastDateShown.diff(moment(), 'minutes') >= 30) {
-                this._store.dispatch(new fromStore.SetBatteryLowAlertShownAt(null));
-                if (batteryLevel < this.minBatteryLevel) {
-                  if (!this.backdropConfig.show) {
-                    showBatterLowAlert();
-                  }
-                }
-              }
-            }
-            else {
-              if (batteryLevel < this.minBatteryLevel) {
-                if (!this.backdropConfig.show) {
-                  showBatterLowAlert();
-                }            
-              }
-            }
-          }
-          else {
-            clearInterval(controller);
-          }
-        }, 5000);
       }
-    }
-    catch(error: any) {
-      if (this.config.debuggingDeviceMode) {
-        this._bluetoothService.logger('verifyBatterLevelOfDevice Error', error);
-      }
-    }
+    }));
   }
 
   async getDeviceInfo() {

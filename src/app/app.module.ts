@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
-
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 
 import * as fromCore from '@core/index';
@@ -11,7 +10,8 @@ import * as fromCore from '@core/index';
   imports: [
     BrowserModule, 
     IonicModule.forRoot({
-      mode: 'ios'
+      mode: 'ios',
+      innerHTMLTemplatesEnabled: true,
     }),
     fromCore.CoreModule
   ],

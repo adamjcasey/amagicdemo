@@ -33,7 +33,7 @@
   <main 
     #main 
     role="main" 
-    class="automagic__wrapper" 
+    class="automagic__wrapper {{ deviceInfo?.model }}" 
     [ngClass]="{ 
       'is-full-screen': config.fullScreen
     }">

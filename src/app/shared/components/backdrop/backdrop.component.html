@@ -424,45 +424,51 @@
     ></ion-icon>
 
     <div 
-      class="backdrop__fold {{ this.layoutConfig.deviceModel?.model }}" 
+      class="backdrop__fold {{ this.layoutConfig.device?.model }}" 
       [ngClass]="{ 
-        'is-physical-device': layoutConfig.deviceModel,
-        'is-iphone-x': this.layoutConfig.deviceModel?.model.includes('iphone-x'),
+        'is-physical-device': layoutConfig.device,
+        'is-iphone-x': this.layoutConfig.device?.model.includes('iphone-x'),
         'is-iphone-11': [
           'iphone12,1', 
           'iphone12,2', 
           'iphone12,3', 
           'iphone12,4', 
           'iphone12,5'
-        ].includes(layoutConfig.deviceModel?.model),
+        ].includes(layoutConfig.device?.model),
         'is-iphone-12': [
           'iphone13,1', 
           'iphone13,2', 
           'iphone13,3', 
           'iphone13,4', 
           'iphone13,5'
-        ].includes(layoutConfig.deviceModel?.model),
+        ].includes(layoutConfig.device?.model),
         'is-iphone-13': [
           'iphone14,1', 
           'iphone14,2', 
           'iphone14,3', 
           'iphone14,4', 
           'iphone14,5'
-        ].includes(layoutConfig.deviceModel?.model),
+        ].includes(layoutConfig.device?.model),
         'is-iphone-14': [
           'iphone14,7', 'iphone14,8'
-        ].includes(layoutConfig.deviceModel?.model),
+        ].includes(layoutConfig.device?.model),
         'is-iphone-14-pro': [
-          'iphone15,2', 'iphone15,3'
-        ].includes(layoutConfig.deviceModel?.model),
+          'iphone15,2',
+        ].includes(layoutConfig.device?.model),
+        'is-iphone-14-pro-max': [
+          'iphone15,3',
+        ].includes(layoutConfig.device?.model),
       }">
 
-      <ng-container *ngIf="layoutConfig.deviceModel">
+      <ng-container *ngIf="layoutConfig.device">
         <ion-img 
           class="background" 
-          *ngIf="
-            layoutConfig.deviceModel?.name.includes('iphone-x') || 
-            layoutConfig.deviceModel?.model === 'iphone10,6'" 
+          *ngIf="getModelDeviceNumber(layoutConfig.device?.model) < 10.5"
+          src="/assets/images/backdrop-fold-bg--iphone-8.svg"
+        ></ion-img>
+        <ion-img 
+          class="background" 
+          *ngIf="layoutConfig.device?.model === 'iphone10,6'" 
           src="/assets/images/backdrop-fold-bg--iphone-x.svg"
         ></ion-img>
         <ion-img 
@@ -473,7 +479,7 @@
             'iphone12,3', 
             'iphone12,4', 
             'iphone12,5'
-          ].includes(layoutConfig.deviceModel?.model)"
+          ].includes(layoutConfig.device?.model)"
           src="/assets/images/backdrop-fold-bg--iphone-11.svg"
         ></ion-img>
         <ion-img 
@@ -484,7 +490,7 @@
             'iphone13,3', 
             'iphone13,4', 
             'iphone13,5'
-          ].includes(layoutConfig.deviceModel?.model)"
+          ].includes(layoutConfig.device?.model)"
           src="/assets/images/backdrop-fold-bg--iphone-12.png"
         ></ion-img>
         <ion-img 
@@ -495,22 +501,22 @@
             'iphone14,3', 
             'iphone14,4', 
             'iphone14,5'
-          ].includes(layoutConfig.deviceModel?.model)"
+          ].includes(layoutConfig.device?.model)"
           src="/assets/images/backdrop-fold-bg--iphone-13.svg"
         ></ion-img>
         <ion-img 
           class="background" 
-          *ngIf="['iphone14,7', 'iphone14,8'].includes(layoutConfig.deviceModel?.model)"
+          *ngIf="['iphone14,7', 'iphone14,8'].includes(layoutConfig.device?.model)"
           src="/assets/images/backdrop-fold-bg--iphone-14.svg"
         ></ion-img>
         <ion-img 
           class="background" 
-          *ngIf="['iphone15,2', 'iphone15,3'].includes(layoutConfig.deviceModel?.model)"
+          *ngIf="['iphone15,2', 'iphone15,3'].includes(layoutConfig.device?.model)"
           src="/assets/images/backdrop-fold-bg--iphone-14-pro.svg"
         ></ion-img>
       </ng-container>
 
-      <ng-container *ngIf="!layoutConfig.deviceModel">
+      <ng-container *ngIf="!layoutConfig.device">
         <ion-img class="background" src="/assets/images/backdrop-fold-bg.svg"></ion-img>
       </ng-container>
 

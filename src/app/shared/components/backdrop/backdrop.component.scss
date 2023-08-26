@@ -741,7 +741,7 @@
           height: 10vh;
         }
       }
-  
+
       &.is-iphone-12 {
         .icon-cta {
           height: 11vh;
@@ -751,6 +751,24 @@
       &.is-iphone-14-pro {
         .icon-cta {
           height: 12vh;
+        }
+
+        ion-icon {
+          &.info {
+            top: 12px;
+          }
+        }
+      }
+
+      &.is-iphone-14-pro-max {
+        .icon-cta {
+          height: 12vh;
+        }
+
+        ion-icon {
+          &.info {
+            top: 5px;
+          }
         }
       }
     }
