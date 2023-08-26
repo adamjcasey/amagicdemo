@@ -176,3 +176,9 @@ ion-modal#modal-datepicker {
     text-align: right;
   }
 }
+
+ion-alert {
+  .alert-title.sc-ion-alert-ios {
+    @include heading-5;
+  }
+}
