@@ -336,6 +336,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
       transition: 'move',
       header: true,
       component: 'time-traveling',
+      blockClose: true,
       onClose: () => {
         setTimeout(() => {
           this._store.dispatch(new fromStore.SetData({

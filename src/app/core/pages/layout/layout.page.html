@@ -7,33 +7,24 @@
   <ion-content class="ion-padding">
     <ion-menu-toggle>
       <div class="device-debugging">
-        <ion-button (click)="copyDebuggingLogs()" class="copy" color="light">
-          <ion-icon slot="icon-only" size="medium" name="copy-outline"></ion-icon>
-        </ion-button>
-
-        <div id="device-debugging-logs"></div>
-        <div id="device-debugging-stats">
-          <p class="uuid"><strong>UUID:</strong> <span></span></p>
-          <p class="rssi"><strong>RSSI:</strong> <span></span></p>
-          <p class="name"><strong>Name:</strong> <span></span></p>
-          <p class="state"><strong>State:</strong> <span></span></p>
-          <p class="battery"><strong>Battery:</strong> <span></span></p>
-          <p class="dosage"><strong>Dosage:</strong> <span></span></p>
-          <p class="is-connected"><strong>Is Connected?:</strong> <span></span></p>
-          <p class="is-scanning"><strong>Is Scanning?:</strong> <span></span></p>
+        <div class="toolbar">
+          <ion-button (click)="copyDebuggingLogs()" class="copy" color="light">
+            <ion-icon slot="icon-only" size="medium" name="copy-outline"></ion-icon>
+          </ion-button>
         </div>
+        <div class="logs" id="device-debugging-logs"></div>
       </div>
     </ion-menu-toggle>
   </ion-content>
 </ion-menu>
 
-<ion-app id="automagic" class="automagic">
+<ion-app id="automagic" class="automagic {{ config.device?.model }}" [ngClass]="{ 'iphone-8': getModelDeviceNumber(config.device.model) < 10.5 }">
   <automagic-alert></automagic-alert>
   <automagic-topbar></automagic-topbar>
   <main 
     #main 
     role="main" 
-    class="automagic__wrapper {{ deviceInfo?.model }}" 
+    class="automagic__wrapper" 
     [ngClass]="{ 
       'is-full-screen': config.fullScreen
     }">

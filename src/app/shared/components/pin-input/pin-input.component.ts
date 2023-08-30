@@ -98,7 +98,6 @@ export class PinInputComponent {
       }
     }
     else if (event.code === 'Enter') {
-      console.log('hace enter');
       const nextDigit = currentDigit.nextSibling;
       if (nextDigit) {
         nextDigit.focus();

@@ -103,9 +103,9 @@ else {
     // to skip start dose flow just fill body part and marked properties of the doses
     doses: [
       {
-        marked: true, // false
-        date: new Date(moment.now()), // '',
-        bodyPartInjected: 'top-left', // '', 
+        marked: true,
+        date: new Date(moment.now()),
+        bodyPartInjected: 'top-left',
         notes: null, // { painful: 2, mood: 3, symptoms: ['Redness', 'Itching'], note: 'Custom Note', }
       },
       {
@@ -141,8 +141,8 @@ else {
     ],
     bodyPartSelected: '',
     dosingStarted: false,
-    timeTravelingDemoDone: true,
-    flareUpsDemoDone: true,
+    timeTravelingDemoDone: false,
+    flareUpsDemoDone: false,
     // to skip start dose flow just set as true
     allCompletedDoses: false,
     // fill up if you need data in the symptom reporter feature on activity module

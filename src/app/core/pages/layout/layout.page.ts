@@ -66,15 +66,26 @@ export class LayoutPage implements OnInit {
         }
         else {
           if (this.config.noDeviceModeBatteryLowFlow) {
-            this._bluetoothService.setBattery(5);
-            this.showBatterLowAlert();
+            if (this.backdropConfig.show) {
+              this._store.dispatch(new fromSharedStore.BackdropSetConfig({
+                onClose: () => {
+                  this._bluetoothService.setBattery(5);
+                  this.showBatterLowAlert();
+                },
+              }));
+            }
           }
         }
 
         if (this.config.device) {
           const model = this.config.device.model.replaceAll(/[a-z]/g, '');
-          if (parseFloat(model) < 9) {
-            console.log('entra');
+          if (
+            parseFloat(model) < 9 || 
+            // iphone12,8 SE 2nd Generation
+            this.config.device.model === 'iphone12,8' || 
+            // iphone14,6 SE 3rd Generation
+            this.config.device.model === 'iphone14,6'
+          ) {
             const alert = await this._alertController.create({
               header: 'Your device is not supported',
               message: 'This application is designed for iPhone 11+. <br><br>This unsupported device will not demonstrate the intended screen layout and user experience.',
@@ -225,6 +236,11 @@ export class LayoutPage implements OnInit {
     catch(error: any) {
       console.log('getDeviceInfo > error: ', error)
     }
+  }
+
+  getModelDeviceNumber(model: any) {
+    model = model.replaceAll(/[a-z]/g, '');
+    return parseFloat(model);
   }
 
   async copyDebuggingLogs() {

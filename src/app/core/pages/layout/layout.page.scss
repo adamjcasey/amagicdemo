@@ -6,34 +6,67 @@
 
 .device-debugging {
   display: grid;
-  grid-template-rows: auto max-content;
+  grid-template-rows: max-content auto;
   height: 100%;
 
-  .copy {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    color: var(--color-text);
-  }
-
-  #device-debugging-logs {
+  .toolbar {
     grid-row: 1;
-    max-height: 100%;
-    overflow-y: scroll;
+    text-align: right;
 
-    .action {
-      padding-top: var(--size-xxs);
-      border-top: 2px solid var(--color-gray-medium);
+    .copy {
+      color: var(--color-text);
     }
   }
 
-  #device-debugging-stats {
+  .logs {
+    // grid-row: 1;
     grid-row: 2;
-    padding-top: var(--size-xxs);
-    border-top: 2px solid var(--color-gray-medium);
+    max-height: 100%;
+    overflow-y: scroll;
 
-    span {
-      margin-left: var(--size-xxs);
+    // hr {
+    //   background-color: red;
+    // }
+
+    // > div {
+    //   padding-top: var(--size-xxs);
+    //   border-top: 2px solid var(--color-gray-medium);
+    // }
+  }
+
+  // #device-debugging-stats {
+  //   grid-row: 2;
+  //   padding-top: var(--size-xxs);
+  //   border-top: 2px solid var(--color-gray-medium);
+
+  //   span {
+  //     margin-left: var(--size-xxs);
+  //   }
+  // }
+}
+
+.iphone-8 {
+  &::ng-deep.topbar {
+    padding-top: var(--size-s);
+  }
+
+  &::ng-deep.backdrop {
+    .backdrop__fold {
+      .icon-cta {
+        left: calc(50% - 15vw);
+        width: 30vw;
+        height: 8vh;
+      }
+
+      ion-icon {
+        &.info {
+          font-size: 48px;
+        }
+
+        &.close {
+          font-size: 24px;
+        }
+      }
     }
   }
 }

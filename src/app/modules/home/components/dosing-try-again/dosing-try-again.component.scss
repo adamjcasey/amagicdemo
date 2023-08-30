@@ -1,0 +1,21 @@
+@import 'src/theme/base/mixins';
+
+.dosing-demo-try-again-message {
+  max-width: 290px;
+  margin: 0 auto;
+  color: var(--color-white);
+  text-align: center;
+
+  ol {
+    text-align: left;
+  }
+
+  ion-button {
+    margin-bottom: var(--size-xxs);
+  }
+
+  .loader {
+    border-color: var(--color-white);
+    border-bottom-color: rgba(var(--color-white--rgb), 0.3);
+  }
+}

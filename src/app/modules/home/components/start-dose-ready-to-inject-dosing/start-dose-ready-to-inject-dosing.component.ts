@@ -29,6 +29,7 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
   public nextDose: any;
   public startDosing: boolean = false;
   public errorDosing: boolean = false;
+  public dosePercentageCompleted: number = 0;
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
@@ -127,6 +128,7 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
     }
     catch (error) {
       this.errorDosing = true;
+      this.dosePercentageCompleted = 100 - ((this.totalTime * 100) / 10);
       this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-salmon'));
       this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
         color: '--color-bg-pastel-salmon',
@@ -137,7 +139,7 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
           <div class="dosing-error-alert">
             <img src="assets/images/dose-dosing-error.svg" />
             <h1 class="font-heading-1--bold">Oops!</h1>
-            <p>You lifted off early and the dose was only 65% administered.</p>
+            <p>You lifted off early and the dose was only ${this.dosePercentageCompleted}% administered.</p>
             <h5>Please contact your HCP for guidance.</h5><br>
           </div>
         `,
@@ -171,14 +173,8 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
     this._store.dispatch(new fromSharedStore.BackdropShow({
       transition: 'move',
       header: true,
-      template: `
-        <div class="dosing-demo-try-again-message">
-          <h1 class="font-heading-1--bold">For this demo let’s try that again</h1>
-          <img src="assets/images/dosing-try-again.svg">
-          <p>Now you’ve seen what happens if you lift the injector too early.</p>
-          <p>For the correct injection experience, follow the app prompts and <br><strong>hold the injector down until the <br>app shows a completed injection <br>(10 seconds).</strong></p>
-        </div>
-      `,
+      blockClose: true,
+      component: 'dosing-try-again',
       onClose: async () => {
         this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple'));
         this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
@@ -186,7 +182,7 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
         }));
         this.errorDosing = false;
         this._store.dispatch(new fromSharedStore.SliderPageSlidePrev);
-        
+
         // to continue with the dose flow
         // try {
         //   const startDosing = await this._bluetoothService.waitForDosingStart(true);

@@ -16,6 +16,7 @@ export enum ActionTypes {
   SetWelcomeFlowAsDone = '[Layout] Set Welcome Flow as Done',
   SetDeviceInfo = '[Layout] Set Device Model Info',
   SetIsDeviceConnected = '[Layout] Set Is Device Connected',
+  SetBatteryOfDevice = '[Layout] Set Battery of Device',
 }
 
 export class Go implements Action {
@@ -89,6 +90,10 @@ export class SetIsDeviceConnected implements Action {
   readonly type = ActionTypes.SetIsDeviceConnected;
   constructor(public payload: boolean) {}
 }
+export class SetBatteryOfDevice implements Action {
+  readonly type = ActionTypes.SetBatteryOfDevice;
+  constructor(public payload: number) {}
+}
 
 export type ActionsUnion 
   = Go 
@@ -104,4 +109,5 @@ export type ActionsUnion
   | SetWelcomeFlowAsDone
   | SetDeviceDebugging
   | SetIsDeviceConnected
+  | SetBatteryOfDevice
   | SetDeviceInfo;

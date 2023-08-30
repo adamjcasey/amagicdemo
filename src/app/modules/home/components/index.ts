@@ -15,6 +15,7 @@ import { StartDoseInjectDoneReportComponent } from './start-dose-inject-done-rep
 
 import { StartGuidedDemoComponent } from './start-guided-demo/start-guided-demo.component';
 import { TimeTravelingComponent } from './time-traveling/time-traveling.component';
+import { DosingTryAgainComponent } from './dosing-try-again/dosing-try-again.component';
 
 export const components: any[] = [
   StartDosePrepareTempTimerComponent,
@@ -34,6 +35,7 @@ export const components: any[] = [
 
   StartGuidedDemoComponent,
   TimeTravelingComponent,
+  DosingTryAgainComponent,
 ];
 
 export * from './start-dose-prepare-survey/start-dose-prepare-survey.component';
@@ -53,3 +55,4 @@ export * from './start-dose-inject-done-report/start-dose-inject-done-report.com
 
 export * from './start-guided-demo/start-guided-demo.component';
 export * from './time-traveling/time-traveling.component';
+export * from './dosing-try-again/dosing-try-again.component';

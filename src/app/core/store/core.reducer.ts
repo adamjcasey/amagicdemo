@@ -105,7 +105,7 @@ export function LayoutReducer(
     case fromActions.ActionTypes.SetDeviceInfo: {
       return {
         ...state,
-        deviceModel: action.payload,
+        device: action.payload,
       };
     }
 
@@ -113,6 +113,13 @@ export function LayoutReducer(
       return {
         ...state,
         isDeviceConnected: action.payload,
+      };
+    }
+
+    case fromActions.ActionTypes.SetBatteryOfDevice: {
+      return {
+        ...state,
+        batteryLevel: action.payload,
       };
     }
 

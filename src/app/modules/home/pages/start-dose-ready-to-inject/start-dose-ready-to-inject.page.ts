@@ -177,6 +177,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                     {
                       label: 'Previous step',
                       action: () => {
+                        // clear previous selection
                         this._store.dispatch(new fromStore.SetData({
                           bodyPartSelected: null, 
                         }));
@@ -317,6 +318,11 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
               {
                 label: 'Previous step',
                 action: () => { 
+                  // clear previous body part selection
+                  this._store.dispatch(new fromStore.SetData({
+                    bodyPartSelected: null, 
+                  }));
+
                   this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
                   this.sliderPage.slidePrev();
                 }

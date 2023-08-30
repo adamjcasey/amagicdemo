@@ -142,7 +142,9 @@ export class BackdropComponent implements OnInit, AfterViewInit {
       }
     }
     else {
-      this._store.dispatch(new fromStore.BackdropHide);
+      if (!this.config.blockClose) {
+        this._store.dispatch(new fromStore.BackdropHide);
+      }
     }
   }
 
@@ -312,7 +314,6 @@ export class BackdropComponent implements OnInit, AfterViewInit {
       this.backButton = {
         label: 'Back',
         action: () => {
-          console.log('click in back share flow');
           this._store.dispatch(new fromStore.BackdropSetConfig({
             shareFlow: null,
           }));
@@ -339,7 +340,6 @@ export class BackdropComponent implements OnInit, AfterViewInit {
       this.backButton = {
         label: 'Back',
         action: () => {
-          console.log('click in back share flow');
           this._store.dispatch(new fromStore.BackdropSetConfig({
             returnFlow: null,
           }));
@@ -471,6 +471,9 @@ export class BackdropComponent implements OnInit, AfterViewInit {
         break;
       case 'time-traveling':
         this.contentComponent.createComponent(fromHomeComponents.TimeTravelingComponent);
+        break;
+      case 'dosing-try-again':
+        this.contentComponent.createComponent(fromHomeComponents.DosingTryAgainComponent);
         break;
     }
   }
