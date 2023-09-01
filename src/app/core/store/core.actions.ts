@@ -14,9 +14,8 @@ export enum ActionTypes {
   SetNoDeviceModeBatteryLowFlow = '[Layout] Set No Device Mode Battery Low Flow',
   SetDeviceDebugging = '[Layout] Set Device Debugging',
   SetWelcomeFlowAsDone = '[Layout] Set Welcome Flow as Done',
-  SetDeviceInfo = '[Layout] Set Device Model Info',
-  SetIsDeviceConnected = '[Layout] Set Is Device Connected',
-  SetBatteryOfDevice = '[Layout] Set Battery of Device',
+  SetUserDeviceInfo = '[Layout] Set Device Model Info',
+  SetDosageDeviceInfo = '[Layout] Set Dosage device info',
 }
 
 export class Go implements Action {
@@ -81,33 +80,28 @@ export class SetWelcomeFlowAsDone implements Action {
 }
 
 
-export class SetDeviceInfo implements Action {
-  readonly type = ActionTypes.SetDeviceInfo;
+export class SetUserDeviceInfo implements Action {
+  readonly type = ActionTypes.SetUserDeviceInfo;
   constructor(public payload: any) {}
 }
 
-export class SetIsDeviceConnected implements Action {
-  readonly type = ActionTypes.SetIsDeviceConnected;
-  constructor(public payload: boolean) {}
-}
-export class SetBatteryOfDevice implements Action {
-  readonly type = ActionTypes.SetBatteryOfDevice;
-  constructor(public payload: number) {}
+export class SetDosageDeviceInfo implements Action {
+  readonly type = ActionTypes.SetDosageDeviceInfo;
+  constructor(public payload: any) {}
 }
 
 export type ActionsUnion 
   = Go 
-  | Back
-  | Forward
-  | SetFullScreen
-  | SetRightCornerEl
-  | ClearRightCornerEl
-  | SetBatteryLowAlertShownAt
-  | SetNoDeviceMode
-  | SetNoDeviceModeOopsFlow
-  | SetNoDeviceModeBatteryLowFlow
-  | SetWelcomeFlowAsDone
-  | SetDeviceDebugging
-  | SetIsDeviceConnected
-  | SetBatteryOfDevice
-  | SetDeviceInfo;
+  | Back 
+  | Forward 
+  | SetFullScreen 
+  | SetRightCornerEl 
+  | ClearRightCornerEl 
+  | SetBatteryLowAlertShownAt 
+  | SetNoDeviceMode 
+  | SetNoDeviceModeOopsFlow 
+  | SetNoDeviceModeBatteryLowFlow 
+  | SetWelcomeFlowAsDone 
+  | SetDeviceDebugging 
+  | SetDosageDeviceInfo 
+  | SetUserDeviceInfo;

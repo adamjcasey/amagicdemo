@@ -98,14 +98,14 @@ if (environment.production) {
 else {
   initialState = {
     // to skip start dose flow set as false
-    firstTimeDose: false,
+    firstTimeDose: true,
     // to skip welcome flow just fill the date of the doses
     // to skip start dose flow just fill body part and marked properties of the doses
     doses: [
       {
-        marked: true,
+        marked: false,
         date: new Date(moment.now()),
-        bodyPartInjected: 'top-left',
+        bodyPartInjected: '',
         notes: null, // { painful: 2, mood: 3, symptoms: ['Redness', 'Itching'], note: 'Custom Note', }
       },
       {
