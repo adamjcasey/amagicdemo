@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BleClient } from '@capacitor-community/bluetooth-le';
 import { Capacitor } from '@capacitor/core';
 import { App } from '@capacitor/app';
@@ -8,6 +9,7 @@ import * as moment from 'moment';
 
 import * as fromStore from '@shared/store';
 import * as fromCoreStore from '@core/store';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 const AUTOMAGIC_SERVICE = 'EDFEC62E-9910-0BAC-5241-D8BDA6932A2F';
 const AUTOMAGIC_STATE_CHARACTERISTIC = '5A87B4EF-3BFA-76A8-E642-92933C31434F';
@@ -19,6 +21,7 @@ export class BluetoothService {
   private bleEnabled: boolean;
   private uuid_: string;
   private rssi_: number;
+  private previousState_: number;
   private state_: number;
   private dosage_: number;
   private battery_: number;
@@ -37,19 +40,33 @@ export class BluetoothService {
   public layoutConfig$: Observable<any>;
   public layoutConfig: any;
 
+  public trackingDateForm: FormGroup;
+
   constructor(
     private _store: Store<fromCoreStore.LayoutState>,
+    private _http: HttpClient, 
+    public _formBuilder: FormBuilder, 
   ) {
     // Initialize your properties here, if needed.
     this.bleEnabled = false;
     this.uuid_ = '';
     this.rssi_ = 0;
+    this.previousState_ = 0;
     this.state_ = 0;
     this.battery_ = 0;
     this.dosage_ = 0;
     this.setBattery(0);
     this.isConnected_ = false;
     this.isScanning_ = false;
+
+    this.trackingDateForm = this._formBuilder.group({
+      device: ['', [Validators.required, Validators.minLength(5)]],
+      previous_state: ['', [Validators.required, Validators.pattern("^[0-9]*$")]],
+      new_state: ['', [Validators.required, Validators.pattern("^[0-9]*$")]],
+      battery: ['', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.min(0), Validators.max(100)]],
+      dosage: ['', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.min(0), Validators.max(100)]]
+    });
+
 
     this.layoutConfig$ = this._store.select(fromCoreStore.getLayoutConfig);
     this.layoutConfig$.subscribe(layoutConfig => {
@@ -60,7 +77,9 @@ export class BluetoothService {
 
     this.battery$.subscribe((batteryLevel: number) => {
       if (batteryLevel) {
-        this._store.dispatch(new fromCoreStore.SetBatteryOfDevice(batteryLevel));
+        this._store.dispatch(new fromCoreStore.SetDosageDeviceInfo({
+          battery: batteryLevel
+        }));
       }
     });
 
@@ -154,7 +173,7 @@ export class BluetoothService {
     }
 
     this.isConnected_ = false;
-    this._store.dispatch(new fromCoreStore.SetIsDeviceConnected(false));
+    this._store.dispatch(new fromCoreStore.SetDosageDeviceInfo(false));
     this.logger('handlerDisconnectDevice: Device disconnected', `ID: ${this.peripheral_.device.deviceId}`);
   }
 
@@ -174,6 +193,7 @@ export class BluetoothService {
           this.logger(`isDeviceConnected: Is the device connected?`, `${this.isConnected_}`);
           if (this.isConnected_) {
             this.logger(`isDeviceConnected: Device connected`);
+            this.postTrackingData();
             clearInterval(controller);
             resolve(true);
           }
@@ -187,6 +207,7 @@ export class BluetoothService {
       });
     }
     else {
+      this.postTrackingData();
       // support for web, wait 3segs to advance.
       await new Promise(resolve => setTimeout(resolve, 3000));
       return true;
@@ -210,6 +231,7 @@ export class BluetoothService {
 
             if (this.state_ === 2) {
               this.logger('waitForDosingStart: Device was activated, continue to Dosing');
+              this.postTrackingData();
               clearInterval(controller);
               resolve(true);
             }
@@ -238,6 +260,7 @@ export class BluetoothService {
 
           if (this.state_ === 3) {
             this.logger('checkDosing: Dosing done', `Dose completed successfully. State is ${this.state_}`);
+            this.postTrackingData();
             clearInterval(controller);
             resolve(true);
           }
@@ -316,6 +339,7 @@ export class BluetoothService {
 
               this.logger('onDeviceDiscovered: Data from Device', bytes.join(', '));
 
+              this.previousState_ = this.state_;
               this.state_ = bytes[0];
               this.setBattery(bytes[1]);
               this.dosage_ = bytes[2];
@@ -326,13 +350,13 @@ export class BluetoothService {
                 Dosage: ${this.dosage_}
               `);
 
-              if (!this.layoutConfig.isDeviceConnected) {
-                this._store.dispatch(new fromCoreStore.SetIsDeviceConnected(true));
+              if (!this.layoutConfig.dosageDevice.isConnected) {
+                this._store.dispatch(new fromCoreStore.SetDosageDeviceInfo(true));
               }
             }
             else {
               this.logger(`onDeviceDiscovered: No data device obtained`);
-              this._store.dispatch(new fromCoreStore.SetIsDeviceConnected(false));
+              this._store.dispatch(new fromCoreStore.SetDosageDeviceInfo(false));
               if (!this.isScanning_) {
                 this.logger('onDeviceDiscovered: Error', 'Looks like the device is desconected, runing scan again');
                 await this.scan();
@@ -346,15 +370,15 @@ export class BluetoothService {
             this.setBattery(this.mock_battery);
             this.dosage_ = this.mock_dosing;
 
-            if (!this.layoutConfig.isDeviceConnected) {
-              this._store.dispatch(new fromCoreStore.SetIsDeviceConnected(true));
+            if (!this.layoutConfig.dosageDevice.isConnected) {
+              this._store.dispatch(new fromCoreStore.SetDosageDeviceInfo(true));
             }
             clearInterval(this.interval_id_);
           }
         }
         catch (error: any) {
           this.logger(`onDeviceDiscovered: Error`, `${error}`);
-          this._store.dispatch(new fromCoreStore.SetIsDeviceConnected(false));
+          this._store.dispatch(new fromCoreStore.SetDosageDeviceInfo(false));
           if (!this.isScanning_) {
             this.logger('onDeviceDiscovered: Error', 'Looks like the device is desconected, runing scan again');
             await this.scan();
@@ -449,5 +473,33 @@ export class BluetoothService {
         ],
       }));
     });
+  }
+
+  async postTrackingData() : Promise<Object | void>{
+    this.trackingDateForm.patchValue({
+      device: this.peripheral_.device.deviceId,
+      previous_state: this.previousState_,
+      new_state: this.state_,
+      battery: this.battery_,
+      dosage: this.dosage_,
+    });
+
+    if (this.trackingDateForm.valid) {
+      const url = 'http://api.onebetterllc.com/'; 
+      const username = 'automagic_admin';
+      const password = '6FRGqutxijsG5jq';
+      const headers = new HttpHeaders({
+        'Content-Type': 'application/json',
+        Authorization: `Basic ${btoa(`${username}:${password}`)}`
+      });
+
+      try {
+        const response = await this._http.post(url, this.trackingDateForm.value, { headers }).toPromise();
+        console.log('POST request successful', response);
+      }
+      catch (error) {
+        console.log('Error occurred', error);
+      }
+    }
   }
 }

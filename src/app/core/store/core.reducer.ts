@@ -60,13 +60,6 @@ export function LayoutReducer(
       };
     }
 
-    case fromActions.ActionTypes.SetBatteryLowAlertShownAt: {
-      return {
-        ...state,
-        batteryLowAlertShownAt: action.payload,
-      };
-    }
-
     case fromActions.ActionTypes.SetNoDeviceMode: {
       return {
         ...state,
@@ -102,24 +95,30 @@ export function LayoutReducer(
       };
     }
 
-    case fromActions.ActionTypes.SetDeviceInfo: {
+    case fromActions.ActionTypes.SetUserDeviceInfo: {
       return {
         ...state,
-        device: action.payload,
+        userDevice: {
+          ...state.userDevice,
+          ...action.payload,
+        }
       };
     }
 
-    case fromActions.ActionTypes.SetIsDeviceConnected: {
+    case fromActions.ActionTypes.SetDosageDeviceInfo: {
       return {
         ...state,
-        isDeviceConnected: action.payload,
+        dosageDevice: {
+          ...state.dosageDevice,
+          ...action.payload,
+        }
       };
     }
 
-    case fromActions.ActionTypes.SetBatteryOfDevice: {
+    case fromActions.ActionTypes.SetBatteryLowAlertShownAt: {
       return {
         ...state,
-        batteryLevel: action.payload,
+        batteryLowAlertShownAt: action.payload,
       };
     }
 

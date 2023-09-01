@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterContentInit, Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { Capacitor } from '@capacitor/core';
@@ -18,7 +18,7 @@ import { AlertController } from '@ionic/angular';
   templateUrl: 'layout.page.html',
   styleUrls: ['layout.page.scss'],
 })
-export class LayoutPage implements OnInit {
+export class LayoutPage implements OnInit, AfterContentInit {
   public config$: Observable<any>;
   public config: any;
   public backdropConfig$: Observable<any>;
@@ -43,8 +43,8 @@ export class LayoutPage implements OnInit {
     this.config$.subscribe(async config => {
       if (config) {
         this.config = config;
-        if (this.config.isDeviceConnected) {
-          const batteryLevel = this.config.batteryLevel;
+        if (this.config.dosageDevice.isConnected) {
+          const batteryLevel = this.config.dosageDevice.battery;
           if (this.config.batteryLowAlertShownAt) {
             const lastDateShown = moment(this.config.batteryLowAlertShownAt);
             if (lastDateShown.diff(moment(), 'minutes') >= 30) {
@@ -77,21 +77,27 @@ export class LayoutPage implements OnInit {
           }
         }
 
-        if (this.config.device) {
-          const model = this.config.device.model.replaceAll(/[a-z]/g, '');
+        if (this.config.userDevice?.model) {
+          const model = this.config.userDevice.model.replaceAll(/[a-z]/g, '');
+          console.log('model ', Number(model));
+          console.log('is minor than 10.5 ', Number(model) <= 10.5);
+          console.log('modelSaved ', this.config.userDevice.model);
+          console.log('condition 1', this.config.userDevice.model === 'iphone12.8');
+          console.log('condition 2', this.config.userDevice.model === 'iphone14.6');
           if (
-            parseFloat(model) < 9 || 
+            Number(model) <= 10.5 || 
             // iphone12,8 SE 2nd Generation
-            this.config.device.model === 'iphone12,8' || 
+            this.config.userDevice.model === 'iphone12.8' || 
             // iphone14,6 SE 3rd Generation
-            this.config.device.model === 'iphone14,6'
+            this.config.userDevice.model === 'iphone14.6'
           ) {
+            console.log('ENTRA!!');
             const alert = await this._alertController.create({
               header: 'Your device is not supported',
-              message: 'This application is designed for iPhone 11+. <br><br>This unsupported device will not demonstrate the intended screen layout and user experience.',
+              message: 'This application is designed for<br>iPhones with a 5.85” or larger display.<br><br>This unsupported device will not demonstrate the intended screen layout and user experience.',
               buttons: [
                 {
-                  text: 'Continue',
+                  text: 'Ok',
                   role: 'cancel',
                 },
                 // {
@@ -151,7 +157,8 @@ export class LayoutPage implements OnInit {
     gc.on('up', (event: any) => {
       if (
         this.backdropConfig.show && 
-        fromSharedServices.UtilsService.getParentByClass(event.target, 'backdrop__fold')
+        fromSharedServices.UtilsService.getParentByClass(event.target, 'backdrop__fold') &&
+        !this.backdropConfig.blockClose
       ) {
         this._store.dispatch(new fromSharedStore.BackdropHide);
       }
@@ -198,7 +205,9 @@ export class LayoutPage implements OnInit {
         highlightElements();
       }
     });
+  }
 
+  ngAfterContentInit() {
     if (Capacitor.isNativePlatform()) {
       this.getDeviceInfo();
     }
@@ -226,11 +235,13 @@ export class LayoutPage implements OnInit {
   }
 
   async getDeviceInfo() {
+    console.log('getDeviceInfo');
     try {
       this.deviceInfo = await Device.getInfo();
-      this._store.dispatch(new fromStore.SetDeviceInfo({
+      console.log('deviceInfo ', this.deviceInfo);
+      this._store.dispatch(new fromStore.SetUserDeviceInfo({
         name: this.deviceInfo.name.toLowerCase().replaceAll(' ', '-'),
-        model: this.deviceInfo.model.toLowerCase().replaceAll(' ', '-'),
+        model: this.deviceInfo.model.toLowerCase().replaceAll(' ', '-').replaceAll(',', '.'),
       }));
     }
     catch(error: any) {

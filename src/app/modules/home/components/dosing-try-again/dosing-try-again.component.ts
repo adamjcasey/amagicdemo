@@ -40,9 +40,13 @@ export class DosingTryAgainComponent implements OnInit, OnDestroy {
         }
       });
 
+    console.log('inicia interval');
     const controller = setInterval(() => {
+      console.log('this.timeOutForRetry ', this.timeOutForRetry);
+      console.log('dosageDevice.isConnected ', this.layoutConfig.dosageDevice.isConnected);
       this.timeOutForRetry = this.timeOutForRetry - 1;
-      if (this.layoutConfig.isDeviceConnected || this.timeOutForRetry === 0) {
+
+      if (this.layoutConfig.dosageDevice.isConnected || this.timeOutForRetry === 0) {
         this.waitingForDeviceConnted = false;
         clearInterval(controller);
       }

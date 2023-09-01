@@ -33,7 +33,7 @@
       <ion-img class="ellipse" src="/assets/images/backdrop-header-ellipse.svg"></ion-img>
 
       <ng-container *ngIf="layoutConfig?.isDeviceConnected">
-        <div class="battery-indicator__wrapper" *ngIf="batteryLevel <= 5 && layoutConfig.isDeviceConnected">
+        <div class="battery-indicator__wrapper" *ngIf="batteryLevel <= 5 && layoutConfig.dosageDevice.isConnected">
           <div class="battery-indicator">
             <ion-icon src="/assets/icons/battery-indicator-{{ getPercentageBatteryAsset(batteryLevel) }}.svg"></ion-icon>
             <p class="battery-indicator__value">{{ batteryLevel }}%</p>
@@ -424,99 +424,99 @@
     ></ion-icon>
 
     <div 
-      class="backdrop__fold {{ this.layoutConfig.device?.model }}" 
+      class="backdrop__fold {{ this.layoutConfig.userDevice?.model }}" 
       [ngClass]="{ 
-        'is-physical-device': layoutConfig.device,
-        'is-iphone-x': this.layoutConfig.device?.model.includes('iphone-x'),
+        'is-physical-device': layoutConfig.userDevice,
+        'is-iphone-x': this.layoutConfig.userDevice?.model.includes('iphone-x'),
         'is-iphone-11': [
-          'iphone12,1', 
-          'iphone12,2', 
-          'iphone12,3', 
-          'iphone12,4', 
-          'iphone12,5'
-        ].includes(layoutConfig.device?.model),
+          'iphone12.1', 
+          'iphone12.2', 
+          'iphone12.3', 
+          'iphone12.4', 
+          'iphone12.5'
+        ].includes(layoutConfig.userDevice?.model),
         'is-iphone-12': [
-          'iphone13,1', 
-          'iphone13,2', 
-          'iphone13,3', 
-          'iphone13,4', 
-          'iphone13,5'
-        ].includes(layoutConfig.device?.model),
+          'iphone13.1', 
+          'iphone13.2', 
+          'iphone13.3', 
+          'iphone13.4', 
+          'iphone13.5'
+        ].includes(layoutConfig.userDevice?.model),
         'is-iphone-13': [
-          'iphone14,1', 
-          'iphone14,2', 
-          'iphone14,3', 
-          'iphone14,4', 
-          'iphone14,5'
-        ].includes(layoutConfig.device?.model),
+          'iphone14.1', 
+          'iphone14.2', 
+          'iphone14.3', 
+          'iphone14.4', 
+          'iphone14.5'
+        ].includes(layoutConfig.userDevice?.model),
         'is-iphone-14': [
-          'iphone14,7', 'iphone14,8'
-        ].includes(layoutConfig.device?.model),
+          'iphone14.7', 'iphone14.8'
+        ].includes(layoutConfig.userDevice?.model),
         'is-iphone-14-pro': [
-          'iphone15,2',
-        ].includes(layoutConfig.device?.model),
+          'iphone15.2',
+        ].includes(layoutConfig.userDevice?.model),
         'is-iphone-14-pro-max': [
-          'iphone15,3',
-        ].includes(layoutConfig.device?.model),
+          'iphone15.3',
+        ].includes(layoutConfig.userDevice?.model),
       }">
 
-      <ng-container *ngIf="layoutConfig.device">
+      <ng-container *ngIf="layoutConfig.userDevice">
         <ion-img 
           class="background" 
-          *ngIf="getModelDeviceNumber(layoutConfig.device?.model) < 10.5"
+          *ngIf="getModelDeviceNumber(layoutConfig.userDevice?.model) < 10.5"
           src="/assets/images/backdrop-fold-bg--iphone-8.png"
         ></ion-img>
         <ion-img 
           class="background" 
-          *ngIf="layoutConfig.device?.model === 'iphone10,6'" 
+          *ngIf="layoutConfig.userDevice?.model === 'iphone10.6'" 
           src="/assets/images/backdrop-fold-bg--iphone-x.svg"
         ></ion-img>
         <ion-img 
           class="background" 
           *ngIf="[
-            'iphone12,1', 
-            'iphone12,2', 
-            'iphone12,3', 
-            'iphone12,4', 
-            'iphone12,5'
-          ].includes(layoutConfig.device?.model)"
+            'iphone12.1', 
+            'iphone12.2', 
+            'iphone12.3', 
+            'iphone12.4', 
+            'iphone12.5'
+          ].includes(layoutConfig.userDevice?.model)"
           src="/assets/images/backdrop-fold-bg--iphone-11.svg"
         ></ion-img>
         <ion-img 
           class="background" 
           *ngIf="[
-            'iphone13,1', 
-            'iphone13,2', 
-            'iphone13,3', 
-            'iphone13,4', 
-            'iphone13,5'
-          ].includes(layoutConfig.device?.model)"
+            'iphone13.1', 
+            'iphone13.2', 
+            'iphone13.3', 
+            'iphone13.4', 
+            'iphone13.5'
+          ].includes(layoutConfig.userDevice?.model)"
           src="/assets/images/backdrop-fold-bg--iphone-12.png"
         ></ion-img>
         <ion-img 
           class="background" 
           *ngIf="[
-            'iphone14,1', 
-            'iphone14,2', 
-            'iphone14,3', 
-            'iphone14,4', 
-            'iphone14,5'
-          ].includes(layoutConfig.device?.model)"
+            'iphone14.1', 
+            'iphone14.2', 
+            'iphone14.3', 
+            'iphone14.4', 
+            'iphone14.5'
+          ].includes(layoutConfig.userDevice?.model)"
           src="/assets/images/backdrop-fold-bg--iphone-13.svg"
         ></ion-img>
         <ion-img 
           class="background" 
-          *ngIf="['iphone14,7', 'iphone14,8'].includes(layoutConfig.device?.model)"
+          *ngIf="['iphone14.7', 'iphone14.8'].includes(layoutConfig.userDevice?.model)"
           src="/assets/images/backdrop-fold-bg--iphone-14.svg"
         ></ion-img>
         <ion-img 
           class="background" 
-          *ngIf="['iphone15,2', 'iphone15,3'].includes(layoutConfig.device?.model)"
+          *ngIf="['iphone15.2', 'iphone15.3'].includes(layoutConfig.userDevice?.model)"
           src="/assets/images/backdrop-fold-bg--iphone-14-pro.svg"
         ></ion-img>
       </ng-container>
 
-      <ng-container *ngIf="!layoutConfig.device">
+      <ng-container *ngIf="!layoutConfig.userDevice">
         <ion-img class="background" src="/assets/images/backdrop-fold-bg.svg"></ion-img>
       </ng-container>
 

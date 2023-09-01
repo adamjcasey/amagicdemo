@@ -15,23 +15,27 @@ export interface LayoutState {
   noDeviceModeOopsFlow: boolean;
   noDeviceModeBatteryLowFlow: boolean;
   debuggingDeviceMode: boolean;
-  device?: any;
-  isDeviceConnected: boolean;
-  batteryLevel: number,
+  userDevice?: any;
+  dosageDevice?: any;
+  // batteryLevel: number,
 }
 
 export const initialState: LayoutState = {
   fullScreen: false,
   rightCornerEl: null,
   welcomeFlowDone: false,
+
+  // batteryLevel: 0,
+  // userDevice: {
+  //   name: 'iphone-14-pro',
+  //   model: 'iphone10.4'
+  // },
+  dosageDevice: {
+    isConnected: false,
+    battery: false,
+  },
   noDeviceMode: false,
   noDeviceModeOopsFlow: false,
   noDeviceModeBatteryLowFlow: false,
   debuggingDeviceMode: false,
-  isDeviceConnected: false,
-  batteryLevel: 0,
-  device: {
-    name: 'iphone-14-pro',
-    model: 'iphone10,4'
-  }
 }

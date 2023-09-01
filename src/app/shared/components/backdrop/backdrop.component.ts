@@ -115,8 +115,8 @@ export class BackdropComponent implements OnInit, AfterViewInit {
     this.layoutConfig$.subscribe(layoutConfig => {
       if (layoutConfig) {
         this.layoutConfig = layoutConfig;
-        if (this.layoutConfig.isDeviceConnected) {
-          this.batteryLevel = this.layoutConfig.batteryLevel;
+        if (this.layoutConfig.dosageDevice.isConnected) {
+          this.batteryLevel = this.layoutConfig.dosageDevice.battery;
         }
       }
     });
@@ -457,7 +457,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
 
   getModelDeviceNumber(model: any) {
     model = model.replaceAll(/[a-z]/g, '');
-    return parseFloat(model);
+    return Number(model);
   }
 
   private _loadComponent(component: any) {

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { SwiperModule } from 'swiper/angular';
+import { HttpClientModule } from '@angular/common/http';
 
 import * as fromComponents from './components';
 import * as fromDirectives from './directives';
@@ -16,6 +17,7 @@ import * as fromServices from './services';
     ReactiveFormsModule,
     IonicModule,
     SwiperModule,
+    HttpClientModule,
   ],
   declarations: [
     fromComponents.components,
