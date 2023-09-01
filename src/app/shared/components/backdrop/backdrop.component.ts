@@ -83,7 +83,6 @@ export class BackdropComponent implements OnInit, AfterViewInit {
       if (config) {
         this.config = config;
         if (this.config.show) {
-          this.getBatteryLevel();
           if (this.config.component !== null) {
             this._loadComponent(this.config.component);
           }
@@ -116,6 +115,9 @@ export class BackdropComponent implements OnInit, AfterViewInit {
     this.layoutConfig$.subscribe(layoutConfig => {
       if (layoutConfig) {
         this.layoutConfig = layoutConfig;
+        if (this.layoutConfig.isDeviceConnected) {
+          this.batteryLevel = this.layoutConfig.batteryLevel;
+        }
       }
     });
 
@@ -132,13 +134,17 @@ export class BackdropComponent implements OnInit, AfterViewInit {
 
   toggle() {
     if (!this.config.show) {
-      this._store.dispatch(new fromStore.BackdropShow({
-        transition: 'move',
-        header: true,
-      }));
+      if (!this.homeConfig.dosingStarted) {
+        this._store.dispatch(new fromStore.BackdropShow({
+          transition: 'move',
+          header: true,
+        }));
+      }
     }
     else {
-      this._store.dispatch(new fromStore.BackdropHide);
+      if (!this.config.blockClose) {
+        this._store.dispatch(new fromStore.BackdropHide);
+      }
     }
   }
 
@@ -212,6 +218,26 @@ export class BackdropComponent implements OnInit, AfterViewInit {
         this.goBackToMenu();
       }
     }
+  }
+
+  getPercentageBatteryAsset(battery: number) {
+    let percentage = 100;
+    if (battery > 50 && battery <= 75) {
+      percentage = 75;
+    }
+    else if (battery > 25 && battery <= 50) {
+      percentage = 50;
+    }
+    else if (battery > 5 && battery <= 25) {
+      percentage = 25;
+    }
+    else if (battery <= 5) {
+      percentage = 5;
+    }
+    else if (battery === 0) {
+      percentage = 0;
+    }
+    return percentage.toString();
   }
 
   onHighlightsTourInit() {
@@ -288,7 +314,6 @@ export class BackdropComponent implements OnInit, AfterViewInit {
       this.backButton = {
         label: 'Back',
         action: () => {
-          console.log('click in back share flow');
           this._store.dispatch(new fromStore.BackdropSetConfig({
             shareFlow: null,
           }));
@@ -315,7 +340,6 @@ export class BackdropComponent implements OnInit, AfterViewInit {
       this.backButton = {
         label: 'Back',
         action: () => {
-          console.log('click in back share flow');
           this._store.dispatch(new fromStore.BackdropSetConfig({
             returnFlow: null,
           }));
@@ -356,13 +380,6 @@ export class BackdropComponent implements OnInit, AfterViewInit {
         velocity: 800,
       }) }
     );
-  }
-
-  getBatteryLevel() {
-    this.batteryLevel = this._bluetoothService.Battery;
-    if (this.config.debuggingDeviceMode) {
-      this._bluetoothService.renderDebuggingVerboose('getBatteryLevel', `Battery Level: ${this.batteryLevel}`);
-    }
   }
 
   doAnotherInjection() {
@@ -423,7 +440,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
       case 'battery-low':
         if (this.layoutConfig.noDeviceMode) {
           this._store.dispatch(new fromCoreStore.SetNoDeviceModeBatteryLowFlow(!this.layoutConfig.noDeviceModeBatteryLowFlow));
-          this._bluetoothService.Battery = 5;
+          this._bluetoothService.setBattery(5);
         }
         break;
       case 'device-debugging':
@@ -438,6 +455,11 @@ export class BackdropComponent implements OnInit, AfterViewInit {
     }));
   }
 
+  getModelDeviceNumber(model: any) {
+    model = model.replaceAll(/[a-z]/g, '');
+    return parseFloat(model);
+  }
+
   private _loadComponent(component: any) {
     this.contentComponent.clear();
     switch(component) {
@@ -449,6 +471,9 @@ export class BackdropComponent implements OnInit, AfterViewInit {
         break;
       case 'time-traveling':
         this.contentComponent.createComponent(fromHomeComponents.TimeTravelingComponent);
+        break;
+      case 'dosing-try-again':
+        this.contentComponent.createComponent(fromHomeComponents.DosingTryAgainComponent);
         break;
     }
   }

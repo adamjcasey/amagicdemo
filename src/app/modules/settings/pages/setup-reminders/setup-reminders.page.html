@@ -77,7 +77,7 @@
     </div>
 
     <div class="setup-reminders-page__controls">
-      <ion-button class="hotspot-element" fill="outline" color="purple" (click)="goTo('settings')">
+      <ion-button class="hotspot-element" fill="outline" color="purple" [disabled]="homeConfig?.firstTimeDose" (click)="goTo('settings')">
         Cancel
       </ion-button>
 

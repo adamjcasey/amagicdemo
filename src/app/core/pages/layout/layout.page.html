@@ -6,12 +6,19 @@
   </ion-header>
   <ion-content class="ion-padding">
     <ion-menu-toggle>
-      <div id="device-debugging-content"></div>
+      <div class="device-debugging">
+        <div class="toolbar">
+          <ion-button (click)="copyDebuggingLogs()" class="copy" color="light">
+            <ion-icon slot="icon-only" size="medium" name="copy-outline"></ion-icon>
+          </ion-button>
+        </div>
+        <div class="logs" id="device-debugging-logs"></div>
+      </div>
     </ion-menu-toggle>
   </ion-content>
 </ion-menu>
 
-<ion-app id="automagic" class="automagic">
+<ion-app id="automagic" class="automagic {{ config.device?.model }}" [ngClass]="{ 'iphone-8': getModelDeviceNumber(config.device.model) < 10.5 }">
   <automagic-alert></automagic-alert>
   <automagic-topbar></automagic-topbar>
   <main 

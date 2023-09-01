@@ -8,6 +8,7 @@ export enum ActionTypes {
   SetFullScreen = '[Layout] Set FullScreen',
   SetRightCornerEl = '[Layout] Set Right Corner Element',
   ClearRightCornerEl = '[Layout] Clear Right Corner Element',
+  SetBatteryLowAlertShownAt = '[Layout] Set Battery Low Alert At',
   SetNoDeviceMode = '[Layout] Set No Device Mode',
   SetNoDeviceModeOopsFlow = '[Layout] Set No Device Mode Oops Flow',
   SetNoDeviceModeBatteryLowFlow = '[Layout] Set No Device Mode Battery Low Flow',
@@ -15,6 +16,7 @@ export enum ActionTypes {
   SetWelcomeFlowAsDone = '[Layout] Set Welcome Flow as Done',
   SetDeviceInfo = '[Layout] Set Device Model Info',
   SetIsDeviceConnected = '[Layout] Set Is Device Connected',
+  SetBatteryOfDevice = '[Layout] Set Battery of Device',
 }
 
 export class Go implements Action {
@@ -47,6 +49,11 @@ export class SetRightCornerEl implements Action {
 
 export class ClearRightCornerEl implements Action {
   readonly type = ActionTypes.ClearRightCornerEl;
+}
+
+export class SetBatteryLowAlertShownAt implements Action {
+  readonly type = ActionTypes.SetBatteryLowAlertShownAt;
+  constructor(public payload: any) {}
 }
 
 export class SetNoDeviceMode implements Action {
@@ -83,6 +90,10 @@ export class SetIsDeviceConnected implements Action {
   readonly type = ActionTypes.SetIsDeviceConnected;
   constructor(public payload: boolean) {}
 }
+export class SetBatteryOfDevice implements Action {
+  readonly type = ActionTypes.SetBatteryOfDevice;
+  constructor(public payload: number) {}
+}
 
 export type ActionsUnion 
   = Go 
@@ -91,10 +102,12 @@ export type ActionsUnion
   | SetFullScreen
   | SetRightCornerEl
   | ClearRightCornerEl
+  | SetBatteryLowAlertShownAt
   | SetNoDeviceMode
   | SetNoDeviceModeOopsFlow
   | SetNoDeviceModeBatteryLowFlow
   | SetWelcomeFlowAsDone
   | SetDeviceDebugging
   | SetIsDeviceConnected
+  | SetBatteryOfDevice
   | SetDeviceInfo;

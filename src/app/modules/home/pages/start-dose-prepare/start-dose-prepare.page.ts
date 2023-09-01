@@ -23,6 +23,8 @@ import * as fromCoreStore from '@core/store';
 export class StartDosePreparePage implements OnInit, OnDestroy {
   public homeConfig$!: Observable<any>;
   public homeConfig: any;
+  public layoutConfig$!: Observable<any>;
+  public layoutConfig: any;
   private _ngUnsubscribe: Subject<void> = new Subject<void>();
   public slides: Array<any> = [];
   @ViewChild('sliderPage', { static: false }) sliderPage!: fromSharedComponents.SliderPageComponent;
@@ -32,6 +34,7 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
     private _bluetoothService: fromSharedServices.BluetoothService,
   ) {
     this.homeConfig$ = this._store.select(fromStore.getHomeConfig);
+    this.layoutConfig$ = this._store.select(fromCoreStore.getLayoutConfig);
     this.slides = [
       {
         header: {
@@ -126,7 +129,15 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
             }));
           }
         }
-    });
+      });
+
+    this.layoutConfig$
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(layoutConfig => {
+        if (layoutConfig) {
+          this.layoutConfig = layoutConfig;
+        }
+      });
   }
 
   ngOnDestroy() {
@@ -146,8 +157,10 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
           this.sliderPage.slideNext();
         }
       }
-      catch (error) {
-        console.log('slideNext > error: ', error);
+      catch (error: any) {
+        if (this.layoutConfig.debuggingDeviceMode) {
+          this._bluetoothService.logger('isDeviceConnected service method Error', error);
+        }
       }
     }
   }

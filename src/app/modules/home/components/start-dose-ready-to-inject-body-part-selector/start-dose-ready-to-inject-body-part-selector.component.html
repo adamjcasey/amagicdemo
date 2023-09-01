@@ -78,8 +78,8 @@
         Most people find it easier to start from one of their thighs.
       </ng-container>
       <ng-template #notFirstDose>
-        Last time you injected your <strong>{{ humanizeBodyPartInjected(lastMarkedDose.bodyPartInjected) }}</strong>. <br>We recommend rotating to your 
-        <ng-container [ngSwitch]="lastMarkedDose.bodyPartInjected">
+        Last time you injected your <strong>{{ humanizeBodyPartInjected(lastMarkedDose?.bodyPartInjected) }}</strong>. <br>We recommend rotating to your 
+        <ng-container [ngSwitch]="lastMarkedDose?.bodyPartInjected">
           <strong *ngSwitchCase="'top-left'">Left Abdomen.</strong>
           <strong *ngSwitchCase="'top-right'">Right Abdomen.</strong>
           <strong *ngSwitchCase="'bottom-left'">Left Thigh.</strong>

@@ -176,7 +176,12 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                   actions: [
                     {
                       label: 'Previous step',
-                      action: () => { 
+                      action: () => {
+                        // clear previous selection
+                        this._store.dispatch(new fromStore.SetData({
+                          bodyPartSelected: null, 
+                        }));
+
                         this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-green'));
                         if (this.homeConfig?.firstTimeDose) {
                           this.sliderPage.slideTo(2);
@@ -313,6 +318,11 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
               {
                 label: 'Previous step',
                 action: () => { 
+                  // clear previous body part selection
+                  this._store.dispatch(new fromStore.SetData({
+                    bodyPartSelected: null, 
+                  }));
+
                   this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
                   this.sliderPage.slidePrev();
                 }
@@ -471,6 +481,9 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
       const startDosing = await this._bluetoothService.waitForDosingStart();
       if (startDosing) {
         this.sliderPage.slideNext();
+        this._store.dispatch(new fromStore.SetData({
+          dosingStarted: true
+        }));
       }
     }
     catch (error) {

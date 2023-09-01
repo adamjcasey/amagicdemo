@@ -106,11 +106,14 @@ export class TopBarComponent implements OnInit, OnDestroy {
               this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
               break;
             case '/resources/mindful-assistant':
-              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-lime'));
-              break;
-            case '/resources/mindful-assistant/start':
               this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-green'));
+              // Old version
+              // this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-lime'));
               break;
+            // Old version
+            // case '/resources/mindful-assistant/start':
+            //   this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-green'));
+            //   break;
           }
         }
       },
@@ -211,14 +214,17 @@ export class TopBarComponent implements OnInit, OnDestroy {
         this.currentRoute.includes('resources/mindful-assistant') ||
         this.currentRoute.includes('resources/one-path')
       ) {
-        if (this.currentRoute.includes('resources/mindful-assistant/start')) {
-          this.goTo('resources/mindful-assistant');
-          this._store.dispatch(new fromStore.TopbarChangeColor('--color-bg-pastel-lime'));
-        }
-        else {
-          this._store.dispatch(new fromStore.TopbarChangeColor('--color-bg-pastel-beige'));
-          this.goTo('resources'); 
-        }
+        // Old version
+        // if (this.currentRoute.includes('resources/mindful-assistant/start')) {
+        //   this.goTo('resources/mindful-assistant');
+        //   this._store.dispatch(new fromStore.TopbarChangeColor('--color-bg-pastel-lime'));
+        // }
+        // else {
+        //   this._store.dispatch(new fromStore.TopbarChangeColor('--color-bg-pastel-beige'));
+        //   this.goTo('resources'); 
+        // }
+        this._store.dispatch(new fromStore.TopbarChangeColor('--color-bg-pastel-beige'));
+        this.goTo('resources'); 
       }
 
       if (this.currentRoute.includes('resources/your-care-team/list')) {

@@ -4,9 +4,21 @@
   </p>
 
   <div class="pin-input__wrapper">
-    <input #digit1 type="number" class="pin-input__digit" (input)="limitToOneDigit($event)" (keyup)="onDigit($event)">
-    <input #digit2 type="number" class="pin-input__digit" (input)="limitToOneDigit($event)" (keyup)="onDigit($event)" disabled>
-    <input #digit3 type="number" class="pin-input__digit" (input)="limitToOneDigit($event)" (keyup)="onDigit($event)" disabled>
-    <input #digit4 type="number" class="pin-input__digit" (input)="limitToOneDigit($event)" (keyup)="onDigit($event)" disabled>
+    <input 
+      #digit1 class="pin-input__digit" type="number"
+      (input)="onInput($event)" 
+      (keyup)="onDigitEnter($event)">
+    <input 
+      #digit2 class="pin-input__digit" type="number" 
+      (input)="onInput($event)" 
+      (keyup)="onDigitEnter($event)" disabled>
+    <input 
+      #digit3 class="pin-input__digit" type="number" 
+      (input)="onInput($event)" 
+      (keyup)="onDigitEnter($event)" disabled>
+    <input 
+      #digit4 class="pin-input__digit" type="number" 
+      (input)="onInput($event)" 
+      (keyup)="onDigitEnter($event)" disabled>
   </div>
 </div>

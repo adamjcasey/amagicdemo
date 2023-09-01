@@ -69,24 +69,35 @@ export class PinInputComponent {
     }
   }
 
-  limitToOneDigit(event: any) {
-    const input = event.target.value;
+  onInput(event: any) {
+    const input = event.target;
+    const value = input.value;
+
     // Remove any characters after the first digit
-    event.target.value = input.charAt(0);
+    event.target.value = value.charAt(0);
+
+    // if the input already has a previous value, set the
+    // new value in the next digit input
+    const nextDigit = input.nextSibling;
+    if (nextDigit && value.length > 1) {
+      nextDigit.value = value.charAt(1);
+    }
   }
 
-  onDigit(event: any) {
+  onDigitEnter(event: any) {
     const currentDigit = event.target;
     const previousDigit = currentDigit.previousSibling;
     const nextDigit = currentDigit.nextSibling;
+
     if (event.code === 'Backspace') {
       if (previousDigit) {
-        previousDigit?.removeAttribute('disabled');
-        previousDigit?.focus();
+        // if (previousDigit.value === '') {
+          previousDigit?.removeAttribute('disabled');
+          previousDigit?.focus();
+        // }
       }
     }
     else if (event.code === 'Enter') {
-      console.log('hace enter');
       const nextDigit = currentDigit.nextSibling;
       if (nextDigit) {
         nextDigit.focus();

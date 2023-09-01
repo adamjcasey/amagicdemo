@@ -31,12 +31,14 @@
       .body-shape__top-left {
         pointer-events: none;
         stroke: var(--color-skintone-4);
+        fill: transparent;
       }
     }
     &.top-right-disabled {
       .body-shape__top-right {
         pointer-events: none;
         stroke: var(--color-skintone-4);
+        fill: transparent;
       }
     }
 
@@ -44,12 +46,14 @@
       .body-shape__bottom-left {
         pointer-events: none;
         stroke: var(--color-skintone-4);
+        fill: transparent;
       }
     }
     &.bottom-right-disabled {
       .body-shape__bottom-right {
         pointer-events: none;
         stroke: var(--color-skintone-4);
+        fill: transparent;
       }
     }
   }

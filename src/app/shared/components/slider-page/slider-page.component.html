@@ -6,14 +6,14 @@
     'is-content-hidden': config.content?.hide, 
     'is-content-expanded': config.content?.isExpanded, 
     'is-full-size': config.header?.fullSize, 
-    'is-iphone-x': this.layoutConfig.deviceModel?.model.includes('iphone-x'),
-    'is-iphone-11': this.layoutConfig.deviceModel?.model.includes('iphone-11'),
-    'is-iphone-12': this.layoutConfig.deviceModel?.model.includes('iphone-12'),
-    'is-iphone-13': this.layoutConfig.deviceModel?.model.includes('iphone-13'),
-    'is-iphone-14': this.layoutConfig.deviceModel?.model.includes('iphone14,7'),
-    'is-iphone-14-plus': this.layoutConfig.deviceModel?.model.includes('iphone14,8'),
-    'is-iphone-14-pro': this.layoutConfig.deviceModel?.model.includes('iphone15,2'),
-    'is-iphone-14-pro-max': this.layoutConfig.deviceModel?.model.includes('iphone15,3'),
+    'is-iphone-x': this.layoutConfig.device?.model.includes('iphone-x'),
+    'is-iphone-11': this.layoutConfig.device?.model.includes('iphone-11'),
+    'is-iphone-12': this.layoutConfig.device?.model.includes('iphone-12'),
+    'is-iphone-13': this.layoutConfig.device?.model.includes('iphone-13'),
+    'is-iphone-14': this.layoutConfig.device?.model.includes('iphone14,7'),
+    'is-iphone-14-plus': this.layoutConfig.device?.model.includes('iphone14,8'),
+    'is-iphone-14-pro': this.layoutConfig.device?.model.includes('iphone15,2'),
+    'is-iphone-14-pro-max': this.layoutConfig.device?.model.includes('iphone15,3'),
   }" 
   [style.background-color]="config.header?.color 
     ? 'var(' + config.header.color + ')' 

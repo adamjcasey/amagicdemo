@@ -1,9 +1,13 @@
-<section id="alert" class="alert" [ngClass]="{ 
-  'is-open': config.show, 
-  'is-full-mode': config.mode === 'full', 
-  'is-window-mode': config.mode === 'window', 
-  'is-floating-mode': config.mode === 'floating', 
-}">
+<section 
+  #alert id="alert" class="alert" 
+  (click)="handleOverlayClick($event)" 
+  [ngClass]="{ 
+    'is-open': config.show, 
+    'is-full-mode': config.mode === 'full', 
+    'is-window-mode': config.mode === 'window', 
+    'is-floating-mode': config.mode === 'floating', 
+  }">
+
   <div class="alert__content">
     <div 
       class="alert__template" 

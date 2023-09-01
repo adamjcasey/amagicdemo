@@ -29,6 +29,7 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
   public nextDose: any;
   public startDosing: boolean = false;
   public errorDosing: boolean = false;
+  public dosePercentageCompleted: number = 0;
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
@@ -86,31 +87,16 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
           color: '--color-bg-pastel-lime',
         }));
 
-        let doseDateFormatted = moment().format('D MMMM YYYY H:mm A');
         const markedDoses = this.homeConfig.doses.filter((dose: any) => dose.marked);
         const unMarkedDoses = this.homeConfig.doses.filter((dose: any) => !dose.marked);
-        // if (markedDoses.length === 0) {
-        //   const dateNextDose = moment(unMarkedDoses[1].date);
-        //   dateNextDose.set('hour', moment().get('hour'));
-        //   dateNextDose.set('minute', moment().get('minute'));
-        //   nextDoseDateFormatted = dateNextDose.format('D MMMM YYYY H:mm A');
-        // }
 
-        // if (markedDoses.length === 5) {
-        //   const lastDose = unMarkedDoses[0];
-        //   const lastDoseDate = moment(lastDose.date);
-        //   lastDoseDate.set('hour', moment().get('hour'));
-        //   lastDoseDate.set('minute', moment().get('minute'));
-        //   lastDoseDate.add(2, 'weeks');
-        //   doseDateFormatted = lastDoseDate.format('D MMMM YYYY H:mm A');
-        // }
+        const currentDoseDate = unMarkedDoses.length > 0 
+          ? moment(unMarkedDoses[0].date) 
+          : moment(markedDoses[markedDoses.length - 1].date).add(2, 'weeks');
 
-        if (markedDoses.length > 0) {
-          const currentDoseDate = moment(unMarkedDoses[0].date);
-          currentDoseDate.set('hour', moment().get('hour'));
-          currentDoseDate.set('minute', moment().get('minute'));
-          doseDateFormatted = currentDoseDate.format('D MMMM YYYY H:mm A');
-        }
+        currentDoseDate.set('hour', moment().get('hour'));
+        currentDoseDate.set('minute', moment().get('minute'));
+        const doseDateFormatted = currentDoseDate.format('D MMMM YYYY H:mm A');
 
         this._store.dispatch(new fromSharedStore.AlertShow({
           mode: 'window',
@@ -128,6 +114,9 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
               action: () => {
                 this._store.dispatch(new fromSharedStore.AlertHide);
                 this._store.dispatch(new fromSharedStore.SliderPageClear());
+                this._store.dispatch(new fromStore.SetData({
+                  dosingStarted: false
+                }));
                 this._store.dispatch(new fromCoreStore.Go({
                   path: ['/home/start-dose/inject-done']
                 }));
@@ -138,8 +127,8 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
       }
     }
     catch (error) {
-      debugger
       this.errorDosing = true;
+      this.dosePercentageCompleted = 100 - ((this.totalTime * 100) / 10);
       this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-salmon'));
       this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
         color: '--color-bg-pastel-salmon',
@@ -150,7 +139,7 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
           <div class="dosing-error-alert">
             <img src="assets/images/dose-dosing-error.svg" />
             <h1 class="font-heading-1--bold">Oops!</h1>
-            <p>You lifted off early and the dose was only 65% administered.</p>
+            <p>You lifted off early and the dose was only ${this.dosePercentageCompleted}% administered.</p>
             <h5>Please contact your HCP for guidance.</h5><br>
           </div>
         `,
@@ -184,14 +173,8 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
     this._store.dispatch(new fromSharedStore.BackdropShow({
       transition: 'move',
       header: true,
-      template: `
-        <div class="dosing-demo-try-again-message">
-          <h1 class="font-heading-1--bold">For this demo let’s try that again</h1>
-          <img src="assets/images/dosing-try-again.svg">
-          <p>Now you’ve seen what happens if you lift the injector too early.</p>
-          <p>For the correct injection experience, follow the app prompts and <br><strong>hold the injector down until the <br>app shows a completed injection <br>(10 seconds).</strong></p>
-        </div>
-      `,
+      blockClose: true,
+      component: 'dosing-try-again',
       onClose: async () => {
         this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple'));
         this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
@@ -199,7 +182,7 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
         }));
         this.errorDosing = false;
         this._store.dispatch(new fromSharedStore.SliderPageSlidePrev);
-        
+
         // to continue with the dose flow
         // try {
         //   const startDosing = await this._bluetoothService.waitForDosingStart(true);

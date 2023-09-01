@@ -33,7 +33,8 @@ export function logger(
 
 export const metaReducers: MetaReducer<fromStore.CoreState>[] = 
   !environment.production
-  ? [logger]
+  // ? [logger]
+  ? []
   : [];
 metaReducers.push(clearState);
 

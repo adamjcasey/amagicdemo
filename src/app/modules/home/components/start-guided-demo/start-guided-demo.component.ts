@@ -307,6 +307,6 @@ export class StartGuidedDemoComponent implements OnInit, OnDestroy {
           }
         ]
       }));
-    }, 2000);
+    }, 1300);
   }
 }

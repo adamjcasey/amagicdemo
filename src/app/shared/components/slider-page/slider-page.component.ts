@@ -255,8 +255,6 @@ export class SliderPageComponent implements OnInit {
 
   slideNext() {
     if (!this.blockNavigation) {
-      console.log('blockNavigation ', this.blockNavigation);
-      console.log('slideNext entra');
       const activeIndex = this.sliderContent.swiperRef.activeIndex;
       if (this.slides[activeIndex].header?.component !== null) {
         this.componentsHeader?.toArray()[activeIndex].clear();
