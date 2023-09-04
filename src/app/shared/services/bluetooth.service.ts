@@ -239,6 +239,7 @@ export class BluetoothService {
         });
       }
       else {
+        this.postTrackingData();
         this.logger('waitForDosingStart: Error', `the state is: ${this.state_} and it should be 1`);
         return new Error(`waitForDosingStart: Error the state is: ${this.state_} and it should be 1`);
       }
@@ -274,6 +275,7 @@ export class BluetoothService {
       });
     }
     else {
+      this.postTrackingData();
       // support for web, wait 10segs (duration of the dosing) to return a true;
       if (this.layoutConfig.noDeviceModeOopsFlow) {
         await new Promise((resolve, reject) => setTimeout(reject, remainingDose ? remainingDose : (Math.floor(Math.random() * 10)) * 1000));
