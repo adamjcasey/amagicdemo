@@ -57,9 +57,6 @@ export class DosingTryAgainComponent implements OnInit, OnDestroy, AfterContentI
   ngAfterContentInit() {
     const controller = setInterval(() => {
       this.timeOutForRetry = this.timeOutForRetry - 1;
-      // alert(`isConnected? ${this.layoutConfig.dosageDevice.isConnected}`);
-      // alert(`timeOutForRetry? ${this.timeOutForRetry}`);
-      // if (this.layoutConfig.dosageDevice.isConnected || this.timeOutForRetry === 0) {
       if (this.timeOutForRetry === 0) {
         this.waitingForDeviceConnected = false;
         clearInterval(controller);
