@@ -10,12 +10,13 @@
 
   <ion-tab-button tab="home" [ngClass]="{
     'is-active': isActivePath('home'), 
-    'is-blocked': onBoardingTasksCompleted === 0,
+    'is-blocked': onBoardingTasksCompleted === 0 && !nonBlockHome,
     'hotspot-element': onBoardingTasksCompleted > 0,
   }">
     <ion-icon size="medium" src="/assets/icons/home.svg"></ion-icon>
     Home
   </ion-tab-button>
+
   <ion-tab-button tab="activity" (click)="goTo('activity')" [ngClass]="{
     'is-active': isActivePath('activity'), 
     'is-blocked': !homeConfig.allCompletedDoses,

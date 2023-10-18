@@ -57,8 +57,14 @@ export class TopBarComponent implements OnInit, OnDestroy {
           }
           else {
             this.activityScope = this.currentRoute.includes('activity/');
-            this.settingsScope = this.currentRoute.includes('settings/');
             this.resourcesScope = this.currentRoute.includes('resources/');
+
+            if (this.currentRoute.includes('settings/setup-reminders')) {
+              this.settingsScope = !this.homeConfig.firstTimeDose ? true : false;
+            }
+            else {
+              this.settingsScope = this.currentRoute.includes('settings/');
+            }
           }
 
           switch(this.currentRoute) {

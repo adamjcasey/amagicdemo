@@ -115,7 +115,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
     this.layoutConfig$.subscribe(layoutConfig => {
       if (layoutConfig) {
         this.layoutConfig = layoutConfig;
-        if (this.layoutConfig.dosageDevice.isConnected) {
+        if (this.layoutConfig.dosageDevice?.isConnected) {
           this.batteryLevel = this.layoutConfig.dosageDevice.battery;
         }
       }
@@ -294,6 +294,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
             component: 'start-guided-demo',
             contentCentered: true,
             highlights: null,
+            showBackButton: false,
           }));
         }
       };
@@ -402,27 +403,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
   }
 
   resetDemo() {
-    this._store.dispatch(new fromHomeStore.SetData({
-      firstTimeDose: true,
-      doses: this.homeConfig.doses.map(() => {
-        return {
-          marked: false,
-          date: '',
-          bodyPartInjected: '',
-          notes: null,
-        }
-      }),
-      timeTravelingDemoDone: false,
-      flareUpsDemoDone: false,
-      allCompletedDoses: false,
-      onBoardingTasks: this.homeConfig.onBoardingTasks.map((task: any) => {
-        return {
-          ...task,
-          completed: false,
-        }
-      }),
-      onBoardingDone: false,
-    }));
+    this._store.dispatch(new fromCoreStore.ClearStore());
     this.toggle();
     this.goTo('welcome');
   }

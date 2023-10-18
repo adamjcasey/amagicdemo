@@ -12,6 +12,7 @@ export interface HomeState {
   allCompletedDoses: boolean;
   onBoardingTasks: any[];
   onBoardingDone: boolean;
+  dosingError: boolean;
 }
 let initialState: HomeState;
 if (environment.production) {
@@ -57,6 +58,7 @@ if (environment.production) {
     ],
     bodyPartSelected: '',
     dosingStarted: false,
+    dosingError: false,
     timeTravelingDemoDone: false,
     flareUpsDemoDone: false,
     allCompletedDoses: false,
@@ -141,6 +143,7 @@ else {
     ],
     bodyPartSelected: '',
     dosingStarted: false,
+    dosingError: false,
     timeTravelingDemoDone: false,
     flareUpsDemoDone: false,
     // to skip start dose flow just set as true

@@ -20,6 +20,7 @@ export class BottomToolbarComponent implements OnInit {
   public excludedPaths: Array<string>;
   public isOpen: boolean = false;
   public onBoardingTasksCompleted: number = 0;
+  public nonBlockHome: boolean = false;
 
   constructor(
     private _router: Router,
@@ -40,6 +41,15 @@ export class BottomToolbarComponent implements OnInit {
       (event: RoutingEvent) => {
         if (event instanceof NavigationEnd) {
           this.currentRoute = event.urlAfterRedirects;
+
+          if (this.currentRoute === '/activity') {
+            this.nonBlockHome = true;
+          }
+          else {
+            if (this.nonBlockHome) {
+              this.nonBlockHome = false;
+            }
+          }
         }
       },
     );

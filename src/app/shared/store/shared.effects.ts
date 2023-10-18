@@ -10,6 +10,72 @@ import * as fromActions from './shared.actions';
 
 @Injectable()
 export class SharedEffects {
+  alertShow$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(fromActions.ActionTypes.AlertShow),
+      withLatestFrom(this._store.pipe(select(fromReducer.getAlertConfig))),
+      map(([action, options]) => {
+        this._alertOptions = options;
+        return action;
+      }),
+      map((action: fromActions.AlertShow) => action.payload),
+      tap(() => {
+        const heightOfWindow = window.innerHeight;
+        if (this._alertOptions.mode === 'full') {
+          animate(
+            '#alert .alert__content',
+            { top: [
+              `${heightOfWindow}px`,
+              `${(heightOfWindow * 0.75)}px`,
+              `${(heightOfWindow * 0.50)}px`,
+              `${(heightOfWindow * 0.25)}px`,
+              `0px`,
+            ] },
+            { easing: spring({
+              stiffness: 80,
+              damping: 20,
+              mass: 1,
+              velocity: 800,
+            }) }
+          ).finished.then(() => {
+            if (typeof this._alertOptions.onShow === 'function') {
+              this._alertOptions.onShow();
+            }
+          });
+        }
+      })
+    )
+  }, { dispatch: false });
+  alertHide$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(fromActions.ActionTypes.AlertHide),
+      withLatestFrom(this._store.pipe(select(fromReducer.getAlertConfig))),
+      map(([action, options]) => {
+        this._alertOptions = options;
+        return action;
+      }),
+      tap(() => {
+        if (this._alertOptions.mode === 'full') {
+          animate(
+            '#alert .alert__content',
+            { top: [0, '25%', '50%', '75%', '100%'] },
+            { easing: spring({
+              stiffness: 80,
+              damping: 20,
+              mass: 1,
+              velocity: 800,
+            }) },
+          ).finished.then(() => {
+            document.querySelector('#alert .alert__content')?.removeAttribute('style');
+            if (typeof this._alertOptions.onClose === 'function') {
+              this._alertOptions.onClose();
+            }
+          });
+        }
+      })
+    )
+  }, { dispatch: false });
+
   backdropShow$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(fromActions.ActionTypes.BackdropShow),
@@ -86,6 +152,7 @@ export class SharedEffects {
               if (typeof this._backdropOptions.onClose === 'function') {
                 this._backdropOptions.onClose();
               }
+
               // clear inline-styles for wrapper element
               wrapper.style.removeProperty('height');
             });
@@ -118,13 +185,73 @@ export class SharedEffects {
               `#backdrop`,
               { top: `${(wrapper.clientHeight) * -1}px` }, 
             );
+
             if (typeof this._backdropOptions.onClose === 'function') {
               this._backdropOptions.onClose();
             }
+
             // clear inline-styles for wrapper element
             wrapper.style.removeProperty('height');
           })
         }
+      })
+    )
+  }, { dispatch: false });
+
+  bottomToolbarShow$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(fromActions.ActionTypes.BottomToolbarShow),
+      map((action: fromActions.BottomToolbarShow) => action),
+      tap(() => {
+        const element = document.getElementById('bottom-toolbar') as HTMLElement;
+        if (element.style.getPropertyValue('display') === 'none') {
+          element.style.removeProperty('display');
+        }
+          
+        animate(
+          '#bottom-toolbar',
+          { y: [
+            `${(element?.clientHeight + 30)}px`,
+            `${(element?.clientHeight * 0.9)}px`,
+            `${(element?.clientHeight * 0.75)}px`,
+            `${(element?.clientHeight * 0.5)}px`,
+            `${(element?.clientHeight * 0.25)}px`,
+            `0px`,
+          ] },
+          { easing: spring({
+            stiffness: 80,
+            damping: 20,
+            mass: 1,
+            velocity: 800,
+          }) }
+        );
+      })
+    )
+  }, { dispatch: false });
+  bottomToolbarHide$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(fromActions.ActionTypes.BottomToolbarHide),
+      map((action: fromActions.BottomToolbarHide) => action),
+      tap(() => {
+        const element = document.getElementById('bottom-toolbar') as HTMLElement;
+        animate(
+          '#bottom-toolbar',
+          { y: [
+            '0px', 
+            '25%', 
+            '50%', 
+            '75%', 
+            `${(element?.clientHeight + 30)}px`,
+          ] },
+          { easing: spring({
+            stiffness: 80,
+            damping: 20,
+            mass: 1,
+            velocity: 800,
+          }) },
+        ).finished.then(() => {
+          element.style.display = 'none';
+        });
       })
     )
   }, { dispatch: false });
@@ -203,130 +330,6 @@ export class SharedEffects {
       map((action: fromActions.BackdropShow) => action),
       tap(() => {
         this._store.dispatch(new fromActions.SliderPageClearMovement);
-      })
-    )
-  }, { dispatch: false });
-
-  alertShow$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(fromActions.ActionTypes.AlertShow),
-      withLatestFrom(this._store.pipe(select(fromReducer.getAlertConfig))),
-      map(([action, options]) => {
-        this._alertOptions = options;
-        return action;
-      }),
-      map((action: fromActions.AlertShow) => action.payload),
-      tap(() => {
-        const heightOfWindow = window.innerHeight;
-        if (this._alertOptions.mode === 'full') {
-          animate(
-            '#alert .alert__content',
-            { top: [
-              `${heightOfWindow}px`,
-              `${(heightOfWindow * 0.75)}px`,
-              `${(heightOfWindow * 0.50)}px`,
-              `${(heightOfWindow * 0.25)}px`,
-              `0px`,
-            ] },
-            { easing: spring({
-              stiffness: 80,
-              damping: 20,
-              mass: 1,
-              velocity: 800,
-            }) }
-          ).finished.then(() => {
-            if (typeof this._alertOptions.onShow === 'function') {
-              this._alertOptions.onShow();
-            }
-          });
-        }
-      })
-    )
-  }, { dispatch: false });
-  alertHide$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(fromActions.ActionTypes.AlertHide),
-      withLatestFrom(this._store.pipe(select(fromReducer.getAlertConfig))),
-      map(([action, options]) => {
-        this._alertOptions = options;
-        return action;
-      }),
-      tap(() => {
-        if (this._alertOptions.mode === 'full') {
-          animate(
-            '#alert .alert__content',
-            { top: [0, '25%', '50%', '75%', '100%'] },
-            { easing: spring({
-              stiffness: 80,
-              damping: 20,
-              mass: 1,
-              velocity: 800,
-            }) },
-          ).finished.then(() => {
-            document.querySelector('#alert .alert__content')?.removeAttribute('style');
-            if (typeof this._alertOptions.onClose === 'function') {
-              this._alertOptions.onClose();
-            }
-          });
-        }
-      })
-    )
-  }, { dispatch: false });
-
-  bottomToolbarShow$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(fromActions.ActionTypes.BottomToolbarShow),
-      map((action: fromActions.BottomToolbarShow) => action),
-      tap(() => {
-        const element = document.getElementById('bottom-toolbar') as HTMLElement;
-        if (element.style.getPropertyValue('display') === 'none') {
-          element.style.removeProperty('display');
-        }
-          
-        animate(
-          '#bottom-toolbar',
-          { y: [
-            `${(element?.clientHeight + 30)}px`,
-            `${(element?.clientHeight * 0.9)}px`,
-            `${(element?.clientHeight * 0.75)}px`,
-            `${(element?.clientHeight * 0.5)}px`,
-            `${(element?.clientHeight * 0.25)}px`,
-            `0px`,
-          ] },
-          { easing: spring({
-            stiffness: 80,
-            damping: 20,
-            mass: 1,
-            velocity: 800,
-          }) }
-        );
-      })
-    )
-  }, { dispatch: false });
-  bottomToolbarHide$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(fromActions.ActionTypes.BottomToolbarHide),
-      map((action: fromActions.BottomToolbarHide) => action),
-      tap(() => {
-        const element = document.getElementById('bottom-toolbar') as HTMLElement;
-        animate(
-          '#bottom-toolbar',
-          { y: [
-            '0px', 
-            '25%', 
-            '50%', 
-            '75%', 
-            `${(element?.clientHeight + 30)}px`,
-          ] },
-          { easing: spring({
-            stiffness: 80,
-            damping: 20,
-            mass: 1,
-            velocity: 800,
-          }) },
-        ).finished.then(() => {
-          element.style.display = 'none';
-        });
       })
     )
   }, { dispatch: false });

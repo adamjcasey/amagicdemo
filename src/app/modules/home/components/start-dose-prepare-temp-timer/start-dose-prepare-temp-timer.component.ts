@@ -58,6 +58,7 @@ export class StartDosePrepareTempTimerComponent implements OnInit, AfterViewInit
         fullScreen: true,
         header: true,
         bgTemplate: 'bottom-hole',
+        showBackButton: false,
         template: `
           <h1 class="font-heading-1--bold">No need to wait!</h1>
           <p>For this demo we’ve sped up the<br> warming time.</p>

@@ -9,6 +9,7 @@ import * as moment from 'moment';
 
 import * as fromStore from '@shared/store';
 import * as fromCoreStore from '@core/store';
+import * as fromHomeStore from '@home/store';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 const AUTOMAGIC_SERVICE = 'EDFEC62E-9910-0BAC-5241-D8BDA6932A2F';
@@ -22,23 +23,31 @@ export class BluetoothService {
   private uuid_: string;
   private rssi_: number;
   private previousState_: number;
-  private state_: number;
-  private dosage_: number;
-  private battery_: number;
-  private batterySubject: Subject<number> = new Subject<number>();
-  public battery$: Observable<number> = this.batterySubject.asObservable();
   private peripheral_: any;
   private isConnected_: boolean;
   private isScanning_: boolean;
   private interval_id_!: any;
 
+  // Stats from the device
+  private state_!: number;
+  private stateSubject: Subject<number> = new Subject<number>();
+  public state$: Observable<number> = this.stateSubject.asObservable();
+  private dosage_!: number;
+  private dosageSubject: Subject<number> = new Subject<number>();
+  public dosage$: Observable<number> = this.stateSubject.asObservable();
+  private battery_!: number;
+  private batterySubject: Subject<number> = new Subject<number>();
+  public battery$: Observable<number> = this.batterySubject.asObservable();
+
   // Variables for mocking
   private mock_state: number = 1;
   private mock_battery: number = 100;
-  private mock_dosing: number = 0;
+  private mock_dosage: number = 0;
 
   public layoutConfig$: Observable<any>;
   public layoutConfig: any;
+  public homeConfig$: Observable<any>;
+  public homeConfig: any;
 
   public trackingDateForm: FormGroup;
 
@@ -52,12 +61,13 @@ export class BluetoothService {
     this.uuid_ = '';
     this.rssi_ = 0;
     this.previousState_ = 0;
-    this.state_ = 0;
-    this.battery_ = 0;
-    this.dosage_ = 0;
-    this.setBattery(0);
     this.isConnected_ = false;
     this.isScanning_ = false;
+
+    // Stats
+    this.setState(0);
+    this.setDosage(0);
+    this.setBattery(0);
 
     this.trackingDateForm = this._formBuilder.group({
       device: ['', [Validators.required, Validators.minLength(5)]],
@@ -67,18 +77,43 @@ export class BluetoothService {
       dosage: ['', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.min(0), Validators.max(100)]]
     });
 
-
     this.layoutConfig$ = this._store.select(fromCoreStore.getLayoutConfig);
     this.layoutConfig$.subscribe(layoutConfig => {
       if (layoutConfig) {
         this.layoutConfig = layoutConfig;
+        if (this.layoutConfig.dosageDevice.isConnected !== this.isConnected_) {
+          this.isConnected_ = this.layoutConfig.dosageDevice.isConnected;
+        }
       }
     });
 
-    this.battery$.subscribe((batteryLevel: number) => {
-      if (batteryLevel) {
+    this.homeConfig$ = this._store.select(fromHomeStore.getHomeConfig);
+    this.homeConfig$.subscribe(homeConfig => {
+      if (homeConfig) {
+        this.homeConfig = homeConfig;
+      }
+    });
+
+    this.state$.subscribe((state: number) => {
+      if (state) {
         this._store.dispatch(new fromCoreStore.SetDosageDeviceInfo({
-          battery: batteryLevel
+          state: state
+        }));
+      }
+    });
+
+    this.dosage$.subscribe((dosage: number) => {
+      if (dosage) {
+        this._store.dispatch(new fromCoreStore.SetDosageDeviceInfo({
+          dosage: dosage
+        }));
+      }
+    });
+
+    this.battery$.subscribe((battery: number) => {
+      if (battery) {
+        this._store.dispatch(new fromCoreStore.SetDosageDeviceInfo({
+          battery: battery
         }));
       }
     });
@@ -90,6 +125,19 @@ export class BluetoothService {
         }
       }
     });
+  }
+
+  //--------------------------------------------------
+  // Setters
+  //--------------------------------------------------
+  setState(value: number) {
+    this.state_ = value;
+    this.stateSubject.next(this.state_);
+  }
+
+  setDosage(value: number) {
+    this.dosage_ = value;
+    this.dosageSubject.next(this.dosage_);
   }
 
   setBattery(value: number) {
@@ -173,7 +221,9 @@ export class BluetoothService {
     }
 
     this.isConnected_ = false;
-    this._store.dispatch(new fromCoreStore.SetDosageDeviceInfo(false));
+    this._store.dispatch(new fromCoreStore.SetDosageDeviceInfo({
+      isConnected: false,
+    }));
     this.logger('handlerDisconnectDevice: Device disconnected', `ID: ${this.peripheral_.device.deviceId}`);
   }
 
@@ -217,10 +267,10 @@ export class BluetoothService {
   async waitForDosingStart(continueDose?: boolean) {
     this.logger('waitForDosingStart');
 
-    if (!this.isConnected_) {
+    if (!this.isConnected_ && !this.homeConfig.dosingError) {
       this.logger('waitForDosingStart: The device is not connected');
-      // await this.showDisconectionTimeOutAlert();
-      this.logger('finished showDisconectionTimeOutAlert');
+      await this.showDisconectionTimeOutAlert();
+      this.logger('showDisconectionTimeOutAlert: finished');
     }
 
     if (Capacitor.isNativePlatform()  && !this.layoutConfig.noDeviceMode) {
@@ -342,9 +392,9 @@ export class BluetoothService {
               this.logger('onDeviceDiscovered: Data from Device', bytes.join(', '));
 
               this.previousState_ = this.state_;
-              this.state_ = bytes[0];
+              this.setState(bytes[0]);
               this.setBattery(bytes[1]);
-              this.dosage_ = bytes[2];
+              this.setDosage(bytes[2]);
 
               this.logger('onDeviceDiscovered: Device Stats', `
                 State: ${this.state_}
@@ -353,12 +403,16 @@ export class BluetoothService {
               `);
 
               if (!this.layoutConfig.dosageDevice.isConnected) {
-                this._store.dispatch(new fromCoreStore.SetDosageDeviceInfo(true));
+                this._store.dispatch(new fromCoreStore.SetDosageDeviceInfo({
+                  isConnected: true,
+                }));
               }
             }
             else {
               this.logger(`onDeviceDiscovered: No data device obtained`);
-              this._store.dispatch(new fromCoreStore.SetDosageDeviceInfo(false));
+              this._store.dispatch(new fromCoreStore.SetDosageDeviceInfo({
+                isConnected: false,
+              }));
               if (!this.isScanning_) {
                 this.logger('onDeviceDiscovered: Error', 'Looks like the device is desconected, runing scan again');
                 await this.scan();
@@ -368,19 +422,23 @@ export class BluetoothService {
             }
           }
           else {
-            this.state_ = this.mock_state;
+            this.setState(this.mock_state);
             this.setBattery(this.mock_battery);
-            this.dosage_ = this.mock_dosing;
+            this.setDosage(this.mock_dosage);
 
             if (!this.layoutConfig.dosageDevice.isConnected) {
-              this._store.dispatch(new fromCoreStore.SetDosageDeviceInfo(true));
+              this._store.dispatch(new fromCoreStore.SetDosageDeviceInfo({
+                isConnected: true,
+              }));
             }
             clearInterval(this.interval_id_);
           }
         }
         catch (error: any) {
           this.logger(`onDeviceDiscovered: Error`, `${error}`);
-          this._store.dispatch(new fromCoreStore.SetDosageDeviceInfo(false));
+          this._store.dispatch(new fromCoreStore.SetDosageDeviceInfo({
+            isConnected: false,
+          }));
           if (!this.isScanning_) {
             this.logger('onDeviceDiscovered: Error', 'Looks like the device is desconected, runing scan again');
             await this.scan();
@@ -427,14 +485,24 @@ export class BluetoothService {
     this._store.dispatch(new fromStore.BackdropShow({
       transition: 'move',
       header: true,
+      showBackButton: false,
       template: `
         <div class="trouble-connecting-message">
           <h1 class="font-heading-1--bold">Trouble connecting?</h1>
           <img src="assets/images/dosing-trouble-connecting.svg">
-          <p>The injector may need to be reset. Press down on the needle guard until it clicks to reset.</p>
-          <p>This demo unit <strong>does not have</strong> a needle nor drug substance.</p>
+          <p>The injector may need to be reset. <br>Press down on the needle guard <br>until it clicks to reset and release. <br>You do not need to hold.</p>
+          <p>This demo unit does not have a <br>needle nor drug substance.</p>
+          <p>When the injector lights return to <br>solid white, it’s ready to continue.</p>
         </div>
       `,
+      buttons: [
+        {
+          label: 'Continue',
+          action: () => {
+            this._store.dispatch(new fromStore.BackdropHide);
+          },
+        }
+      ],
       onClose: async () => {
         await this.handlerDisconnectDevice();
         await this.scan();
@@ -452,12 +520,14 @@ export class BluetoothService {
           <div class="connection-time-out-alert">
             <img src="assets/images/alert-warning.svg" />
             <h3>Device connection timeout</h3>
-            <p>The connection to your AutoMagic <br>injector has timed out. Please <br>reconnect by picking up the <br>autoinjector and then pressing <br>“Reconnect”</p>
+            <p>The injector may need to be reset. <br>Press down on the needle guard until <br>it clicks to reset and release. You do <br>not need to hold.</p>
+            <p>This demo unit does not have a <br>needle nor drug substance.</p>
+            <p>When the injector lights return to <br>solid white, it’s ready to continue.</p>
           </div>
         `,
         actions: [
           {
-            label: 'Reconnect',
+            label: 'Continue',
             fill: 'outline',
             action: async () => {
               try {
@@ -497,7 +567,6 @@ export class BluetoothService {
 
       try {
         const response = await this._http.post(url, this.trackingDateForm.value, { headers }).toPromise();
-        console.log('POST request successful', response);
       }
       catch (error) {
         console.log('Error occurred', error);

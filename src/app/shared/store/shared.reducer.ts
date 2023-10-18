@@ -8,37 +8,6 @@ export function SharedReducer(
   action: fromActions.ActionsUnion,
 ): fromStore.SharedState {
   switch (action.type) {
-    case fromActions.ActionTypes.BackdropShow: {
-      return {
-        ...state,
-        backdropConfig: {
-          ...fromStore.initialState.backdropConfig, 
-          ...action.payload,
-          show: true,
-        },
-      };
-    }
-    case fromActions.ActionTypes.BackdropHide: {
-      return {
-        ...state,
-        backdropConfig: {
-          ...state.backdropConfig,
-          show: false,
-        },
-      };
-    }
-    case fromActions.ActionTypes.BackdropSetConfig: {
-      return {
-        ...state,
-        backdropConfig: {
-          ...state.backdropConfig,
-          ...action.payload,
-          template: action.payload?.template ? action.payload?.template : null,
-          component: action.payload?.component ? action.payload?.component : null,
-        },
-      };
-    }
-
     case fromActions.ActionTypes.SliderPageSetHeader: {
       return {
         ...state,
@@ -158,6 +127,37 @@ export function SharedReducer(
         ...state,
         alertConfig: {
           ...state.alertConfig,
+          ...action.payload,
+          template: action.payload?.template ? action.payload?.template : null,
+          component: action.payload?.component ? action.payload?.component : null,
+        },
+      };
+    }
+
+    case fromActions.ActionTypes.BackdropShow: {
+      return {
+        ...state,
+        backdropConfig: {
+          ...fromStore.initialState.backdropConfig, 
+          ...action.payload,
+          show: true,
+        },
+      };
+    }
+    case fromActions.ActionTypes.BackdropHide: {
+      return {
+        ...state,
+        backdropConfig: {
+          ...state.backdropConfig,
+          show: false,
+        },
+      };
+    }
+    case fromActions.ActionTypes.BackdropSetConfig: {
+      return {
+        ...state,
+        backdropConfig: {
+          ...state.backdropConfig,
           ...action.payload,
           template: action.payload?.template ? action.payload?.template : null,
           component: action.payload?.component ? action.payload?.component : null,

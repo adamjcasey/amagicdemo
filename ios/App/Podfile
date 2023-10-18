@@ -19,6 +19,8 @@ def capacitor_pods
   pod 'CapacitorKeyboard', :path => '../../node_modules/@capacitor/keyboard'
   pod 'CapacitorPushNotifications', :path => '../../node_modules/@capacitor/push-notifications'
   pod 'CapacitorStatusBar', :path => '../../node_modules/@capacitor/status-bar'
+  pod 'CapacitorNativeSettings', :path => '../../node_modules/capacitor-native-settings'
+  pod 'PowerMode', :path => '../../node_modules/power-mode'
 end
 
 target 'App' do

@@ -16,6 +16,8 @@ export enum ActionTypes {
   SetWelcomeFlowAsDone = '[Layout] Set Welcome Flow as Done',
   SetUserDeviceInfo = '[Layout] Set Device Model Info',
   SetDosageDeviceInfo = '[Layout] Set Dosage device info',
+  SetStore = '[Layout] Set Store',
+  ClearStore = '[Layout] Clear Store',
 }
 
 export class Go implements Action {
@@ -90,6 +92,15 @@ export class SetDosageDeviceInfo implements Action {
   constructor(public payload: any) {}
 }
 
+export class SetStore implements Action {
+  readonly type = ActionTypes.SetStore;
+  constructor(public payload: any) {}
+}
+
+export class ClearStore implements Action {
+  readonly type = ActionTypes.ClearStore;
+}
+
 export type ActionsUnion 
   = Go 
   | Back 
@@ -104,4 +115,5 @@ export type ActionsUnion
   | SetWelcomeFlowAsDone 
   | SetDeviceDebugging 
   | SetDosageDeviceInfo 
-  | SetUserDeviceInfo;
+  | SetUserDeviceInfo
+  | SetStore;

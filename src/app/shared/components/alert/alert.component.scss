@@ -94,7 +94,6 @@ automagic-alert {
   &.is-window-mode {
     display: flex;
     justify-content: center;
-    // align-items: flex-end;
     align-items: center;
     padding-bottom: var(--size-l);
 
@@ -103,7 +102,6 @@ automagic-alert {
       grid-template-rows: auto max-content;
       gap: var(--size-m);
       opacity: 0;
-      // height: calc(100vh - (var(--topbar-size) + var(--size-l)));
       transition-property: opacity;
       transition-duration: 400ms;
       transition-timing-function: ease-in;
