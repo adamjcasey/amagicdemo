@@ -7,6 +7,12 @@ export interface SharedState {
 }
 
 export const initialState: SharedState = {
+  alertConfig: {
+    show: false,
+    mode: 'move',
+    template: null,
+    component: null,
+  },
   backdropConfig: {
     show: false,
     fullScreen: false,
@@ -18,6 +24,13 @@ export const initialState: SharedState = {
     showBackButton: true,
     highlights: null,
     contentCentered: false,
+  },
+  bottomToolbarConfig: {
+    show: true,
+  },
+  topbarConfig: {
+    bgColor: '--color-white',
+    pendingNotifications: 0,
   },
   sliderPageConfig: {
     header: {
@@ -36,17 +49,4 @@ export const initialState: SharedState = {
       toolbar: null,
     },
   },
-  alertConfig: {
-    show: false,
-    mode: 'move',
-    template: null,
-    component: null,
-  },
-  bottomToolbarConfig: {
-    show: true,
-  },
-  topbarConfig: {
-    bgColor: '--color-white',
-    pendingNotifications: 0,
-  }
 }

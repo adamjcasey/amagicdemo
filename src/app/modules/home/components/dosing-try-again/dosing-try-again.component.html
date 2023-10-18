@@ -7,12 +7,13 @@
     <li>Follow the app prompts to begin the injection.</li>
     <li><strong>Hold the injector down until the app shows a completed injection (10 seconds).</strong></li>
   </ol>
-  <ng-container *ngIf="waitingForDeviceConnted">
+
+  <ng-container *ngIf="waitingForDeviceConnected">
     <p>Waiting for injector to be ready...</p>
     <div class="loader"></div>
   </ng-container>
 
-  <ng-container *ngIf="!waitingForDeviceConnted">
+  <ng-container *ngIf="!waitingForDeviceConnected">
     <ion-button 
       class="hotspot-element" 
       (click)="retryInjection()"
@@ -21,7 +22,3 @@
     </ion-button>
   </ng-container>
 </div>
-
-
-
-

@@ -17,7 +17,7 @@
       : null
     ">
     <header class="backdrop__header" *ngIf="config.header">
-      <div class="back-button" *ngIf="backButton">
+      <div class="back-button" *ngIf="(config.showBackButton !== null && config.showBackButton) && backButton">
         <ion-button 
           class="hotspot-element" 
           (click)="backButton.action($event)" 

@@ -1,9 +1,14 @@
 import { Action } from '@ngrx/store';
 
 export enum ActionTypes {
+  AlertShow = '[Alert] Show',
+  AlertHide = '[Alert] Hide',
+  AlertSetConfig = '[Alert] Set Config',
   BackdropShow = '[Backdrop] Show',
   BackdropHide = '[Backdrop] Close',
   BackdropSetConfig = '[Backdrop] Set Config',
+  BottomToolbarShow = '[BottomToolbar] Show',
+  BottomToolbarHide = '[BottomToolbar] Hide',
   SliderPageSetHeader = '[SliderPage] Set Header',
   SliderPageSetHeaderOptions = '[SliderPage] Set Header Options',
   SliderPageSetContent = '[SliderPage] Set Content',
@@ -13,14 +18,24 @@ export enum ActionTypes {
   SliderPageSlidePrev = '[SliderPage] Go Slide Prev',
   SliderPageSlideNext = '[SliderPage] Go Slide Next',
   SliderPageClearMovement = '[SliderPage] Clear Movements',
-  AlertShow = '[Alert] Show',
-  AlertHide = '[Alert] Hide',
-  AlertSetConfig = '[Alert] Set Config',
-  BottomToolbarShow = '[BottomToolbar] Show',
-  BottomToolbarHide = '[BottomToolbar] Hide',
   TopbarChangeColor = '[Topbar] Chnage Color',
   TopbarPendingNotifications = '[Topbar] Pending Notifications',
 }
+
+export class AlertShow implements Action {
+  readonly type = ActionTypes.AlertShow;
+
+  constructor(public payload: any) {}
+}
+export class AlertHide implements Action {
+  readonly type = ActionTypes.AlertHide;
+}
+export class AlertSetConfig implements Action {
+  readonly type = ActionTypes.AlertSetConfig;
+
+  constructor(public payload: any) {}
+}
+
 export class BackdropShow implements Action {
   readonly type = ActionTypes.BackdropShow;
 
@@ -33,6 +48,13 @@ export class BackdropSetConfig implements Action {
   readonly type = ActionTypes.BackdropSetConfig;
 
   constructor(public payload: any) {}
+}
+
+export class BottomToolbarShow implements Action {
+  readonly type = ActionTypes.BottomToolbarShow;
+}
+export class BottomToolbarHide implements Action {
+  readonly type = ActionTypes.BottomToolbarHide;
 }
 
 export class SliderPageSetHeader implements Action {
@@ -73,27 +95,6 @@ export class SliderPageClearMovement implements Action {
   readonly type = ActionTypes.SliderPageClearMovement;
 }
 
-export class AlertShow implements Action {
-  readonly type = ActionTypes.AlertShow;
-
-  constructor(public payload: any) {}
-}
-export class AlertHide implements Action {
-  readonly type = ActionTypes.AlertHide;
-}
-export class AlertSetConfig implements Action {
-  readonly type = ActionTypes.AlertSetConfig;
-
-  constructor(public payload: any) {}
-}
-
-export class BottomToolbarShow implements Action {
-  readonly type = ActionTypes.BottomToolbarShow;
-}
-export class BottomToolbarHide implements Action {
-  readonly type = ActionTypes.BottomToolbarHide;
-}
-
 export class TopbarChangeColor implements Action {
   readonly type = ActionTypes.TopbarChangeColor;
 
@@ -106,9 +107,14 @@ export class TopbarPendingNotifications implements Action {
 }
 
 export type ActionsUnion 
-  = BackdropShow 
+  = AlertShow 
+  | AlertHide
+  | BackdropShow 
   | BackdropHide
   | BackdropSetConfig
+  | AlertSetConfig
+  | BottomToolbarShow
+  | BottomToolbarHide
   | SliderPageSetHeader
   | SliderPageSetHeaderOptions
   | SliderPageSetContent
@@ -118,10 +124,5 @@ export type ActionsUnion
   | SliderPageSlidePrev
   | SliderPageSlideNext
   | SliderPageClearMovement
-  | AlertShow 
-  | AlertHide
-  | AlertSetConfig
-  | BottomToolbarShow
-  | BottomToolbarHide
   | TopbarChangeColor
   | TopbarPendingNotifications;

@@ -5,7 +5,7 @@ import {
   ViewEncapsulation, 
 } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
 import * as moment from 'moment';
 
 import * as fromStore from '@home/store';
@@ -30,6 +30,9 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
   public startDosing: boolean = false;
   public errorDosing: boolean = false;
   public dosePercentageCompleted: number = 0;
+  public doseDone: boolean = false;
+
+  private _ngUnsubscribe: Subject<void> = new Subject<void>();
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
@@ -41,29 +44,38 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
 
   ngOnInit() {
     this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple'));
-    this.homeConfig$.subscribe(homeConfig => {
-      if (homeConfig) {
-        this.homeConfig = homeConfig;
-        if (this.homeConfig.firstTimeDose) {
-          this.nextDose = this.homeConfig.doses[1];
+    this.homeConfig$
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(homeConfig => {
+        if (homeConfig) {
+          this.homeConfig = homeConfig;
+          if (this.homeConfig.firstTimeDose) {
+            this.nextDose = this.homeConfig.doses[1];
+          }
+          else {
+            const markedDoses = this.homeConfig?.doses.filter((dose: any) => dose.marked);
+            this.nextDose = this.homeConfig.doses[markedDoses];
+          }
         }
-        else {
-          const markedDoses = this.homeConfig?.doses.filter((dose: any) => dose.marked);
-          this.nextDose = this.homeConfig.doses[markedDoses];
-        }
-      }
-    });
+      });
 
-    this.layoutConfig$.subscribe(layoutConfig => {
-      if (layoutConfig) {
-        this.layoutConfig = layoutConfig;
-      }
-    });
+    this.layoutConfig$
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(layoutConfig => {
+        if (layoutConfig) {
+          this.layoutConfig = layoutConfig;
+        }
+      });
   }
 
   ngAfterViewInit() {
     this.startDose();
     this.checkDosingProcess();
+  }
+
+  ngOnDestroy() {
+    this._ngUnsubscribe.next();
+    this._ngUnsubscribe.complete();
   }
 
   startDose() {
@@ -81,6 +93,7 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
     try {
       const dosingProcess = await this._bluetoothService.checkDosing();
       if (dosingProcess) {
+        this.doseDone = true;
         this.title = 'Full dose delivered!';
         this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-lime'));
         this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
@@ -89,7 +102,6 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
 
         const markedDoses = this.homeConfig.doses.filter((dose: any) => dose.marked);
         const unMarkedDoses = this.homeConfig.doses.filter((dose: any) => !dose.marked);
-
         const currentDoseDate = unMarkedDoses.length > 0 
           ? moment(unMarkedDoses[0].date) 
           : moment(markedDoses[markedDoses.length - 1].date).add(2, 'weeks');
@@ -127,7 +139,14 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
       }
     }
     catch (error) {
+      this._bluetoothService.logger('Error in Dosing Component ', `${error}`);
       this.errorDosing = true;
+      this._store.dispatch(new fromStore.SetData({
+        dosingError: true,
+      }));
+      this._store.dispatch(new fromCoreStore.SetDosageDeviceInfo({
+        isConnected: false,
+      }));
       this.dosePercentageCompleted = 100 - ((this.totalTime * 100) / 10);
       this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-salmon'));
       this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
@@ -139,7 +158,7 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
           <div class="dosing-error-alert">
             <img src="assets/images/dose-dosing-error.svg" />
             <h1 class="font-heading-1--bold">Oops!</h1>
-            <p>You lifted off early and the dose was only ${this.dosePercentageCompleted}% administered.</p>
+            <p>You lifted off early and the dose was only ${this.dosePercentageCompleted === 100 ? 90 : this.dosePercentageCompleted}% administered.</p>
             <h5>Please contact your HCP for guidance.</h5><br>
           </div>
         `,
@@ -169,20 +188,18 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
     }
   }
 
-  async continueDosing() {    
+  async continueDosing() {
     this._store.dispatch(new fromSharedStore.BackdropShow({
       transition: 'move',
       header: true,
       blockClose: true,
+      showBackButton: false,
       component: 'dosing-try-again',
       onClose: async () => {
-        this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple'));
-        this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
-          color: '--color-bg-pastel-purple',
-        }));
         this.errorDosing = false;
-        this._store.dispatch(new fromSharedStore.SliderPageSlidePrev);
-
+        // this._store.dispatch(new fromStore.SetData({
+        //   dosingError: false,
+        // }));
         // to continue with the dose flow
         // try {
         //   const startDosing = await this._bluetoothService.waitForDosingStart(true);

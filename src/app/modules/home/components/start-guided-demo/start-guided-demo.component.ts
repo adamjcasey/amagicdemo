@@ -70,6 +70,7 @@ export class StartGuidedDemoComponent implements OnInit, OnDestroy {
       template: null,
       component: null,
       contentCentered: false,
+      showBackButton: true,
       highlights: [
         {
           type: 'simple',
@@ -292,6 +293,7 @@ export class StartGuidedDemoComponent implements OnInit, OnDestroy {
         fullScreen: true,
         header: true,
         bgTemplate: 'bottom-ellipse-hole',
+        showBackButton: false,
         template: `
           <div class="start-guided-demo-message">
             <h1 class="font-heading-1--bold">You're free to explore!</h1>

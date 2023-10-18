@@ -203,6 +203,7 @@ export class SliderPageComponent implements OnInit {
       // update config for header section based on the currentSlide
       this._store.dispatch(new fromStore.SliderPageSetHeaderOptions({
         ...this.currentSlide.header,
+        currentSlide: swiperActiveIndex,
       }));
     }
     if (this.currentSlide.content) {
@@ -212,6 +213,7 @@ export class SliderPageComponent implements OnInit {
       this._store.dispatch(new fromStore.SliderPageSetContentOptions({
         ...this.currentSlide.content,
         form: null,
+        currentSlide: swiperActiveIndex,
       }));
     }
 

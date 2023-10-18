@@ -83,6 +83,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                             transition: 'move',
                             header: true,
                             contentCentered: true,
+                            showBackButton: false,
                             template: `
                               <div class="no-needless-message">
                                 <h1 class="font-heading-1--bold">Postpone gives patients control.</h1>
@@ -204,6 +205,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                               fullScreen: true,
                               header: true,
                               bgTemplate: 'top-hole',
+                              showBackButton: false,
                               template: `
                                 <div class="no-need-to-clean-message">
                                   <h1 class="font-heading-1--bold">No need to clean!</h1>
@@ -416,6 +418,11 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
               }
             ],
           },
+          onLoad: () => {
+            if (this.homeConfig.firstTimeDose) {
+              this.startWaitingForStartDosing();
+            }
+          },
         },
       );
     }
@@ -433,7 +440,15 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
           hide: true,
         },
         onLoad: () => {
-          this.startWaitingForStartDosing();
+          if (!this.homeConfig.firstTimeDose || this.homeConfig.dosingError) {
+            this.startWaitingForStartDosing();
+
+            if (this.homeConfig.dosingError) {
+              this._store.dispatch(new fromStore.SetData({
+                dosingError: false,
+              }));
+            }
+          }
         },
       },
       {
@@ -464,6 +479,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
       transition: 'move',
       header: true,
       contentCentered: true,
+      showBackButton: false,
       template: `
         <div class="no-needless-message">
           <h1 class="font-heading-1--bold">No needles and no drugs</h1>
@@ -480,7 +496,21 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
       this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-transparent'));
       const startDosing = await this._bluetoothService.waitForDosingStart();
       if (startDosing) {
-        this.sliderPage.slideNext();
+        if (this.homeConfig.firstTimeDose) {
+          if (this.sliderPageConfig?.header.currentSlide === 7) {
+            this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
+              template: null,
+            }));
+            this.sliderPage.slideTo(9);
+          }
+          else {
+            this.sliderPage.slideNext();  
+          }
+        }
+        else {
+          this.sliderPage.slideNext();
+        }
+
         this._store.dispatch(new fromStore.SetData({
           dosingStarted: true
         }));

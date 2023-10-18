@@ -139,6 +139,7 @@ export class StartDoseInjectDonePage implements OnInit {
                             fullScreen: true,
                             header: true,
                             bgTemplate: 'top-hole',
+                            showBackButton: false,
                             template: `
                               <div class="start-dose-inject-done-message">
                                 <h1 class="font-heading-1--bold">Do not discard!</h1>

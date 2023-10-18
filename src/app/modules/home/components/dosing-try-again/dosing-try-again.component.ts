@@ -3,12 +3,14 @@ import {
   ViewEncapsulation, 
   OnInit,
   OnDestroy,
+  AfterContentInit,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, Subject, takeUntil } from 'rxjs';
 
 import * as fromStore from '@home/store';
 import * as fromCoreStore from '@core/store';
+import * as fromHomeStore from '@home/store';
 import * as fromSharedStore from '@shared/store';
 
 @Component({
@@ -17,18 +19,21 @@ import * as fromSharedStore from '@shared/store';
   styleUrls: ['dosing-try-again.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class DosingTryAgainComponent implements OnInit, OnDestroy {
+export class DosingTryAgainComponent implements OnInit, OnDestroy, AfterContentInit {
   public layoutConfig$!: Observable<any>;
   public layoutConfig: any;
+  public homeConfig$!: Observable<any>;
+  public homeConfig: any;
   private _ngUnsubscribe: Subject<void> = new Subject<void>();
 
-  public waitingForDeviceConnted: boolean = true;
+  public waitingForDeviceConnected: boolean = true;
   public timeOutForRetry: number = 15; // 15segs
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
   ) {
     this.layoutConfig$ = this._store.select(fromCoreStore.getLayoutConfig);
+    this.homeConfig$ = this._store.select(fromHomeStore.getHomeConfig);
   }
 
   ngOnInit() {
@@ -40,14 +45,23 @@ export class DosingTryAgainComponent implements OnInit, OnDestroy {
         }
       });
 
-    console.log('inicia interval');
-    const controller = setInterval(() => {
-      console.log('this.timeOutForRetry ', this.timeOutForRetry);
-      console.log('dosageDevice.isConnected ', this.layoutConfig.dosageDevice.isConnected);
-      this.timeOutForRetry = this.timeOutForRetry - 1;
+    this.homeConfig$
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(homeConfig => {
+        if (homeConfig) {
+          this.homeConfig = homeConfig;
+        }
+      });
+  }
 
-      if (this.layoutConfig.dosageDevice.isConnected || this.timeOutForRetry === 0) {
-        this.waitingForDeviceConnted = false;
+  ngAfterContentInit() {
+    const controller = setInterval(() => {
+      this.timeOutForRetry = this.timeOutForRetry - 1;
+      // alert(`isConnected? ${this.layoutConfig.dosageDevice.isConnected}`);
+      // alert(`timeOutForRetry? ${this.timeOutForRetry}`);
+      // if (this.layoutConfig.dosageDevice.isConnected || this.timeOutForRetry === 0) {
+      if (this.timeOutForRetry === 0) {
+        this.waitingForDeviceConnected = false;
         clearInterval(controller);
       }
     }, 1000);
@@ -59,6 +73,14 @@ export class DosingTryAgainComponent implements OnInit, OnDestroy {
   }
 
   retryInjection() {
+    this._store.dispatch(new fromSharedStore.BackdropSetConfig({
+      component: null,
+    }));
     this._store.dispatch(new fromSharedStore.BackdropHide);
+    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-transparent'));
+    this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
+      color: '--color-transparent',
+    }));
+    this._store.dispatch(new fromSharedStore.SliderPageSlidePrev);
   }
 }

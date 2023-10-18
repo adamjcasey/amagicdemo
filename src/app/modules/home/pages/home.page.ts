@@ -182,6 +182,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
                         fullScreen: true,
                         bgTemplate: 'top-hole',
                         header: true,
+                        showBackButton: false,
                         template: `
                           <div class="start-dose-message">
                             <h1 class="font-heading-1--bold">Start dose</h1>
@@ -318,6 +319,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
         fullScreen: true,
         header: true,
         bgTemplate: 'top-hole',
+        showBackButton: false,
         template: `
           <h1 class="font-heading-1--bold">Dose Day</h1>
           <p>For this demo, let's pretend that <br>you're scheduled for your first at-<br>home dose today</p>
@@ -337,6 +339,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
       header: true,
       component: 'time-traveling',
       blockClose: true,
+      showBackButton: false,
       onClose: () => {
         setTimeout(() => {
           this._store.dispatch(new fromStore.SetData({
@@ -351,6 +354,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     this._store.dispatch(new fromSharedStore.BackdropShow({
       transition: 'move',
       header: true,
+      showBackButton: false,
       template: `
         <div class="simulate-flares-up-message">
           <img src="assets/images/flare-up-backdrop-image.svg" />
@@ -396,6 +400,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
       transition: 'move',
       header: true,
       component: 'start-guided-demo',
+      showBackButton: false,
       template: null,
       contentCentered: true,
     }));

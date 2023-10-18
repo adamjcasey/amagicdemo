@@ -12,6 +12,7 @@ import { Store } from '@ngrx/store';
 import { Observable, Subject, takeUntil } from 'rxjs';
 import { Capacitor } from '@capacitor/core';
 import { PushNotifications } from '@capacitor/push-notifications';
+import { PowerMode } from 'power-mode';
 
 import * as fromStore from '../store';
 import * as fromCoreStore from '@core/store';
@@ -28,6 +29,8 @@ import * as fromSharedServices from '@shared/services';
 export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
   public config$: Observable<any>;
   public config: any;
+  public backdropConfig$: Observable<any>;
+  public backdropConfig: any;
   public videoPlayer: any;
   public slides: Array<any> = [];
   public welcomeFormGroup: FormGroup;
@@ -42,6 +45,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
     private _bluetoothService: fromSharedServices.BluetoothService,
   ) {
     this.config$ = this._store.select(fromStore.getWelcomeConfig);
+    this.backdropConfig$ = this._store.select(fromSharedStore.getBackdropConfig);
     this.welcomeFormGroup = this._formBuilder.group({
       pin: ['', [ Validators.required, Validators.minLength(4) ]],
       name: ['', [ Validators.required ]],
@@ -190,10 +194,26 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
           }
         }
       });
+
+    this.backdropConfig$
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(backdropConfig => {
+      if (backdropConfig) {
+        this.backdropConfig = backdropConfig;
+      }
+    });
   }
 
-  ngAfterViewInit() {
-    this.playVideoIntro();
+  async ngAfterViewInit() {
+    if (Capacitor.isNativePlatform()) {
+      const lowPowerMode = await PowerMode.lowPowerModeEnabled();
+      if (!lowPowerMode.lowPowerModeEnabled) {
+        this.playVideoIntro();
+      }
+    }
+    else {
+      this.playVideoIntro();
+    }
   }
 
   ngOnDestroy() {
@@ -214,6 +234,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
         header: false,
         contentCentered: true,
         showBackButton: false,
+        template: null,
         component: 'welcome-sign-up',
       }));
 
@@ -249,48 +270,76 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async allowBluetooth() {
-    try {
-      const checkPermissions = await this._bluetoothService.checkPermissions();
-      if (checkPermissions === 'granted') {
-        this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
-        this.sliderPage.slideNext();
-      }
+    if (this.config.bleAllowed) {
+      this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
+      this.sliderPage.slideNext();
     }
-    catch (error) {
-      this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
-        actions: [
-          {
-            label: 'Open Settings to Allow Bluetooth',
-            action: () => { 
-              this._bluetoothService.openSettingsApp();
-              this.sliderPage.slideNext();
-            }
-          },
-        ],
-      }));
+    else {
+      try {
+        const checkPermissions = await this._bluetoothService.checkPermissions();
+        if (checkPermissions === 'granted') {
+          this._store.dispatch(new fromStore.SetData({
+            bleAllowed: true,
+          }));
+          this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
+          this.sliderPage.slideNext();
+        }
+        else {
+          this._store.dispatch(new fromStore.SetData({
+            bleAllowed: false,
+          }));
+        }
+      }
+      catch (error) {
+        this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
+          actions: [
+            {
+              label: 'Open Settings to Allow Bluetooth',
+              action: () => {
+                this._bluetoothService.openSettingsApp();
+                this.sliderPage.slideNext();
+                this._store.dispatch(new fromStore.SetData({
+                  bleAllowed: true,
+                }));
+              }
+            },
+          ],
+        }));
+      }
     }
   }
 
   async allowNotifications() {
-    if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios') {
-      let permissionStatus = await PushNotifications.checkPermissions();
-      
-      if (permissionStatus.receive === 'prompt') {
-        permissionStatus = await PushNotifications.requestPermissions();
-      }
-
-      if (permissionStatus.receive !== 'granted') {
-        throw new Error('User denied permissions!');
-      }
-
-      if (permissionStatus.receive === 'granted') {
-        this.showDosesSelector();
-      }
-
-      await PushNotifications.register();
+    if (this.config.notificationsAllowed) {
+      this.showDosesSelector();
     }
     else {
-      this.showDosesSelector();
+      if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios') {
+        let permissionStatus = await PushNotifications.checkPermissions();
+        
+        if (permissionStatus.receive === 'prompt') {
+          permissionStatus = await PushNotifications.requestPermissions();
+        }
+  
+        if (permissionStatus.receive !== 'granted') {
+          this._store.dispatch(new fromStore.SetData({
+            notificationsAllowed: false,
+          }));
+          throw new Error('User denied permissions!');
+        }
+  
+        if (permissionStatus.receive === 'granted') {
+          this._store.dispatch(new fromStore.SetData({
+            notificationsAllowed: true,
+          }));
+          this.showDosesSelector();
+        }
+  
+        await PushNotifications.register();
+      }
+      else {
+        this.showDosesSelector();
+      }
     }
   }
 

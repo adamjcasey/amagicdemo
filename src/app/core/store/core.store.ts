@@ -1,10 +1,18 @@
-import * as fromRouter from '@ngrx/router-store';
+import { Params, RouterStateSnapshot } from '@angular/router';
+import * as fromNgrxRouter from '@ngrx/router-store';
 
 import * as fromReducer from './core.reducer';
 
-export interface CoreState {
-  router: fromRouter.RouterReducerState<fromReducer.RouterState>;
+export interface RouterState {
+  url: string,
+  params: Params,
+  queryParams: Params
 }
+
+export interface CoreState {
+  // router?: fromNgrxRouter.RouterReducerState<RouterState>;
+}
+export const initialCoreState: CoreState = {}
 
 export interface LayoutState {
   fullScreen: boolean;
@@ -17,19 +25,11 @@ export interface LayoutState {
   debuggingDeviceMode: boolean;
   userDevice?: any;
   dosageDevice?: any;
-  // batteryLevel: number,
 }
-
-export const initialState: LayoutState = {
+export const initialLayoutState: LayoutState = {
   fullScreen: false,
   rightCornerEl: null,
   welcomeFlowDone: false,
-
-  // batteryLevel: 0,
-  // userDevice: {
-  //   name: 'iphone-14-pro',
-  //   model: 'iphone10.4'
-  // },
   dosageDevice: {
     isConnected: false,
     battery: false,
@@ -37,5 +37,5 @@ export const initialState: LayoutState = {
   noDeviceMode: false,
   noDeviceModeOopsFlow: false,
   noDeviceModeBatteryLowFlow: false,
-  debuggingDeviceMode: false,
+  debuggingDeviceMode: false
 }
