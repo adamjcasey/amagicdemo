@@ -5,7 +5,7 @@ import { App } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { Device } from '@capacitor/device';
 import { Clipboard } from '@capacitor/clipboard';
-import { NativeSettings } from 'capacitor-native-settings';
+import { IOSOptions, IOSSettings, NativeSettings } from 'capacitor-native-settings';
 import { PowerMode } from 'power-mode';
 import * as moment from 'moment';
 
@@ -16,6 +16,12 @@ import * as fromHomeStore from '@home/store';
 import { environment } from 'src/environments/environment';
 import { GestureController } from '@shared/services/gestureController';
 import { AlertController } from '@ionic/angular';
+
+enum CustomIOSSettings {
+  Battery = 'battery',
+}
+
+type ExtendedIOSSettings = IOSSettings | CustomIOSSettings;
 
 @Component({
   selector: 'automagic-layout',
@@ -274,8 +280,8 @@ export class LayoutPage implements OnInit, AfterContentInit {
             label: 'Go to settings',
             action: () => {
               NativeSettings.openIOS({
-                option: 'battery',
-              });
+                option: 'battery'
+              } as IOSOptions & { option: ExtendedIOSSettings });
             },
           }
         ],
