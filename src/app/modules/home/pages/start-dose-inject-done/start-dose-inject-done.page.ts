@@ -12,6 +12,8 @@ import * as fromStore from '@home/store';
 import * as fromSharedStore from '@shared/store';
 import * as fromSharedComponents from '@shared/components';
 import * as fromCoreStore from '@core/store';
+import { environment } from 'src/environments/environment';
+import { Capacitor } from '@capacitor/core';
 
 @Component({
   selector: 'automagic-start-dose-inject-done',
@@ -110,6 +112,8 @@ export class StartDoseInjectDonePage implements OnInit {
       .subscribe(homeConfig => {
         if (homeConfig) {
           this.homeConfig = homeConfig;
+
+          this.updateNextDoseSlideTitle(homeConfig);
 
           // add extra instructions (slides)
           if (this.slides.length === 2) {
@@ -275,6 +279,8 @@ export class StartDoseInjectDonePage implements OnInit {
           }
         }
       });
+
+      this.setDoses();
   }
 
   ngOnDestroy() {
@@ -286,5 +292,42 @@ export class StartDoseInjectDonePage implements OnInit {
     this._store.dispatch(new fromCoreStore.Go({
       path: [path]
     }));
+  }
+
+  setDoses(): void {
+    if (Capacitor.isNativePlatform()) {
+      setTimeout(async() =>{
+        const storage: any = environment.db;
+        const saveState = await storage.get('state') as string; 
+        const saveDoses = await storage.get('doses')  as string; 
+        
+        this.dispatchDosesIfDataMissing(saveDoses, saveState);
+      });
+    }
+    else {
+      const saveState = localStorage.getItem('state') as string;
+      const saveDoses = localStorage.getItem('doses') as string;
+
+      this.dispatchDosesIfDataMissing(saveDoses, saveState);
+    }
+  }
+
+  dispatchDosesIfDataMissing(saveDoses: string, saveState: string): void {
+    const state = JSON.parse(saveState);
+    const doses = JSON.parse(saveDoses);
+    const lastIndex = doses?.length - 1;
+    const lastDoseDate = doses?.[lastIndex]?.date;
+
+    if (lastDoseDate && !state.home?.doses?.[lastIndex]?.date) {
+      this._store.dispatch(new fromStore.SetData({ firstTimeDose: !doses[0]?.marked, doses }));
+    }
+  }
+
+  updateNextDoseSlideTitle(homeConfig: any): void {
+    const nextDoseSlide = this.slides[4];
+    
+    if(nextDoseSlide && homeConfig.firstTimeDose) {
+      nextDoseSlide.header.cards[0].title = moment(homeConfig.doses[1].date).format('MMMM Do');
+    }
   }
 }
