@@ -62,8 +62,11 @@ export class StartDoseInjectDoneProgressComponent implements OnInit, AfterViewIn
     }
     else {
       const markedDoses = this.homeConfig?.doses.filter((dose: any) => dose.marked);
-      doses[markedDoses.length].marked = true;
-      doses[markedDoses.length].bodyPartInjected = this.homeConfig.bodyPartSelected;
+      const index = Math.min(markedDoses.length, doses.length - 1);
+
+      doses[index].marked = true;
+      doses[index].bodyPartInjected = this.homeConfig.bodyPartSelected;
+
     }
 
     this.doseMarked = true;
