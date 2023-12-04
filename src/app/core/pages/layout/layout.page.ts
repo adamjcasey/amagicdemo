@@ -74,7 +74,7 @@ export class LayoutPage implements OnInit, AfterContentInit {
               if (batteryLevel < this.minBatteryLevel) {
                 if (!this.backdropConfig.show) {
                   this.showBatterLowAlert();
-                }            
+                }
               }
             }
           }
@@ -94,9 +94,9 @@ export class LayoutPage implements OnInit, AfterContentInit {
           if (this.config.userDevice?.model) {
             const model = this.config.userDevice.model.replaceAll(/[a-z]/g, '');
             if (
-              Number(model) <= 10.5 || 
+              Number(model) <= 10.5 ||
               // iphone12,8 SE 2nd Generation
-              this.config.userDevice.model === 'iphone12.8' || 
+              this.config.userDevice.model === 'iphone12.8' ||
               // iphone14,6 SE 3rd Generation
               this.config.userDevice.model === 'iphone14.6'
             ) {
@@ -150,7 +150,7 @@ export class LayoutPage implements OnInit, AfterContentInit {
                   {
                     label: 'Got it',
                     fill: 'outline',
-                    action: () => { 
+                    action: () => {
                       this._store.dispatch(new fromSharedStore.AlertHide);
                       this._store.dispatch(new fromHomeStore.SetData({
                         onBoardingDone: true,
@@ -167,7 +167,7 @@ export class LayoutPage implements OnInit, AfterContentInit {
     const gc = new (GestureController as any)();
     gc.on('up', (event: any) => {
       if (
-        this.backdropConfig.show && 
+        this.backdropConfig.show &&
         fromSharedServices.UtilsService.getParentByClass(event.target, 'backdrop__fold') &&
         !this.backdropConfig.blockClose
       ) {
@@ -176,7 +176,7 @@ export class LayoutPage implements OnInit, AfterContentInit {
     });
     gc.on('down', (event: any) => {
       if (
-        !this.backdropConfig.show && 
+        !this.backdropConfig.show &&
         fromSharedServices.UtilsService.getParentByClass(event.target, 'backdrop__fold')
       ) {
         this._store.dispatch(new fromSharedStore.BackdropShow({
@@ -205,12 +205,12 @@ export class LayoutPage implements OnInit, AfterContentInit {
 
       if (
         event.target.tagName !== 'INPUT' &&
-        event.target.tagName !== 'ION-CHECKBOX' && 
-        !event.target.classList.contains('hotspot-element') && 
+        event.target.tagName !== 'ION-CHECKBOX' &&
+        !event.target.classList.contains('hotspot-element') &&
         !event.target.classList.contains('body-shape') &&
         !fromSharedServices.UtilsService.getParentByClass(event.target, 'hotspot-element') &&
         !fromSharedServices.UtilsService.getParentByClass(event.target, 'rating-field') &&
-        !fromSharedServices.UtilsService.getParentByClass(event.target, 'add-photo-cta') && 
+        !fromSharedServices.UtilsService.getParentByClass(event.target, 'add-photo-cta') &&
         !fromSharedServices.UtilsService.getParentByClass(event.target, 'backdrop__fold')
       ) {
         highlightElements();
@@ -227,7 +227,6 @@ export class LayoutPage implements OnInit, AfterContentInit {
           }
 
           this.getDeviceInfo();
-          this.checkLowPowerModeStatus();
         }
         else {
           const state = localStorage.getItem('state');
@@ -241,7 +240,6 @@ export class LayoutPage implements OnInit, AfterContentInit {
 
   ngAfterContentInit() {
     this.getDeviceInfo();
-    this.checkLowPowerModeStatus();
   }
 
   ngOnDestroy() {
@@ -249,7 +247,7 @@ export class LayoutPage implements OnInit, AfterContentInit {
     this._ngUnsubscribe.complete();
   }
 
-  async checkLowPowerModeStatus() {
+  async blockUsageInLowPowerMode() {
     if (Capacitor.isNativePlatform()) {
       const lowPowerMode = await PowerMode.lowPowerModeEnabled();
       this.lowPowerModeEnabled = lowPowerMode.lowPowerModeEnabled;
