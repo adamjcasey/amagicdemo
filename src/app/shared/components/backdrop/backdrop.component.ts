@@ -182,7 +182,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
       this.sliderMainMenu?.swiperRef.slideTo(step);
     }
 
-    if (this.sliderHighlightsTour) {
+    if (this.sliderHighlightsTour && this.sliderHighlightsTour.swiperRef.slides[step]) {
       this.sliderHighlightsTour?.swiperRef.slideTo(step);
     }
   }
