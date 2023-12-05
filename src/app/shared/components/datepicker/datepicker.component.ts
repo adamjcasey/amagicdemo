@@ -1,10 +1,10 @@
-import { 
-  Component, 
+import {
+  Component,
   ViewEncapsulation,
   Input,
-  Output, 
+  Output,
   EventEmitter,
-  ViewChild, 
+  ViewChild,
   ElementRef,
   OnInit
 } from '@angular/core';
@@ -31,8 +31,9 @@ export class DatepickerComponent implements OnInit {
   @ViewChild('datePickerList') datePickerList!: ElementRef;
   @ViewChild('modal') modal!: IonModal;
   public months: any[] = []; // Array to hold the months data
-  public weekdays: string[] = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];; // Array to hold the weekdays data
+  public weekdays: string[] = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']; // Array to hold the weekdays data
   public isFirstMonth: boolean = true;
+  public isLastMonth: boolean = false;
   public idDatePicker?: number;
   public monthsToGenerate: number = 2;
 
@@ -48,7 +49,11 @@ export class DatepickerComponent implements OnInit {
       const lastDate = this.selectedDates[this.selectedDates.length - 1];
       const lastMonthToGenerate = lastDate.getMonth();
       const currentMonth = new Date().getMonth();
-      this.monthsToGenerate = (lastMonthToGenerate - currentMonth) + 1;
+        if (currentMonth <= lastMonthToGenerate) {
+            this.monthsToGenerate = lastMonthToGenerate - currentMonth + 1;
+        } else {
+            this.monthsToGenerate = 12 - currentMonth + lastMonthToGenerate + 1;
+        }
     }
 
     const currentDate = new Date();
@@ -62,7 +67,7 @@ export class DatepickerComponent implements OnInit {
       const monthName = date.toLocaleString('default', { month: 'long' });
       const year = date.getFullYear();
       const weeks = this.generateWeeks(date);
-      
+
       months.push({ name: monthName, year, weeks });
       date.setMonth(date.getMonth() + 1);
     }
@@ -92,7 +97,7 @@ export class DatepickerComponent implements OnInit {
           moment(date).isSame(currentDate, 'day');
       }).length;
 
-      week.push({ 
+      week.push({
         number: day,
         isToday: isToday,
         isSelected: isSelected,
@@ -173,6 +178,7 @@ export class DatepickerComponent implements OnInit {
     prevMonth.classList.add('is-active');
     if (!prevMonth.previousElementSibling) {
       this.isFirstMonth = true;
+      this.isLastMonth = false;
     }
   }
 
@@ -184,7 +190,10 @@ export class DatepickerComponent implements OnInit {
     const currentMonth = this.datePickerList.nativeElement.querySelector('table.month.is-active');
     currentMonth.classList.remove('is-active');
     const nextMonth = currentMonth.nextElementSibling;
-    nextMonth.classList.add('is-active');
+      if (nextMonth) {
+          this.isLastMonth = true;
+          nextMonth.classList.add('is-active');
+      }
   }
 
   toggleDatepickerModal() {
