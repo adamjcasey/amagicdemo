@@ -34,6 +34,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
   public videoPlayer: any;
   public slides: Array<any> = [];
   public welcomeFormGroup: FormGroup;
+  public isFullPowerMode: boolean = true;
   @ViewChild('videoWrapper') videoWrapper!: ElementRef;
   @ViewChild('videoTag') videoTag!: ElementRef;
   @ViewChild('sliderPage', { static: false }) sliderPage!: fromSharedComponents.SliderPageComponent;
@@ -207,13 +208,10 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
   async ngAfterViewInit() {
     if (Capacitor.isNativePlatform()) {
       const lowPowerMode = await PowerMode.lowPowerModeEnabled();
-      if (!lowPowerMode.lowPowerModeEnabled) {
-        this.playVideoIntro();
-      }
+      this.isFullPowerMode = !lowPowerMode.lowPowerModeEnabled;
     }
-    else {
-      this.playVideoIntro();
-    }
+
+    this.playVideoIntro();
   }
 
   ngOnDestroy() {
@@ -224,7 +222,8 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
   playVideoIntro() {
     // set full screen option for global layout
     this._store.dispatch(new fromCoreStore.SetFullScreen(true));
-    const endHandler = () => {
+
+    const showWelcomeScreen = () => {
       // turn off full screen option for global layout
       this._store.dispatch(new fromCoreStore.SetFullScreen(false));
       // show pin asking screen
@@ -244,17 +243,25 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
       }, 400);
     };
 
-    // setup and playing the video
-    const videoElement = this.videoTag.nativeElement;
-    videoElement.onended = () => {
-      endHandler();
-    }
+    if (this.isFullPowerMode) {
+      // setup and playing the video
+      const videoElement = this.videoTag.nativeElement;
+      videoElement.onended = () => {
+        showWelcomeScreen();
+      }
 
-    if (Capacitor.getPlatform() === 'web') {
-      videoElement.muted = true;
-    }
+      if (Capacitor.getPlatform() === 'web') {
+        videoElement.muted = true;
+      }
 
-    videoElement.play();
+      videoElement.play();
+    } else {
+      const welcomeGifDuration = 4000;
+
+      setTimeout(() => {
+        showWelcomeScreen();
+      }, welcomeGifDuration);
+    }
   }
 
   slideNext(sliders: any) {
@@ -316,25 +323,25 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
     else {
       if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios') {
         let permissionStatus = await PushNotifications.checkPermissions();
-        
+
         if (permissionStatus.receive === 'prompt') {
           permissionStatus = await PushNotifications.requestPermissions();
         }
-  
+
         if (permissionStatus.receive !== 'granted') {
           this._store.dispatch(new fromStore.SetData({
             notificationsAllowed: false,
           }));
           throw new Error('User denied permissions!');
         }
-  
+
         if (permissionStatus.receive === 'granted') {
           this._store.dispatch(new fromStore.SetData({
             notificationsAllowed: true,
           }));
           this.showDosesSelector();
         }
-  
+
         await PushNotifications.register();
       }
       else {

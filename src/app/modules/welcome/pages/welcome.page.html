@@ -1,14 +1,21 @@
 <ion-content [fullscreen]="true" [scrollY]="false">
   <div #videoWrapper class="welcome-page__video-wrapper">
-    <video 
-      #videoTag 
-      id="welcome-video-intro"
-      src="/assets/videos/welcome.mp4" 
-      playsinline
-    ></video>
+    <div *ngIf="isFullPowerMode">
+      <video
+        #videoTag
+        id="welcome-video-intro"
+        src="/assets/videos/welcome.mp4"
+        [attr.playsinline]="isFullPowerMode"
+      ></video>
+    </div>
+
+    <div *ngIf="!isFullPowerMode">
+      <img alt="welcome introduction animation" src="/assets/gifs/Screen1-Splash%20Screen.gif">
+    </div>
+
   </div>
 
-  <automagic-slider-page 
+  <automagic-slider-page
     #sliderPage
     [slides]="slides"
     (onNextSlide)="slideNext($event)"
