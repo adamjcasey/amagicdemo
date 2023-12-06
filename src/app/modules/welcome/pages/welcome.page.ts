@@ -164,8 +164,8 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
             {
               label: 'Previous',
               action: () => {
-                this.showDosesSelector();
                 this.sliderPage.slidePrev();
+                this.showDosesSelector();
               }
             },
             {
