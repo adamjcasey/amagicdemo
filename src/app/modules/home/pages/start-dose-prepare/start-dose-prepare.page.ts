@@ -1,6 +1,6 @@
-import { 
+import {
   Component,
-  ViewEncapsulation, 
+  ViewEncapsulation,
   OnInit,
   OnDestroy,
   ViewChild,
@@ -42,6 +42,7 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
           asset: '/assets/images/start-dose-prepare-1.svg',
         },
         content: {
+          hide: false,
           hideNavigation: true,
           template: `
             <h1 class="font-heading-1--bold">Take the autoinjector out of the box.</h1>
@@ -50,7 +51,7 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
           actions: [
             {
               label: 'Continue',
-              action: () => { 
+              action: () => {
                 this.sliderPage.slideNext();
                 this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-mint'));
               }
@@ -115,14 +116,14 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
           const markedDoses = this.homeConfig.doses.filter((dose: any) => dose.marked);
           if (markedDoses.length === 1) {
             this._store.dispatch(new fromStore.SetData({
-              // if the first one dose was injected, for the demo purpose we'll fill 
+              // if the first one dose was injected, for the demo purpose we'll fill
               // automatically 5 doses to leave the user in the last dose
               doses: this.homeConfig.doses.map((dose: any, index: number) => {
                 return {
                   ...dose,
                   bodyPartInjected: markedDoses[0].bodyPartInjected,
-                  marked: index + 1 < this.homeConfig.doses.length 
-                    ? true 
+                  marked: index + 1 < this.homeConfig.doses.length
+                    ? true
                     : false,
                 }
               }),
@@ -166,14 +167,14 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
   }
 
   showStepTemperature = () => {
-    // hold on a few ms the change of the topbar bgcolor to match with the opening 
+    // hold on a few ms the change of the topbar bgcolor to match with the opening
     // of the expanded box in SlidePage component
     setTimeout(() => {
       this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-white'));
     }, 500);
     this._store.dispatch(new fromSharedStore.SliderPageSetContent({
       isExpanded: true,
-      template: this.homeConfig.firstTimeDose 
+      template: this.homeConfig.firstTimeDose
         ? `
           <div class="start-dose-prepare__instructions">
             <img src="assets/images/drug-cold-temp.svg" />
@@ -235,7 +236,7 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
         actions: [
           {
             label: 'Ok, let’s go!',
-            // setting as disabled to avoid user unnecessary action, 
+            // setting as disabled to avoid user unnecessary action,
             // will be enable after show Dose setup view
             disabled: true,
             action: () => {
