@@ -23,7 +23,6 @@ export class TimeTravelingComponent {
   ) {}
 
   playVideo () {
-    debugger;
     // setup and playing the video
     const timeTravelingAnimationDuration = 7000;
     const introAnimationDuration = 1000;
