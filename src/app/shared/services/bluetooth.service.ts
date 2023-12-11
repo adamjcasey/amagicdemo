@@ -53,8 +53,8 @@ export class BluetoothService {
 
   constructor(
     private _store: Store<fromCoreStore.LayoutState>,
-    private _http: HttpClient, 
-    public _formBuilder: FormBuilder, 
+    private _http: HttpClient,
+    public _formBuilder: FormBuilder,
   ) {
     // Initialize your properties here, if needed.
     this.bleEnabled = false;
@@ -216,15 +216,15 @@ export class BluetoothService {
       this.logger(`handlerDisconnectDevice: Clearing reading`);
     }
 
-    if (Capacitor.isNativePlatform() && !this.layoutConfig.noDeviceMode) {
-      await BleClient.disconnect(this.peripheral_.device.deviceId); 
+    if (Capacitor.isNativePlatform() && !this.layoutConfig.noDeviceMode && this.peripheral_) {
+      await BleClient.disconnect(this.peripheral_.device.deviceId);
+      this.logger('handlerDisconnectDevice: Device disconnected', `ID: ${this.peripheral_.device.deviceId}`);
     }
 
     this.isConnected_ = false;
     this._store.dispatch(new fromCoreStore.SetDosageDeviceInfo({
       isConnected: false,
     }));
-    this.logger('handlerDisconnectDevice: Device disconnected', `ID: ${this.peripheral_.device.deviceId}`);
   }
 
   async isDeviceConnected() {
@@ -344,8 +344,8 @@ export class BluetoothService {
     this.logger(`onDeviceDiscovered`);
 
     if (
-      peripheral.localName == 'AutoMagic' || 
-      peripheral.device.name == 'AutoMagic' && 
+      peripheral.localName == 'AutoMagic' ||
+      peripheral.device.name == 'AutoMagic' &&
       peripheral.rssi > -60
     ) {
       this.logger('onDeviceDiscovered: Device to Connect', `${peripheral.device.deviceId}`);
@@ -371,7 +371,7 @@ export class BluetoothService {
         this.isConnected_ = true;
       }
 
-      // Once connected, read the characteristic every 250ms.  
+      // Once connected, read the characteristic every 250ms.
       // Discriminate state, battery, and dosing values
       const intervalDuration = 250;
       this.logger('onDeviceDiscovered: Starting reading of stats from the device');
@@ -384,7 +384,7 @@ export class BluetoothService {
             if (reading.byteLength > 0) {
               let data = reading.getUint32(0);
               const bytes = [];
-              while (data > 0) { 
+              while (data > 0) {
                 bytes.unshift(data & 0xFF);
                 data >>= 8;
               }
@@ -557,7 +557,7 @@ export class BluetoothService {
     });
 
     if (this.trackingDateForm.valid) {
-      const url = 'http://api.onebetterllc.com/'; 
+      const url = 'http://api.onebetterllc.com/';
       const username = 'automagic_admin';
       const password = '6FRGqutxijsG5jq';
       const headers = new HttpHeaders({
