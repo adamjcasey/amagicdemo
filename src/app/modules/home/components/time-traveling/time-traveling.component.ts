@@ -1,10 +1,7 @@
-import { 
+import {
   Component,
   ViewEncapsulation,
-  ViewChild,
-  ElementRef, 
 } from '@angular/core';
-import { Capacitor } from '@capacitor/core';
 import { Store } from '@ngrx/store';
 
 import * as fromSharedStore from '@shared/store';
@@ -19,7 +16,7 @@ import * as fromCoreStore from '@core/store';
 export class TimeTravelingComponent {
   public isPlayingVideo: boolean = false;
   public endedVideo: boolean = false;
-  @ViewChild('videoTraining') videoTraining!: ElementRef;
+  public showingTimeTravel: boolean = false;
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
@@ -27,19 +24,18 @@ export class TimeTravelingComponent {
 
   playVideo () {
     // setup and playing the video
-    const videoElement = this.videoTraining.nativeElement;
-    videoElement.onended = () => {
-      this.endedVideo = true;
-    }
+    const timeTravelingAnimationDuration = 7000;
+    const introAnimationDuration = 1000;
 
-    if (Capacitor.getPlatform() === 'web') {
-      videoElement.muted = true;
-    }
+    setTimeout(() => {
+      this.endedVideo = true;
+      this.showingTimeTravel = false;
+    }, timeTravelingAnimationDuration);
 
     this.isPlayingVideo = true;
     setTimeout(() => {
-      videoElement.play();
-    }, 1000);
+      this.showingTimeTravel = true;
+    }, introAnimationDuration);
   }
 
   closeBackdrop() {

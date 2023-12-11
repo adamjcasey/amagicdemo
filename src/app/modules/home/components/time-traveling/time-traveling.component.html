@@ -11,12 +11,7 @@
 
   <div class="time-traveling__video-wrapper">
     <h1 class="font-heading-1--bold">Time traveling...</h1>
-    <video 
-      #videoTraining
-      id="time-traveling-video"
-      src="/assets/videos/time-traveling.mp4" 
-      playsinline
-    ></video>
+    <ion-img *ngIf="showingTimeTravel" alt="time traveling calendar" src="/assets/gifs/time-travel.gif"></ion-img>
   </div>
 
   <div class="time-traveling__bottom-content">
