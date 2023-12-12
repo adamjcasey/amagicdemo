@@ -243,9 +243,9 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
       }, 400);
     };
 
-    if (this.isFullPowerMode) {
+    if (this.isFullPowerMode && this.videoTag) {
       // setup and playing the video
-      const videoElement = this.videoTag.nativeElement;
+      const videoElement = this.videoTag?.nativeElement;
       videoElement.onended = () => {
         showWelcomeScreen();
       }
