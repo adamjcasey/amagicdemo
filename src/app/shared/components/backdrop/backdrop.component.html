@@ -1,26 +1,26 @@
-<section id="backdrop" class="backdrop" [ngClass]="{ 
-  'is-open': config.show, 
-  'is-full-screen': config.fullScreen, 
-  'is-content-centered': config.contentCentered || getType() === 'menu-main', 
-  'transition-fade': config.transition === 'fade', 
-  'transition-move': config.transition === 'move', 
-  'bg-template': config.bgTemplate, 
-  'bg-template--top-hole': config.bgTemplate === 'top-hole', 
-  'bg-template--bottom-hole': config.bgTemplate === 'bottom-hole', 
-  'bg-template--bottom-ellipse-hole': config.bgTemplate === 'bottom-ellipse-hole', 
-  'has-buttons': config.buttons, 
+<section id="backdrop" class="backdrop" [ngClass]="{
+  'is-open': config.show,
+  'is-full-screen': config.fullScreen,
+  'is-content-centered': config.contentCentered || getType() === 'menu-main',
+  'transition-fade': config.transition === 'fade',
+  'transition-move': config.transition === 'move',
+  'bg-template': config.bgTemplate,
+  'bg-template--top-hole': config.bgTemplate === 'top-hole',
+  'bg-template--bottom-hole': config.bgTemplate === 'bottom-hole',
+  'bg-template--bottom-ellipse-hole': config.bgTemplate === 'bottom-ellipse-hole',
+  'has-buttons': config.buttons,
 }">
-  <div 
-    class="backdrop__wrapper" 
-    [style.background-image]="config.bgTemplate 
+  <div
+    class="backdrop__wrapper"
+    [style.background-image]="config.bgTemplate
       ? 'url(' + '/assets/images/backdrop-' + config.bgTemplate + '.svg' + ')'
       : null
     ">
     <header class="backdrop__header" *ngIf="config.header">
       <div class="back-button" *ngIf="(config.showBackButton !== null && config.showBackButton) && backButton">
-        <ion-button 
-          class="hotspot-element" 
-          (click)="backButton.action($event)" 
+        <ion-button
+          class="hotspot-element"
+          (click)="backButton.action($event)"
           fill="clear" color="light" size="small">
 
           <ion-icon name="chevron-back-outline" color="light"></ion-icon>
@@ -43,9 +43,9 @@
     </header>
 
     <div class="backdrop__content">
-      <div 
-        class="backdrop__template" 
-        *ngIf="config.template" 
+      <div
+        class="backdrop__template"
+        *ngIf="config.template"
         [innerHTML]="sanitizeContent(config.template)"
       ></div>
 
@@ -54,19 +54,19 @@
       </div>
 
       <div class="backdrop__actions" *ngIf="config.buttons">
-        <ion-button 
-          *ngFor="let button of config.buttons; let i = index" 
+        <ion-button
+          *ngFor="let button of config.buttons; let i = index"
           class="hotspot-element {{ button.cssClasses ? button.cssClasses : null }}"
-          (click)="button.action ? button.action($event) : null" 
+          (click)="button.action ? button.action($event) : null"
           fill="outline" color="light">
           {{ button.label }}
         </ion-button>
       </div>
 
       <div class="main-menu" *ngIf="getType() === 'menu-main'">
-        <swiper 
-          #sliderMainMenu 
-          effect="fade" 
+        <swiper
+          #sliderMainMenu
+          effect="fade"
           [allowTouchMove]="false"
           [autoHeight]="true"
           [initialSlide]="initialSlide"
@@ -89,12 +89,7 @@
               </a>
               <a class="link hotspot-element" (click)="goToSubmenu(2)">
                 <ion-icon src="/assets/icons/time-loader.svg" slot="start" size="large"></ion-icon>
-                <ion-label>Reset the demo</ion-label>
-                <ion-icon name="chevron-forward-outline" slot="end" color="light"></ion-icon>
-              </a>
-              <a class="link hotspot-element" (click)="goToSubmenu(3)">
-                <ion-icon src="/assets/icons/help.svg" slot="start" size="large"></ion-icon>
-                <ion-label>Help! Something broke</ion-label>
+                <ion-label>Restart the app</ion-label>
                 <ion-icon name="chevron-forward-outline" slot="end" color="light"></ion-icon>
               </a>
               <a class="link hotspot-element" (click)="goToSubmenu(4)">
@@ -106,14 +101,9 @@
           </ng-template>
 
           <ng-template swiperSlide>
-            <h1 class="font-heading-1--bold">I’m all done</h1>
+            <h1 class="font-heading-1--bold">I’m all done with the demo</h1>
 
             <div class="buttons-container">
-              <ion-button class="hotspot-element" fill="outline" expand="block" color="light">
-                Share feedback
-                <ion-icon name="chevron-forward-outline" slot="end" color="light"></ion-icon>
-              </ion-button>
-
               <ion-button class="hotspot-element" fill="outline" expand="block" color="light" (click)="showShareFlow()">
                 Share this demo kit
                 <ion-icon name="chevron-forward-outline" slot="end" color="light"></ion-icon>
@@ -129,16 +119,16 @@
             <h1 class="font-heading-1--bold">Reset the demo</h1>
 
             <div class="buttons-container">
-              <ion-button 
-                class="hotspot-element" 
-                (click)="doAnotherInjection()" 
+              <ion-button
+                class="hotspot-element"
+                (click)="doAnotherInjection()"
                 fill="outline" expand="block" color="light">
                 Do another injection
               </ion-button>
 
-              <ion-button 
-                class="hotspot-element" 
-                (click)="resetDemo()" 
+              <ion-button
+                class="hotspot-element"
+                (click)="resetDemo()"
                 fill="outline" expand="block" color="light">
 
                 Restart from the beginning
@@ -147,24 +137,10 @@
           </ng-template>
 
           <ng-template swiperSlide>
-            <h1 class="font-heading-1--bold">Help! Something broke!</h1>
-
-            <div class="buttons-container">
-              <ion-button class="hotspot-element" fill="outline" expand="block" color="light">
-                Pack up and return
-              </ion-button>
-
-              <ion-button class="hotspot-element" fill="outline" expand="block" color="light">
-                View troubleshooting tips
-              </ion-button>
-            </div>
-          </ng-template>
-
-          <ng-template swiperSlide>
             <h1 class="font-heading-1--bold">Debugging</h1>
 
             <div class="buttons-container">
-              <ion-button 
+              <ion-button
                 class="hotspot-element"
                 [ngClass]="{
                   'is-active': layoutConfig.noDeviceMode
@@ -174,7 +150,7 @@
                 Testing with No Device Mode
               </ion-button>
 
-              <ion-button 
+              <ion-button
                 class="hotspot-element"
                 [ngClass]="{
                   'is-active': layoutConfig.noDeviceModeOopsFlow
@@ -184,7 +160,7 @@
                 Testing of Oops Flow
               </ion-button>
 
-              <ion-button 
+              <ion-button
                 class="hotspot-element"
                 [ngClass]="{
                   'is-active': layoutConfig.noDeviceModeBatteryLowFlow
@@ -194,7 +170,7 @@
                 Testing of Low Battery Flow
               </ion-button>
 
-              <ion-button 
+              <ion-button
                 class="hotspot-element"
                 [ngClass]="{
                   'is-active': layoutConfig.debuggingDeviceMode
@@ -209,19 +185,19 @@
       </div>
 
       <div class="highlights-tour" *ngIf="getType() === 'highlights-tour'">
-        <swiper 
-          #sliderHighlightsTour 
-          effect="fade" 
-          [allowTouchMove]="false" 
-          (swiper)="onHighlightsTourInit()" 
-          (slideChange)="onHighlightsTourChange()" 
+        <swiper
+          #sliderHighlightsTour
+          effect="fade"
+          [allowTouchMove]="false"
+          (swiper)="onHighlightsTourInit()"
+          (slideChange)="onHighlightsTourChange()"
           [autoHeight]="true">
           <ng-template swiperSlide>
             <h1 class="font-heading-1--bold">Highlights Tour</h1>
             <div class="cards-container masonry-layout">
-              <automagic-card 
-                *ngFor="let section of config.highlights; let i = index" 
-                [card]="section" 
+              <automagic-card
+                *ngFor="let section of config.highlights; let i = index"
+                [card]="section"
                 [ngClass]="{
                   'hotspot-element': i === 0,
                 }"
@@ -229,11 +205,11 @@
               </automagic-card>
             </div>
           </ng-template>
-          
+
           <ng-container *ngFor="let section of config.highlights; let i = index">
             <ng-template swiperSlide *ngIf="section.detail" class="highlights-tour__slide">
-              <div 
-                class="highlights__detail" 
+              <div
+                class="highlights__detail"
                 [dinamicInnerHtml]="section.detail">
               </div>
             </ng-template>
@@ -242,9 +218,9 @@
       </div>
 
       <div class="return-flow" *ngIf="getType() === 'return-flow'">
-        <swiper 
-          #sliderReturnFlow 
-          effect="fade" 
+        <swiper
+          #sliderReturnFlow
+          effect="fade"
           [allowTouchMove]="false">
           <ng-template swiperSlide>
             <div class="return-flow">
@@ -337,9 +313,9 @@
       </div>
 
       <div class="share-flow" *ngIf="getType() === 'share-flow'">
-        <swiper 
-          #sliderShareFlow 
-          effect="fade" 
+        <swiper
+          #sliderShareFlow
+          effect="fade"
           [allowTouchMove]="false">
           <ng-template swiperSlide>
             <div class="share-flow">
@@ -416,37 +392,37 @@
       </div>
     </div>
 
-    <ion-icon 
-      class="backdrop__close hotspot-element" 
-      name="chevron-up-outline" 
-      *ngIf="config.fullScreen && config.bgTemplate" 
-      (click)="toggle()" 
+    <ion-icon
+      class="backdrop__close hotspot-element"
+      name="chevron-up-outline"
+      *ngIf="config.fullScreen && config.bgTemplate"
+      (click)="toggle()"
     ></ion-icon>
 
-    <div 
-      class="backdrop__fold {{ this.layoutConfig.userDevice?.model }}" 
-      [ngClass]="{ 
+    <div
+      class="backdrop__fold {{ this.layoutConfig.userDevice?.model }}"
+      [ngClass]="{
         'is-physical-device': layoutConfig.userDevice,
         'is-iphone-x': this.layoutConfig.userDevice?.model.includes('iphone-x'),
         'is-iphone-11': [
-          'iphone12.1', 
-          'iphone12.2', 
-          'iphone12.3', 
-          'iphone12.4', 
+          'iphone12.1',
+          'iphone12.2',
+          'iphone12.3',
+          'iphone12.4',
           'iphone12.5'
         ].includes(layoutConfig.userDevice?.model),
         'is-iphone-12': [
-          'iphone13.1', 
-          'iphone13.2', 
-          'iphone13.3', 
-          'iphone13.4', 
+          'iphone13.1',
+          'iphone13.2',
+          'iphone13.3',
+          'iphone13.4',
           'iphone13.5'
         ].includes(layoutConfig.userDevice?.model),
         'is-iphone-13': [
-          'iphone14.1', 
-          'iphone14.2', 
-          'iphone14.3', 
-          'iphone14.4', 
+          'iphone14.1',
+          'iphone14.2',
+          'iphone14.3',
+          'iphone14.4',
           'iphone14.5'
         ].includes(layoutConfig.userDevice?.model),
         'is-iphone-14': [
@@ -461,56 +437,56 @@
       }">
 
       <ng-container *ngIf="layoutConfig.userDevice">
-        <ion-img 
-          class="background" 
+        <ion-img
+          class="background"
           *ngIf="getModelDeviceNumber(layoutConfig.userDevice?.model) < 10.5"
           src="/assets/images/backdrop-fold-bg--iphone-8.png"
         ></ion-img>
-        <ion-img 
-          class="background" 
-          *ngIf="layoutConfig.userDevice?.model === 'iphone10.6'" 
+        <ion-img
+          class="background"
+          *ngIf="layoutConfig.userDevice?.model === 'iphone10.6'"
           src="/assets/images/backdrop-fold-bg--iphone-x.svg"
         ></ion-img>
-        <ion-img 
-          class="background" 
+        <ion-img
+          class="background"
           *ngIf="[
-            'iphone12.1', 
-            'iphone12.2', 
-            'iphone12.3', 
-            'iphone12.4', 
+            'iphone12.1',
+            'iphone12.2',
+            'iphone12.3',
+            'iphone12.4',
             'iphone12.5'
           ].includes(layoutConfig.userDevice?.model)"
           src="/assets/images/backdrop-fold-bg--iphone-11.svg"
         ></ion-img>
-        <ion-img 
-          class="background" 
+        <ion-img
+          class="background"
           *ngIf="[
-            'iphone13.1', 
-            'iphone13.2', 
-            'iphone13.3', 
-            'iphone13.4', 
+            'iphone13.1',
+            'iphone13.2',
+            'iphone13.3',
+            'iphone13.4',
             'iphone13.5'
           ].includes(layoutConfig.userDevice?.model)"
           src="/assets/images/backdrop-fold-bg--iphone-12.png"
         ></ion-img>
-        <ion-img 
-          class="background" 
+        <ion-img
+          class="background"
           *ngIf="[
-            'iphone14.1', 
-            'iphone14.2', 
-            'iphone14.3', 
-            'iphone14.4', 
+            'iphone14.1',
+            'iphone14.2',
+            'iphone14.3',
+            'iphone14.4',
             'iphone14.5'
           ].includes(layoutConfig.userDevice?.model)"
           src="/assets/images/backdrop-fold-bg--iphone-13.svg"
         ></ion-img>
-        <ion-img 
-          class="background" 
+        <ion-img
+          class="background"
           *ngIf="['iphone14.7', 'iphone14.8'].includes(layoutConfig.userDevice?.model)"
           src="/assets/images/backdrop-fold-bg--iphone-14.svg"
         ></ion-img>
-        <ion-img 
-          class="background" 
+        <ion-img
+          class="background"
           *ngIf="['iphone15.2', 'iphone15.3'].includes(layoutConfig.userDevice?.model)"
           src="/assets/images/backdrop-fold-bg--iphone-14-pro.svg"
         ></ion-img>
