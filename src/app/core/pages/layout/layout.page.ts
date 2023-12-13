@@ -6,6 +6,7 @@ import { Capacitor } from '@capacitor/core';
 import { Device } from '@capacitor/device';
 import { Clipboard } from '@capacitor/clipboard';
 import { IOSOptions, IOSSettings, NativeSettings } from 'capacitor-native-settings';
+import { StatusBar, Style } from '@capacitor/status-bar';
 import { PowerMode } from 'power-mode';
 import * as moment from 'moment';
 
@@ -127,6 +128,14 @@ export class LayoutPage implements OnInit, AfterContentInit {
       .subscribe(backdropConfig => {
         if (backdropConfig) {
           this.backdropConfig = backdropConfig;
+
+          if(Capacitor.isNativePlatform()){
+              if(backdropConfig.show) {
+                  this.statusBarSetStyle(Style.Dark);
+              } else {
+                  this.statusBarSetStyle(Style.Light);
+              }
+          }
         }
       });
 
@@ -334,4 +343,8 @@ export class LayoutPage implements OnInit, AfterContentInit {
       string: logs.innerHTML
     });
   }
+
+    private statusBarSetStyle(style: Style): void {
+        StatusBar.setStyle({ style });
+    }
 }
