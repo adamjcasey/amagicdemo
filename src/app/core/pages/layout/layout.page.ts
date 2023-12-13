@@ -129,13 +129,13 @@ export class LayoutPage implements OnInit, AfterContentInit {
         if (backdropConfig) {
           this.backdropConfig = backdropConfig;
 
-          if(Capacitor.isNativePlatform()){
+          /*if(Capacitor.isNativePlatform()){
               if(backdropConfig.show) {
                   this.statusBarSetStyle(Style.Dark);
               } else {
                   this.statusBarSetStyle(Style.Light);
               }
-          }
+          }*/
         }
       });
 
