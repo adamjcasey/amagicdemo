@@ -78,10 +78,9 @@
                 <ion-label>I’m all done with the demo</ion-label>
                 <ion-icon name="chevron-forward-outline" slot="end" color="light"></ion-icon>
               </a>
-              <a class="link hotspot-element" (click)="goToSubmenu(2)">
+              <a class="link hotspot-element" (click)="resetApp()" >
                 <ion-icon src="/assets/icons/time-loader.svg" slot="start" size="large"></ion-icon>
                 <ion-label>Restart the app</ion-label>
-                <ion-icon name="chevron-forward-outline" slot="end" color="light"></ion-icon>
               </a>
               <a class="link hotspot-element" (click)="goToSubmenu(4)">
                 <ion-icon name="construct-outline" slot="start" size="large" color="light"></ion-icon>
@@ -102,27 +101,6 @@
 
               <ion-button class="hotspot-element" fill="outline" expand="block" color="light" (click)="showReturnFlow()">
                 Pack up and return
-              </ion-button>
-            </div>
-          </ng-template>
-
-          <ng-template swiperSlide>
-            <h1 class="font-heading-1--bold">Reset the demo</h1>
-
-            <div class="buttons-container">
-              <ion-button
-                class="hotspot-element"
-                (click)="doAnotherInjection()"
-                fill="outline" expand="block" color="light">
-                Do another injection
-              </ion-button>
-
-              <ion-button
-                class="hotspot-element"
-                (click)="resetDemo()"
-                fill="outline" expand="block" color="light">
-
-                Restart from the beginning
               </ion-button>
             </div>
           </ng-template>
