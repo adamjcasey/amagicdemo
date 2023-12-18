@@ -1,5 +1,5 @@
-import { 
-  Component, 
+import {
+  Component,
   OnInit,
   ViewChild,
   ViewEncapsulation,
@@ -402,10 +402,11 @@ export class BackdropComponent implements OnInit, AfterViewInit {
     this.goTo('home/start-dose/prepare');
   }
 
-  resetDemo() {
+  resetApp() {
     this._store.dispatch(new fromCoreStore.ClearStore());
     this.toggle();
     this.goTo('welcome');
+    setTimeout(() => window.location.reload());
   }
 
   toggleDebuggingOptions(option: string) {
