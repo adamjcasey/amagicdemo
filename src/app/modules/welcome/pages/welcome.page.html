@@ -1,18 +1,7 @@
 <ion-content [fullscreen]="true" [scrollY]="false">
   <div #videoWrapper class="welcome-page__video-wrapper">
-    <div *ngIf="isFullPowerMode">
-      <video
-        #videoTag
-        id="welcome-video-intro"
-        src="/assets/videos/welcome.mp4"
-        [attr.playsinline]="isFullPowerMode"
-      ></video>
-    </div>
-
-    <div *ngIf="!isFullPowerMode">
-      <ion-img alt="welcome introduction animation" src="/assets/gifs/welcome-screen.gif"></ion-img>
-    </div>
-
+    <ion-img alt="welcome introduction animation" src="/assets/gifs/welcome-screen.gif"></ion-img>
+    <audio autoplay preload="auto" src="assets/gifs/Splash_Screen_Sound.m4a"></audio>
   </div>
 
   <automagic-slider-page

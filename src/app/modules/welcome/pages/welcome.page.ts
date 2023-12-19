@@ -31,12 +31,11 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
   public config: any;
   public backdropConfig$: Observable<any>;
   public backdropConfig: any;
-  public videoPlayer: any;
+
   public slides: Array<any> = [];
   public welcomeFormGroup: FormGroup;
   public isFullPowerMode: boolean = true;
   @ViewChild('videoWrapper') videoWrapper!: ElementRef;
-  @ViewChild('videoTag') videoTag!: ElementRef;
   @ViewChild('sliderPage', { static: false }) sliderPage!: fromSharedComponents.SliderPageComponent;
   private _ngUnsubscribe: Subject<void> = new Subject<void>();
 
@@ -211,7 +210,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
       this.isFullPowerMode = !lowPowerMode.lowPowerModeEnabled;
     }
 
-    this.playVideoIntro();
+    this.playIntroAnimation();
   }
 
   ngOnDestroy() {
@@ -219,7 +218,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
     this._ngUnsubscribe.complete();
   }
 
-  playVideoIntro() {
+  playIntroAnimation() {
     // set full screen option for global layout
     this._store.dispatch(new fromCoreStore.SetFullScreen(true));
 
@@ -243,25 +242,11 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
       }, 400);
     };
 
-    if (this.isFullPowerMode && this.videoTag) {
-      // setup and playing the video
-      const videoElement = this.videoTag?.nativeElement;
-      videoElement.onended = () => {
-        showWelcomeScreen();
-      }
+    const welcomeGifDuration = 3800;
 
-      if (Capacitor.getPlatform() === 'web') {
-        videoElement.muted = true;
-      }
-
-      videoElement.play();
-    } else {
-      const welcomeGifDuration = 4000;
-
-      setTimeout(() => {
-        showWelcomeScreen();
-      }, welcomeGifDuration);
-    }
+    setTimeout(() => {
+      showWelcomeScreen();
+    }, welcomeGifDuration);
   }
 
   slideNext(sliders: any) {
