@@ -11,6 +11,8 @@ import * as fromStore from '@shared/store';
 import * as fromCoreStore from '@core/store';
 import * as fromHomeStore from '@home/store';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import * as fromSharedStore from "@shared/store";
+import {filter} from "rxjs/internal/operators/filter";
 
 const AUTOMAGIC_SERVICE = 'EDFEC62E-9910-0BAC-5241-D8BDA6932A2F';
 const AUTOMAGIC_STATE_CHARACTERISTIC = '5A87B4EF-3BFA-76A8-E642-92933C31434F';
@@ -48,6 +50,8 @@ export class BluetoothService {
   public layoutConfig: any;
   public homeConfig$: Observable<any>;
   public homeConfig: any;
+  private backdropConfig$: Observable<any>;
+  private backdropConfig: any;
 
   public trackingDateForm: FormGroup;
 
@@ -117,6 +121,12 @@ export class BluetoothService {
         }));
       }
     });
+
+      this.backdropConfig$ = this._store.select(fromSharedStore.getBackdropConfig);
+      this.backdropConfig$.pipe(filter((backdropConfig) => backdropConfig))
+          .subscribe(backdropConfig => {
+              this.backdropConfig = backdropConfig;
+          });
 
     App.addListener('appStateChange', async ({ isActive }) => {
       if (isActive) {
@@ -248,10 +258,10 @@ export class BluetoothService {
             resolve(true);
           }
           else {
-            if (startWatcher.diff(moment(), 'seconds') === -30) {
-              this.logger(`isDeviceConnected: After 30 seconds is still not connecting`);
-              this.showTroubleConnectingBackdrop();
-            }
+              if (Math.abs(startWatcher.diff(moment(), 'seconds')) % 30 === 0 && !this.backdropConfig.show && !this.isConnected_) {
+                  this.logger(`isDeviceConnected: After 30 seconds is still not connecting`);
+                  this.showTroubleConnectingBackdrop();
+              }
           }
         }, 1000);
       });
