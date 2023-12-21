@@ -1,6 +1,6 @@
-import { 
+import {
   Component,
-  ViewEncapsulation, 
+  ViewEncapsulation,
   OnInit,
   ViewChild,
   AfterViewInit,
@@ -58,7 +58,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
               {
                 header: {
                   color: '--color-bg-pastel-green',
-                  template: this.homeConfig.firstTimeDose 
+                  template: this.homeConfig.firstTimeDose
                     ? `
                       <div class="start-dose-ready-to-inject__content">
                         <h1 class="font-heading-1--bold">You’ve got this!</h1>
@@ -180,7 +180,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                       action: () => {
                         // clear previous selection
                         this._store.dispatch(new fromStore.SetData({
-                          bodyPartSelected: null, 
+                          bodyPartSelected: null,
                         }));
 
                         this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-green'));
@@ -271,8 +271,10 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                 label: 'Replay',
                 action: () => {
                   const videoElement = document.getElementById('start-dose-ready-to-inject-video') as HTMLMediaElement;
-                  videoElement.currentTime = 0;
-                  videoElement.play();
+                  if (videoElement) {
+                    videoElement.currentTime = 0;
+                    videoElement.play();
+                  }
                 }
               },
               {
@@ -280,13 +282,13 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
                 action: () => {
                   const videoElement = document.getElementById('start-dose-ready-to-inject-video') as HTMLMediaElement;
                   // pausing the video if it's ended
-                  if (!videoElement.ended) {
-                    videoElement.pause();
+                  if (!videoElement?.ended) {
+                    videoElement?.pause();
                   }
                   this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
                     fullSize: false,
                   }));
-                  // remove timeline 
+                  // remove timeline
                   this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
                     timeline: null,
                   }));
@@ -300,7 +302,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
         }
       );
 
-      // set instruction steps to clean-site, 
+      // set instruction steps to clean-site,
       // uncap-injector, and pre-loading for dosing
       this.slides.push(
         {
@@ -319,10 +321,10 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
             actions: [
               {
                 label: 'Previous step',
-                action: () => { 
+                action: () => {
                   // clear previous body part selection
                   this._store.dispatch(new fromStore.SetData({
-                    bodyPartSelected: null, 
+                    bodyPartSelected: null,
                   }));
 
                   this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
@@ -354,14 +356,14 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
             actions: [
               {
                 label: 'Previous step',
-                action: () => { 
+                action: () => {
                   this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-blue'));
                   this.sliderPage.slidePrev();
                 }
               },
               {
                 label: 'Next Step',
-                action: () => { 
+                action: () => {
                   this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-beige'));
                   this.sliderPage.slideNext();
                 }
@@ -504,7 +506,7 @@ export class StartDoseReadyToInjectPage implements OnInit, AfterViewInit {
             this.sliderPage.slideTo(9);
           }
           else {
-            this.sliderPage.slideNext();  
+            this.sliderPage.slideNext();
           }
         }
         else {

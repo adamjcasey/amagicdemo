@@ -1,8 +1,18 @@
 <div #videoWrapper class="start-dose-ready-to-inject-video">
-  <video 
-    #videoTag 
+  <video
+    *ngIf="!isDefaultVideoComponentFailed"
+    #videoTag
     id="start-dose-ready-to-inject-video"
-    src="/assets/videos/first-dose-video.mp4" 
-    playsinline
+    src="/assets/videos/first-dose-video.mp4"
+    controls
+    (error)="videoError($event)"
   ></video>
+
+  <div id="fullscreen" slot="primary"></div>
+  <div *ngIf="isDefaultVideoComponentFailed">
+    <div class="first-time-dose__video-indicator hotspot-element" (click)="restartTrainingVideo()">
+      <ion-icon src="/assets/icons/play.svg"></ion-icon>
+      <img src="assets/images/start-dose-first-time-dose.svg">
+    </div>
+  </div>
 </div>

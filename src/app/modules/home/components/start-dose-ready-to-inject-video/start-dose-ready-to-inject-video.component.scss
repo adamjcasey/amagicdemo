@@ -11,3 +11,33 @@
     object-fit: cover;
   }
 }
+
+#fullscreen {
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+
+  div {
+    height: 100vh !important;
+
+  }
+
+  video {
+    object-fit: contain;
+    height: 100vh !important;
+  }
+}
+
+.first-time-dose__video-indicator {
+  margin-top: 150px;
+  position: relative;
+
+  ion-icon {
+    position: absolute;
+    z-index: 50;
+    top: calc(50% - 40px);
+    left: calc(50% - 40px);
+    font-size: 80px;
+  }
+}
