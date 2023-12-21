@@ -16,7 +16,10 @@
       ? 'url(' + '/assets/images/backdrop-' + config.bgTemplate + '.svg' + ')'
       : null
     ">
-    <header class="backdrop__header" *ngIf="config.header">
+    <header class="backdrop__header"
+            *ngIf="config.header"
+            [automagicThreeFingerTap]="showDebugging"
+    >
       <div class="back-button" *ngIf="(config.showBackButton !== null && config.showBackButton) && backButton">
         <ion-button
           class="hotspot-element"
@@ -82,11 +85,6 @@
                 <ion-icon src="/assets/icons/time-loader.svg" slot="start" size="large"></ion-icon>
                 <ion-label>Restart the app</ion-label>
               </a>
-              <a class="link hotspot-element" (click)="goToSubmenu(4)">
-                <ion-icon name="construct-outline" slot="start" size="large" color="light"></ion-icon>
-                <ion-label>Debugging</ion-label>
-                <ion-icon name="chevron-forward-outline" slot="end" color="light"></ion-icon>
-              </a>
             </div>
           </ng-template>
 
@@ -116,6 +114,7 @@
                 }"
                 (click)="toggleDebuggingOptions('no-device-mode')"
                 fill="outline" expand="block" color="light">
+                  <ion-icon slot="start" src="/assets/icons/no-device.svg"></ion-icon>
                 Testing with No Device Mode
               </ion-button>
 
@@ -126,6 +125,7 @@
                 }"
                 (click)="toggleDebuggingOptions('oops-flow')"
                 fill="outline" expand="block" color="light">
+                  <ion-icon name="warning-outline" slot="start"></ion-icon>
                 Testing of Oops Flow
               </ion-button>
 
@@ -136,6 +136,7 @@
                 }"
                 (click)="toggleDebuggingOptions('battery-low')"
                 fill="outline" expand="block" color="light">
+                  <ion-icon slot="start" src="/assets/icons/battery_low_light.svg"></ion-icon>
                 Testing of Low Battery Flow
               </ion-button>
 
@@ -146,6 +147,7 @@
                 }"
                 (click)="toggleDebuggingOptions('device-debugging')"
                 fill="outline" expand="block" color="light">
+                  <ion-icon name="construct-outline" slot="start" color="light"></ion-icon>
                 Enable Device Debugging
               </ion-button>
             </div>
