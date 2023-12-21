@@ -187,6 +187,12 @@ export class BackdropComponent implements OnInit, AfterViewInit {
     }
   }
 
+    showDebugging = () => {
+        if (this.sliderMainMenu) {
+            this.sliderMainMenu?.swiperRef.slideTo(4);
+        }
+    }
+
   goBackToMenu(stepToGo?: number) {
     if (this.config.fullScreen) {
       this.animateFullScreenToDefault();
