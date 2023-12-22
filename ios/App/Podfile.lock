@@ -20,6 +20,8 @@ PODS:
     - Capacitor
   - CapacitorStatusBar (5.0.0):
     - Capacitor
+  - CapacitorVideoPlayer (5.5.1):
+    - Capacitor
   - PowerMode (5.0.0):
     - Capacitor
 
@@ -35,6 +37,7 @@ DEPENDENCIES:
   - CapacitorNativeSettings (from `../../node_modules/capacitor-native-settings`)
   - "CapacitorPushNotifications (from `../../node_modules/@capacitor/push-notifications`)"
   - "CapacitorStatusBar (from `../../node_modules/@capacitor/status-bar`)"
+  - CapacitorVideoPlayer (from `../../node_modules/capacitor-video-player`)
   - PowerMode (from `../../node_modules/power-mode`)
 
 EXTERNAL SOURCES:
@@ -60,6 +63,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor/push-notifications"
   CapacitorStatusBar:
     :path: "../../node_modules/@capacitor/status-bar"
+  CapacitorVideoPlayer:
+    :path: "../../node_modules/capacitor-video-player"
   PowerMode:
     :path: "../../node_modules/power-mode"
 
@@ -75,8 +80,9 @@ SPEC CHECKSUMS:
   CapacitorNativeSettings: 6e94ed3c0465206756f320df18efc52f053ce3c7
   CapacitorPushNotifications: 0566429afa72fe083a4142a58321f0ad83837096
   CapacitorStatusBar: 7ff77f2b22a52a93a140d1b2dede027bfb7d705f
+  CapacitorVideoPlayer: 2ac95a93f13d7cc6a10c9b2c5b9e655ef1d4c8b4
   PowerMode: f716309b2ac2e4520b3c98983616b074afdb33ee
 
-PODFILE CHECKSUM: 63f73a156706266d9652ee3a97f6e8282dc6eec6
+PODFILE CHECKSUM: ac1233214603a7ca606172defe961f4e8c7f077d
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.14.3
