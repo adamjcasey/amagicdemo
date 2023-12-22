@@ -32,7 +32,6 @@ export class StartDoseReadyToInjectVideoComponent implements OnInit, AfterViewIn
   private handlerEnded: any;
   private handlerExit: any;
   private handlerReady: any;
-  private videoProgress: number = 0;
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
@@ -75,7 +74,6 @@ export class StartDoseReadyToInjectVideoComponent implements OnInit, AfterViewIn
       percentage: percentageCompleted,
     }
 
-    this.videoProgress = currentTime;
     this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
       timeline: timeline,
     }));
@@ -84,7 +82,8 @@ export class StartDoseReadyToInjectVideoComponent implements OnInit, AfterViewIn
   private initVideoPlayerOnMainVideoComponentStuck() {
     const videoIsInitTimeout = 3000;
     setTimeout(() => {
-      if (this.videoProgress === 0 && !this.videoPlayer) {
+      const videoElement = this.videoTag.nativeElement;
+      if (videoElement.currentTime === 0 && !this.videoPlayer) {
         this.startBackupVideoPlayer();
       }
     }, videoIsInitTimeout)
