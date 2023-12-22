@@ -1,10 +1,10 @@
 import {
-  Component,
-  OnInit,
-  ViewChild,
-  ViewEncapsulation,
-  ViewContainerRef,
-  AfterViewInit
+    Component,
+    OnInit,
+    ViewChild,
+    ViewEncapsulation,
+    ViewContainerRef,
+    AfterViewInit,
 } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
@@ -38,6 +38,8 @@ export class BackdropComponent implements OnInit, AfterViewInit {
   public homeConfig: any;
   public backButton!: any;
   public initialized: boolean = false;
+  public isShowDebugging: boolean = false;
+  public isShowDebuggingStatus: boolean = false;
   public initialSlide: number = 0;
   public batteryLevel: number = 0;
   @ViewChild('sliderMainMenu', { static: false }) sliderMainMenu!: SwiperComponent;
@@ -118,6 +120,8 @@ export class BackdropComponent implements OnInit, AfterViewInit {
         if (this.layoutConfig.dosageDevice?.isConnected) {
           this.batteryLevel = this.layoutConfig.dosageDevice.battery;
         }
+
+        this.isShowDebuggingStatus = layoutConfig.noDeviceMode || layoutConfig.noDeviceModeOopsFlow || layoutConfig.noDeviceModeBatteryLowFlow || layoutConfig.debuggingDeviceMode;
       }
     });
 
@@ -155,8 +159,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
         this.backButton = {
           label: 'Back',
           action: () => {
-            this.sliderMainMenu.swiperRef.slideTo(0);
-            this.backButton = null;
+            this.goToSlideZero();
           }
         };
       }
@@ -169,8 +172,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
         this.backButton = {
           label: 'Back',
           action: () => {
-            this.sliderMainMenu.swiperRef.slideTo(0);
-            this.backButton = null;
+            this.goToSlideZero();
           }
         };
       }
@@ -189,6 +191,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
 
     showDebugging = () => {
         if (this.sliderMainMenu) {
+            this.isShowDebugging = true;
             this.sliderMainMenu?.swiperRef.slideTo(4);
         }
     }
@@ -215,6 +218,11 @@ export class BackdropComponent implements OnInit, AfterViewInit {
     if (stepToGo) {
       this.initialSlide = stepToGo;
     }
+  }
+
+  onBackToMenu(): void {
+      this.isShowDebugging = false;
+      this.goToSlideZero();
   }
 
   setGoBackMenuButton() {
@@ -464,5 +472,9 @@ export class BackdropComponent implements OnInit, AfterViewInit {
         this.contentComponent.createComponent(fromHomeComponents.DosingTryAgainComponent);
         break;
     }
+  }
+  private goToSlideZero(): void {
+    this.sliderMainMenu.swiperRef.slideTo(0);
+    this.backButton = null;
   }
 }
