@@ -37,7 +37,10 @@ export class LayoutPage implements OnInit, AfterContentInit {
   public homeConfig$: Observable<any>;
   public homeConfig: any;
   private _ngUnsubscribe: Subject<void> = new Subject<void>();
-  public minBatteryLevel: number = 5;
+  // disable of showing low power notification by setting unrealistic minimum level value
+  // and left dedicated logic and layout untouched to be able switch in on in future
+  // or remove it fully later after final testing of this major release
+  public minBatteryLevelDisabled: number = -1;
   public batteryLowMessageShowed: boolean = false;
   public deviceInfo: any;
   public lowPowerModeEnabled: boolean = false;
@@ -64,7 +67,7 @@ export class LayoutPage implements OnInit, AfterContentInit {
               const lastDateShown = moment(this.config.batteryLowAlertShownAt);
               if (lastDateShown.diff(moment(), 'minutes') >= 30) {
                 this._store.dispatch(new fromStore.SetBatteryLowAlertShownAt(null));
-                if (batteryLevel < this.minBatteryLevel) {
+                if (batteryLevel < this.minBatteryLevelDisabled) {
                   if (!this.backdropConfig.show) {
                     this.showBatterLowAlert();
                   }
@@ -72,7 +75,7 @@ export class LayoutPage implements OnInit, AfterContentInit {
               }
             }
             else {
-              if (batteryLevel < this.minBatteryLevel) {
+              if (batteryLevel < this.minBatteryLevelDisabled) {
                 if (!this.backdropConfig.show) {
                   this.showBatterLowAlert();
                 }
@@ -309,10 +312,10 @@ export class LayoutPage implements OnInit, AfterContentInit {
       `,
       onClose: async () => {
         this._store.dispatch(new fromStore.SetBatteryLowAlertShownAt(moment().toDate()));
-        if (this.config.noDeviceModeBatteryLowFlow) {
+        // if (this.config.noDeviceModeBatteryLowFlow) {
           this._store.dispatch(new fromStore.SetNoDeviceModeBatteryLowFlow(false));
           this._bluetoothService.setBattery(20);
-        }
+        // }
       }
     }));
   }
