@@ -39,6 +39,12 @@
       margin: 0 auto;
     }
 
+    .dosing-hold {
+      display: grid;
+      justify-items: center;
+    }
+
+    .hold,
     .digit {
       width: 80px;
       box-sizing: border-box;
@@ -50,6 +56,14 @@
       line-height: var(--font-line-height-display);
       font-weight: var(--font-weight-extra-light);
       text-align: center;
+    }
+
+    .hold {
+      width: 220px;
+
+      &.is-done {
+        border-color: var(--color-primary-green);
+      }
     }
 
     p {
@@ -98,7 +112,7 @@
           animation-fill-mode: forwards;
           animation-timing-function: linear;
         }
-  
+
         .dosing-box__indicator {
           animation-name: dosingAnimateIndicator;
           animation-duration: 10000ms;
@@ -106,13 +120,13 @@
           animation-timing-function: linear;
         }
       }
-  
+
       &.is-error-dosing {
         .dosing-box {
           &::before {
             animation-play-state: paused;
           }
-    
+
           .dosing-box__indicator {
             animation-play-state: paused;
           }

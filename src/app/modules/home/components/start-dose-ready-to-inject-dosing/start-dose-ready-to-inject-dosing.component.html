@@ -1,5 +1,5 @@
-<div 
-  class="start-dose-ready-to-inject__dosing" 
+<div
+  class="start-dose-ready-to-inject__dosing"
   [ngClass]="{
     'is-done': totalTime === 0,
     'is-dosing': startDosing,
@@ -13,6 +13,11 @@
         <div class="digit" [innerText]="totalTime < 10 ? '0' : '1'"></div>
         <div class="digit" [innerText]="totalTime < 10 ? totalTime : '0'"></div>
       </div>
+        <div class="dosing-hold" *ngIf="totalTime <= 0">
+            <div class="hold"
+                 [ngClass]="{ 'is-done': doseDone }"
+            >{{ doseStatus }}</div>
+        </div>
     </div>
     <p *ngIf="totalTime > 0">seconds</p>
   </div>
