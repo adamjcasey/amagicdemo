@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { BleClient } from '@capacitor-community/bluetooth-le';
+import { BleClient, ScanResult } from '@capacitor-community/bluetooth-le';
 import { Capacitor } from '@capacitor/core';
 import { App } from '@capacitor/app';
 import { Store } from '@ngrx/store';
@@ -13,9 +13,11 @@ import * as fromHomeStore from '@home/store';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as fromSharedStore from "@shared/store";
 import {filter} from "rxjs/internal/operators/filter";
+import { isNil, maxBy } from 'lodash';
 
 const AUTOMAGIC_SERVICE = 'EDFEC62E-9910-0BAC-5241-D8BDA6932A2F';
 const AUTOMAGIC_STATE_CHARACTERISTIC = '5A87B4EF-3BFA-76A8-E642-92933C31434F';
+const DEVICE_NAME = 'AutoMagic';
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +31,7 @@ export class BluetoothService {
   private isConnected_: boolean;
   private isScanning_: boolean;
   private interval_id_!: any;
+  private devices: ScanResult[] = [];
 
   // Stats from the device
   private state_!: number;
@@ -195,12 +198,7 @@ export class BluetoothService {
 
     if (Capacitor.isNativePlatform() && !this.layoutConfig.noDeviceMode) {
       try {
-        this.logger('scan: Start Scanning');
-        this.isScanning_ = true;
-        await BleClient.requestLEScan(
-          { allowDuplicates: true },
-          this.onDeviceDiscovered.bind(this)
-        );
+          await this.startScanning();
       }
       catch (error: any) {
         this.logger('scan: Error', `${error}`);
@@ -211,8 +209,8 @@ export class BluetoothService {
       // Not using an actual mobile device, therefore running on the browser
       // Mock this with fake found devices
       this.onDeviceDiscovered({
-        localName: "AutoMagic",
-        device: { name: "AutoMagic", deviceId: "cec50777-de5a-4884-a6a1-b247efa53231" },
+        localName: DEVICE_NAME,
+        device: { name: DEVICE_NAME, deviceId: "cec50777-de5a-4884-a6a1-b247efa53231" },
         rssi: -90
       });
     }
@@ -354,9 +352,8 @@ export class BluetoothService {
     this.logger(`onDeviceDiscovered`);
 
     if (
-      peripheral.localName == 'AutoMagic' ||
-      peripheral.device.name == 'AutoMagic' &&
-      peripheral.rssi > -60
+      peripheral.localName == DEVICE_NAME ||
+      peripheral.device.name == DEVICE_NAME
     ) {
       this.logger('onDeviceDiscovered: Device to Connect', `${peripheral.device.deviceId}`);
 
@@ -366,8 +363,6 @@ export class BluetoothService {
 
       if (Capacitor.isNativePlatform() && !this.layoutConfig.noDeviceMode) {
         try {
-          await BleClient.stopLEScan();
-          this.isScanning_ = false;
           await BleClient.connect(this.peripheral_.device.deviceId, () => this.handlerDisconnectDevice());
           this.isConnected_ = true;
           this.logger('onDeviceDiscovered: Device connected successsfully');
@@ -583,4 +578,40 @@ export class BluetoothService {
       }
     }
   }
+
+    private handleLEScan(scanResult: ScanResult): void {
+        if (scanResult.device?.name !== DEVICE_NAME) {
+            return;
+        }
+
+        if (!isNil(scanResult.rssi) && scanResult.rssi > -60) {
+            this.devices.push(scanResult);
+        }
+    }
+
+    private async finishScanning(): Promise<void> {
+        await BleClient.stopLEScan();
+        this.isScanning_ = false;
+        this.logger('scan: Finished Scanning');
+
+        const strongestDevice: ScanResult | undefined = maxBy(this.devices, 'rssi');
+        if (strongestDevice) {
+            await this.onDeviceDiscovered(strongestDevice);
+        } else if (!this.isConnected_) {
+            await this.startScanning();
+        }
+    }
+
+    public async startScanning(): Promise<void> {
+        this.logger('scan: Start Scanning');
+        this.isScanning_ = true;
+        this.devices = [];
+
+        await BleClient.requestLEScan(
+            { allowDuplicates: false },
+            this.handleLEScan.bind(this)
+        );
+
+        setTimeout(this.finishScanning.bind(this), 2000);
+    }
 }
