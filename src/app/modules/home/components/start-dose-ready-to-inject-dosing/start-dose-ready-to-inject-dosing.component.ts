@@ -1,8 +1,8 @@
-import { 
+import {
   AfterViewInit,
   Component,
   OnInit,
-  ViewEncapsulation, 
+  ViewEncapsulation,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, Subject, takeUntil } from 'rxjs';
@@ -21,6 +21,7 @@ import * as fromSharedServices from '@shared/services';
 })
 export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewInit {
   public title: string = 'Starting...';
+  public doseStatus: string = 'Hold...';
   public layoutConfig$!: Observable<any>;
   public layoutConfig: any;
   public homeConfig$!: Observable<any>;
@@ -95,6 +96,7 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
       if (dosingProcess) {
         this.doseDone = true;
         this.title = 'Full dose delivered!';
+        this.doseStatus = 'Done!';
         this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-lime'));
         this._store.dispatch(new fromSharedStore.SliderPageSetHeaderOptions({
           color: '--color-bg-pastel-lime',
@@ -102,8 +104,8 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
 
         const markedDoses = this.homeConfig.doses.filter((dose: any) => dose.marked);
         const unMarkedDoses = this.homeConfig.doses.filter((dose: any) => !dose.marked);
-        const currentDoseDate = unMarkedDoses.length > 0 
-          ? moment(unMarkedDoses[0].date) 
+        const currentDoseDate = unMarkedDoses.length > 0
+          ? moment(unMarkedDoses[0].date)
           : moment(markedDoses[markedDoses.length - 1].date).add(2, 'weeks');
 
         currentDoseDate.set('hour', moment().get('hour'));
@@ -206,7 +208,7 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
         //   if (startDosing) {
         //     this.totalTime += 1;
         //     this.startDose();
-        //     this.checkDosingProcess(true);    
+        //     this.checkDosingProcess(true);
         //   }
         // }
         // catch (error) {
