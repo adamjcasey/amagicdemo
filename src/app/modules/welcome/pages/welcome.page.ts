@@ -317,7 +317,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
           this._store.dispatch(new fromStore.SetData({
             notificationsAllowed: false,
           }));
-          throw new Error('User denied permissions!');
+            this.showDosesSelector();
         }
 
         if (permissionStatus.receive === 'granted') {
