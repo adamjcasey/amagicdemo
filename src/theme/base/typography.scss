@@ -1,4 +1,4 @@
-@import "mixins";
+@use "mixins";
 
 /** Fonts CSS Variables **/
 :root {
@@ -53,7 +53,7 @@
 
 h1,
 .font-heading-1 {
-  @include heading-1;
+  @include mixins.heading-1;
 
   &.font-heading-1--bold {
     font-weight: var(--font-weight-extrabold);
@@ -62,43 +62,43 @@ h1,
 
 h2,
 .font-heading-2 {
-  @include heading-2;
+  @include mixins.heading-2;
 }
 
 h3,
 .font-heading-3 {
-  @include heading-3;
+  @include mixins.heading-3;
 }
 
 h4,
 .font-heading-4 {
-  @include heading-4;
+  @include mixins.heading-4;
 }
 
 h5,
 .font-heading-5 {
-  @include heading-5;
+  @include mixins.heading-5;
 }
 
 .font-paragraph-xl {
-  @include paragraph-xl;
+  @include mixins.paragraph-xl;
 }
 
 .font-paragraph-l {
-  @include paragraph-l;
+  @include mixins.paragraph-l;
 }
 
 p,
 ul li,
 a,
 .font-paragraph-m {
-  @include paragraph-m;
+  @include mixins.paragraph-m;
 }
 
 .font-paragraph-s {
-  @include paragraph-s;
+  @include mixins.paragraph-s;
 }
 
 .font-paragraph-xs {
-  @include paragraph-xs;
+  @include mixins.paragraph-xs;
 }

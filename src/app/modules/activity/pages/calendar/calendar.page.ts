@@ -1,15 +1,27 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, Subject, takeUntil } from 'rxjs';
 
 import * as fromStore from '@activity/store';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SliderPageComponent } from '@app/shared/components';
 import * as fromCoreStore from '@core/store';
 import * as fromHomeStore from '@home/store';
+import { IonContent } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'automagic-calendar',
   templateUrl: 'calendar.page.html',
   styleUrls: ['calendar.page.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    IonContent,
+    SliderPageComponent,
+  ],
 })
 export class CalendarPage implements OnInit, OnDestroy {
   public activityConfig$!: Observable<any>;
@@ -19,9 +31,7 @@ export class CalendarPage implements OnInit, OnDestroy {
   private _ngUnsubscribe: Subject<void> = new Subject<void>();
   public slides: any[];
 
-  constructor(
-    private _store: Store<fromCoreStore.CoreState>,
-  ) {
+  constructor(private _store: Store<fromCoreStore.CoreState>) {
     this.activityConfig$ = this._store.select(fromStore.getActivityConfig);
     this.homeConfig$ = this._store.select(fromHomeStore.getHomeConfig);
     this.slides = [
@@ -40,7 +50,7 @@ export class CalendarPage implements OnInit, OnDestroy {
   ngOnInit() {
     this.homeConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(homeConfig => {
+      .subscribe((homeConfig) => {
         if (homeConfig) {
           this.homeConfig = homeConfig;
         }
@@ -48,19 +58,23 @@ export class CalendarPage implements OnInit, OnDestroy {
 
     this.activityConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(activityConfig => {
+      .subscribe((activityConfig) => {
         if (activityConfig) {
           this.activityConfig = activityConfig;
           if (!this.activityConfig.calendarPageVisited && this.homeConfig) {
-            const onBoardingTasks = this.homeConfig.onBoardingTasks.map((task: any, index: number) => {
-              return {
-                ...task,
+            const onBoardingTasks = this.homeConfig.onBoardingTasks.map(
+              (task: any, index: number) => {
+                return {
+                  ...task,
+                };
               }
-            });
+            );
             onBoardingTasks[0].completed = true;
-            this._store.dispatch(new fromHomeStore.SetData({
-              onBoardingTasks: onBoardingTasks,
-            }));
+            this._store.dispatch(
+              new fromHomeStore.SetData({
+                onBoardingTasks: onBoardingTasks,
+              })
+            );
           }
         }
       });

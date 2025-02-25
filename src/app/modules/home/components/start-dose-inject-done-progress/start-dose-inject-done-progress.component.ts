@@ -1,45 +1,51 @@
-import { 
+import {
   AfterViewInit,
   Component,
   OnInit,
-  ViewEncapsulation, 
+  ViewEncapsulation,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
 import { cloneDeep } from 'lodash';
+import { Observable } from 'rxjs';
 
-import * as fromStore from '@home/store';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import * as fromCoreStore from '@core/store';
+import * as fromStore from '@home/store';
+import { IonImg } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'automagic-start-dose-inject-done-progress',
   templateUrl: 'start-dose-inject-done-progress.component.html',
   styleUrls: ['start-dose-inject-done-progress.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, IonImg],
 })
-export class StartDoseInjectDoneProgressComponent implements OnInit, AfterViewInit {
+export class StartDoseInjectDoneProgressComponent
+  implements OnInit, AfterViewInit
+{
   public title: string = 'Verifying...';
   public homeConfig$!: Observable<any>;
   public homeConfig: any;
   public doseMarked: boolean = false;
 
-  constructor(
-    private _store: Store<fromCoreStore.CoreState>,
-  ) {
+  constructor(private _store: Store<fromCoreStore.CoreState>) {
     this.homeConfig$ = this._store.select(fromStore.getHomeConfig);
   }
 
   ngOnInit() {
-    this.homeConfig$.subscribe(homeConfig => {
+    this.homeConfig$.subscribe((homeConfig) => {
       if (homeConfig) {
         this.homeConfig = homeConfig;
 
         // if this is the first dose
         if (this.homeConfig.firstTimeDose) {
           this.title = 'First dose done!';
-        }
-        else {
-          const markedDoses = this.homeConfig?.doses.filter((dose: any) => dose.marked);
+        } else {
+          const markedDoses = this.homeConfig?.doses.filter(
+            (dose: any) => dose.marked
+          );
           this.title = `${markedDoses.length} doses done`;
         }
       }
@@ -59,19 +65,21 @@ export class StartDoseInjectDoneProgressComponent implements OnInit, AfterViewIn
       doses[0].marked = true;
       doses[0].date = new Date();
       doses[0].bodyPartInjected = this.homeConfig.bodyPartSelected;
-    }
-    else {
-      const markedDoses = this.homeConfig?.doses.filter((dose: any) => dose.marked);
+    } else {
+      const markedDoses = this.homeConfig?.doses.filter(
+        (dose: any) => dose.marked
+      );
       const index = Math.min(markedDoses.length, doses.length - 1);
 
       doses[index].marked = true;
       doses[index].bodyPartInjected = this.homeConfig.bodyPartSelected;
-
     }
 
     this.doseMarked = true;
-    this._store.dispatch(new fromStore.SetData({
-      doses: doses,
-    }));
+    this._store.dispatch(
+      new fromStore.SetData({
+        doses: doses,
+      })
+    );
   }
 }

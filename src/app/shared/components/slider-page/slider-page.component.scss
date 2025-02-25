@@ -23,12 +23,12 @@
     transition-duration: 500ms;
     transition-timing-function: ease-in-out;
 
-    swiper {
+    swiper-container {
       .swiper-wrapper {
         max-height: calc(100vh - var(--topbar-size));
       }
 
-      .swiper-slide {
+      swiper-slide {
         &:not(.swiper-slide-active) {
           opacity: 0 !important;
           pointer-events: none;
@@ -92,7 +92,7 @@
     }
 
     &.has-template {
-      swiper {
+      swiper-container {
         height: 100%;
       }
     }
@@ -106,7 +106,7 @@
 
         .wrapper-small__slide {
           grid-template-rows: auto;
-          
+
           .content-wrapper {
             display: none;
           }
@@ -127,10 +127,7 @@
     box-shadow: 0px 0px 16px rgba(0, 0, 0, 0.1);
     border-radius: 16px 16px 0px 0px;
     background-color: var(--color-white);
-
-    &.has-template {
-      height: 45vh;
-    }
+    overflow: hidden;
 
     .wrapper-small {
       position: relative;
@@ -138,23 +135,24 @@
       grid-template-rows: max-content auto;
       gap: var(--size-xxxxs);
       height: 100%;
+      // transition: opacity 0.3s ease-in-out;
 
       .wrapper-small__navigation {
         grid-row: 1;
         padding-top: var(--size-l);
-  
+
         &.visibility-hidden {
           display: none;
         }
-  
+
         .swiper-pagination {
           position: relative;
-  
+
           .swiper-pagination-bullet {
             &:first-child {
               display: none;
             }
-  
+
             &-active {
               background: var(--color-primary-dark-blue);
             }
@@ -216,8 +214,8 @@
           text-align: right;
         }
       }
-  
-      swiper {
+
+      swiper-container {
         grid-row: 2;
 
         .wrapper-small__slide {
@@ -229,7 +227,7 @@
           box-sizing: border-box;
           text-align: center;
           overflow-y: scroll;
-    
+
           &:not(.swiper-slide-active) {
             opacity: 0 !important;
             pointer-events: none;
@@ -246,29 +244,29 @@
             justify-content: center;
             min-height: 48px;
           }
-    
+
           .template-wrapper {
             h1 {
               margin-bottom: 24px;
             }
-        
+
             h3 {
               margin-bottom: 4px;
             }
-        
+
             p {
               margin-bottom: 16px;
-        
+
               &:last-child {
                 margin-bottom: 0;
               }
             }
           }
-    
+
           .cards-wrapper {
             automagic-card {
               margin-bottom: var(--size-xs);
-    
+
               &:last-child {
                 margin-bottom: 0;
               }
@@ -282,14 +280,17 @@
       position: absolute;
       top: 0;
       left: 0;
+      width: 100%;
+      height: 100%;
       display: grid;
       grid-template-rows: auto max-content;
       gap: var(--size-xxs);
-      width: 100%;
-      height: 100%;
       padding-top: var(--size-l);
       opacity: 0;
       pointer-events: none;
+      box-sizing: border-box;
+      // transform: translateX(100%);
+      // transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
 
       .wrapper-large__content {
         grid-row: 1;
@@ -304,7 +305,7 @@
           color: var(--color-black);
           text-align: center;
         }
-  
+
         .wrapper-large__component {
           grid-row: 2;
         }
@@ -337,20 +338,21 @@
 
     &.is-expanded {
       .wrapper-small {
+        opacity: 0;
         pointer-events: none;
       }
 
       .wrapper-large {
         z-index: 50;
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateX(0);
         padding-top: var(--topbar-size);
-        pointer-events: initial;
-
-        > * {
-          top: 0;
-          opacity: 1;
-          transition-timing-function: ease-in;
-        }
       }
+    }
+
+    &.has-template {
+      height: 45vh;
     }
   }
 
@@ -358,7 +360,7 @@
     .slider-page__header {
       padding-top: 0;
 
-      swiper {
+      swiper-container {
         height: 100%;
 
         .swiper-wrapper {
@@ -383,7 +385,7 @@
 
     .slider-page__content {
       height: 100vh;
-      
+
       .wrapper-small {
         opacity: 0;
       }
@@ -414,7 +416,7 @@
         .asset-wrapper img {
           max-width: 320px;
         }
-      }      
+      }
     }
   }
   &.is-iphone-13,
@@ -424,7 +426,7 @@
         .asset-wrapper img {
           max-width: 340px;
         }
-      }      
+      }
     }
   }
 }

@@ -1,18 +1,30 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
+import moment from 'moment';
 import { Observable, Subject, takeUntil } from 'rxjs';
-import * as moment from 'moment';
 
 import * as fromStore from '@activity/store';
-import * as fromHomeStore from '@home/store';
-import * as fromSharedStore from '@shared/store';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AccordionComponent } from '@app/shared/components';
 import * as fromCoreStore from '@core/store';
+import * as fromHomeStore from '@home/store';
+import { IonContent } from '@ionic/angular/standalone';
 import * as fromSharedServices from '@shared/services';
+import * as fromSharedStore from '@shared/store';
 
 @Component({
   selector: 'automagic-activity',
   templateUrl: 'activity.page.html',
   styleUrls: ['activity.page.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    AccordionComponent,
+    IonContent,
+  ],
 })
 export class ActivityPage implements OnInit, OnDestroy {
   public homeConfig$!: Observable<any>;
@@ -44,7 +56,7 @@ export class ActivityPage implements OnInit, OnDestroy {
         `,
         onClick: () => {
           this.goTo('activity/calendar');
-        }
+        },
       },
       {
         type: 'dose-report',
@@ -57,7 +69,7 @@ export class ActivityPage implements OnInit, OnDestroy {
         `,
         onClick: () => {
           this.goTo('activity/dose-report');
-        }
+        },
       },
       {
         tabColor: '--color-bg-pastel-honey-yellow',
@@ -65,15 +77,15 @@ export class ActivityPage implements OnInit, OnDestroy {
         asset: '/assets/images/activity-highlights-your-progress.svg',
         onClick: () => {
           this.goTo('activity/your-progress');
-        }
+        },
       },
       {
         tabColor: '--color-bg-pastel-tiffany-blue',
         title: 'Symptom Report',
         onClick: () => {
           this.goTo('activity/symptom-report');
-        }
-      }
+        },
+      },
     ];
   }
 
@@ -81,24 +93,29 @@ export class ActivityPage implements OnInit, OnDestroy {
     this._store.dispatch(new fromSharedStore.SliderPageClear());
     this.activityConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(activityConfig => {
+      .subscribe((activityConfig) => {
         if (activityConfig) {
           if (activityConfig.symptomReports) {
-            const lastReport = activityConfig.symptomReports[activityConfig.symptomReports.length - 1];
+            const lastReport =
+              activityConfig.symptomReports[
+                activityConfig.symptomReports.length - 1
+              ];
             this.widgets[3].template = `
               <div class="symptom-report-widget">
                 <h4>
-                  ${moment(lastReport.date).format('MMM D')}, 
+                  ${moment(lastReport.date).format('MMM D')},
                   <span>${moment(lastReport.date).format('H:mm A')}</span>
                 </h4>
                 <div class="row-field symptoms">
                   <h5>Symptoms</h5>
                   <p>${lastReport.symptoms.join(', ')}</p>
                 </div>
-  
+
                 <div class="row-field severity">
                   <h5>Severity</h5>
-                  <p class="level-${lastReport.severity}">${this.humanizeSeveritySymptom(lastReport.severity)}</p>
+                  <p class="level-${
+                    lastReport.severity
+                  }">${this.humanizeSeveritySymptom(lastReport.severity)}</p>
                 </div>
               </div>
             `;
@@ -108,11 +125,13 @@ export class ActivityPage implements OnInit, OnDestroy {
 
     this.homeConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(homeConfig => {
+      .subscribe((homeConfig) => {
         if (homeConfig) {
           this.homeConfig = homeConfig;
           if (this.homeConfig.doses) {
-            const doseDates = this.homeConfig.doses.map((dose: any) => dose.date );
+            const doseDates = this.homeConfig.doses.map(
+              (dose: any) => dose.date
+            );
             this.widgets[0].component = {
               type: 'datepicker',
               multiple: true,
@@ -123,13 +142,21 @@ export class ActivityPage implements OnInit, OnDestroy {
             };
 
             // getting last marked dose for Dose report widget
-            if (!this.homeConfig.firstTimeDose) { 
-              const markedDoses = this.homeConfig?.doses.filter((dose: any) => dose.marked);
+            if (!this.homeConfig.firstTimeDose) {
+              const markedDoses = this.homeConfig?.doses.filter(
+                (dose: any) => dose.marked
+              );
               const lastMarkedDose = markedDoses[markedDoses.length - 1];
               this.widgets[1].numberDose = markedDoses.length;
-              this.widgets[1].time = moment(lastMarkedDose.date).format('MMM D, H:mm A');
-              this.widgets[1].asset = `assets/images/activity-highlights-dose-report-${lastMarkedDose.bodyPartInjected.toLowerCase().replace(' ', '-')}.svg`;
-              this.widgets[1].description = `This time you injected your <strong>${this._utils.humanizeBodyPartInjected(lastMarkedDose.bodyPartInjected)}<strong>`
+              this.widgets[1].time = moment(lastMarkedDose.date).format(
+                'MMM D, H:mm A'
+              );
+              this.widgets[1].asset = `assets/images/activity-highlights-dose-report-${lastMarkedDose.bodyPartInjected
+                .toLowerCase()
+                .replace(' ', '-')}.svg`;
+              this.widgets[1].description = `This time you injected your <strong>${this._utils.humanizeBodyPartInjected(
+                lastMarkedDose.bodyPartInjected
+              )}<strong>`;
             }
           }
         }
@@ -146,8 +173,10 @@ export class ActivityPage implements OnInit, OnDestroy {
   }
 
   goTo(path: string) {
-    this._store.dispatch(new fromCoreStore.Go({
-      path: [path]
-    }));
+    this._store.dispatch(
+      new fromCoreStore.Go({
+        path: [path],
+      })
+    );
   }
 }

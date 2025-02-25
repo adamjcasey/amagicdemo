@@ -1,5 +1,5 @@
+import moment from 'moment';
 import { environment } from 'src/environments/environment';
-import * as moment from 'moment';
 
 export interface ActivityState {
   calendarPageVisited: boolean;
@@ -20,9 +20,8 @@ if (environment.production) {
     yourProgressPageVisited: false,
     symptomReportPageVisited: false,
     symptomReports: [],
-  }
-}
-else {
+  };
+} else {
   initialState = {
     calendarPageVisited: false,
     doseReportsPageVisited: false,
@@ -76,9 +75,9 @@ else {
         energyLevels: 3,
         sleepQuality: 3,
         notes: 'Custom Notes',
-      }
+      },
     ],
-  }
+  };
 }
 
-export { initialState }
+export { initialState };

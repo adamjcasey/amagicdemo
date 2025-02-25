@@ -4,10 +4,10 @@ import { NotificationsPage } from './notifications/notifications.page';
 import { AddSymptomPage } from './add-symptom/add-symptom.page';
 
 export const pages: any[] = [
-  LayoutPage,
+  // LayoutPage,
   ErrorPage,
   NotificationsPage,
-  AddSymptomPage
+  AddSymptomPage,
 ];
 
 export * from './layout/layout.page';

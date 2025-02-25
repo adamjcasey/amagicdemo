@@ -1,12 +1,14 @@
-import { 
-  Component, 
-  Output, 
-  EventEmitter, 
-  ViewEncapsulation, 
+import { CommonModule } from '@angular/common';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
   Input,
+  Output,
   ViewChild,
-  ElementRef
+  ViewEncapsulation,
 } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Capacitor } from '@capacitor/core';
 import { Keyboard } from '@capacitor/keyboard';
 import { animate, spring } from 'motion';
@@ -15,7 +17,9 @@ import { animate, spring } from 'motion';
   selector: 'automagic-pin-input',
   templateUrl: 'pin-input.component.html',
   styleUrls: ['pin-input.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
 })
 export class PinInputComponent {
   @Output() onChange = new EventEmitter<any>();
@@ -30,40 +34,46 @@ export class PinInputComponent {
 
   constructor() {
     if (Capacitor.isNativePlatform()) {
-      Keyboard.addListener('keyboardWillShow', info => {
+      Keyboard.addListener('keyboardWillShow', (info) => {
         const inputPosition = this.digit1.nativeElement.getBoundingClientRect();
         const positionY = inputPosition.top + inputPosition.height;
         const remainingScreenSpace = window.innerHeight - info.keyboardHeight;
         if (positionY > remainingScreenSpace) {
           animate(
             `#backdrop`,
-            { 
-              y: `-${(positionY - remainingScreenSpace) + 30}px`,
-              height: `${window.innerHeight + ((positionY - remainingScreenSpace) + 30)}px`,
+            {
+              y: `-${positionY - remainingScreenSpace + 30}px`,
+              height: `${
+                window.innerHeight + (positionY - remainingScreenSpace + 30)
+              }px`,
             },
-            { easing: spring({
+            {
+              easing: spring({
+                stiffness: 80,
+                damping: 20,
+                mass: 1,
+                velocity: 800,
+              }),
+            }
+          );
+        }
+      });
+
+      Keyboard.addListener('keyboardWillHide', () => {
+        animate(
+          `#backdrop`,
+          {
+            y: `0px`,
+            height: `${window.innerHeight}px`,
+          },
+          {
+            easing: spring({
               stiffness: 80,
               damping: 20,
               mass: 1,
               velocity: 800,
-            }) }
-          );
-        }
-      });
-  
-      Keyboard.addListener('keyboardWillHide', () => {
-        animate(
-          `#backdrop`,
-          { 
-            y: `0px`,
-            height: `${window.innerHeight}px`,
-          },
-          { easing: spring({
-            stiffness: 80,
-            damping: 20,
-            mass: 1,
-            velocity: 800,
-          }) }
+            }),
+          }
         );
       });
     }
@@ -92,21 +102,18 @@ export class PinInputComponent {
     if (event.code === 'Backspace') {
       if (previousDigit) {
         // if (previousDigit.value === '') {
-          previousDigit?.removeAttribute('disabled');
-          previousDigit?.focus();
+        previousDigit?.removeAttribute('disabled');
+        previousDigit?.focus();
         // }
       }
-    }
-    else if (event.code === 'Enter') {
+    } else if (event.code === 'Enter') {
       const nextDigit = currentDigit.nextSibling;
       if (nextDigit) {
         nextDigit.focus();
-      }
-      else {
+      } else {
         this.validateValue(true);
       }
-    }
-    else {
+    } else {
       if (currentDigit.value !== '') {
         nextDigit?.removeAttribute('disabled');
         nextDigit?.focus();
@@ -123,8 +130,7 @@ export class PinInputComponent {
         if (!this.allowedCodes.includes(this.value)) {
           this.error = 'Invalid digital code';
           this.onError.emit(true);
-        }
-        else {
+        } else {
           this.error = null;
           this.onError.emit(false);
           this.onChange.emit({
@@ -132,8 +138,7 @@ export class PinInputComponent {
             submit: submit,
           });
         }
-      }
-      else {
+      } else {
         this.error = null;
         this.onError.emit(false);
       }

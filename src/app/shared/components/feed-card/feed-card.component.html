@@ -21,10 +21,7 @@
       <ion-img *ngIf="config.asset" class="feed-card__asset" [src]="config.asset"></ion-img>
     </ng-container>
 
-    <div class="feed-card__template" 
-      *ngIf="config.template" 
-      [innerHTML]="sanitizeContent(config.template)"
-    ></div>
+    <div class="feed-card__template" *ngIf="config.template" [innerHTML]="sanitizeContent(config.template)"></div>
 
     <div class="feed-card__actions">
       <ng-container *ngIf="config.type === 'post'">

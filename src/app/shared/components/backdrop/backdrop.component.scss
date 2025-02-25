@@ -297,7 +297,7 @@
       display: flex;
       color: var(--color-white);
 
-      swiper {
+      swiper-container {
         .swiper-slide {
           text-align: center;
 
@@ -313,7 +313,7 @@
       padding-right: var(--size-xxl);
       padding-left: var(--size-xxl);
 
-      swiper {
+      swiper-container {
         .swiper-slide {
           .battery-indicator {
             position: relative;
@@ -638,8 +638,8 @@
       text-align: center;
       overflow-x: hidden;
 
-      swiper {
-        .swiper-slide {
+      swiper-container {
+        swiper-slide {
           max-width: 100vw;
           text-align: center;
 

@@ -1,14 +1,34 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, Subject, takeUntil } from 'rxjs';
 
-import * as fromStore from '@settings/store';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CardComponent } from '@app/shared/components';
 import * as fromCoreStore from '@core/store';
+import {
+  IonContent,
+  IonIcon,
+  IonImg,
+  IonToggle,
+} from '@ionic/angular/standalone';
+import * as fromStore from '@settings/store';
 
 @Component({
   selector: 'automagic-settings',
   templateUrl: 'settings.page.html',
   styleUrls: ['settings.page.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    CardComponent,
+    IonContent,
+    IonImg,
+    IonIcon,
+    IonToggle,
+  ],
 })
 export class SettingsPage implements OnInit, OnDestroy {
   public settingsConfig$!: Observable<any>;
@@ -16,9 +36,7 @@ export class SettingsPage implements OnInit, OnDestroy {
   private _ngUnsubscribe: Subject<void> = new Subject<void>();
   public card: any;
 
-  constructor(
-    private _store: Store<fromCoreStore.CoreState>,
-  ) {
+  constructor(private _store: Store<fromCoreStore.CoreState>) {
     this.settingsConfig$ = this._store.select(fromStore.getSettingsConfig);
     this.card = {
       asset: '/assets/images/settings-start-setup-reminders.svg',
@@ -29,15 +47,15 @@ export class SettingsPage implements OnInit, OnDestroy {
         cssClasses: 'hotspot-element',
         action: () => {
           this.goTo('settings/setup-reminders');
-        }
+        },
       },
-    }
+    };
   }
 
   ngOnInit() {
     this.settingsConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(settingsConfig => {
+      .subscribe((settingsConfig) => {
         if (settingsConfig) {
           this.settingsConfig = settingsConfig;
         }
@@ -50,46 +68,50 @@ export class SettingsPage implements OnInit, OnDestroy {
   }
 
   saveSettings(event: any, parent: string, value: string) {
-    switch(parent) {
+    switch (parent) {
       case 'notifications':
         const notifications = [...this.settingsConfig.notifications];
         if (event.detail.checked) {
           notifications.push(value);
-        }
-        else {
+        } else {
           const indexToDelete = notifications.findIndex((notification: any) => {
             return notification === value;
           });
           notifications.splice(indexToDelete, 1);
         }
-        
-        this._store.dispatch(new fromStore.SetData({
-          notifications: notifications,
-        }));
+
+        this._store.dispatch(
+          new fromStore.SetData({
+            notifications: notifications,
+          })
+        );
         break;
 
       case 'integrations':
         const integrations = [...this.settingsConfig.integrations];
         if (event.detail.checked) {
           integrations.push(value);
-        }
-        else {
+        } else {
           const indexToDelete = integrations.findIndex((notification: any) => {
             return notification === value;
           });
           integrations.splice(indexToDelete, 1);
         }
 
-        this._store.dispatch(new fromStore.SetData({
-          integrations: integrations,
-        }));
+        this._store.dispatch(
+          new fromStore.SetData({
+            integrations: integrations,
+          })
+        );
         break;
     }
   }
 
   goTo(path: string) {
-    this._store.dispatch(new fromCoreStore.Go({
-      path: [path]
-    }));
+    this._store.dispatch(
+      new fromCoreStore.Go({
+        path: [path],
+      })
+    );
   }
 }

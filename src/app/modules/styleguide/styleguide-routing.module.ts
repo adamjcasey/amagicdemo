@@ -3,19 +3,19 @@ import { RouterModule, Routes } from '@angular/router';
 
 import * as fromPages from './pages';
 
-const routes: Routes = [
+export const routes: Routes = [
   {
     path: '',
-    component: fromPages.StyleguidePage
+    component: fromPages.StyleguidePage,
   },
   {
     path: 'components',
-    component: fromPages.ComponentsPage
+    component: fromPages.ComponentsPage,
   },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
 export class StyleguideRoutingModule {}

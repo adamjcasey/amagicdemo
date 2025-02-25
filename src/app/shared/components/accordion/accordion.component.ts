@@ -1,22 +1,33 @@
-import { 
-  Component, 
-  Input, 
-  ViewEncapsulation, 
-} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, Input, ViewEncapsulation } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { IonIcon, IonImg } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { checkmarkCircle, chevronForward } from 'ionicons/icons';
+import { DatepickerComponent } from '../datepicker/datepicker.component';
 
 @Component({
   selector: 'automagic-accordion',
   templateUrl: 'accordion.component.html',
   styleUrls: ['accordion.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    DatepickerComponent,
+    IonIcon,
+    IonImg,
+  ],
 })
 export class AccordionComponent {
   @Input() config: any;
 
-  constructor(
-    private _sanitizer: DomSanitizer,
-  ) {}
+  constructor(private _sanitizer: DomSanitizer) {
+    addIcons({ checkmarkCircle, chevronForward });
+  }
 
   // if the toggle behavior (hide/expand) as an accordion is required
   // this could be used for that

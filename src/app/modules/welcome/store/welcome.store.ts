@@ -1,5 +1,3 @@
-import * as moment from 'moment';
-
 import { environment } from 'src/environments/environment';
 
 export interface WelcomeState {
@@ -17,15 +15,14 @@ if (environment.production) {
     doses: [],
     bleAllowed: false,
     notificationsAllowed: false,
-  }
-}
-else {
+  };
+} else {
   initialState = {
     name: 'Developer',
     doses: [],
     bleAllowed: false,
     notificationsAllowed: false,
-  }
+  };
 }
 
 export { initialState };

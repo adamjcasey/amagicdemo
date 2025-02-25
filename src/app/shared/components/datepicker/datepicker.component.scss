@@ -29,11 +29,11 @@
 
   .month {
     width: 100%;
-  
+
     &:nth-child(n+2) {
       margin-top: var(--size-m);
     }
-  
+
     .month__title {
       td {
         @include heading-5;
@@ -53,7 +53,7 @@
         }
       }
     }
-  
+
     .month__weekdays,
     .month__week {
       td {
@@ -61,7 +61,7 @@
         text-align: center;
       }
     }
-  
+
     .month__weekdays {
       td {
         padding-top: var(--size-xs);
@@ -69,7 +69,7 @@
         color: var(--color-gray-medium);
       }
     }
-    
+
     .month__week {
       td {
         padding-top: calc(var(--size-xxxxs) / 2);
@@ -83,7 +83,7 @@
           line-height: 38px;
           text-align: center;
         }
-  
+
         &.is-today,
         &.is-selected {
           font-weight: var(--font-weight-bold);
@@ -100,7 +100,7 @@
             background-color: var(--color-bg-pastel-purple);
           }
         }
-  
+
         &.is-today {
           color: var(--color-white);
 
@@ -121,7 +121,7 @@
       }
     }
   }
-  
+
   &.is-continuous {
     &.max-view-1 {
       .month {

@@ -1,21 +1,42 @@
+import { CommonModule } from '@angular/common';
 import {
   Component,
-  ViewEncapsulation,
-  Input,
-  Output,
-  EventEmitter,
-  ViewChild,
   ElementRef,
-  OnInit
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+  ViewEncapsulation,
 } from '@angular/core';
-import { IonModal } from '@ionic/angular';
-import * as moment from 'moment';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { EllipsisPipe } from '@app/shared/pipes';
+import {
+  IonButton,
+  IonIcon,
+  IonInput,
+  IonModal,
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { chevronBack, chevronForward } from 'ionicons/icons';
+import moment from 'moment';
 
 @Component({
   selector: 'automagic-datepicker',
   templateUrl: 'datepicker.component.html',
   styleUrls: ['datepicker.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    EllipsisPipe,
+    IonInput,
+    IonIcon,
+    IonModal,
+    IonButton,
+  ],
 })
 export class DatepickerComponent implements OnInit {
   @Input() labelInput?: string;
@@ -31,13 +52,26 @@ export class DatepickerComponent implements OnInit {
   @ViewChild('datePickerList') datePickerList!: ElementRef;
   @ViewChild('modal') modal!: IonModal;
   public months: any[] = []; // Array to hold the months data
-  public weekdays: string[] = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']; // Array to hold the weekdays data
+  public weekdays: string[] = [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+  ]; // Array to hold the weekdays data
   public isFirstMonth: boolean = true;
   public isLastMonth: boolean = false;
   public idDatePicker?: number;
   public monthsToGenerate: number = 2;
 
-  constructor() {}
+  constructor() {
+    addIcons({
+      chevronBack,
+      chevronForward,
+    });
+  }
 
   ngOnInit(): void {
     this.months = this.generateMonths();
@@ -49,11 +83,11 @@ export class DatepickerComponent implements OnInit {
       const lastDate = this.selectedDates[this.selectedDates.length - 1];
       const lastMonthToGenerate = lastDate.getMonth();
       const currentMonth = new Date().getMonth();
-        if (currentMonth <= lastMonthToGenerate) {
-            this.monthsToGenerate = lastMonthToGenerate - currentMonth + 1;
-        } else {
-            this.monthsToGenerate = 12 - currentMonth + lastMonthToGenerate + 1;
-        }
+      if (currentMonth <= lastMonthToGenerate) {
+        this.monthsToGenerate = lastMonthToGenerate - currentMonth + 1;
+      } else {
+        this.monthsToGenerate = 12 - currentMonth + lastMonthToGenerate + 1;
+      }
     }
 
     const currentDate = new Date();
@@ -92,9 +126,11 @@ export class DatepickerComponent implements OnInit {
       // Check if the current date is today's date
       const isToday = currentDate.toDateString() === today.toDateString();
       const isSelected = this.selectedDates?.filter((date: any) => {
-        return moment(date).isSame(currentDate, 'year') &&
+        return (
+          moment(date).isSame(currentDate, 'year') &&
           moment(date).isSame(currentDate, 'month') &&
-          moment(date).isSame(currentDate, 'day');
+          moment(date).isSame(currentDate, 'day')
+        );
       }).length;
 
       week.push({
@@ -124,7 +160,9 @@ export class DatepickerComponent implements OnInit {
       const dateSelected = new Date(`${month} ${day} ${year}`);
       if (event.target.classList.contains('is-selected')) {
         if (this.multiple) {
-          const index = selectedDates.findIndex((date) => date.getTime() === dateSelected.getTime());
+          const index = selectedDates.findIndex(
+            (date) => date.getTime() === dateSelected.getTime()
+          );
           if (index > -1) {
             selectedDates.splice(index, 1);
           }
@@ -132,27 +170,25 @@ export class DatepickerComponent implements OnInit {
 
         if (event.target.tagName === 'SPAN') {
           event.target.parentElement.classList.remove('is-selected');
-        }
-        else {
+        } else {
           event.target.classList.remove('is-selected');
         }
-      }
-      else {
+      } else {
         if (this.multiple) {
           selectedDates.push(dateSelected);
-        }
-        else {
-          this.datePickerList.nativeElement.querySelectorAll('.month__week td').forEach((day: HTMLElement) => {
-            if (day.classList.contains('is-selected')) {
-              day.classList.remove('is-selected');
-            }
-          });
+        } else {
+          this.datePickerList.nativeElement
+            .querySelectorAll('.month__week td')
+            .forEach((day: HTMLElement) => {
+              if (day.classList.contains('is-selected')) {
+                day.classList.remove('is-selected');
+              }
+            });
         }
 
         if (event.target.tagName === 'SPAN') {
           event.target.parentElement.classList.add('is-selected');
-        }
-        else {
+        } else {
           event.target.classList.add('is-selected');
         }
       }
@@ -160,8 +196,7 @@ export class DatepickerComponent implements OnInit {
       if (this.multiple) {
         this.selectedDates = selectedDates;
         this.dateSelected.emit(this.selectedDates);
-      }
-      else {
+      } else {
         this.dateSelected.emit([dateSelected]);
         if (!this.continuous) {
           const inputNativeElement = this.datePickerInput.nativeElement;
@@ -172,7 +207,9 @@ export class DatepickerComponent implements OnInit {
   }
 
   prevMonth() {
-    const currentMonth = this.datePickerList.nativeElement.querySelector('table.month.is-active');
+    const currentMonth = this.datePickerList.nativeElement.querySelector(
+      'table.month.is-active'
+    );
     currentMonth.classList.remove('is-active');
     const prevMonth = currentMonth.previousElementSibling;
     prevMonth.classList.add('is-active');
@@ -187,13 +224,15 @@ export class DatepickerComponent implements OnInit {
       this.isFirstMonth = false;
     }
 
-    const currentMonth = this.datePickerList.nativeElement.querySelector('table.month.is-active');
+    const currentMonth = this.datePickerList.nativeElement.querySelector(
+      'table.month.is-active'
+    );
     currentMonth.classList.remove('is-active');
     const nextMonth = currentMonth.nextElementSibling;
-      if (nextMonth) {
-          this.isLastMonth = true;
-          nextMonth.classList.add('is-active');
-      }
+    if (nextMonth) {
+      this.isLastMonth = true;
+      nextMonth.classList.add('is-active');
+    }
   }
 
   toggleDatepickerModal() {

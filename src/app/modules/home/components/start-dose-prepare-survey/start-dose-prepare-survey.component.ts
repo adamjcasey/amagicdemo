@@ -1,21 +1,27 @@
-import { 
-  Component,
-  ViewEncapsulation, 
-  OnInit,
-} from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import * as fromStore from '../../store';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RatingFieldComponent } from '@app/shared/components';
 import * as fromCoreStore from '@core/store';
 import * as fromSharedStore from '@shared/store';
+import * as fromStore from '../../store';
 
 @Component({
   selector: 'automagic-start-dose-prepare-survey',
   templateUrl: 'start-dose-prepare-survey.component.html',
   styleUrls: ['start-dose-prepare-survey.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    RatingFieldComponent,
+  ],
 })
 export class StartDosePrepareSurveyComponent implements OnInit {
   public sliderPageConfig$!: Observable<any>;
@@ -26,9 +32,11 @@ export class StartDosePrepareSurveyComponent implements OnInit {
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
-    private _formBuilder: FormBuilder,
+    private _formBuilder: FormBuilder
   ) {
-    this.sliderPageConfig$ = this._store.select(fromSharedStore.getSliderPageConfig);
+    this.sliderPageConfig$ = this._store.select(
+      fromSharedStore.getSliderPageConfig
+    );
     this.homeConfig$ = this._store.select(fromStore.getHomeConfig);
     this.surveyFormGroup = this._formBuilder.group({
       overall: ['', [Validators.required]],
@@ -38,7 +46,7 @@ export class StartDosePrepareSurveyComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.homeConfig$.subscribe(homeConfig => {
+    this.homeConfig$.subscribe((homeConfig) => {
       if (homeConfig) {
         this.homeConfig = homeConfig;
       }

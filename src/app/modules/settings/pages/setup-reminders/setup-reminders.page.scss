@@ -11,30 +11,30 @@
       width: 280px;
       margin: 0 auto var(--size-m);
     }
-  
+
     .setup-reminders-action {
       margin-top: var(--size-m);
       margin-bottom: var(--size-m);
       padding-right: var(--size-s);
       padding-left: var(--size-s);
-  
+
       .field-label {
         @include heading-5;
       }
     }
-  
+
     .settings__section {
       margin-bottom: var(--size-m);
       padding: var(--size-m);
       border-radius: 12px;
       background-color: var(--color-white);
       box-shadow: 0px 0px 16px 0px #0000001A;
-  
+
       &:last-child {
         margin-bottom: 0;
       }
     }
-  
+
     .settings__section-header {
       @include heading-5;
       display: flex;

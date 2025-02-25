@@ -1,42 +1,48 @@
-import { 
-  Component, 
+import {
+  Component,
+  ElementRef,
   OnInit,
   ViewChild,
-  ViewEncapsulation,
   ViewContainerRef,
-  ElementRef
+  ViewEncapsulation,
 } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 
 // Swiper Config
-import SwiperCore, { EffectFade } from 'swiper';
-SwiperCore.use([EffectFade]);
+// import SwiperCore, { EffectFade } from 'swiper';
+// SwiperCore.use([EffectFade]);
 
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { IonButton } from '@ionic/angular/standalone';
 import * as fromStore from '@shared/store';
 
 @Component({
   selector: 'automagic-alert',
   templateUrl: 'alert.component.html',
   styleUrls: ['alert.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, IonButton],
 })
 export class AlertComponent implements OnInit {
   public config$: Observable<any>;
   public config: any;
   @ViewChild('alert') alert!: ElementRef;
-  @ViewChild('contentComponent', { read: ViewContainerRef }) contentComponent!: ViewContainerRef;
+  @ViewChild('contentComponent', { read: ViewContainerRef })
+  contentComponent!: ViewContainerRef;
 
   constructor(
     private _store: Store<fromStore.SharedState>,
-    private _sanitizer: DomSanitizer,
+    private _sanitizer: DomSanitizer
   ) {
     this.config$ = this._store.select(fromStore.getAlertConfig);
   }
 
   ngOnInit() {
-    this.config$.subscribe(config => {
+    this.config$.subscribe((config) => {
       if (config) {
         this.config = config;
         if (this.alert) {
@@ -46,8 +52,7 @@ export class AlertComponent implements OnInit {
             if (this.config.overlay) {
               wrapper.classList.add('show-overlay');
             }
-          }
-          else {
+          } else {
             wrapper.classList.remove('is-shown');
             if (wrapper.classList.contains('show-overlay')) {
               wrapper.classList.remove('show-overlay');
@@ -69,9 +74,8 @@ export class AlertComponent implements OnInit {
         if (lastAction.action) {
           lastAction.action();
         }
-      }
-      else {
-        this._store.dispatch(new fromStore.AlertHide);
+      } else {
+        this._store.dispatch(new fromStore.AlertHide());
       }
     }
   }

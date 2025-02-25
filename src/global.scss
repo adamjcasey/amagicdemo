@@ -1,3 +1,6 @@
+@use "sass:meta";
+@use "theme/base/mixins";
+
 /*
  * App Global CSS
  * ----------------------------------------------------------------------------
@@ -25,18 +28,28 @@
 @import "@ionic/angular/css/text-transformation.css";
 // @import "@ionic/angular/css/flex-utils.css";
 
-@import "swiper/css/bundle";
+// @import "swiper/css/bundle";
+
+/* Update Swiper imports */
+@import 'swiper/css';
+@import 'swiper/css/effect-fade';
+@import 'swiper/css/pagination';
 
 // Base Theme configuration
-@import "./theme/base/colors";
-@import "./theme/base/sizing";
-@import "./theme/base/typography";
-@import "./theme/base/rewrites";
-@import "./theme/base/forms";
+@include meta.load-css("theme/base/colors");
+@include meta.load-css("theme/base/sizing");
+@include meta.load-css("theme/base/typography");
+@include meta.load-css("theme/base/rewrites");
+@include meta.load-css("theme/base/forms");
 
 :root {
   --topbar-size: 106px;
   --bottom-toolbar-size: 96px;
+  --swiper-pagination-bullet-inactive-color: var(--ion-color-step-200, #cccccc);
+  --swiper-pagination-color: var(--ion-color-primary, #3880ff);
+  --swiper-pagination-progressbar-bg-color: rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.25);
+  --swiper-scrollbar-bg-color: rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.1);
+  --swiper-scrollbar-drag-bg-color: rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.5);
 }
 
 .field-custom {
@@ -46,7 +59,7 @@
   height: var(--size-xxl);
   border-radius: 24px;
   border: 1px solid var(--color-gray-medium);
-  
+
   &.field-custom--action {
     --padding-end: calc(var(--size-m) + var(--size-xs));
 
@@ -91,13 +104,13 @@
 
 .hotspot-element {
   &.is-highlighted {
-    @include hotspot-element;
-  
+    @include mixins.hotspot-element;
+
     &:is(ion-button),
     &:is(automagic-accordion),
     &:is(ion-tab-button) {
       position: relative;
-  
+
       &::before {
         top: -1px;
       }

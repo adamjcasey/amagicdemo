@@ -1,31 +1,51 @@
-import { ActionReducerMap, createFeatureSelector, createSelector } from '@ngrx/store';
+import {
+  Action,
+  ActionReducerMap,
+  createFeatureSelector,
+  createSelector,
+} from '@ngrx/store';
 import { Params, RouterStateSnapshot } from '@angular/router';
 import { RouterStateSerializer, routerReducer } from '@ngrx/router-store';
 
 import * as fromStore from './core.store';
 import * as fromActions from './core.actions';
 
+// export function CoreReducer(
+//   state = fromStore.initialCoreState,
+//   action: fromActions.ActionsUnion,
+// ): fromStore.CoreState {
+//   switch (action.type) {
+//     case fromActions.ActionTypes.SetStore: {
+//       return {
+//         ...action.payload,
+//       };
+//     }
+
+//     default: {
+//       return state;
+//     }
+//   }
+// }
 
 export function CoreReducer(
-  state = fromStore.initialCoreState,
-  action: fromActions.ActionsUnion,
+  state: fromStore.CoreState = fromStore.initialCoreState,
+  action: Action
 ): fromStore.CoreState {
-  switch (action.type) {
-    case fromActions.ActionTypes.SetStore: {
-      return {
-        ...action.payload,
-      };
-    }
+  const typedAction = action as fromActions.ActionsUnion;
 
-    default: {
+  switch (typedAction.type) {
+    case fromActions.ActionTypes.SetStore:
+      return {
+        ...typedAction.payload,
+      };
+    default:
       return state;
-    }
   }
 }
 
 export function LayoutReducer(
   state = fromStore.initialLayoutState,
-  action: fromActions.ActionsUnion,
+  action: fromActions.ActionsUnion
 ): fromStore.LayoutState {
   switch (action.type) {
     case fromActions.ActionTypes.SetFullScreen: {
@@ -93,7 +113,7 @@ export function LayoutReducer(
         userDevice: {
           ...state.userDevice,
           ...action.payload,
-        }
+        },
       };
     }
 
@@ -103,7 +123,7 @@ export function LayoutReducer(
         dosageDevice: {
           ...state.dosageDevice,
           ...action.payload,
-        }
+        },
       };
     }
 
@@ -121,7 +141,7 @@ export function LayoutReducer(
 }
 
 const exportLayout = (state: fromStore.LayoutState) => state;
-const selectLayoutState = createFeatureSelector<fromStore.LayoutState>('layout');
+const selectLayoutState =
+  createFeatureSelector<fromStore.LayoutState>('layout');
 
 export const getLayoutConfig = createSelector(selectLayoutState, exportLayout);
-

@@ -1,24 +1,28 @@
-import { 
-  Component,
-  ViewEncapsulation, 
-  OnInit,
-  OnDestroy,
-} from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, Subject, takeUntil } from 'rxjs';
 
-import * as fromStore from '@home/store';
-import * as fromSharedStore from '@shared/store';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import * as fromCoreStore from '@core/store';
+import * as fromStore from '@home/store';
+import { IonIcon } from '@ionic/angular/standalone';
 import * as fromSharedService from '@shared/services';
+import * as fromSharedStore from '@shared/store';
+import { addIcons } from 'ionicons';
+import { informationCircleOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'automagic-start-dose-ready-to-inject-body-part-selector',
   templateUrl: 'start-dose-ready-to-inject-body-part-selector.component.html',
   styleUrls: ['start-dose-ready-to-inject-body-part-selector.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, IonIcon],
 })
-export class StartDoseReadyToInjectBodyPartSelectorComponent implements OnInit, OnDestroy {
+export class StartDoseReadyToInjectBodyPartSelectorComponent
+  implements OnInit, OnDestroy
+{
   public bodyPartSelected: string = '';
   public bodyPartPreviousSelected: string = '';
   public sliderPageConfig$!: Observable<any>;
@@ -30,16 +34,20 @@ export class StartDoseReadyToInjectBodyPartSelectorComponent implements OnInit, 
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
-    private _utils: fromSharedService.UtilsService,
+    private _utils: fromSharedService.UtilsService
   ) {
-    this.sliderPageConfig$ = this._store.select(fromSharedStore.getSliderPageConfig);
+    this.sliderPageConfig$ = this._store.select(
+      fromSharedStore.getSliderPageConfig
+    );
     this.homeConfig$ = this._store.select(fromStore.getHomeConfig);
+
+    addIcons({ informationCircleOutline });
   }
 
   ngOnInit() {
     this.sliderPageConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(sliderPageConfig => {
+      .subscribe((sliderPageConfig) => {
         if (sliderPageConfig) {
           this.sliderPageConfig = sliderPageConfig;
         }
@@ -47,14 +55,17 @@ export class StartDoseReadyToInjectBodyPartSelectorComponent implements OnInit, 
 
     this.homeConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(homeConfig => {
+      .subscribe((homeConfig) => {
         if (homeConfig) {
           this.homeConfig = homeConfig;
           this.bodyPartSelected = this.homeConfig.bodyPartSelected;
-          const markedDoses = this.homeConfig?.doses.filter((dose: any) => dose.marked);
+          const markedDoses = this.homeConfig?.doses.filter(
+            (dose: any) => dose.marked
+          );
           if (markedDoses.length) {
             this.lastMarkedDose = markedDoses[markedDoses.length - 1];
-            this.bodyPartPreviousSelected = this.lastMarkedDose.bodyPartInjected;
+            this.bodyPartPreviousSelected =
+              this.lastMarkedDose.bodyPartInjected;
           }
         }
       });
@@ -115,18 +126,22 @@ export class StartDoseReadyToInjectBodyPartSelectorComponent implements OnInit, 
     }
 
     this.bodyPartSelected = !clickOnPath ? '' : this.bodyPartSelected;
-    this._store.dispatch(new fromStore.SetData({
-      bodyPartSelected: this.bodyPartSelected, 
-    }));
-    this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
-      actions: [
-        this.sliderPageConfig.content.actions[0],
-        {
-          ...this.sliderPageConfig.content.actions[1],
-          disabled: clickOnPath ? null : true,
-        }
-      ]
-    }));
+    this._store.dispatch(
+      new fromStore.SetData({
+        bodyPartSelected: this.bodyPartSelected,
+      })
+    );
+    this._store.dispatch(
+      new fromSharedStore.SliderPageSetContentOptions({
+        actions: [
+          this.sliderPageConfig.content.actions[0],
+          {
+            ...this.sliderPageConfig.content.actions[1],
+            disabled: clickOnPath ? null : true,
+          },
+        ],
+      })
+    );
   }
 
   humanizeBodyPartInjected(bodyPartInjected: string) {

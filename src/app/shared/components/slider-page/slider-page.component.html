@@ -1,11 +1,7 @@
-<div 
-  *ngIf="config$ | async as config" 
-  #wrapper 
-  class="slider-page" 
-  [ngClass]="{ 
-    'is-content-hidden': config.content?.hide, 
-    'is-content-expanded': config.content?.isExpanded, 
-    'is-full-size': config.header?.fullSize, 
+<div *ngIf="config$ | async as config" #wrapper class="slider-page" [ngClass]="{
+    'is-content-hidden': config.content?.hide,
+    'is-content-expanded': config.content?.isExpanded,
+    'is-full-size': config.header?.fullSize,
     'is-iphone-x': this.layoutConfig.userDevice?.model.includes('iphone-x'),
     'is-iphone-11': this.layoutConfig.userDevice?.model.includes('iphone-11'),
     'is-iphone-12': this.layoutConfig.userDevice?.model.includes('iphone-12'),
@@ -14,34 +10,28 @@
     'is-iphone-14-plus': this.layoutConfig.userDevice?.model.includes('iphone14.8'),
     'is-iphone-14-pro': this.layoutConfig.userDevice?.model.includes('iphone15.2'),
     'is-iphone-14-pro-max': this.layoutConfig.userDevice?.model.includes('iphone15.3'),
-  }" 
-  [style.background-color]="config.header?.color 
-    ? 'var(' + config.header.color + ')' 
+  }" [style.background-color]="config.header?.color
+    ? 'var(' + config.header.color + ')'
     : 'var(--color-white)'
   ">
 
-  <div 
-    class="slider-page__header" 
-    [ngClass]="{ 
-      'has-asset': config.header?.asset, 
-      'has-template': config.header?.template, 
-      'has-component': config.header?.component, 
+  <div class="slider-page__header" [ngClass]="{
+      'has-asset': config.header?.asset,
+      'has-template': config.header?.template,
+      'has-component': config.header?.component,
       'has-timeline': config.content?.timeline,
       'no-scroll': config.header?.noScroll,
     }">
 
-    <swiper #sliderHeader effect="fade" [allowTouchMove]="false">
-      <ng-template class="slider-page__header-slide" swiperSlide *ngFor="let slide of slides">
+    <swiper-container #sliderHeader [init]="false" effect="fade">
+      <swiper-slide *ngFor="let slide of slides" class="slider-page__header-slide">
         <div class="asset-wrapper" *ngIf="slide.header?.asset">
           <img [src]="slide.header.asset" />
         </div>
 
         <div class="content-wrapper">
-          <div 
-            class="template-wrapper" 
-            *ngIf="config.header?.template" 
-            [dinamicInnerHtml]="config.header?.template"
-          ></div>
+          <div class="template-wrapper" *ngIf="config.header?.template" [dinamicInnerHtml]="config.header?.template">
+          </div>
 
           <div class="cards-wrapper" *ngIf="slide.header?.cards">
             <automagic-card *ngFor="let card of slide.header.cards" [card]="card"></automagic-card>
@@ -51,13 +41,11 @@
             <ng-template #componentHeader></ng-template>
           </div>
         </div>
-      </ng-template>
-    </swiper>
+      </swiper-slide>
+    </swiper-container>
   </div>
 
-  <div 
-    class="slider-page__content" 
-    [ngClass]="{ 
+  <div class="slider-page__content" [ngClass]="{
       'is-expanded': config.content?.isExpanded,
       'has-template': config.content?.template || config.content?.form,
     }">
@@ -73,21 +61,12 @@
         <div class="timeline-end">{{ config.content.timeline.duration }}</div>
       </div>
 
-      <swiper 
-        #sliderContent 
-        effect="fade" 
-        [allowTouchMove]="false" 
-        [pagination]="{ el: '.swiper-pagination' }" 
-        (swiper)="onSliderInit()"
-        (slideChange)="onSlideChange()">
-
-        <ng-template class="wrapper-small__slide" swiperSlide *ngFor="let slide of slides">
+      <swiper-container #sliderContent [init]="false" effect="fade" pagination="true" pagination-clickable="true"
+        pagination-el=".swiper-pagination">
+        <swiper-slide *ngFor=" let slide of slides" class="wrapper-small__slide">
           <div class="content-wrapper">
-            <div 
-              class="template-wrapper" 
-              *ngIf="slide.content?.template" 
-              [innerHTML]="sanitizeContent(slide.content.template)"
-            ></div>
+            <div class="template-wrapper" *ngIf="slide.content?.template"
+              [innerHTML]="sanitizeContent(slide.content.template)"></div>
 
             <div class="cards-wrapper" *ngIf="slide.content?.cards">
               <automagic-card *ngFor="let card of slide.content.cards" [card]="card"></automagic-card>
@@ -97,57 +76,41 @@
               <form [formGroup]="slide.content.form.group" autocomplete="off">
                 <div class="field-wrapper" *ngFor="let field of slide.content.form.fields">
                   <p class="field-label">{{ field.label }}</p>
-                  <ion-input 
-                    color="purple" 
-                    fill="outline" 
-                    mode="md" 
-                    (keyup.enter)="handlerEnterKey($event)"
-                    [formControlName]="field.name" 
-                    [placeholder]="field.placeholder" 
-                    [errorText]="slide.content.form.group.get(field.name)?.errors?.['required'] ? 'Please enter your name' : null" 
-                    (input)="field.onInput ? field.onInput($event) : null"
-                  ></ion-input>
+                  <ion-input color="purple" fill="outline" mode="md" (keyup.enter)="handlerEnterKey($event)"
+                    [formControlName]="field.name" [placeholder]="field.placeholder"
+                    [errorText]="slide.content.form.group.get(field.name)?.errors?.['required'] ? 'Please enter your name' : null"
+                    (input)="field.onInput ? field.onInput($event) : null"></ion-input>
                 </div>
               </form>
             </div>
           </div>
 
           <div class="actions-wrapper" *ngIf="config.content?.actions">
-            <ion-button 
-              *ngFor="let button of config.content.actions; let i = index"
-              class="hotspot-element {{ button.cssClasses ? button.cssClasses : null }}"
-              color="purple" 
-              size="large" 
+            <ion-button *ngFor="let button of config.content.actions; let i = index"
+              class="hotspot-element {{ button.cssClasses ? button.cssClasses : null }}" color="purple" size="large"
               [ngClass]="{ 'is-hidden': button.hidden, 'is-blocked': blockNavigation }"
-              [disabled]="button.disabled ? true : null" 
-              (click)="button.action ? button.action($event) : null" 
-              [fill]="
-                button.fill 
-                ? button.fill 
-                : (i % 2 !== 1 && config.content.actions.length > 1 
-                  ? 'outline' 
+              [disabled]="button.disabled ? true : null" (click)="button.action ? button.action($event) : null" [fill]="
+                button.fill
+                ? button.fill
+                : (i % 2 !== 1 && config.content.actions.length > 1
+                  ? 'outline'
                   : null)
               ">
               {{ button.label }}
             </ion-button>
           </div>
-        </ng-template>
-      </swiper>
+        </swiper-slide>
+      </swiper-container>
     </div>
 
-    <div 
-      class="wrapper-large" 
-      [style.background-color]="config.content?.bgColor 
-        ? 'var(' + config.content.bgColor + ')' 
+    <div class="wrapper-large" [style.background-color]="config.content?.bgColor
+        ? 'var(' + config.content.bgColor + ')'
         : 'var(--color-white)'
       ">
 
       <div class="wrapper-large__content">
-        <div 
-          class="wrapper-large__template" 
-          *ngIf="config.content?.template" 
-          [innerHTML]="sanitizeContent(config.content.template)"
-        ></div>
+        <div class="wrapper-large__template" *ngIf="config.content?.template"
+          [innerHTML]="sanitizeContent(config.content.template)"></div>
 
         <div class="wrapper-large__component">
           <ng-template #componentContent></ng-template>
@@ -155,26 +118,18 @@
       </div>
 
       <div class="wrapper-large__toolbar" *ngIf="config.content?.toolbar">
-        <div 
-          class="wrapper-large__toolbar-template" 
-          *ngIf="config.content?.toolbar?.template" 
-          [innerHTML]="sanitizeContent(config.content.toolbar.template)"
-        ></div>
+        <div class="wrapper-large__toolbar-template" *ngIf="config.content?.toolbar?.template"
+          [innerHTML]="sanitizeContent(config.content.toolbar.template)"></div>
 
         <div class="wrapper-large__toolbar-actions" *ngIf="config.content?.toolbar?.actions">
-          <ion-button 
-            *ngFor="let button of config.content.toolbar.actions; let i = index" 
+          <ion-button *ngFor="let button of config.content.toolbar.actions; let i = index"
             class="hotspot-element {{ button.cssClasses ? button.cssClasses : null }}"
-            [ngClass]="{ 'is-blocked': blockNavigation }"
-            color="purple" 
-            size="large" 
-            [disabled]="button.disabled ? true : null" 
-            (click)="button.action ? button.action($event) : null" 
-            [fill]="
-              button.fill 
+            [ngClass]="{ 'is-blocked': blockNavigation }" color="purple" size="large"
+            [disabled]="button.disabled ? true : null" (click)="button.action ? button.action($event) : null" [fill]="
+              button.fill
               ? button.fill
-              : (i % 2 !== 1 && config.content?.toolbar?.actions.length > 1 
-                ? 'outline' 
+              : (i % 2 !== 1 && config.content?.toolbar?.actions.length > 1
+                ? 'outline'
                 : null)
             ">
             {{ button.label }}

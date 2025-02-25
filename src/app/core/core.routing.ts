@@ -1,56 +1,51 @@
-import { NgModule } from '@angular/core';
-import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 
 import * as fromPages from './pages';
 
-const routes: Routes = [
+export const routes: Routes = [
   {
     path: '',
     redirectTo: '/welcome',
-    pathMatch: 'full'
+    pathMatch: 'full',
   },
   {
     path: 'welcome',
-    loadChildren: () => import('src/app/modules/welcome/welcome.module').then( m => m.WelcomeModule)
+    loadChildren: () =>
+      import('src/app/modules/welcome/welcome-routing.module'),
   },
   {
     path: '',
     children: [
       {
         path: 'home',
-        loadChildren: () => import('src/app/modules/home/home.module').then(m => m.HomeModule)
+        loadChildren: () => import('src/app/modules/home/home-routing.module'),
       },
       {
         path: 'activity',
-        loadChildren: () => import('src/app/modules/activity/activity.module').then(m => m.ActivityModule)
+        loadChildren: () =>
+          import('src/app/modules/activity/activity-routing.module'),
       },
       {
         path: 'resources',
-        loadChildren: () => import('src/app/modules/resources/resources.module').then(m => m.ResourcesModule)
+        loadChildren: () =>
+          import('src/app/modules/resources/resources-routing.module'),
       },
       {
         path: 'settings',
-        loadChildren: () => import('src/app/modules/settings/settings.module').then(m => m.SettingsModule)
+        loadChildren: () =>
+          import('src/app/modules/settings/settings-routing.module'),
       },
-    ]
+    ],
   },
   {
     path: 'notifications',
-    component: fromPages.NotificationsPage
+    component: fromPages.NotificationsPage,
   },
   {
     path: 'symptoms/add',
-    component: fromPages.AddSymptomPage
+    component: fromPages.AddSymptomPage,
   },
 
   // Handler errors
-  { path: '**', component: fromPages.ErrorPage }
+  { path: '**', component: fromPages.ErrorPage },
 ];
-
-@NgModule({
-  imports: [
-    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
-  ],
-  exports: [RouterModule]
-})
-export class CoreRouting { }

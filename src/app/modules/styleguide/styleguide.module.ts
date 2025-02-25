@@ -1,21 +1,18 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
+import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
-import * as fromPages from './pages';
-import { StyleguideRoutingModule } from './styleguide-routing.module';
-import { SharedModule } from '@app/shared/shared.module';
+import { RouterLink } from '@angular/router';
+import { IonButton } from '@ionic/angular/standalone';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    IonicModule,
-    StyleguideRoutingModule,
-    SharedModule,
+    IonButton,
+    RouterLink,
+    // StyleguideRoutingModule,
   ],
-  declarations: [fromPages.pages]
+  // declarations: [fromPages.pages],
 })
 export class StyleguideModule {}

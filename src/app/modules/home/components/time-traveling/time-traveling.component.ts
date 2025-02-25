@@ -1,28 +1,28 @@
-import {
-  Component,
-  ViewEncapsulation,
-} from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { Store } from '@ngrx/store';
 
-import * as fromSharedStore from '@shared/store';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import * as fromCoreStore from '@core/store';
+import { IonButton, IonImg } from '@ionic/angular/standalone';
+import * as fromSharedStore from '@shared/store';
 
 @Component({
   selector: 'automagic-time-traveling',
   templateUrl: 'time-traveling.component.html',
   styleUrls: ['time-traveling.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, IonButton, IonImg],
 })
 export class TimeTravelingComponent {
   public isPlayingVideo: boolean = false;
   public endedVideo: boolean = false;
   public showingTimeTravel: boolean = false;
 
-  constructor(
-    private _store: Store<fromCoreStore.CoreState>,
-  ) {}
+  constructor(private _store: Store<fromCoreStore.CoreState>) {}
 
-  playVideo () {
+  playVideo() {
     // setup and playing the video
     const timeTravelingAnimationDuration = 7000;
     const introAnimationDuration = 1000;
@@ -39,6 +39,6 @@ export class TimeTravelingComponent {
   }
 
   closeBackdrop() {
-    this._store.dispatch(new fromSharedStore.BackdropHide);
+    this._store.dispatch(new fromSharedStore.BackdropHide());
   }
 }

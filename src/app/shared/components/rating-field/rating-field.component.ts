@@ -1,16 +1,21 @@
-import { 
-  Component, 
-  Output, 
-  EventEmitter, 
-  ViewEncapsulation, 
-  Input
+import { CommonModule } from '@angular/common';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  ViewEncapsulation,
 } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { IonIcon } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'automagic-rating-field',
   templateUrl: 'rating-field.component.html',
   styleUrls: ['rating-field.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, IonIcon],
 })
 export class RatingFieldComponent {
   @Output() onChage = new EventEmitter<number>();
@@ -28,5 +33,4 @@ export class RatingFieldComponent {
     this.value = value;
     this.onChage.emit(this.value);
   }
-
 }

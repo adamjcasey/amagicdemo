@@ -1,20 +1,14 @@
-<div 
-  class="rating-field"
-  [ngClass]="{ 
-    'is-invalid': error, 
+<div class="rating-field" [ngClass]="{
+    'is-invalid': error,
     'is-disabled': disabled === true
   }">
 
   <p class="field-label" *ngIf="label">{{ label }}</p>
   <div class="rating-field__rates" [ngClass]="{ 'with-icons': showIcons }">
     <ng-container *ngIf="showIcons; else default">
-      <div 
-        class="icon" 
-        *ngFor="let point of [1, 2, 3, 4, 5]" 
-        [ngClass]="{
+      <div class="icon" *ngFor="let point of [1, 2, 3, 4, 5]" [ngClass]="{
           'hotspot-element': point === 5,
-        }"
-        (click)="updateValue(point)">
+        }" (click)="updateValue(point)">
 
         <ion-icon src="/assets/images/rating-field--icons-{{ point }}.svg"></ion-icon>
         <p [ngSwitch]="point">
@@ -32,21 +26,14 @@
     </ng-template>
   </div>
   <div class="rating-field__rate-line">
-    <div 
-      class="checkpoint" 
-      *ngFor="let point of [1, 2, 3, 4, 5]; let i = index" 
-      [ngClass]="{
+    <div class="checkpoint" *ngFor="let point of [1, 2, 3, 4, 5]; let i = index" [ngClass]="{
         'is-selected': value === point || point <= value,
         'is-marked': (value === 2 && point === 1) || (value > 2 && value > point),
         'hotspot-element': point === 5,
-      }"
-      (click)="updateValue(point)">
+      }" (click)="updateValue(point)">
 
       <div class="checkpoint__line" *ngIf="point < 5"></div>
     </div>
   </div>
-  <input 
-    type="number" 
-    [value]="value" 
-  />
+  <input type="number" [value]="value" />
 </div>

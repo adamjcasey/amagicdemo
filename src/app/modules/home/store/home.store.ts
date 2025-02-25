@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import moment from 'moment';
 
 import { environment } from 'src/environments/environment';
 
@@ -54,7 +54,7 @@ if (environment.production) {
         date: '',
         bodyPartInjected: '',
         notes: null,
-      }
+      },
     ],
     bodyPartSelected: '',
     dosingStarted: false,
@@ -71,33 +71,32 @@ if (environment.production) {
       {
         completed: false,
         title: 'Activity Dose Report',
-        description: 'Make a note of your symptoms to see Theryx® at work.'
+        description: 'Make a note of your symptoms to see Theryx® at work.',
       },
       {
         completed: false,
         title: 'Activity Progress',
-        description: 'Make a note of your symptoms to see Theryx® at work.'
+        description: 'Make a note of your symptoms to see Theryx® at work.',
       },
       {
         completed: false,
         title: 'Activity Symptom Report',
-        description: 'Review individual symptom recordings to track progress.'
+        description: 'Review individual symptom recordings to track progress.',
       },
       {
         completed: false,
         title: 'Resources',
-        description: 'Make a note of your symptoms to see Theryx® at work.'
+        description: 'Make a note of your symptoms to see Theryx® at work.',
       },
       {
         completed: false,
         title: 'Care Team',
-        description: 'Make a note of your symptoms to see Theryx® at work.'
-      }
+        description: 'Make a note of your symptoms to see Theryx® at work.',
+      },
     ],
     onBoardingDone: false,
-  }
-}
-else {
+  };
+} else {
   initialState = {
     // to skip start dose flow set as false
     firstTimeDose: true,
@@ -139,7 +138,7 @@ else {
         date: new Date(moment().add(7, 'week').calendar()),
         bodyPartInjected: '',
         notes: null,
-      }
+      },
     ],
     bodyPartSelected: '',
     dosingStarted: false,
@@ -158,31 +157,31 @@ else {
       {
         completed: false,
         title: 'Activity Dose Report',
-        description: 'Make a note of your symptoms to see Theryx® at work.'
+        description: 'Make a note of your symptoms to see Theryx® at work.',
       },
       {
         completed: false,
         title: 'Activity Progress',
-        description: 'Make a note of your symptoms to see Theryx® at work.'
+        description: 'Make a note of your symptoms to see Theryx® at work.',
       },
       {
         completed: false,
         title: 'Activity Symptom Report',
-        description: 'Review individual symptom recordings to track progress.'
+        description: 'Review individual symptom recordings to track progress.',
       },
       {
         completed: false,
         title: 'Resources',
-        description: 'Make a note of your symptoms to see Theryx® at work.'
+        description: 'Make a note of your symptoms to see Theryx® at work.',
       },
       {
         completed: false,
         title: 'Care Team',
-        description: 'Make a note of your symptoms to see Theryx® at work.'
-      }
+        description: 'Make a note of your symptoms to see Theryx® at work.',
+      },
     ],
     onBoardingDone: false,
-  }
+  };
 }
 
 export { initialState };

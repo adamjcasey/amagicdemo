@@ -2,16 +2,29 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, Subject, takeUntil } from 'rxjs';
 
-import * as fromStore from '@resources/store';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HeroComponent } from '@app/shared/components';
 import * as fromCoreStore from '@core/store';
-import * as fromWelcomeStore from '@welcome/store';
 import * as fromHomeStore from '@home/store';
-import * as fromSharedStore from '@shared/store';
+import { IonButton, IonContent, IonImg } from '@ionic/angular/standalone';
+import * as fromStore from '@resources/store';
+import * as fromWelcomeStore from '@welcome/store';
 
 @Component({
   selector: 'automagic-your-care-team',
   templateUrl: './your-care-team.page.html',
   styleUrls: ['./your-care-team.page.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    HeroComponent,
+    IonContent,
+    IonImg,
+    IonButton,
+  ],
 })
 export class YourCareTeamPage implements OnInit, OnDestroy {
   public welcomeConfig$!: Observable<any>;
@@ -23,9 +36,7 @@ export class YourCareTeamPage implements OnInit, OnDestroy {
   private _ngUnsubscribe: Subject<void> = new Subject<void>();
   public heroConfig: any;
 
-  constructor(
-    private _store: Store<fromCoreStore.CoreState>,
-  ) {
+  constructor(private _store: Store<fromCoreStore.CoreState>) {
     this.welcomeConfig$ = this._store.select(fromWelcomeStore.getWelcomeConfig);
     this.homeConfig$ = this._store.select(fromHomeStore.getHomeConfig);
     this.resourcesConfig$ = this._store.select(fromStore.getResourcesConfig);
@@ -33,14 +44,14 @@ export class YourCareTeamPage implements OnInit, OnDestroy {
       color: '--color-bg-pastel-blue',
       template: `
         <h1 class="font-heading-1--bold">Your Care Team</h1>
-      `
-    }
+      `,
+    };
   }
 
   ngOnInit() {
     this.welcomeConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(welcomeConfig => {
+      .subscribe((welcomeConfig) => {
         if (welcomeConfig) {
           this.name = welcomeConfig.name;
         }
@@ -48,7 +59,7 @@ export class YourCareTeamPage implements OnInit, OnDestroy {
 
     this.homeConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(homeConfig => {
+      .subscribe((homeConfig) => {
         if (homeConfig) {
           this.homeConfig = homeConfig;
         }
@@ -56,19 +67,26 @@ export class YourCareTeamPage implements OnInit, OnDestroy {
 
     this.resourcesConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(resourcesConfig => {
+      .subscribe((resourcesConfig) => {
         if (resourcesConfig) {
           this.resourcesConfig = resourcesConfig;
-          if (!this.resourcesConfig.yourCareTeamPageVisited && this.homeConfig) {
-            const onBoardingTasks = this.homeConfig.onBoardingTasks.map((task: any) => {
-              return {
-                ...task,
+          if (
+            !this.resourcesConfig.yourCareTeamPageVisited &&
+            this.homeConfig
+          ) {
+            const onBoardingTasks = this.homeConfig.onBoardingTasks.map(
+              (task: any) => {
+                return {
+                  ...task,
+                };
               }
-            });
+            );
             onBoardingTasks[5].completed = true;
-            this._store.dispatch(new fromHomeStore.SetData({
-              onBoardingTasks: onBoardingTasks,
-            }));
+            this._store.dispatch(
+              new fromHomeStore.SetData({
+                onBoardingTasks: onBoardingTasks,
+              })
+            );
           }
         }
       });
@@ -80,8 +98,10 @@ export class YourCareTeamPage implements OnInit, OnDestroy {
   }
 
   goTo(path: string) {
-    this._store.dispatch(new fromCoreStore.Go({
-      path: [path]
-    }));
+    this._store.dispatch(
+      new fromCoreStore.Go({
+        path: [path],
+      })
+    );
   }
 }
