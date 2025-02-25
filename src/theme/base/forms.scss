@@ -1,3 +1,5 @@
+@use "mixins";
+
 form {
   > .field-wrapper,
   > automagic-rating-field {
@@ -22,7 +24,7 @@ form {
   }
 
   &-label {
-    @include paragraph-l;
+    @include mixins.paragraph-l;
     display: inline-block;
     margin-top: 0;
     font-weight: var(--font-weight-bold);
@@ -58,7 +60,7 @@ form {
     margin-bottom: var(--size-xs);
 
     .field-label {
-      @include paragraph-m;
+      @include mixins.paragraph-m;
       grid-column: 2;
       margin-bottom: 0;
     }
@@ -69,7 +71,7 @@ form {
       font-size: var(--size-xxl);
 
       + .field-label {
-        @include heading-5;
+        @include mixins.heading-5;
       }
     }
 
@@ -78,7 +80,7 @@ form {
     }
 
     .field-value {
-      @include paragraph-m;
+      @include mixins.paragraph-m;
       margin: 0;
       font-weight: var(--font-weight-bold);
     }

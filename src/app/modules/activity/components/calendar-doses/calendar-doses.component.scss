@@ -3,7 +3,7 @@
 .calendar-doses {
   h1 {
     margin-bottom: var(--size-m);
-  } 
+  }
 }
 
 .calendar-doses__wrapper {
@@ -15,10 +15,10 @@
     display: block;
     width: 100%;
   }
-  
+
   .calendar-widget {
     text-align: center;
-  
+
     .indicators {
       span {
         @include paragraph-s;
@@ -28,32 +28,32 @@
         gap: var(--size-xxxs);
         white-space: nowrap;
         margin: var(--size-xxxxs) var(--size-xxs);
-  
+
         &::before {
           content: '';
           width: var(--size-xxs);
           height: var(--size-xxs);
         }
-  
+
         &.today,
         &.next-dose {
           &::before {
             border-radius: 2px;
           }
         }
-  
+
         &.today {
           &::before {
             background-color: var(--color-primary-purple);
           }
         }
-  
+
         &.next-dose {
           &::before {
             background-color: var(--color-bg-pastel-purple);
           }
         }
-        
+
         &.reminder,
         &.flare-ups {
           &::before {
@@ -61,22 +61,22 @@
             height: var(--size-xxxs);
           }
         }
-  
+
         &.reminder {
           &::before {
             border-radius: 50%;
             background-color: var(--color-primary-purple);
           }
         }
-  
+
         &.flare-ups {
           position: relative;
-  
+
           &::before {
             background-color: var(--color-primary-salmon);
             border-radius: 50%;
           }
-  
+
           &::after {
             content: '';
             position: absolute;

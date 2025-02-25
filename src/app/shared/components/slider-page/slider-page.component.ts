@@ -1,41 +1,60 @@
 import {
   Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  QueryList,
   ViewChild,
   ViewChildren,
-  ViewEncapsulation,
-  OnInit,
-  Input,
-  Output,
-  EventEmitter,
   ViewContainerRef,
-  QueryList,
-  ElementRef,
+  ViewEncapsulation,
 } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
 import { Observable, Subject, takeUntil } from 'rxjs';
+import type { SwiperContainer } from 'swiper/element';
+import { register } from 'swiper/element/bundle';
+import { EffectFade, Pagination } from 'swiper/modules';
 
-// Swiper Config
-import { SwiperComponent } from 'swiper/angular';
-import SwiperCore, { Pagination, EffectFade } from 'swiper';
-SwiperCore.use([Pagination, EffectFade]);
+// Register Swiper custom elements
+register();
 
-import * as fromStore from '@shared/store';
-import * as fromCoreStore from '@core/store';
-import * as fromWelcomeStore from '@welcome/store';
-import * as fromWelcomeComponents from '@welcome/components';
-import * as fromHomeStore from '@home/store';
-import * as fromHomeComponents from '@home/components';
 import * as fromActivityComponents from '@activity/components';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { DynamicInnerHtmlDirective } from '@app/shared/directives';
 import * as fromCoreComponents from '@core/components';
+import * as fromCoreStore from '@core/store';
+import * as fromHomeComponents from '@home/components';
+import * as fromHomeStore from '@home/store';
+import { IonButton, IonInput } from '@ionic/angular/standalone';
+import * as fromStore from '@shared/store';
+import * as fromWelcomeComponents from '@welcome/components';
+import * as fromWelcomeStore from '@welcome/store';
+import { CardComponent } from '../card/card.component';
 
 @Component({
   selector: 'automagic-slider-page',
   templateUrl: 'slider-page.component.html',
   styleUrls: ['slider-page.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    CardComponent,
+    DynamicInnerHtmlDirective,
+    IonInput,
+    IonButton,
+  ],
 })
-export class SliderPageComponent implements OnInit {
+export class SliderPageComponent implements OnInit, OnDestroy {
   public config$: Observable<any>;
   public layoutConfig$: Observable<any>;
   public layoutConfig: any;
@@ -52,11 +71,35 @@ export class SliderPageComponent implements OnInit {
   @Output() onPrevSlide = new EventEmitter<any>();
   @Output() onNextSlide = new EventEmitter<any>();
   @ViewChild('wrapper') wrapper!: ElementRef;
-  @ViewChild('sliderHeader', { static: false }) sliderHeader!: SwiperComponent;
-  @ViewChild('sliderContent', { static: false }) sliderContent!: SwiperComponent;
-  @ViewChildren('componentHeader', { read: ViewContainerRef }) componentsHeader!: QueryList<ViewContainerRef>;
-  @ViewChild('componentContent', { read: ViewContainerRef }) componentContent!: ViewContainerRef;
+  @ViewChild('sliderHeader') sliderHeader!: ElementRef<SwiperContainer>;
+  @ViewChild('sliderContent') sliderContent!: ElementRef<SwiperContainer>;
+  @ViewChildren('componentHeader', { read: ViewContainerRef })
+  componentsHeader!: QueryList<ViewContainerRef>;
+  @ViewChild('componentContent', { read: ViewContainerRef })
+  componentContent!: ViewContainerRef;
   private _ngUnsubscribe: Subject<void> = new Subject<void>();
+
+  headerSwiperModules = [EffectFade];
+  contentSwiperModules = [EffectFade, Pagination];
+
+  headerSwiperConfig = {
+    // effect: 'fade',
+    // fadeEffect: {
+    //   crossFade: true,
+    // },
+    // allowTouchMove: false,
+  };
+
+  contentSwiperConfig = {
+    // effect: 'fade',
+    // fadeEffect: {
+    //   crossFade: true,
+    // },
+    // allowTouchMove: false,
+    // pagination: {
+    //   el: '.swiper-pagination',
+    // },
+  };
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
@@ -68,94 +111,100 @@ export class SliderPageComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.initializeSwipers();
+
     this.currentSlide = this.slides[0];
-    this.config$
-      .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(config => {
-        if (config) {
-          this.previousConfig = this.config;
-          this.config = config;
+    this.config$.pipe(takeUntil(this._ngUnsubscribe)).subscribe((config) => {
+      if (config) {
+        this.previousConfig = this.config;
+        this.config = config;
 
-          const currentComponentHeader = this.componentsHeader?.toArray()[this.sliderContent.swiperRef.activeIndex];
-          // previous state: check if there is a component in the header
-          if (this.previousConfig?.header?.component) {
-            // current state: check if there is a component in the header
-            if (this.config.header?.component) {
-              // check if the previous and the current components are differents
-              if (this.config.header?.component !== this.previousConfig?.header?.component) {
-                // clear previosly to avoid duplicated components
-                currentComponentHeader.clear();
-                // load component in the header
-                this._loadComponent(
-                  currentComponentHeader, 
-                  this.config.header.component
-                );
-              }
-            }
-          }
-          else {
-            // current state: check if there is a component in the header
-            if (this.config.header?.component) {
-              if (currentComponentHeader) {
-                // clear previosly to avoid duplicated components
-                currentComponentHeader.clear();
-                // load component in the header
-                this._loadComponent(
-                  currentComponentHeader, 
-                  this.config.header.component
-                );
-              }
-            }
-          }
-
-          // previous state: check if there is a component in the content
-          if (this.previousConfig?.content?.component) {
-            // current state: check if there is a component in the content
-            if (this.config.content?.component) {
-              // check if the previous and the current components are differents
-              if (this.config.content?.component !== this.previousConfig?.content?.component) {
-                // clear previosly to avoid duplicated components
-                this.componentContent.clear();
-                // load component in the content
-                this._loadComponent(
-                  this.componentContent, 
-                  this.config.content.component
-                );
-              }
-            }
-            else {
+        const currentComponentHeader =
+          this.componentsHeader?.toArray()[
+            this.sliderContent.nativeElement.swiper.activeIndex
+          ];
+        // previous state: check if there is a component in the header
+        if (this.previousConfig?.header?.component) {
+          // current state: check if there is a component in the header
+          if (this.config.header?.component) {
+            // check if the previous and the current components are differents
+            if (
+              this.config.header?.component !==
+              this.previousConfig?.header?.component
+            ) {
               // clear previosly to avoid duplicated components
-              this.componentContent.clear();
-            }
-          }
-          else {
-            // current state: check if there is a component in the content
-            if (this.config.content?.component) {
-              // clear previosly to avoid duplicated components
-              this.componentContent?.clear();
-              // load component in the content
+              currentComponentHeader.clear();
+              // load component in the header
               this._loadComponent(
-                this.componentContent, 
-                this.config.content.component
+                currentComponentHeader,
+                this.config.header.component
               );
             }
           }
-
-          if (this.config.moveTo) {
-            this.slideTo(this.config.moveTo);
-          }
-          if (this.config.movePrev && !this.isMoving) {
-            this.slidePrev();
-          }
-          if (this.config.moveNext && !this.isMoving) {
-            this.slideNext();
+        } else {
+          // current state: check if there is a component in the header
+          if (this.config.header?.component) {
+            if (currentComponentHeader) {
+              // clear previosly to avoid duplicated components
+              currentComponentHeader.clear();
+              // load component in the header
+              this._loadComponent(
+                currentComponentHeader,
+                this.config.header.component
+              );
+            }
           }
         }
-      });
+
+        // previous state: check if there is a component in the content
+        if (this.previousConfig?.content?.component) {
+          // current state: check if there is a component in the content
+          if (this.config.content?.component) {
+            // check if the previous and the current components are differents
+            if (
+              this.config.content?.component !==
+              this.previousConfig?.content?.component
+            ) {
+              // clear previosly to avoid duplicated components
+              this.componentContent.clear();
+              // load component in the content
+              this._loadComponent(
+                this.componentContent,
+                this.config.content.component
+              );
+            }
+          } else {
+            // clear previosly to avoid duplicated components
+            this.componentContent.clear();
+          }
+        } else {
+          // current state: check if there is a component in the content
+          if (this.config.content?.component) {
+            // clear previosly to avoid duplicated components
+            this.componentContent?.clear();
+            // load component in the content
+            this._loadComponent(
+              this.componentContent,
+              this.config.content.component
+            );
+          }
+        }
+
+        if (this.config.moveTo) {
+          this.slideTo(this.config.moveTo);
+        }
+        if (this.config.movePrev && !this.isMoving) {
+          this.slidePrev();
+        }
+        if (this.config.moveNext && !this.isMoving) {
+          this.slideNext();
+        }
+      }
+    });
 
     this.homeConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(homeConfig => {
+      .subscribe((homeConfig) => {
         if (homeConfig) {
           this.homeConfig = homeConfig;
         }
@@ -163,7 +212,7 @@ export class SliderPageComponent implements OnInit {
 
     this.layoutConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(layoutConfig => {
+      .subscribe((layoutConfig) => {
         if (layoutConfig) {
           this.layoutConfig = layoutConfig;
         }
@@ -175,46 +224,59 @@ export class SliderPageComponent implements OnInit {
     this._ngUnsubscribe.complete();
   }
 
-  onSliderInit() {  
+  onSliderInit() {
+    console.log('SLIDER INIT', this.slides);
+
     this.currentSlide = this.slides[0];
     if (this.currentSlide.header) {
       // set initial config the header section
-      this._store.dispatch(new fromStore.SliderPageSetHeaderOptions({
-        ...this.currentSlide.header,
-      }));
+      this._store.dispatch(
+        new fromStore.SliderPageSetHeaderOptions({
+          ...this.currentSlide.header,
+        })
+      );
     }
 
     if (this.currentSlide.content) {
       // set initial config the content section
       // set form as null in order to don't include it in the store
       // if form: FormGroup it's included in the store will be inmutable
-      this._store.dispatch(new fromStore.SliderPageSetContentOptions({
-        ...this.currentSlide.content,
-        form: null,
-      }));
+      this._store.dispatch(
+        new fromStore.SliderPageSetContentOptions({
+          ...this.currentSlide.content,
+          form: null,
+        })
+      );
     }
   }
 
   onSlideChange() {
-    const swiperActiveIndex = this.sliderContent.swiperRef.activeIndex;
+    const swiperActiveIndex =
+      this.sliderContent.nativeElement.swiper.activeIndex;
     this.currentSlide = this.slides[swiperActiveIndex];
+
+    console.log('CURRENT SLIDE', this.currentSlide, swiperActiveIndex);
 
     if (this.currentSlide.header) {
       // update config for header section based on the currentSlide
-      this._store.dispatch(new fromStore.SliderPageSetHeaderOptions({
-        ...this.currentSlide.header,
-        currentSlide: swiperActiveIndex,
-      }));
+      this._store.dispatch(
+        new fromStore.SliderPageSetHeaderOptions({
+          ...this.currentSlide.header,
+          currentSlide: swiperActiveIndex,
+        })
+      );
     }
     if (this.currentSlide.content) {
       // update config for content section based on the currentSlide
       // set form as null in order to don't include it in the store
       // if form: FormGroup it's included in the store will be inmutable
-      this._store.dispatch(new fromStore.SliderPageSetContentOptions({
-        ...this.currentSlide.content,
-        form: null,
-        currentSlide: swiperActiveIndex,
-      }));
+      this._store.dispatch(
+        new fromStore.SliderPageSetContentOptions({
+          ...this.currentSlide.content,
+          form: null,
+          currentSlide: swiperActiveIndex,
+        })
+      );
     }
 
     if (this.currentSlide.onLoad) {
@@ -232,57 +294,57 @@ export class SliderPageComponent implements OnInit {
   slidePrev() {
     if (!this.blockNavigation) {
       this.isMoving = true;
-      const activeIndex = this.sliderContent.swiperRef.activeIndex;
+      const activeIndex = this.sliderContent.nativeElement.swiper.activeIndex;
       if (this.slides[activeIndex].header?.component !== null) {
         this.componentsHeader?.toArray()[activeIndex].clear();
       }
 
       if (this.onPrevSlide.observers.length > 0) {
         this.onPrevSlide.emit({
-          asset: this.sliderHeader.swiperRef,
-          content: this.sliderContent.swiperRef,
-        })
-      }
-      else {
-        this.sliderHeader.swiperRef.slidePrev(500);
-        this.sliderContent.swiperRef.slidePrev(500);
+          asset: this.sliderHeader.nativeElement.swiper,
+          content: this.sliderContent.nativeElement.swiper,
+        });
+      } else {
+        this.sliderHeader.nativeElement.swiper.slidePrev(500);
+        this.sliderContent.nativeElement.swiper.slidePrev(500);
       }
 
       setTimeout(() => {
         this.isMoving = false;
-        this._store.dispatch(new fromStore.SliderPageClearMovement);
+        this._store.dispatch(new fromStore.SliderPageClearMovement());
       }, 500);
     }
   }
 
   slideNext() {
     if (!this.blockNavigation) {
-      const activeIndex = this.sliderContent.swiperRef.activeIndex;
+      this.isMoving = true;
+      const activeIndex = this.sliderContent.nativeElement.swiper.activeIndex;
+
       if (this.slides[activeIndex].header?.component !== null) {
         this.componentsHeader?.toArray()[activeIndex].clear();
       }
 
       if (this.onNextSlide.observers.length > 0) {
         this.onNextSlide.emit({
-          asset: this.sliderHeader.swiperRef,
-          content: this.sliderContent.swiperRef,
-        })
-      }
-      else {
-        this.sliderHeader.swiperRef.slideNext(500);
-        this.sliderContent.swiperRef.slideNext(500);
+          asset: this.sliderHeader.nativeElement.swiper,
+          content: this.sliderContent.nativeElement.swiper,
+        });
+      } else {
+        this.sliderHeader.nativeElement.swiper.slideNext(500);
+        this.sliderContent.nativeElement.swiper.slideNext(500);
       }
 
       setTimeout(() => {
         this.isMoving = false;
-        this._store.dispatch(new fromStore.SliderPageClearMovement);
+        this._store.dispatch(new fromStore.SliderPageClearMovement());
       }, 500);
     }
   }
 
   slideTo(index: number) {
-    this.sliderHeader.swiperRef.slideTo(index);
-    this.sliderContent.swiperRef.slideTo(index);
+    this.sliderHeader.nativeElement.swiper.slideTo(index);
+    this.sliderContent.nativeElement.swiper.slideTo(index);
   }
 
   handlerEnterKey(event: any) {
@@ -291,21 +353,23 @@ export class SliderPageComponent implements OnInit {
       const form = event.currentTarget.parentElement.parentElement;
       if (form.children.length > 1) {
         // if there more than 1 field
-      }
-      else {
+      } else {
         field.blur();
       }
 
-      const actions = this.config.content?.isExpanded 
-        ? this.wrapper.nativeElement.querySelector('.slider-page__content .wrapper-large .wrapper-large__toolbar-actions')
-        : this.wrapper.nativeElement.querySelector('.slider-page__content .wrapper-small .swiper-slide-active .actions-wrapper');
+      const actions = this.config.content?.isExpanded
+        ? this.wrapper.nativeElement.querySelector(
+            '.slider-page__content .wrapper-large .wrapper-large__toolbar-actions'
+          )
+        : this.wrapper.nativeElement.querySelector(
+            '.slider-page__content .wrapper-small .swiper-slide-active .actions-wrapper'
+          );
 
       if (actions) {
         const buttons = actions.children;
         if (buttons.length > 1) {
           buttons[buttons.length - 1].click();
-        }
-        else {
+        } else {
           buttons[0].click();
         }
       }
@@ -318,77 +382,198 @@ export class SliderPageComponent implements OnInit {
 
   private _loadComponent(element: ViewContainerRef, component: any) {
     let componentRef;
-    switch(component) {
+    switch (component) {
       case 'welcome-doses-selector':
-        componentRef = element.createComponent(fromWelcomeComponents.WelcomeDosesSelectorComponent);
-        if (componentRef.instance instanceof fromWelcomeComponents.WelcomeDosesSelectorComponent) {
+        componentRef = element.createComponent(
+          fromWelcomeComponents.WelcomeDosesSelectorComponent
+        );
+        if (
+          componentRef.instance instanceof
+          fromWelcomeComponents.WelcomeDosesSelectorComponent
+        ) {
           // Listen to the dosesSelected event
           componentRef.instance.onDosesChange.subscribe((doses: Date[]) => {
             // Handle the event in the parent component
-            this._store.dispatch(new fromWelcomeStore.SetData({
-              doses: doses,
-            }));
-            this._store.dispatch(new fromHomeStore.SetData({
-              doses: this.homeConfig.doses.map((dose: any, index: number) => {
-                return {
-                  ...dose,
-                  date: doses[index]
-                }
-              }),
-            }));
+            this._store.dispatch(
+              new fromWelcomeStore.SetData({
+                doses: doses,
+              })
+            );
+            this._store.dispatch(
+              new fromHomeStore.SetData({
+                doses: this.homeConfig.doses.map((dose: any, index: number) => {
+                  return {
+                    ...dose,
+                    date: doses[index],
+                  };
+                }),
+              })
+            );
           });
         }
         break;
       case 'start-dose-prepare-temp-timer':
-        componentRef = element.createComponent(fromHomeComponents.StartDosePrepareTempTimerComponent);
+        componentRef = element.createComponent(
+          fromHomeComponents.StartDosePrepareTempTimerComponent
+        );
         break;
       case 'start-dose-prepare-setup':
-        componentRef = element.createComponent(fromHomeComponents.StartDosePrepareSetupComponent);
+        componentRef = element.createComponent(
+          fromHomeComponents.StartDosePrepareSetupComponent
+        );
         break;
       case 'start-dose-prepare-survey':
-        componentRef = element.createComponent(fromHomeComponents.StartDosePrepareSurveyComponent);
+        componentRef = element.createComponent(
+          fromHomeComponents.StartDosePrepareSurveyComponent
+        );
         break;
       case 'start-dose-prepare-waiting-to-inject':
-        componentRef = element.createComponent(fromHomeComponents.StartDosePrepareWaitingToInjectComponent);
+        componentRef = element.createComponent(
+          fromHomeComponents.StartDosePrepareWaitingToInjectComponent
+        );
         break;
       case 'start-dose-ready-to-inject-first-time-user':
-        componentRef = element.createComponent(fromHomeComponents.StartDoseReadyToInjectFirstTimeUserComponent);
-        if (componentRef.instance instanceof fromHomeComponents.StartDoseReadyToInjectFirstTimeUserComponent) {
+        componentRef = element.createComponent(
+          fromHomeComponents.StartDoseReadyToInjectFirstTimeUserComponent
+        );
+        if (
+          componentRef.instance instanceof
+          fromHomeComponents.StartDoseReadyToInjectFirstTimeUserComponent
+        ) {
           componentRef.instance.onPlayTrainingVideo.subscribe(() => {
             this.slideNext();
           });
         }
         break;
       case 'start-dose-ready-to-inject-video':
-        componentRef = element.createComponent(fromHomeComponents.StartDoseReadyToInjectVideoComponent);
+        componentRef = element.createComponent(
+          fromHomeComponents.StartDoseReadyToInjectVideoComponent
+        );
         break;
       case 'start-dose-ready-to-inject-body-part-selector':
-        componentRef = element.createComponent(fromHomeComponents.StartDoseReadyToInjectBodyPartSelectorComponent);
+        componentRef = element.createComponent(
+          fromHomeComponents.StartDoseReadyToInjectBodyPartSelectorComponent
+        );
         break;
       case 'start-dose-ready-to-inject-waiting-to-start-injection':
-        componentRef = element.createComponent(fromHomeComponents.StartDoseReadyToInjectWaitingToStartInjectionComponent);
+        componentRef = element.createComponent(
+          fromHomeComponents.StartDoseReadyToInjectWaitingToStartInjectionComponent
+        );
         break;
       case 'start-dose-ready-to-inject-dosing':
-        componentRef = element.createComponent(fromHomeComponents.StartDoseReadyToInjectDosingComponent);
+        componentRef = element.createComponent(
+          fromHomeComponents.StartDoseReadyToInjectDosingComponent
+        );
         break;
       case 'start-dose-inject-done-progress':
-        componentRef = element.createComponent(fromHomeComponents.StartDoseInjectDoneProgressComponent);
+        componentRef = element.createComponent(
+          fromHomeComponents.StartDoseInjectDoneProgressComponent
+        );
         break;
       case 'start-dose-inject-dose-notes':
-        componentRef = element.createComponent(fromHomeComponents.StartDoseInjectDoseNotesFormComponent);
+        componentRef = element.createComponent(
+          fromHomeComponents.StartDoseInjectDoseNotesFormComponent
+        );
         break;
       case 'start-dose-inject-done-report':
-        componentRef = element.createComponent(fromHomeComponents.StartDoseInjectDoneReportComponent);
+        componentRef = element.createComponent(
+          fromHomeComponents.StartDoseInjectDoneReportComponent
+        );
         break;
       case 'add-symptom-form':
-        componentRef = element.createComponent(fromCoreComponents.AddSymptomFormComponent);
+        componentRef = element.createComponent(
+          fromCoreComponents.AddSymptomFormComponent
+        );
         break;
       case 'calendar-doses':
-        componentRef = element.createComponent(fromActivityComponents.CalendarDosesComponent);
+        componentRef = element.createComponent(
+          fromActivityComponents.CalendarDosesComponent
+        );
         break;
       case 'calendar-edit-schedule':
-        componentRef = element.createComponent(fromActivityComponents.CalendarEditScheduleComponent);
+        componentRef = element.createComponent(
+          fromActivityComponents.CalendarEditScheduleComponent
+        );
         break;
     }
+  }
+
+  private async initializeSwipers() {
+    await customElements.whenDefined('swiper-container');
+
+    this.onSliderInit();
+
+    const headerSwiperEl = this.sliderHeader.nativeElement;
+    const contentSwiperEl = this.sliderContent.nativeElement;
+
+    console.log('Content Swiper Element:', contentSwiperEl);
+    console.log(
+      'Pagination Element:',
+      document.querySelector('.swiper-pagination')
+    );
+
+    // Set up parameters before initialization
+    headerSwiperEl.setAttribute('effect', 'fade');
+
+    // Update content swiper attributes
+    contentSwiperEl.setAttribute('effect', 'fade');
+    contentSwiperEl.setAttribute('pagination', 'true');
+    contentSwiperEl.setAttribute('pagination-clickable', 'true');
+    contentSwiperEl.setAttribute('pagination-el', '.swiper-pagination');
+
+    const headerParams = {
+      effect: 'fade',
+      fadeEffect: {
+        crossFade: true,
+      },
+      allowTouchMove: false,
+      speed: 500,
+      modules: [EffectFade],
+    };
+
+    const contentParams = {
+      effect: 'fade',
+      fadeEffect: {
+        crossFade: true,
+      },
+      allowTouchMove: false,
+      speed: 500,
+      modules: [EffectFade, Pagination],
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+        type: 'bullets',
+        bulletActiveClass: 'swiper-pagination-bullet-active',
+        bulletClass: 'swiper-pagination-bullet',
+      },
+    };
+
+    Object.assign(headerSwiperEl, { params: headerParams });
+    Object.assign(contentSwiperEl, { params: contentParams });
+
+    // Add event listeners
+    headerSwiperEl.addEventListener('swiperready', (event: any) => {
+      console.log('Header Swiper is ready!');
+      this.onSliderInit();
+    });
+
+    contentSwiperEl.addEventListener('swiperready', (event: any) => {
+      console.log('Content Swiper is ready!');
+      this.onSliderInit();
+    });
+
+    contentSwiperEl.addEventListener('swiperslidechange', (event: any) => {
+      console.log('Slide changed!');
+      this.onSlideChange();
+    });
+
+    // Initialize Swipers
+    headerSwiperEl.initialize();
+    contentSwiperEl.initialize();
+
+    contentSwiperEl.addEventListener('swiperready', (event: any) => {
+      console.log('Content Swiper Ready:', event);
+      console.log('Pagination:', contentSwiperEl.swiper.pagination);
+    });
   }
 }

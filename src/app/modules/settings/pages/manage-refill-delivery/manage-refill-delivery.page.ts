@@ -1,14 +1,28 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, Subject, takeUntil } from 'rxjs';
 
-import * as fromStore from '@settings/store';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AccordionComponent, HeroComponent } from '@app/shared/components';
 import * as fromCoreStore from '@core/store';
+import { IonContent, IonToggle } from '@ionic/angular/standalone';
+import * as fromStore from '@settings/store';
 
 @Component({
   selector: 'automagic-manage-refill-delivery',
   templateUrl: 'manage-refill-delivery.page.html',
   styleUrls: ['manage-refill-delivery.page.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    HeroComponent,
+    AccordionComponent,
+    IonContent,
+    IonToggle,
+  ],
 })
 export class ManageRefillDeliveryPage implements OnInit, OnDestroy {
   public settingsConfig$!: Observable<any>;
@@ -18,14 +32,13 @@ export class ManageRefillDeliveryPage implements OnInit, OnDestroy {
   public myPharmacy: any;
   public myPharmacist: any;
 
-  constructor(
-    private _store: Store<fromCoreStore.CoreState>,
-  ) {
+  constructor(private _store: Store<fromCoreStore.CoreState>) {
     this.settingsConfig$ = this._store.select(fromStore.getSettingsConfig);
     this.heroConfig = {
       color: '--color-bg-pastel-green',
-      template: '<h1 class="font-heading-1--bold">Manage Refill & Delivery</h1>',
-    }
+      template:
+        '<h1 class="font-heading-1--bold">Manage Refill & Delivery</h1>',
+    };
 
     this.myPharmacy = {
       type: 'contact',
@@ -50,7 +63,7 @@ export class ManageRefillDeliveryPage implements OnInit, OnDestroy {
   ngOnInit() {
     this.settingsConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(settingsConfig => {
+      .subscribe((settingsConfig) => {
         if (settingsConfig) {
           this.settingsConfig = settingsConfig;
         }
@@ -63,8 +76,10 @@ export class ManageRefillDeliveryPage implements OnInit, OnDestroy {
   }
 
   saveAutomaticRefills(event: any) {
-    this._store.dispatch(new fromStore.SetData({
-      automaticRefiils: event.detail.checked,
-    }));
+    this._store.dispatch(
+      new fromStore.SetData({
+        automaticRefiils: event.detail.checked,
+      })
+    );
   }
 }

@@ -1,5 +1,9 @@
 import { Component } from '@angular/core';
 
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { IonButton, IonContent, IonImg } from '@ionic/angular/standalone';
+
 // Old version
 // import { Store } from '@ngrx/store';
 // import * as fromCoreStore from '@core/store';
@@ -8,6 +12,15 @@ import { Component } from '@angular/core';
   selector: 'automagic-mindful-assistant',
   templateUrl: './mindful-assistant.page.html',
   styleUrls: ['./mindful-assistant.page.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    IonContent,
+    IonButton,
+    IonImg,
+  ],
 })
 export class MindfulAssistantPage {
   // Old version
@@ -15,10 +28,8 @@ export class MindfulAssistantPage {
   // public cards: Array<any> = [];
   // public exit_card: any;
 
-  constructor(
-    // Old version
-    // private _store: Store<fromCoreStore.CoreState>
-  ) {
+  constructor() {
+    // private _store: Store<fromCoreStore.CoreState> // Old version
     // Old version
     // this.heroConfig = {
     //   color: '--color-bg-pastel-lime',
@@ -26,7 +37,6 @@ export class MindfulAssistantPage {
     //     <h1 class="font-heading-1--bold">Mindful Assistant</h1>
     //   `,
     // };
-
     // this.cards = [
     //   {
     //     type: 'mindful',
@@ -37,7 +47,7 @@ export class MindfulAssistantPage {
     //     type: 'mindful',
     //     title: 'Pain reduction Techniques',
     //     asset: '/assets/images/resources-mindful-assistant-pain.svg',
-    //   }, 
+    //   },
     //   {
     //     type: 'mindful',
     //     title: 'Delay Injection 30 min',
@@ -47,7 +57,7 @@ export class MindfulAssistantPage {
     //     type: 'mindful',
     //     title: 'Talk to a<br>coach',
     //     asset: '/assets/images/resources-mindful-assistant-talk.svg',
-    //   }, 
+    //   },
     //   {
     //     asset: '/assets/images/resources-mindful-assistant-dot.svg',
     //     description: 'Stress less, sleep soundly, and get happier. Use Headspace.',
@@ -59,7 +69,7 @@ export class MindfulAssistantPage {
     //         this.goTo('resources/mindful-assistant/start');
     //       }
     //     },
-    //   }     
+    //   }
     // ];
   }
 

@@ -1,6 +1,4 @@
-<ion-header 
-  class="topbar" 
-  [style.background-color]="'var(' + config?.bgColor + ')'">
+<ion-header class="topbar" [style.background-color]="'var(' + config?.bgColor + ')'">
 
   <ion-toolbar class="topbar__toolbar">
     <ion-buttons slot="start">
@@ -24,21 +22,15 @@
 
       <ng-container *ngIf="!layoutConfig.debuggingDeviceMode">
         <div *ngIf="layoutConfig.rightCornerEl; else default">
-          <div 
-            class="timer"
-            *ngIf="layoutConfig.rightCornerEl.type === 'timer'">
+          <div class="timer" *ngIf="layoutConfig.rightCornerEl.type === 'timer'">
             <span class="timer__label">{{ layoutConfig?.rightCornerEl?.timer|secondsToMinutes }}</span>
             <ion-icon src="/assets/icons/timer.svg"></ion-icon>
           </div>
         </div>
         <ng-template #default>
-          <ion-button 
-            class="notifications-cta" 
-            [ngClass]="{
+          <ion-button class="notifications-cta" [ngClass]="{
               'hotspot-element': config.pendingNotifications > 0,
-            }" 
-            (click)="goTo('notifications')" 
-            [disabled]="config.pendingNotifications === 0">
+            }" (click)="goTo('notifications')" [disabled]="config.pendingNotifications === 0">
 
             <div class="counter" *ngIf="config.pendingNotifications > 0">
               {{ config.pendingNotifications }}
@@ -50,5 +42,5 @@
     </ion-buttons>
   </ion-toolbar>
 
-  <automagic-backdrop ></automagic-backdrop>
+  <automagic-backdrop></automagic-backdrop>
 </ion-header>

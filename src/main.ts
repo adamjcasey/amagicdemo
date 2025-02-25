@@ -1,12 +1,30 @@
-import { enableProdMode } from '@angular/core';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { provideHttpClient } from '@angular/common/http';
+import { bootstrapApplication } from '@angular/platform-browser';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import {
+  PreloadAllModules,
+  provideRouter,
+  RouteReuseStrategy,
+  withPreloading,
+} from '@angular/router';
+import { LayoutPage } from '@app/core';
+import { routes } from '@app/core/core.routing';
+import { provideAppStore } from '@app/shared/newStore/providers';
+import {
+  IonicRouteStrategy,
+  provideIonicAngular,
+} from '@ionic/angular/standalone';
 
-import { AppModule } from './app/app.module';
-import { environment } from './environments/environment';
-
-if (environment.production) {
-  enableProdMode();
-}
-
-platformBrowserDynamic().bootstrapModule(AppModule)
-  .catch(err => console.log(err));
+bootstrapApplication(LayoutPage, {
+  providers: [
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    provideIonicAngular({
+      mode: 'ios',
+      innerHTMLTemplatesEnabled: true,
+    }),
+    provideRouter(routes, withPreloading(PreloadAllModules)),
+    provideHttpClient(),
+    provideAppStore(),
+    provideAnimationsAsync(),
+  ],
+}).catch((err) => console.error(err));

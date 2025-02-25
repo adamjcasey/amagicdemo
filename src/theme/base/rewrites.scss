@@ -1,3 +1,5 @@
+@use "mixins";
+
 :root {
   /** rewrites for tabs ionic component **/
   --ion-tab-bar-color-selected: var(--color-primary-purple);
@@ -147,7 +149,7 @@ ion-datetime-button {
   }
 
   &::part(native) {
-    @include paragraph-m;
+    @include mixins.paragraph-m;
     position: relative;
     width: 50%;
     margin: 0;
@@ -179,6 +181,6 @@ ion-modal#modal-datepicker {
 
 ion-alert {
   .alert-title.sc-ion-alert-ios {
-    @include heading-5;
+    @include mixins.heading-5;
   }
 }

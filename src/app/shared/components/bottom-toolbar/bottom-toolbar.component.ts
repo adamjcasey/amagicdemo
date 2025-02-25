@@ -1,18 +1,38 @@
-import { Component, OnInit } from '@angular/core';
-import { Router, Event as RoutingEvent, NavigationEnd } from '@angular/router';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { NavigationEnd, Router, Event as RoutingEvent } from '@angular/router';
 import { Store } from '@ngrx/store';
+import { animate, spring } from 'motion';
 import { Observable } from 'rxjs';
-import { animate, spring  } from 'motion';
 
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import * as fromCoreStore from '@core/store';
 import * as fromHomeStore from '@home/store';
+import {
+  IonButton,
+  IonIcon,
+  IonImg,
+  IonTabButton,
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { addOutline, closeOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'automagic-bottom-toolbar',
   templateUrl: 'bottom-toolbar.component.html',
   styleUrls: ['bottom-toolbar.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    IonTabButton,
+    IonIcon,
+    IonButton,
+    IonImg,
+  ],
 })
-export class BottomToolbarComponent implements OnInit {
+export class BottomToolbarComponent implements OnInit, OnDestroy {
   public homeConfig$: Observable<any>;
   public homeConfig: any;
   public routerEvents$;
@@ -24,8 +44,13 @@ export class BottomToolbarComponent implements OnInit {
 
   constructor(
     private _router: Router,
-    private _store: Store<fromCoreStore.CoreState>,
+    private _store: Store<fromCoreStore.CoreState>
   ) {
+    addIcons({
+      addOutline,
+      closeOutline,
+    });
+
     // list of excluded pages to shown bottom toolbar component
     this.excludedPaths = [
       '/welcome',
@@ -44,24 +69,25 @@ export class BottomToolbarComponent implements OnInit {
 
           if (this.currentRoute === '/activity') {
             this.nonBlockHome = true;
-          }
-          else {
+          } else {
             if (this.nonBlockHome) {
               this.nonBlockHome = false;
             }
           }
         }
-      },
+      }
     );
 
     this.homeConfig$ = this._store.select(fromHomeStore.getHomeConfig);
   }
-  
+
   ngOnInit() {
-    this.homeConfig$.subscribe(homeConfig => {
+    this.homeConfig$.subscribe((homeConfig) => {
       if (homeConfig) {
         this.homeConfig = homeConfig;
-        this.onBoardingTasksCompleted = this.homeConfig.onBoardingTasks.filter((task: any) => task.completed).length;
+        this.onBoardingTasksCompleted = this.homeConfig.onBoardingTasks.filter(
+          (task: any) => task.completed
+        ).length;
       }
     });
   }
@@ -75,33 +101,36 @@ export class BottomToolbarComponent implements OnInit {
   }
 
   toggle() {
-      if (!this.homeConfig.firstTimeDose) {
+    if (!this.homeConfig.firstTimeDose) {
       this.isOpen = !this.isOpen;
       const element = document.getElementById('bottom-toolbar');
       if (this.isOpen) {
         animate(
           `#bottom-toolbar`,
           { height: '254px' },
-          { easing: spring({
-            stiffness: 80,
-            damping: 20,
-            mass: 1,
-            velocity: 800,
-          }) }
+          {
+            easing: spring({
+              stiffness: 80,
+              damping: 20,
+              mass: 1,
+              velocity: 800,
+            }),
+          }
         ).finished.then(() => {
           element?.classList.add('is-open');
         });
-      }
-      else {
+      } else {
         animate(
           `#bottom-toolbar`,
           { height: '64px' },
-          { easing: spring({
-            stiffness: 80,
-            damping: 20,
-            mass: 1,
-            velocity: 800,
-          }) }
+          {
+            easing: spring({
+              stiffness: 80,
+              damping: 20,
+              mass: 1,
+              velocity: 800,
+            }),
+          }
         ).finished.then(() => {
           element?.classList.remove('is-open');
         });
@@ -110,9 +139,11 @@ export class BottomToolbarComponent implements OnInit {
   }
 
   goTo(path: string) {
-    this._store.dispatch(new fromCoreStore.Go({
-      path: [path]
-    }));
+    this._store.dispatch(
+      new fromCoreStore.Go({
+        path: [path],
+      })
+    );
 
     if (this.isOpen) {
       this.toggle();

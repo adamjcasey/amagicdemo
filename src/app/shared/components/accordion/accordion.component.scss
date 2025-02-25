@@ -132,7 +132,7 @@ automagic-accordion {
 
       .calendar-widget {
         text-align: center;
-      
+
         .indicators {
           span {
             @include paragraph-s;
@@ -142,32 +142,32 @@ automagic-accordion {
             gap: var(--size-xxxs);
             white-space: nowrap;
             margin: var(--size-xxxxs) var(--size-xxs);
-      
+
             &::before {
               content: '';
               width: var(--size-xxs);
               height: var(--size-xxs);
             }
-      
+
             &.today,
             &.next-dose {
               &::before {
                 border-radius: 2px;
               }
             }
-      
+
             &.today {
               &::before {
                 background-color: var(--color-primary-purple);
               }
             }
-      
+
             &.next-dose {
               &::before {
                 background-color: var(--color-bg-pastel-purple);
               }
             }
-            
+
             &.reminder,
             &.flare-ups {
               &::before {
@@ -175,22 +175,22 @@ automagic-accordion {
                 height: var(--size-xxxs);
               }
             }
-      
+
             &.reminder {
               &::before {
                 border-radius: 50%;
                 background-color: var(--color-primary-purple);
               }
             }
-      
+
             &.flare-ups {
               position: relative;
-      
+
               &::before {
                 background-color: var(--color-primary-salmon);
                 border-radius: 50%;
               }
-      
+
               &::after {
                 content: '';
                 position: absolute;
@@ -220,7 +220,7 @@ automagic-accordion {
   &.accordion--task-checked {
     .accordion__tab {
       background-color: var(--color-bg-pastel-lime) !important;
-    } 
+    }
   }
 
   &.accordion--dose-report {
@@ -316,7 +316,7 @@ automagic-accordion {
 
     .row-field {
       margin-bottom: var(--size-xs);
-      
+
       &:last-child {
         margin-bottom: 0;
       }

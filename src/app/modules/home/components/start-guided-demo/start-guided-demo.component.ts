@@ -1,38 +1,38 @@
-import { 
-  Component,
-  ViewEncapsulation, 
-  OnInit,
-  OnDestroy,
-} from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable, Subject, takeUntil } from 'rxjs';
 import { animate, spring } from 'motion';
+import { Observable, Subject, takeUntil } from 'rxjs';
 
-import * as fromStore from '@home/store';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import * as fromCoreStore from '@core/store';
+import * as fromStore from '@home/store';
+import { IonButton } from '@ionic/angular/standalone';
 import * as fromSharedStore from '@shared/store';
 
 @Component({
   selector: 'automagic-start-guided-demo',
   templateUrl: 'start-guided-demo.component.html',
   styleUrls: ['start-guided-demo.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, IonButton],
 })
 export class StartGuidedDemoComponent implements OnInit, OnDestroy {
   public backdropConfig$!: Observable<any>;
   public backdropConfig: any;
   private _ngUnsubscribe: Subject<void> = new Subject<void>();
 
-  constructor(
-    private _store: Store<fromCoreStore.CoreState>,
-  ) {
-    this.backdropConfig$ = this._store.select(fromSharedStore.getBackdropConfig);
+  constructor(private _store: Store<fromCoreStore.CoreState>) {
+    this.backdropConfig$ = this._store.select(
+      fromSharedStore.getBackdropConfig
+    );
   }
 
   ngOnInit() {
     this.backdropConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(backdropConfig => {
+      .subscribe((backdropConfig) => {
         if (backdropConfig) {
           this.backdropConfig = backdropConfig;
         }
@@ -44,7 +44,7 @@ export class StartGuidedDemoComponent implements OnInit, OnDestroy {
     this._ngUnsubscribe.complete();
   }
 
-  showHighlightsTour () {
+  showHighlightsTour() {
     if (!this.backdropConfig.fullScreen) {
       animate(
         '#backdrop .backdrop__wrapper',
@@ -53,31 +53,35 @@ export class StartGuidedDemoComponent implements OnInit, OnDestroy {
             `${window.innerHeight * 0.75}px`,
             `${window.innerHeight * 0.8}px`,
             `${window.innerHeight * 0.9}px`,
-            `${window.innerHeight}px`
+            `${window.innerHeight}px`,
           ],
         },
-        { easing: spring({
-          stiffness: 100,
-          damping: 15,
-          mass: 1,
-          velocity: 800,
-        }) }
+        {
+          easing: spring({
+            stiffness: 100,
+            damping: 15,
+            mass: 1,
+            velocity: 800,
+          }),
+        }
       );
     }
 
-    this._store.dispatch(new fromSharedStore.BackdropSetConfig({
-      fullScreen: true,
-      template: null,
-      component: null,
-      contentCentered: false,
-      showBackButton: true,
-      highlights: [
-        {
-          type: 'simple',
-          asset: '/assets/images/highlights-1.svg',
-          title: 'Takeda Benefits',
-          description: 'Explore how this connected vision creates improved Patient, Trust, Reputation, and Business opportunities.',
-          detail: `
+    this._store.dispatch(
+      new fromSharedStore.BackdropSetConfig({
+        fullScreen: true,
+        template: null,
+        component: null,
+        contentCentered: false,
+        showBackButton: true,
+        highlights: [
+          {
+            type: 'simple',
+            asset: '/assets/images/highlights-1.svg',
+            title: 'Takeda Benefits',
+            description:
+              'Explore how this connected vision creates improved Patient, Trust, Reputation, and Business opportunities.',
+            detail: `
             <h1 class="font-heading-1--bold">Takeda Benefits</h1>
             <div class="highlights__detail-section color-salmon">
               <h2>Patient-centric approach</h2>
@@ -178,14 +182,14 @@ export class StartGuidedDemoComponent implements OnInit, OnDestroy {
                 <p class="eyebrow">Reputation</p>
                 <p>Helping Takeda exceed consumer and competitive tech with seamless experiences.</p>
               </div>
-          
+
               <div class="box-wrapper">
                 <p class="indicator">2</p>
                 <h3>Digital-forward company</h3>
                   <p class="eyebrow">Reputation</p>
                   <p>Evolving Takeda into a digital forward company that delivers on the tech in biotech.</p>
               </div>
-          
+
               <div class="box-wrapper">
                 <p class="indicator">3</p>
                 <h3>Sustainability</h3>
@@ -193,32 +197,32 @@ export class StartGuidedDemoComponent implements OnInit, OnDestroy {
                 <p>Promoting sustainability across the full lifecycle of drug delivery including packaging with thoughtful materials and user guidance.</p>
               </div>
             </div>
-          
+
             <div class="highlights__detail-section color-blue">
               <h2>Clinical trials enhancement</h2>
               <ion-img src="/assets/images/take-benefits-5.svg"></ion-img>
-          
+
               <div class="box-wrapper">
                 <p class="indicator">1</p>
                 <h3>Expanding the pool of patients</h3>
                 <p class="eyebrow">Patient</p>
                 <p>Enabling hybrid and decentralized clinical trials, expanding the pool of patients able to access care and participate.</p>
               </div>
-          
+
               <div class="box-wrapper">
                 <p class="indicator">2</p>
                 <h3>Clinical trial integrity</h3>
                   <p class="eyebrow">Trust</p>
                   <p>Improving clinical trial integrity through patient adherence to trial protocols and regimens.</p>
               </div>
-          
+
               <div class="box-wrapper">
                 <p class="indicator">3</p>
                 <h3>Patient reported outcomes (PROs)</h3>
                 <p class="eyebrow">Reputation</p>
                 <p>Improving the collection of patient reported outcomes (PROs) – including longitudinal and supplementary health data.</p>
               </div>
-          
+
               <div class="box-wrapper">
                 <p class="indicator">4</p>
                 <h3>Post-market surveillance</h3>
@@ -226,18 +230,18 @@ export class StartGuidedDemoComponent implements OnInit, OnDestroy {
                 <p>Continuing longitudinal data collection for post-market surveillance, beyond clinical trials.</p>
               </div>
             </div>
-          
+
             <div class="highlights__detail-section color-purple">
               <h2>Increasing loyalty to Takeda's offerings in a world of future therapies</h2>
               <ion-img src="/assets/images/take-benefits-6.svg"></ion-img>
-          
+
               <div class="box-wrapper">
                 <p class="indicator">1</p>
                 <h3>Improving the injectable experience</h3>
                 <p class="eyebrow">Business</p>
                 <p>To compete against other delivery methods and lower cost biosimilars.</p>
               </div>
-          
+
               <div class="box-wrapper">
                 <p class="indicator">2</p>
                 <h3>Consumer-electronics ecosystem</h3>
@@ -246,69 +250,79 @@ export class StartGuidedDemoComponent implements OnInit, OnDestroy {
               </div>
             </div>
           `,
-        },
-        {
-          type: 'simple',
-          asset: '/assets/images/highlights-2.svg',
-          title: 'Safer than ever',
-          description: 'Increasing Takeda’s ability to ensure drug authenticity and integrity while mitigating user error.',
-        },
-        {
-          type: 'simple',
-          asset: '/assets/images/highlights-3.svg',
-          title: 'Integrations with EMR / AppleHealth',
-          description: 'API based integrations with pharmacy, EMR, and Apple Health data.',
-        },
-        {
-          type: 'simple',
-          asset: '/assets/images/highlights-4.svg',
-          title: 'Coordinating the healthcare ecosystem',
-          description: 'Connecting patients to their care team and support network.',
-        },
-        {
-          type: 'simple',
-          asset: '/assets/images/highlights-5.svg',
-          title: 'Helping build the habit',
-          description: 'Encouraging proactive disease management by making  tracking easy and intuitive.',
-        },
-        {
-          type: 'simple',
-          asset: '/assets/images/highlights-6.svg',
-          title: 'Patient Resources and Support',
-          description: 'Connecting patients to community , education, and other resources for holistic support.',
-        },
-      ],
-    }));
+          },
+          {
+            type: 'simple',
+            asset: '/assets/images/highlights-2.svg',
+            title: 'Safer than ever',
+            description:
+              'Increasing Takeda’s ability to ensure drug authenticity and integrity while mitigating user error.',
+          },
+          {
+            type: 'simple',
+            asset: '/assets/images/highlights-3.svg',
+            title: 'Integrations with EMR / AppleHealth',
+            description:
+              'API based integrations with pharmacy, EMR, and Apple Health data.',
+          },
+          {
+            type: 'simple',
+            asset: '/assets/images/highlights-4.svg',
+            title: 'Coordinating the healthcare ecosystem',
+            description:
+              'Connecting patients to their care team and support network.',
+          },
+          {
+            type: 'simple',
+            asset: '/assets/images/highlights-5.svg',
+            title: 'Helping build the habit',
+            description:
+              'Encouraging proactive disease management by making  tracking easy and intuitive.',
+          },
+          {
+            type: 'simple',
+            asset: '/assets/images/highlights-6.svg',
+            title: 'Patient Resources and Support',
+            description:
+              'Connecting patients to community , education, and other resources for holistic support.',
+          },
+        ],
+      })
+    );
   }
 
   startExploring() {
-    this._store.dispatch(new fromSharedStore.BackdropHide);
-    this._store.dispatch(new fromStore.SetData({
-      allCompletedDoses: true
-    }));
+    this._store.dispatch(new fromSharedStore.BackdropHide());
+    this._store.dispatch(
+      new fromStore.SetData({
+        allCompletedDoses: true,
+      })
+    );
 
     setTimeout(() => {
-      this._store.dispatch(new fromSharedStore.BackdropShow({
-        transition: 'move',
-        fullScreen: true,
-        header: true,
-        bgTemplate: 'bottom-ellipse-hole',
-        showBackButton: false,
-        template: `
+      this._store.dispatch(
+        new fromSharedStore.BackdropShow({
+          transition: 'move',
+          fullScreen: true,
+          header: true,
+          bgTemplate: 'bottom-ellipse-hole',
+          showBackButton: false,
+          template: `
           <div class="start-guided-demo-message">
             <h1 class="font-heading-1--bold">You're free to explore!</h1>
             <p>Use the onboarding cards here to track where you've been and what's left to explore</p>
           </div>
         `,
-        buttons: [
-          {
-            label: 'Got it',
-            action: () => {
-              this._store.dispatch(new fromSharedStore.BackdropHide);
+          buttons: [
+            {
+              label: 'Got it',
+              action: () => {
+                this._store.dispatch(new fromSharedStore.BackdropHide());
+              },
             },
-          }
-        ]
-      }));
+          ],
+        })
+      );
     }, 1300);
   }
 }

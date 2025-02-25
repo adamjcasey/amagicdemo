@@ -1,7 +1,14 @@
-import { Directive, ElementRef, Input, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  Directive,
+  ElementRef,
+  Input,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
 
 @Directive({
-  selector: '[dinamicInnerHtml]'
+  selector: '[dinamicInnerHtml]',
+  standalone: true,
 })
 export class DynamicInnerHtmlDirective implements OnChanges {
   @Input('dinamicInnerHtml') newContent!: string;

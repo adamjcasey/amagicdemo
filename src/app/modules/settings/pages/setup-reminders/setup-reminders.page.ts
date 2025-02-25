@@ -1,16 +1,38 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, Subject, takeUntil } from 'rxjs';
 
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HeroComponent } from '@app/shared/components';
+import * as fromCoreStore from '@core/store';
+import * as fromHomeStore from '@home/store';
+import {
+  IonButton,
+  IonContent,
+  IonIcon,
+  IonImg,
+  IonToggle,
+} from '@ionic/angular/standalone';
 import * as fromStore from '@settings/store';
 import * as fromSharedStore from '@shared/store';
-import * as fromHomeStore from '@home/store';
-import * as fromCoreStore from '@core/store';
 
 @Component({
   selector: 'automagic-setup-reminders',
   templateUrl: 'setup-reminders.page.html',
   styleUrls: ['setup-reminders.page.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    HeroComponent,
+    IonContent,
+    IonImg,
+    IonToggle,
+    IonIcon,
+    IonButton,
+  ],
 })
 export class SetupRemindersPage implements OnInit, OnDestroy {
   public settingsConfig$!: Observable<any>;
@@ -20,21 +42,19 @@ export class SetupRemindersPage implements OnInit, OnDestroy {
   private _ngUnsubscribe: Subject<void> = new Subject<void>();
   public heroConfig: any;
 
-  constructor(
-    private _store: Store<fromCoreStore.CoreState>,
-  ) {
+  constructor(private _store: Store<fromCoreStore.CoreState>) {
     this.settingsConfig$ = this._store.select(fromStore.getSettingsConfig);
     this.homeConfig$ = this._store.select(fromHomeStore.getHomeConfig);
     this.heroConfig = {
       color: '--color-bg-pastel-green',
       template: '<h1 class="font-heading-1--bold">Smart reminders</h1>',
-    }
+    };
   }
 
   ngOnInit() {
     this.settingsConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(settingsConfig => {
+      .subscribe((settingsConfig) => {
         if (settingsConfig) {
           this.settingsConfig = settingsConfig;
         }
@@ -42,7 +62,7 @@ export class SetupRemindersPage implements OnInit, OnDestroy {
 
     this.homeConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(homeConfig => {
+      .subscribe((homeConfig) => {
         if (homeConfig) {
           this.homeConfig = homeConfig;
         }
@@ -55,72 +75,87 @@ export class SetupRemindersPage implements OnInit, OnDestroy {
   }
 
   saveSmartReminders(event: any) {
-    this._store.dispatch(new fromStore.SetData({
-      smartReminders: event.detail.checked,
-    }));
+    this._store.dispatch(
+      new fromStore.SetData({
+        smartReminders: event.detail.checked,
+      })
+    );
   }
 
   saveNotifyConflictsCalendar(event: any) {
-    this._store.dispatch(new fromStore.SetData({
-      notifyConflictsTime: event.detail.checked,
-    }));
+    this._store.dispatch(
+      new fromStore.SetData({
+        notifyConflictsTime: event.detail.checked,
+      })
+    );
   }
 
   saveSymptomReminder(event: any) {
-    this._store.dispatch(new fromStore.SetData({
-      symptomReminder: event.detail.checked,
-    }));
+    this._store.dispatch(
+      new fromStore.SetData({
+        symptomReminder: event.detail.checked,
+      })
+    );
   }
 
   saveOnlyRemindAtHome(event: any) {
-    this._store.dispatch(new fromStore.SetData({
-      onlyRemindAtHome: event.detail.checked,
-    }));
+    this._store.dispatch(
+      new fromStore.SetData({
+        onlyRemindAtHome: event.detail.checked,
+      })
+    );
   }
 
   saveNotifyWeatherPrecautions(event: any) {
-    this._store.dispatch(new fromStore.SetData({
-      notifyWeatherPrecautions: event.detail.checked,
-    }));
+    this._store.dispatch(
+      new fromStore.SetData({
+        notifyWeatherPrecautions: event.detail.checked,
+      })
+    );
   }
 
   saveSettings() {
     if (this.homeConfig.firstTimeDose) {
       this.goTo('home');
       setTimeout(() => {
-        this._store.dispatch(new fromSharedStore.AlertShow({
-          mode: 'full',
-          template: `
+        this._store.dispatch(
+          new fromSharedStore.AlertShow({
+            mode: 'full',
+            template: `
             <img src="assets/images/alert-setup-reminders.svg" />
             <h1 class="font-heading-1--bold">Smart reminders saved</h1>
             <p>AutoMagic will learn from your selections to improve recommendations.</p>
           `,
-          actions: [
-            {
-              label: 'Ok, let’s go!',
-              action: () => {
-                this._store.dispatch(new fromSharedStore.AlertHide);
-                // hold on until Alert component is closed
-                setTimeout(() => {
-                  // set as false first time dose property into home config
-                  this._store.dispatch(new fromHomeStore.SetData({
-                    firstTimeDose: false,
-                  }));
-                }, 500);
+            actions: [
+              {
+                label: 'Ok, let’s go!',
+                action: () => {
+                  this._store.dispatch(new fromSharedStore.AlertHide());
+                  // hold on until Alert component is closed
+                  setTimeout(() => {
+                    // set as false first time dose property into home config
+                    this._store.dispatch(
+                      new fromHomeStore.SetData({
+                        firstTimeDose: false,
+                      })
+                    );
+                  }, 500);
+                },
               },
-            }
-          ],
-        }));
+            ],
+          })
+        );
       }, 500);
-    }
-    else {
+    } else {
       this.goTo('settings');
     }
   }
 
   goTo(path: string) {
-    this._store.dispatch(new fromCoreStore.Go({
-      path: [path]
-    }));
+    this._store.dispatch(
+      new fromCoreStore.Go({
+        path: [path],
+      })
+    );
   }
 }

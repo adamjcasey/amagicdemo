@@ -1,29 +1,35 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class UtilsService {
   createMasonryLayout(wrapper: Element) {
     const applyMasonry = () => {
       const resizeGridItem = (item: any) => {
         const rowHeight = 12;
-        const rowGap = parseInt(window.getComputedStyle(wrapper).getPropertyValue('grid-row-gap'));
-        const rowSpan = Math.ceil((item.firstChild.clientHeight + rowGap) / (rowHeight + rowGap));
+        const rowGap = parseInt(
+          window.getComputedStyle(wrapper).getPropertyValue('grid-row-gap')
+        );
+        const rowSpan = Math.ceil(
+          (item.firstChild.clientHeight + rowGap) / (rowHeight + rowGap)
+        );
         item.style.gridRowEnd = `span ${rowSpan}`;
-      }
-  
+      };
+
       const items = wrapper.children;
       const resizeItems = () => {
-        for(let i = 0; i < items.length; i++) {
+        for (let i = 0; i < items.length; i++) {
           resizeGridItem(items[i]);
         }
-      }
+      };
       resizeItems();
       window.addEventListener('resize', resizeItems);
-    }
+    };
 
     const images = wrapper.querySelectorAll('.card .card__image img');
     let loadedImages = 0;
-    images.forEach(image => {
+    images.forEach((image) => {
       image.addEventListener('load', () => {
         loadedImages++;
         if (loadedImages === images.length) {
@@ -36,7 +42,7 @@ export class UtilsService {
 
   humanizeBodyPartInjected(bodyPart: string) {
     let text;
-    switch(bodyPart) {
+    switch (bodyPart) {
       case 'top-left':
         text = 'Right Abdomen';
         break;
@@ -57,7 +63,7 @@ export class UtilsService {
 
   humanizeSeveritySymptom(value: number) {
     let text;
-    switch(value) {
+    switch (value) {
       case 1:
         text = 'Very Severe';
         break;

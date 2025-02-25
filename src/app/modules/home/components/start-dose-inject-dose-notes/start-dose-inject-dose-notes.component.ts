@@ -1,23 +1,33 @@
-import { 
-  Component,
-  ViewEncapsulation, 
-  OnInit,
-  OnDestroy,
-} from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Observable, Subject, takeUntil } from 'rxjs';
 
-import * as fromStore from '@home/store';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RatingFieldComponent } from '@app/shared/components';
 import * as fromCoreStore from '@core/store';
+import * as fromStore from '@home/store';
+import { IonCheckbox, IonIcon } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'automagic-start-dose-inject-dose-notes',
   templateUrl: 'start-dose-inject-dose-notes.component.html',
   styleUrls: ['start-dose-inject-dose-notes.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    RatingFieldComponent,
+    IonCheckbox,
+    IonIcon,
+  ],
 })
-export class StartDoseInjectDoseNotesFormComponent implements OnInit, OnDestroy {
+export class StartDoseInjectDoseNotesFormComponent
+  implements OnInit, OnDestroy
+{
   public homeConfig$!: Observable<any>;
   public homeConfig: any;
   public doseNotesFormGroup: FormGroup;
@@ -27,7 +37,7 @@ export class StartDoseInjectDoseNotesFormComponent implements OnInit, OnDestroy 
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
-    private _formBuilder: FormBuilder,
+    private _formBuilder: FormBuilder
   ) {
     this.homeConfig$ = this._store.select(fromStore.getHomeConfig);
     this.doseNotesFormGroup = this._formBuilder.group({
@@ -37,18 +47,13 @@ export class StartDoseInjectDoseNotesFormComponent implements OnInit, OnDestroy 
       note: ['', ''],
     });
 
-    this.symptoms = [
-      'Redness',
-      'Swelling',
-      'Itching',
-      'No Reaction',
-    ];
+    this.symptoms = ['Redness', 'Swelling', 'Itching', 'No Reaction'];
   }
 
   ngOnInit() {
     this.homeConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(homeConfig => {
+      .subscribe((homeConfig) => {
         if (homeConfig) {
           this.homeConfig = homeConfig;
         }
@@ -56,23 +61,25 @@ export class StartDoseInjectDoseNotesFormComponent implements OnInit, OnDestroy 
 
     this.doseNotesFormGroup.valueChanges.subscribe(() => {
       if (this.doseNotesFormGroup.valid) {
-        this._store.dispatch(new fromStore.SetData({
-          doses: this.homeConfig.doses?.map((dose: any, index: number) => {
-            const nextDose = this.homeConfig.doses[index + 1];
-            if (dose.marked) {
-              if (nextDose && !nextDose.marked)  {
-                return {
-                  marked: dose.marked,
-                  date: dose.date,
-                  bodyPartInjected: dose.bodyPartInjected,
-                  notes: this.doseNotesFormGroup.value,
-                };
+        this._store.dispatch(
+          new fromStore.SetData({
+            doses: this.homeConfig.doses?.map((dose: any, index: number) => {
+              const nextDose = this.homeConfig.doses[index + 1];
+              if (dose.marked) {
+                if (nextDose && !nextDose.marked) {
+                  return {
+                    marked: dose.marked,
+                    date: dose.date,
+                    bodyPartInjected: dose.bodyPartInjected,
+                    notes: this.doseNotesFormGroup.value,
+                  };
+                }
               }
-            }
 
-            return dose;
-          }),
-        }));
+              return dose;
+            }),
+          })
+        );
       }
     });
   }
@@ -87,9 +94,10 @@ export class StartDoseInjectDoseNotesFormComponent implements OnInit, OnDestroy 
     const symptomsField = this.doseNotesFormGroup.get('symptoms') as FormArray;
     if (!symptomsField?.value.includes(this.symptoms[index])) {
       symptomsField.push(this._formBuilder.control(this.symptoms[index]));
-    }
-    else {
-      const indexToDelete = symptomsField.value.findIndex((symptom: string) => symptom === this.symptoms[index]);
+    } else {
+      const indexToDelete = symptomsField.value.findIndex(
+        (symptom: string) => symptom === this.symptoms[index]
+      );
       symptomsField.removeAt(indexToDelete);
     }
   }
@@ -103,7 +111,9 @@ export class StartDoseInjectDoseNotesFormComponent implements OnInit, OnDestroy 
     field.blur();
 
     const sliderPageComponent = document.querySelector('.slider-page');
-    const submitAction = sliderPageComponent?.querySelector('.wrapper-large__toolbar ion-button:last-child') as HTMLElement;
+    const submitAction = sliderPageComponent?.querySelector(
+      '.wrapper-large__toolbar ion-button:last-child'
+    ) as HTMLElement;
     submitAction.click();
   }
 }

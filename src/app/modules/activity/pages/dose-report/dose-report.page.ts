@@ -1,18 +1,31 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
+import moment from 'moment';
 import { Observable, Subject, takeUntil } from 'rxjs';
-import * as moment from 'moment';
 
 import * as fromStore from '@activity/store';
-import * as fromHomeStore from '@home/store';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AccordionComponent } from '@app/shared/components';
+import { ReversePipe } from '@app/shared/pipes';
 import * as fromCoreStore from '@core/store';
-import * as fromSharedStore from '@shared/store';
+import * as fromHomeStore from '@home/store';
+import { IonContent } from '@ionic/angular/standalone';
 import * as fromSharedServices from '@shared/services';
 
 @Component({
   selector: 'automagic-dose-report',
   templateUrl: 'dose-report.page.html',
   styleUrls: ['dose-report.page.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    AccordionComponent,
+    ReversePipe,
+    IonContent,
+  ],
 })
 export class DoseReportPage implements OnInit, OnDestroy {
   public activityConfig$!: Observable<any>;
@@ -24,7 +37,7 @@ export class DoseReportPage implements OnInit, OnDestroy {
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
-    private _utils: fromSharedServices.UtilsService,
+    private _utils: fromSharedServices.UtilsService
   ) {
     this.homeConfig$ = this._store.select(fromHomeStore.getHomeConfig);
     this.activityConfig$ = this._store.select(fromStore.getActivityConfig);
@@ -33,7 +46,7 @@ export class DoseReportPage implements OnInit, OnDestroy {
   ngOnInit() {
     this.homeConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(homeConfig => {
+      .subscribe((homeConfig) => {
         if (homeConfig) {
           this.homeConfig = homeConfig;
           if (this.homeConfig.doses) {
@@ -43,24 +56,32 @@ export class DoseReportPage implements OnInit, OnDestroy {
                 .map((dose: any, index: number) => {
                   return {
                     type: 'dose-report',
-                    title: `Dose ${index + 1} <span>${moment(dose.date).format('MMM D, H:mm A')}</span>`,
+                    title: `Dose ${index + 1} <span>${moment(dose.date).format(
+                      'MMM D, H:mm A'
+                    )}</span>`,
                     template: `
                       <div class="dose-report-widget">
                         <img src="/assets/images/activity-page-dose-report-widget.svg">
                       </div>
                     `,
                     onClick: () => {
-                      this._store.dispatch(new fromStore.SetData({
-                        doseReportSelected: {
-                          ...dose,
-                          numberDose: index + 1,
-                        }
-                      }));
+                      this._store.dispatch(
+                        new fromStore.SetData({
+                          doseReportSelected: {
+                            ...dose,
+                            numberDose: index + 1,
+                          },
+                        })
+                      );
                       this.goTo(`activity/dose-report-detail`);
                     },
-                    asset: `assets/images/activity-highlights-dose-report-${dose.bodyPartInjected.toLowerCase().replace(' ', '-')}.svg`,
-                    description: `This time you injected your <strong>${this._utils.humanizeBodyPartInjected(dose.bodyPartInjected)}<strong>`
-                  }
+                    asset: `assets/images/activity-highlights-dose-report-${dose.bodyPartInjected
+                      .toLowerCase()
+                      .replace(' ', '-')}.svg`,
+                    description: `This time you injected your <strong>${this._utils.humanizeBodyPartInjected(
+                      dose.bodyPartInjected
+                    )}<strong>`,
+                  };
                 });
             }
           }
@@ -69,19 +90,23 @@ export class DoseReportPage implements OnInit, OnDestroy {
 
     this.activityConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(activityConfig => {
+      .subscribe((activityConfig) => {
         if (activityConfig) {
           this.activityConfig = activityConfig;
           if (!this.activityConfig.doseReportsPageVisited && this.homeConfig) {
-            const onBoardingTasks = this.homeConfig.onBoardingTasks.map((task: any, index: number) => {
-              return {
-                ...task,
+            const onBoardingTasks = this.homeConfig.onBoardingTasks.map(
+              (task: any, index: number) => {
+                return {
+                  ...task,
+                };
               }
-            });
+            );
             onBoardingTasks[1].completed = true;
-            this._store.dispatch(new fromHomeStore.SetData({
-              onBoardingTasks: onBoardingTasks,
-            }));
+            this._store.dispatch(
+              new fromHomeStore.SetData({
+                onBoardingTasks: onBoardingTasks,
+              })
+            );
           }
         }
       });
@@ -93,9 +118,10 @@ export class DoseReportPage implements OnInit, OnDestroy {
   }
 
   goTo(path: string) {
-    this._store.dispatch(new fromCoreStore.Go({
-      path: [path]
-    }));
+    this._store.dispatch(
+      new fromCoreStore.Go({
+        path: [path],
+      })
+    );
   }
-
 }

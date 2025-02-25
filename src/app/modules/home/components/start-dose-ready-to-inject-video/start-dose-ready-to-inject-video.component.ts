@@ -1,41 +1,47 @@
 import {
+  AfterViewInit,
   Component,
-  ViewEncapsulation,
+  ElementRef,
+  OnDestroy,
   OnInit,
   ViewChild,
-  AfterViewInit,
-  ElementRef,
+  ViewEncapsulation,
 } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { Store } from '@ngrx/store';
-import * as moment from 'moment';
-import { CapacitorVideoPlayer } from "capacitor-video-player";
-import { capVideoPlayerOptions} from "capacitor-video-player/dist/esm/definitions";
+import { CapacitorVideoPlayer } from 'capacitor-video-player';
+import { capVideoPlayerOptions } from 'capacitor-video-player/dist/esm/definitions';
+import moment from 'moment';
 
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import * as fromCoreStore from '@core/store';
+import { IonIcon } from '@ionic/angular/standalone';
 import * as fromSharedStore from '@shared/store';
 
 @Component({
   selector: 'automagic-start-dose-ready-to-inject-video',
   templateUrl: 'start-dose-ready-to-inject-video.component.html',
   styleUrls: ['start-dose-ready-to-inject-video.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, IonIcon],
 })
-export class StartDoseReadyToInjectVideoComponent implements OnInit, AfterViewInit {
+export class StartDoseReadyToInjectVideoComponent
+  implements OnInit, AfterViewInit, OnDestroy
+{
   @ViewChild('videoWrapper') videoWrapper!: ElementRef;
   @ViewChild('videoTag') videoTag!: ElementRef;
   isDefaultVideoComponentFailed: boolean = false;
   private videoPlayer: any;
-  readonly videoUrl: string = "/assets/videos/first-dose-video.mp4";
+  readonly videoUrl: string = '/assets/videos/first-dose-video.mp4';
   private handlerPlay: any;
   private handlerPause: any;
   private handlerEnded: any;
   private handlerExit: any;
   private handlerReady: any;
 
-  constructor(
-    private _store: Store<fromCoreStore.CoreState>,
-  ) {}
+  constructor(private _store: Store<fromCoreStore.CoreState>) {}
 
   ngOnInit() {}
 
@@ -57,26 +63,36 @@ export class StartDoseReadyToInjectVideoComponent implements OnInit, AfterViewIn
     };
 
     videoElement.play();
-    this.initVideoPlayerOnMainVideoComponentStuck()
+    this.initVideoPlayerOnMainVideoComponentStuck();
   }
 
-  setTimeline () {
+  setTimeline() {
     const videoElement = this.videoTag.nativeElement;
     const totalLength = videoElement.duration % 60;
-    const percentageCompleted = Math.round((videoElement.currentTime / totalLength) * 100);
-    const duration = moment.duration(Math.floor(videoElement.duration), 's').asSeconds();
-    const progress = moment.duration(Math.floor(videoElement.currentTime), 's').asSeconds();
+    const percentageCompleted = Math.round(
+      (videoElement.currentTime / totalLength) * 100
+    );
+    const duration = moment
+      .duration(Math.floor(videoElement.duration), 's')
+      .asSeconds();
+    const progress = moment
+      .duration(Math.floor(videoElement.currentTime), 's')
+      .asSeconds();
     const currentTime = Math.floor(videoElement.currentTime);
     const remainingTime = duration - progress;
     const timeline = {
       progress: `00:${currentTime < 10 ? '0' + currentTime : currentTime}`,
-      duration: `00:${remainingTime < 10 ? '0' + remainingTime : remainingTime}`,
+      duration: `00:${
+        remainingTime < 10 ? '0' + remainingTime : remainingTime
+      }`,
       percentage: percentageCompleted,
-    }
+    };
 
-    this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
-      timeline: timeline,
-    }));
+    this._store.dispatch(
+      new fromSharedStore.SliderPageSetContentOptions({
+        timeline: timeline,
+      })
+    );
   }
 
   private initVideoPlayerOnMainVideoComponentStuck() {
@@ -86,7 +102,7 @@ export class StartDoseReadyToInjectVideoComponent implements OnInit, AfterViewIn
       if (videoElement.currentTime === 0 && !this.videoPlayer) {
         this.startBackupVideoPlayer();
       }
-    }, videoIsInitTimeout)
+    }, videoIsInitTimeout);
   }
 
   private async startBackupVideoPlayer() {
@@ -96,10 +112,13 @@ export class StartDoseReadyToInjectVideoComponent implements OnInit, AfterViewIn
     const videoSettings: capVideoPlayerOptions = {};
     this.addListenersToPlayerPlugin();
     if (this.videoUrl) {
-      videoSettings.mode = "fullscreen";
-      videoSettings.url = (Capacitor.getPlatform() === 'web') ?  this.videoUrl : `public${this.videoUrl}`;
+      videoSettings.mode = 'fullscreen';
+      videoSettings.url =
+        Capacitor.getPlatform() === 'web'
+          ? this.videoUrl
+          : `public${this.videoUrl}`;
       videoSettings.showControls = true;
-      videoSettings.displayMode = "portrait";
+      videoSettings.displayMode = 'portrait';
       videoSettings.playerId = 'fullscreen';
       videoSettings.componentTag = 'automagic-start-dose-ready-to-inject-video';
 
@@ -128,40 +147,63 @@ export class StartDoseReadyToInjectVideoComponent implements OnInit, AfterViewIn
   }
 
   private async addListenersToPlayerPlugin(): Promise<void> {
-    this.handlerPlay = await this.videoPlayer.addListener('jeepCapVideoPlayerPlay',
+    this.handlerPlay = await this.videoPlayer.addListener(
+      'jeepCapVideoPlayerPlay',
       (data: any) => {
         const fromPlayerId = data.fromPlayerId;
         const currentTime = data.currentTime;
-        console.log(`<<<< onPlay in ViewerVideo ${fromPlayerId} ct: ${currentTime}`);
-      }, false);
-    this.handlerPause = await this.videoPlayer.addListener('jeepCapVideoPlayerPause',
+        console.log(
+          `<<<< onPlay in ViewerVideo ${fromPlayerId} ct: ${currentTime}`
+        );
+      },
+      false
+    );
+    this.handlerPause = await this.videoPlayer.addListener(
+      'jeepCapVideoPlayerPause',
       (data: any) => {
         const fromPlayerId = data.fromPlayerId;
         const currentTime = data.currentTime;
-        console.log(`<<<< onPause in ViewerVideo ${fromPlayerId} ct: ${currentTime}`);
-      }, false);
-    this.handlerEnded = await this.videoPlayer.addListener('jeepCapVideoPlayerEnded',
+        console.log(
+          `<<<< onPause in ViewerVideo ${fromPlayerId} ct: ${currentTime}`
+        );
+      },
+      false
+    );
+    this.handlerEnded = await this.videoPlayer.addListener(
+      'jeepCapVideoPlayerEnded',
       (data: any) => {
         const fromPlayerId = data.fromPlayerId;
         const currentTime = data.currentTime;
-        console.log(`<<<< onEnded in ViewerVideo ${fromPlayerId} ct: ${currentTime}`);
-      }, false);
-    this.handlerExit = await this.videoPlayer.addListener('jeepCapVideoPlayerExit',
+        console.log(
+          `<<<< onEnded in ViewerVideo ${fromPlayerId} ct: ${currentTime}`
+        );
+      },
+      false
+    );
+    this.handlerExit = await this.videoPlayer.addListener(
+      'jeepCapVideoPlayerExit',
       (data: any) => {
-        const dismiss = data.dismiss ;
+        const dismiss = data.dismiss;
         console.log(`<<<< onExit in ViewerVideo ${dismiss}`);
         this.cleanUpVideoPlayer();
-      }, false);
-    this.handlerReady = await this.videoPlayer.addListener('jeepCapVideoPlayerReady',
+      },
+      false
+    );
+    this.handlerReady = await this.videoPlayer.addListener(
+      'jeepCapVideoPlayerReady',
       (data: any) => {
         const fromPlayerId = data.fromPlayerId;
         const currentTime = data.currentTime;
-        console.log(`<<<< onReady in ViewerVideo ${fromPlayerId} ct: ${currentTime}`);
-      }, false);
+        console.log(
+          `<<<< onReady in ViewerVideo ${fromPlayerId} ct: ${currentTime}`
+        );
+      },
+      false
+    );
     return;
   }
 
   async ngOnDestroy(): Promise<void> {
-    await this.cleanUpVideoPlayer()
+    await this.cleanUpVideoPlayer();
   }
 }

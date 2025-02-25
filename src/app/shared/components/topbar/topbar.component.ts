@@ -1,19 +1,47 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Router, Event as RoutingEvent, NavigationEnd } from '@angular/router';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { NavigationEnd, Router, Event as RoutingEvent } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable, Subject, takeUntil } from 'rxjs';
 
-import * as fromStore from '@shared/store';
+import * as fromActivityStore from '@activity/store';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SecondsToMinutesPipe } from '@app/shared/pipes';
 import * as fromCoreStore from '@core/store';
 import * as fromHomeStore from '@home/store';
-import * as fromActivityStore from '@activity/store';
+import {
+  IonButton,
+  IonButtons,
+  IonHeader,
+  IonIcon,
+  IonMenuButton,
+  IonToolbar,
+} from '@ionic/angular/standalone';
 import * as fromResourcesStore from '@resources/store';
 import * as fromSharedStore from '@shared/store';
+import * as fromStore from '@shared/store';
+import { addIcons } from 'ionicons';
+import { chevronBackOutline, hammerOutline } from 'ionicons/icons';
+import { BackdropComponent } from '../backdrop/backdrop.component';
 
 @Component({
   selector: 'automagic-topbar',
   templateUrl: 'topbar.component.html',
   styleUrls: ['topbar.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    BackdropComponent,
+    SecondsToMinutesPipe,
+    IonHeader,
+    IonToolbar,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonMenuButton,
+  ],
 })
 export class TopBarComponent implements OnInit, OnDestroy {
   public config$!: Observable<any>;
@@ -28,7 +56,6 @@ export class TopBarComponent implements OnInit, OnDestroy {
   public activityConfig: any;
   public resourcesConfig$!: Observable<any>;
   public resourcesConfig: any;
-  public routerEvents$;
   public activityScope: boolean = false;
   public settingsScope: boolean = false;
   public resourcesScope: boolean = false;
@@ -38,81 +65,132 @@ export class TopBarComponent implements OnInit, OnDestroy {
   constructor(
     private _store: Store<fromStore.SharedState>,
     private _router: Router,
+    private _cdr: ChangeDetectorRef
   ) {
+    console.log('AUTOMAGIC TOPBAR');
+
+    addIcons({
+      chevronBackOutline,
+      hammerOutline,
+    });
+
     this.config$ = this._store.select(fromStore.getTopbarConfig);
-    this.bottomToolbarConfig$ = this._store.select(fromStore.getBottomToolbarConfig);
+    this.bottomToolbarConfig$ = this._store.select(
+      fromStore.getBottomToolbarConfig
+    );
     this.layoutConfig$ = this._store.select(fromCoreStore.getLayoutConfig);
     this.homeConfig$ = this._store.select(fromHomeStore.getHomeConfig);
-    this.activityConfig$ = this._store.select(fromActivityStore.getActivityConfig);
-    this.resourcesConfig$ = this._store.select(fromResourcesStore.getResourcesConfig);
+    this.activityConfig$ = this._store.select(
+      fromActivityStore.getActivityConfig
+    );
+    this.resourcesConfig$ = this._store.select(
+      fromResourcesStore.getResourcesConfig
+    );
 
-    this.routerEvents$ = this._router.events.subscribe(
-      (event: RoutingEvent) => {
+    this._router.events
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((event: RoutingEvent) => {
+        console.log('Router event:', event);
+
         if (event instanceof NavigationEnd) {
           this.currentRoute = event.urlAfterRedirects;
           if (this.currentRoute.includes('symptoms/add')) {
             if (this.activityConfig.symptomReportSelected) {
               this.activityScope = true;
             }
-          }
-          else {
+          } else {
             this.activityScope = this.currentRoute.includes('activity/');
             this.resourcesScope = this.currentRoute.includes('resources/');
 
             if (this.currentRoute.includes('settings/setup-reminders')) {
-              this.settingsScope = !this.homeConfig.firstTimeDose ? true : false;
-            }
-            else {
+              this.settingsScope = !this.homeConfig.firstTimeDose
+                ? true
+                : false;
+            } else {
               this.settingsScope = this.currentRoute.includes('settings/');
             }
           }
 
-          switch(this.currentRoute) {
+          console.log('this.currentRoute', this.currentRoute);
+
+          switch (this.currentRoute) {
             case '/welcome':
             case '/home':
             case '/settings':
-              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-green'));
+              this._store.dispatch(
+                new fromSharedStore.TopbarChangeColor('--color-bg-pastel-green')
+              );
               break;
 
             case '/activity':
             case '/resources':
-              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-beige'));
+              this._store.dispatch(
+                new fromSharedStore.TopbarChangeColor('--color-bg-pastel-beige')
+              );
               break;
 
             case '/symptoms/add':
-              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-white'));
+              this._store.dispatch(
+                new fromSharedStore.TopbarChangeColor('--color-white')
+              );
               break;
 
             case '/activity/calendar':
-              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple'));
+              this._store.dispatch(
+                new fromSharedStore.TopbarChangeColor(
+                  '--color-bg-pastel-purple'
+                )
+              );
               break;
             case '/activity/dose-report':
-              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-blue'));
+              this._store.dispatch(
+                new fromSharedStore.TopbarChangeColor('--color-bg-pastel-blue')
+              );
               break;
             case '/activity/dose-report-detail':
-              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-white'));
+              this._store.dispatch(
+                new fromSharedStore.TopbarChangeColor('--color-white')
+              );
               break;
             case '/activity/your-progress':
-              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
+              this._store.dispatch(
+                new fromSharedStore.TopbarChangeColor(
+                  '--color-bg-pastel-honey-yellow'
+                )
+              );
               break;
             case '/activity/symptom-report':
-              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-tiffany-blue'));
+              this._store.dispatch(
+                new fromSharedStore.TopbarChangeColor(
+                  '--color-bg-pastel-tiffany-blue'
+                )
+              );
               break;
 
             case '/resources/your-care-team':
             case '/resources/your-care-team/list':
             case '/resources/your-care-team/detail':
-              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-blue'));
+              this._store.dispatch(
+                new fromSharedStore.TopbarChangeColor('--color-bg-pastel-blue')
+              );
               break;
             case '/resources/community-feed':
-              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-mint'));
+              this._store.dispatch(
+                new fromSharedStore.TopbarChangeColor('--color-bg-pastel-mint')
+              );
               break;
             case '/resources/education':
             case '/resources/one-path':
-              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow'));
+              this._store.dispatch(
+                new fromSharedStore.TopbarChangeColor(
+                  '--color-bg-pastel-honey-yellow'
+                )
+              );
               break;
             case '/resources/mindful-assistant':
-              this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-green'));
+              this._store.dispatch(
+                new fromSharedStore.TopbarChangeColor('--color-bg-pastel-green')
+              );
               // Old version
               // this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-lime'));
               break;
@@ -122,38 +200,37 @@ export class TopBarComponent implements OnInit, OnDestroy {
             //   break;
           }
         }
-      },
-    );
+      });
   }
 
   ngOnInit() {
-    this.config$
-      .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(config => {
-        if (config) {
-          this.config = config;
-        }
-      });
+    this.config$.pipe(takeUntil(this._ngUnsubscribe)).subscribe((config) => {
+      if (config) {
+        this.config = config;
+      }
+    });
 
     this.bottomToolbarConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(bottomToolbarConfig => {
+      .subscribe((bottomToolbarConfig) => {
         if (bottomToolbarConfig) {
           this.bottomToolbarConfig = bottomToolbarConfig;
         }
       });
-    
-    this.layoutConfig$
-      .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(layoutConfig => {
-        if (layoutConfig) {
-          this.layoutConfig = layoutConfig;
-        }
-      });
+
+    this.layoutConfig$ = this._store
+      .select(fromCoreStore.getLayoutConfig)
+      .pipe(takeUntil(this._ngUnsubscribe));
+
+    this.layoutConfig$.subscribe((config) => {
+      this.layoutConfig = config;
+      // Manually trigger change detection after the value is updated
+      this._cdr.detectChanges();
+    });
 
     this.homeConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(homeConfig => {
+      .subscribe((homeConfig) => {
         if (homeConfig) {
           this.homeConfig = homeConfig;
         }
@@ -161,7 +238,7 @@ export class TopBarComponent implements OnInit, OnDestroy {
 
     this.activityConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(activityConfig => {
+      .subscribe((activityConfig) => {
         if (activityConfig) {
           this.activityConfig = activityConfig;
         }
@@ -169,7 +246,7 @@ export class TopBarComponent implements OnInit, OnDestroy {
 
     this.resourcesConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(resourcesConfig => {
+      .subscribe((resourcesConfig) => {
         if (resourcesConfig) {
           this.resourcesConfig = resourcesConfig;
         }
@@ -208,11 +285,9 @@ export class TopBarComponent implements OnInit, OnDestroy {
           this._store.dispatch(new fromStore.SliderPageClear());
         }
       }
-    }
-    else if (this.settingsScope) {
+    } else if (this.settingsScope) {
       this.goTo('settings');
-    }
-    else if (this.resourcesScope) {
+    } else if (this.resourcesScope) {
       if (
         this.currentRoute.includes('resources/your-care-team') ||
         this.currentRoute.includes('resources/community-feed') ||
@@ -227,16 +302,21 @@ export class TopBarComponent implements OnInit, OnDestroy {
         // }
         // else {
         //   this._store.dispatch(new fromStore.TopbarChangeColor('--color-bg-pastel-beige'));
-        //   this.goTo('resources'); 
+        //   this.goTo('resources');
         // }
-        this._store.dispatch(new fromStore.TopbarChangeColor('--color-bg-pastel-beige'));
-        this.goTo('resources'); 
+        this._store.dispatch(
+          new fromStore.TopbarChangeColor('--color-bg-pastel-beige')
+        );
+        this.goTo('resources');
       }
 
       if (this.currentRoute.includes('resources/your-care-team/list')) {
         const yourCareteam = this.resourcesConfig.yourCareTeam;
         let path = 'resources/your-care-team';
-        if (yourCareteam.myTeam.length > 0 || yourCareteam.caregivers.length > 0) {
+        if (
+          yourCareteam.myTeam.length > 0 ||
+          yourCareteam.caregivers.length > 0
+        ) {
           path = 'resources';
         }
         this.goTo(path);
@@ -244,10 +324,11 @@ export class TopBarComponent implements OnInit, OnDestroy {
 
       if (this.currentRoute.includes('resources/your-care-team/detail')) {
         this.goTo('resources/your-care-team/list');
-        this._store.dispatch(new fromResourcesStore.MemberYouCareTeamSelected(null));
+        this._store.dispatch(
+          new fromResourcesStore.MemberYouCareTeamSelected(null)
+        );
       }
-    }
-    else {
+    } else {
       // this.goTo('profile');
     }
   }
@@ -259,14 +340,18 @@ export class TopBarComponent implements OnInit, OnDestroy {
 
     if (this.currentRoute.includes('symptoms/add')) {
       if (this.activityConfig.symptomReportSelected) {
-        this._store.dispatch(new fromActivityStore.SetData({
-          symptomReportSelected: null,
-        }));
+        this._store.dispatch(
+          new fromActivityStore.SetData({
+            symptomReportSelected: null,
+          })
+        );
       }
     }
 
-    this._store.dispatch(new fromCoreStore.Go({
-      path: [path]
-    }));
+    this._store.dispatch(
+      new fromCoreStore.Go({
+        path: [path],
+      })
+    );
   }
 }

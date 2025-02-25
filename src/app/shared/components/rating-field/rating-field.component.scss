@@ -2,7 +2,7 @@
 
 .rating-field {
   &.is-disabled {
-    pointer-events: none; 
+    pointer-events: none;
   }
 
   .rating-field__rate-line {
@@ -78,19 +78,19 @@
         &:nth-child(2) {
           z-index: 20;
         }
-  
+
         &:nth-child(3) {
           z-index: 30;
         }
-  
+
         &:nth-child(4) {
           z-index: 40;
-  
+
           .checkpoint__line {
             width: 80px;
           }
         }
-  
+
         &:nth-child(5) {
           z-index: 50;
         }
@@ -111,7 +111,7 @@
               border-color: #FF9955;
             }
           }
-  
+
           &:nth-child(3) {
             border-color: #FFB852;
 
@@ -123,7 +123,7 @@
               border-color: #FFB852;
             }
           }
-  
+
           &:nth-child(4) {
             border-color: #E4D960;
 
@@ -152,7 +152,7 @@
             &::before {
               background-color: transparent;
             }
-  
+
             &::after {
               border-color: transparent;
               background-color: transparent;
@@ -205,7 +205,7 @@
       + .rating-field__rate-line {
         margin-right: var(--size-xxs);
         margin-left: var(--size-xxs);
-  
+
         .checkpoint {
           &:nth-child(4) {
             .checkpoint__line {

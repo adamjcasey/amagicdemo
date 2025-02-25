@@ -1,5 +1,5 @@
+import moment from 'moment';
 import { environment } from 'src/environments/environment';
-import * as moment from 'moment';
 
 import * as fromSharedServices from '@shared/services';
 
@@ -27,10 +27,7 @@ if (environment.production) {
           email: 'dr_smith@gmail.com',
           video: '#',
           phone: '+49 571061332',
-          permissions: [
-            'dose-history',
-            'prescription-info',
-          ],
+          permissions: ['dose-history', 'prescription-info'],
         },
         {
           name: 'Dr. Jess  Santiago',
@@ -39,10 +36,7 @@ if (environment.production) {
           email: 'dr_smith@gmail.com',
           video: '#',
           phone: '+49 571061332',
-          permissions: [
-            'prescription-info',
-            'injection-site-photos',
-          ],
+          permissions: ['prescription-info', 'injection-site-photos'],
         },
       ],
       caregivers: [
@@ -52,11 +46,9 @@ if (environment.production) {
           photo: `https://ui-avatars.com/api/?name=James+David&size=120&color=ffffff&background=${fromSharedServices.UtilsService.getRandomColor()}`,
           website: '#',
           phone: '+49 571061332',
-          permissions: [
-            'dose-history',
-          ],
+          permissions: ['dose-history'],
         },
-      ]
+      ],
     },
     communityFeeds: [
       {
@@ -102,7 +94,7 @@ if (environment.production) {
         `,
         likes: 150,
         comments: 45,
-      }
+      },
     ],
     educationFeeds: [
       {
@@ -140,49 +132,58 @@ if (environment.production) {
       messages: [
         {
           type: 'from',
-          content: 'I’m going to be traveling for my next injection. How do I make sure to get my Theryx when I’m away?',
+          content:
+            'I’m going to be traveling for my next injection. How do I make sure to get my Theryx when I’m away?',
         },
         {
           type: 'to',
-          content: 'I can help you with that where will you be traveling? Also how are you doing?',
+          content:
+            'I can help you with that where will you be traveling? Also how are you doing?',
         },
         {
           type: 'from',
-          content: 'I’m going to be traveling for my next injection. How do I make sure to get my Theryx when I’m away?',
+          content:
+            'I’m going to be traveling for my next injection. How do I make sure to get my Theryx when I’m away?',
         },
         {
           type: 'to',
-          content: 'I can help you with that where will you be traveling? Also how are you doing?',
+          content:
+            'I can help you with that where will you be traveling? Also how are you doing?',
         },
         {
           type: 'from',
-          content: 'I’m going to be traveling for my next injection. How do I make sure to get my Theryx when I’m away?',
+          content:
+            'I’m going to be traveling for my next injection. How do I make sure to get my Theryx when I’m away?',
         },
         {
           type: 'to',
-          content: 'I can help you with that where will you be traveling? Also how are you doing?',
+          content:
+            'I can help you with that where will you be traveling? Also how are you doing?',
         },
         {
           type: 'from',
-          content: 'I’m going to be traveling for my next injection. How do I make sure to get my Theryx when I’m away?',
+          content:
+            'I’m going to be traveling for my next injection. How do I make sure to get my Theryx when I’m away?',
         },
         {
           type: 'to',
-          content: 'I can help you with that where will you be traveling? Also how are you doing?',
+          content:
+            'I can help you with that where will you be traveling? Also how are you doing?',
         },
         {
           type: 'from',
-          content: 'I’m going to be traveling for my next injection. How do I make sure to get my Theryx when I’m away?',
+          content:
+            'I’m going to be traveling for my next injection. How do I make sure to get my Theryx when I’m away?',
         },
         {
           type: 'to',
-          content: 'I can help you with that where will you be traveling? Also how are you doing?',
-        }
-      ]
-    }
-  }
-}
-else {
+          content:
+            'I can help you with that where will you be traveling? Also how are you doing?',
+        },
+      ],
+    },
+  };
+} else {
   initialState = {
     entryPageVisited: false,
     yourCareTeamPageVisited: false,
@@ -195,10 +196,7 @@ else {
           email: 'dr_smith@gmail.com',
           video: '#',
           phone: '+49 571061332',
-          permissions: [
-            'dose-history',
-            'prescription-info',
-          ],
+          permissions: ['dose-history', 'prescription-info'],
         },
         {
           name: 'Dr. Jess  Santiago',
@@ -207,10 +205,7 @@ else {
           email: 'dr_smith@gmail.com',
           video: '#',
           phone: '+49 571061332',
-          permissions: [
-            'prescription-info',
-            'injection-site-photos',
-          ],
+          permissions: ['prescription-info', 'injection-site-photos'],
         },
       ],
       caregivers: [
@@ -220,11 +215,9 @@ else {
           photo: `https://ui-avatars.com/api/?name=James+David&size=120&color=ffffff&background=${fromSharedServices.UtilsService.getRandomColor()}`,
           website: '#',
           phone: '+49 571061332',
-          permissions: [
-            'dose-history',
-          ],
+          permissions: ['dose-history'],
         },
-      ]
+      ],
     },
     communityFeeds: [
       {
@@ -270,7 +263,7 @@ else {
         `,
         likes: 150,
         comments: 45,
-      }
+      },
     ],
     educationFeeds: [
       {
@@ -308,47 +301,57 @@ else {
       messages: [
         {
           type: 'from',
-          content: 'I’m going to be traveling for my next injection. How do I make sure to get my Theryx when I’m away?',
+          content:
+            'I’m going to be traveling for my next injection. How do I make sure to get my Theryx when I’m away?',
         },
         {
           type: 'to',
-          content: 'I can help you with that where will you be traveling? Also how are you doing?',
+          content:
+            'I can help you with that where will you be traveling? Also how are you doing?',
         },
         {
           type: 'from',
-          content: 'I’m going to be traveling for my next injection. How do I make sure to get my Theryx when I’m away?',
+          content:
+            'I’m going to be traveling for my next injection. How do I make sure to get my Theryx when I’m away?',
         },
         {
           type: 'to',
-          content: 'I can help you with that where will you be traveling? Also how are you doing?',
+          content:
+            'I can help you with that where will you be traveling? Also how are you doing?',
         },
         {
           type: 'from',
-          content: 'I’m going to be traveling for my next injection. How do I make sure to get my Theryx when I’m away?',
+          content:
+            'I’m going to be traveling for my next injection. How do I make sure to get my Theryx when I’m away?',
         },
         {
           type: 'to',
-          content: 'I can help you with that where will you be traveling? Also how are you doing?',
+          content:
+            'I can help you with that where will you be traveling? Also how are you doing?',
         },
         {
           type: 'from',
-          content: 'I’m going to be traveling for my next injection. How do I make sure to get my Theryx when I’m away?',
+          content:
+            'I’m going to be traveling for my next injection. How do I make sure to get my Theryx when I’m away?',
         },
         {
           type: 'to',
-          content: 'I can help you with that where will you be traveling? Also how are you doing?',
+          content:
+            'I can help you with that where will you be traveling? Also how are you doing?',
         },
         {
           type: 'from',
-          content: 'I’m going to be traveling for my next injection. How do I make sure to get my Theryx when I’m away?',
+          content:
+            'I’m going to be traveling for my next injection. How do I make sure to get my Theryx when I’m away?',
         },
         {
           type: 'to',
-          content: 'I can help you with that where will you be traveling? Also how are you doing?',
-        }
-      ]
-    }
-  }
+          content:
+            'I can help you with that where will you be traveling? Also how are you doing?',
+        },
+      ],
+    },
+  };
 }
 
-export { initialState }
+export { initialState };

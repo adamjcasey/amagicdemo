@@ -2,14 +2,28 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, Subject, takeUntil } from 'rxjs';
 
-import * as fromStore from '@resources/store';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AccordionComponent, HeroComponent } from '@app/shared/components';
 import * as fromCoreStore from '@core/store';
 import * as fromHomeStore from '@home/store';
+import { IonContent, IonIcon } from '@ionic/angular/standalone';
+import * as fromStore from '@resources/store';
 
 @Component({
   selector: 'automagic-your-care-team-list',
   templateUrl: './your-care-team-list.page.html',
   styleUrls: ['./your-care-team-list.page.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    HeroComponent,
+    AccordionComponent,
+    IonContent,
+    IonIcon,
+  ],
 })
 export class YourCareTeamListPage implements OnInit, OnDestroy {
   public resourcesConfig$!: Observable<any>;
@@ -21,9 +35,7 @@ export class YourCareTeamListPage implements OnInit, OnDestroy {
   public myTeam: any;
   public caregivers: any;
 
-  constructor(
-    private _store: Store<fromCoreStore.CoreState>,
-  ) {
+  constructor(private _store: Store<fromCoreStore.CoreState>) {
     this.resourcesConfig$ = this._store.select(fromStore.getResourcesConfig);
     this.homeConfig$ = this._store.select(fromHomeStore.getHomeConfig);
     this.heroConfig = {
@@ -31,13 +43,13 @@ export class YourCareTeamListPage implements OnInit, OnDestroy {
       template: `
         <h1 class="font-heading-1--bold">Your Care Team</h1>
       `,
-    }
+    };
   }
 
   ngOnInit() {
     this.homeConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(homeConfig => {
+      .subscribe((homeConfig) => {
         if (homeConfig) {
           this.homeConfig = homeConfig;
         }
@@ -45,18 +57,22 @@ export class YourCareTeamListPage implements OnInit, OnDestroy {
 
     this.resourcesConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(resourcesConfig => {
+      .subscribe((resourcesConfig) => {
         if (resourcesConfig) {
           if (!resourcesConfig.yourCareTeamPageVisited && this.homeConfig) {
-            const onBoardingTasks = this.homeConfig.onBoardingTasks.map((task: any) => {
-              return {
-                ...task,
+            const onBoardingTasks = this.homeConfig.onBoardingTasks.map(
+              (task: any) => {
+                return {
+                  ...task,
+                };
               }
-            });
+            );
             onBoardingTasks[5].completed = true;
-            this._store.dispatch(new fromHomeStore.SetData({
-              onBoardingTasks: onBoardingTasks,
-            }));
+            this._store.dispatch(
+              new fromHomeStore.SetData({
+                onBoardingTasks: onBoardingTasks,
+              })
+            );
           }
 
           this.config = resourcesConfig.yourCareTeam;
@@ -69,10 +85,12 @@ export class YourCareTeamListPage implements OnInit, OnDestroy {
                 asset: member.photo,
                 position: member.role,
                 onClick: () => {
-                  this._store.dispatch(new fromStore.MemberYouCareTeamSelected(member));
+                  this._store.dispatch(
+                    new fromStore.MemberYouCareTeamSelected(member)
+                  );
                   this.goTo('resources/your-care-team/detail');
-                }
-              }
+                },
+              };
             });
             this.caregivers = this.config.caregivers.map((member: any) => {
               return {
@@ -82,10 +100,12 @@ export class YourCareTeamListPage implements OnInit, OnDestroy {
                 asset: member.photo,
                 position: member.role,
                 onClick: () => {
-                  this._store.dispatch(new fromStore.MemberYouCareTeamSelected(member));
+                  this._store.dispatch(
+                    new fromStore.MemberYouCareTeamSelected(member)
+                  );
                   this.goTo('resources/your-care-team/detail');
-                }
-              }
+                },
+              };
             });
           }
         }
@@ -98,8 +118,10 @@ export class YourCareTeamListPage implements OnInit, OnDestroy {
   }
 
   goTo(path: string) {
-    this._store.dispatch(new fromCoreStore.Go({
-      path: [path]
-    }));
+    this._store.dispatch(
+      new fromCoreStore.Go({
+        path: [path],
+      })
+    );
   }
 }

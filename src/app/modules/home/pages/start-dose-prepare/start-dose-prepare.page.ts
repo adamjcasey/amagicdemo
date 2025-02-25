@@ -1,24 +1,37 @@
 import {
   Component,
-  ViewEncapsulation,
-  OnInit,
   OnDestroy,
+  OnInit,
   ViewChild,
+  ViewEncapsulation,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable, Subject, takeUntil } from 'rxjs';
+import { firstValueFrom, Observable, Subject, takeUntil } from 'rxjs';
 
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import * as fromCoreStore from '@core/store';
 import * as fromStore from '@home/store';
-import * as fromSharedStore from '@shared/store';
+import { IonContent } from '@ionic/angular/standalone';
 import * as fromSharedComponents from '@shared/components';
 import * as fromSharedServices from '@shared/services';
-import * as fromCoreStore from '@core/store';
+import * as fromSharedStore from '@shared/store';
+import { addIcons } from 'ionicons';
+import { checkmarkCircle, closeCircle } from 'ionicons/icons';
 
 @Component({
   selector: 'automagic-start-dose-prepare',
   templateUrl: 'start-dose-prepare.page.html',
   styleUrls: ['start-dose-prepare.page.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    fromSharedComponents.SliderPageComponent,
+    IonContent,
+  ],
 })
 export class StartDosePreparePage implements OnInit, OnDestroy {
   public homeConfig$!: Observable<any>;
@@ -27,14 +40,21 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
   public layoutConfig: any;
   private _ngUnsubscribe: Subject<void> = new Subject<void>();
   public slides: Array<any> = [];
-  @ViewChild('sliderPage', { static: false }) sliderPage!: fromSharedComponents.SliderPageComponent;
+  @ViewChild('sliderPage', { static: false })
+  sliderPage!: fromSharedComponents.SliderPageComponent;
+  public sliderPageConfig$!: Observable<any>;
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
-    private _bluetoothService: fromSharedServices.BluetoothService,
+    private _bluetoothService: fromSharedServices.BluetoothService
   ) {
+    addIcons({ closeCircle, checkmarkCircle });
+
     this.homeConfig$ = this._store.select(fromStore.getHomeConfig);
     this.layoutConfig$ = this._store.select(fromCoreStore.getLayoutConfig);
+    this.sliderPageConfig$ = this._store.select(
+      fromSharedStore.getSliderPageConfig
+    );
     this.slides = [
       {
         header: {
@@ -53,11 +73,15 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
               label: 'Continue',
               action: () => {
                 this.sliderPage.slideNext();
-                this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-mint'));
-              }
-            }
+                this._store.dispatch(
+                  new fromSharedStore.TopbarChangeColor(
+                    '--color-bg-pastel-mint'
+                  )
+                );
+              },
+            },
           ],
-        }
+        },
       },
       {
         header: {
@@ -91,15 +115,15 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
               title: 'Theryx®, 80mg',
               description: 'Synthesized in Dayton, OH on 05/04/2023',
               disclamerText: 'Expires 06/24/2024',
-            }
+            },
           ],
           actions: [
             {
               label: 'Continue',
               action: () => {
                 this.showStepTemperature();
-              }
-            }
+              },
+            },
           ],
         },
       },
@@ -107,34 +131,54 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple'));
+    this._store.dispatch(
+      new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple')
+    );
+
+    // Subscribe to connection state changes
+    this._bluetoothService.connected$
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe(async (isConnected) => {
+        if (!isConnected) {
+          // Get current slide from the config
+          const currentConfig = await firstValueFrom(this.sliderPageConfig$);
+          if (currentConfig?.header?.currentSlide > 2) {
+            // If device disconnects after we've moved past the connection slides,
+            // go back to the Theryx info slide and attempt to reconnect
+            this.sliderPage.slideTo(2);
+            await this._bluetoothService.isDeviceConnected();
+          }
+        }
+      });
+
     this.homeConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(homeConfig => {
+      .subscribe((homeConfig) => {
         if (homeConfig) {
           this.homeConfig = homeConfig;
-          const markedDoses = this.homeConfig.doses.filter((dose: any) => dose.marked);
+          const markedDoses = this.homeConfig.doses.filter(
+            (dose: any) => dose.marked
+          );
           if (markedDoses.length === 1) {
-            this._store.dispatch(new fromStore.SetData({
-              // if the first one dose was injected, for the demo purpose we'll fill
-              // automatically 5 doses to leave the user in the last dose
-              doses: this.homeConfig.doses.map((dose: any, index: number) => {
-                return {
-                  ...dose,
-                  bodyPartInjected: markedDoses[0].bodyPartInjected,
-                  marked: index + 1 < this.homeConfig.doses.length
-                    ? true
-                    : false,
-                }
-              }),
-            }));
+            this._store.dispatch(
+              new fromStore.SetData({
+                doses: this.homeConfig.doses.map((dose: any, index: number) => {
+                  return {
+                    ...dose,
+                    bodyPartInjected: markedDoses[0].bodyPartInjected,
+                    marked:
+                      index + 1 < this.homeConfig.doses.length ? true : false,
+                  };
+                }),
+              })
+            );
           }
         }
       });
 
     this.layoutConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(layoutConfig => {
+      .subscribe((layoutConfig) => {
         if (layoutConfig) {
           this.layoutConfig = layoutConfig;
         }
@@ -153,14 +197,33 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
     const currentSlide = sliders.content.activeIndex;
     if (currentSlide === 1) {
       try {
-        const isDeviceConnected = await this._bluetoothService.isDeviceConnected();
+        // Start the connection process
+        const isDeviceConnected =
+          await this._bluetoothService.isDeviceConnected();
+
         if (isDeviceConnected) {
+          // Wait a bit for animations to complete
+          await new Promise((resolve) => setTimeout(resolve, 500));
           this.sliderPage.slideNext();
+        } else {
+          // If connection failed, show error state
+          this._store.dispatch(
+            new fromSharedStore.SliderPageSetContentOptions({
+              template: `
+                <div class="start-dose-prepare__connecting">
+                  <h1 class="font-heading-1--bold">Connection failed</h1>
+                  <p>Please make sure your device is nearby and powered on.</p>
+                </div>
+              `,
+            })
+          );
         }
-      }
-      catch (error: any) {
+      } catch (error: any) {
         if (this.layoutConfig.debuggingDeviceMode) {
-          this._bluetoothService.logger('isDeviceConnected service method Error', error);
+          this._bluetoothService.logger(
+            'isDeviceConnected service method Error',
+            error
+          );
         }
       }
     }
@@ -170,12 +233,15 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
     // hold on a few ms the change of the topbar bgcolor to match with the opening
     // of the expanded box in SlidePage component
     setTimeout(() => {
-      this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-white'));
+      this._store.dispatch(
+        new fromSharedStore.TopbarChangeColor('--color-white')
+      );
     }, 500);
-    this._store.dispatch(new fromSharedStore.SliderPageSetContent({
-      isExpanded: true,
-      template: this.homeConfig.firstTimeDose
-        ? `
+    this._store.dispatch(
+      new fromSharedStore.SliderPageSetContent({
+        isExpanded: true,
+        template: this.homeConfig.firstTimeDose
+          ? `
           <div class="start-dose-prepare__instructions">
             <img src="assets/images/drug-cold-temp.svg" />
             <h1 class="font-heading-1--bold">Theryx® temperature</h1>
@@ -194,7 +260,7 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
             <p>It's best to let it warm up for a bit to room temperature (65°F) before injecting.</p>
           </div>
         `
-        : `
+          : `
           <div class="start-dose-prepare__instructions">
             <img src="assets/images/drug-cold-temp.svg" />
             <h1 class="font-heading-1--bold">Theryx® temperature</h1>
@@ -209,56 +275,60 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
             <p>Good job taking it out of the fridge ahead of time!</p>
           </div>
         `,
-      toolbar: {
-        actions: [
-          {
-            label: 'Proceed',
-            action: () => {
-              if (this.homeConfig.firstTimeDose) {
-                this.showStepTempTimer();
-              }
-              else {
-                this.sliderPage.slideNext();
-                this.showStepInspect();
-              }
+        toolbar: {
+          actions: [
+            {
+              label: 'Proceed',
+              action: () => {
+                if (this.homeConfig.firstTimeDose) {
+                  this.showStepTempTimer();
+                } else {
+                  this.sliderPage.slideNext();
+                  this.showStepInspect();
+                }
+              },
             },
-          }
-        ],
-      }
-    }));
-  }
+          ],
+        },
+      })
+    );
+  };
 
   showStepTempTimer() {
-    this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
-      template: null,
-      component: 'start-dose-prepare-temp-timer',
-      toolbar: {
-        actions: [
-          {
-            label: 'Ok, let’s go!',
-            // setting as disabled to avoid user unnecessary action,
-            // will be enable after show Dose setup view
-            disabled: true,
-            action: () => {
-              this.showStepInspect();
+    this._store.dispatch(
+      new fromSharedStore.SliderPageSetContentOptions({
+        template: null,
+        component: 'start-dose-prepare-temp-timer',
+        toolbar: {
+          actions: [
+            {
+              label: "Ok, let's go!",
+              // setting as disabled to avoid user unnecessary action,
+              // will be enable after show Dose setup view
+              disabled: true,
+              action: () => {
+                this.showStepInspect();
+              },
             },
-          }
-        ],
-      }
-    }));
+          ],
+        },
+      })
+    );
   }
 
   showStepInspect() {
-    this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
-      component: null,
-      template: `
+    // TODO: resolve ion-icons
+    this._store.dispatch(
+      new fromSharedStore.SliderPageSetContentOptions({
+        component: null,
+        template: `
         <div class="start-dose-prepare__instructions">
           <img src="assets/images/drug-window.svg" />
           <h1 class="font-heading-1--bold">Inspect your Theryx®</h1>
           <div class="inspection">
             <div class="statement incorrect">
               <h3>
-                <ion-icon name="close-circle"></ion-icon>
+                <!-- <ion-icon name="close-circle"></ion-icon> -->
                 Do not proceed if it is
               </h3>
               <p>Cloudy</p>
@@ -268,7 +338,7 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
 
             <div class="statement correct">
               <h3>
-                <ion-icon name="checkmark-circle"></ion-icon>
+                <!-- <ion-icon name="checkmark-circle"></ion-icon> -->
                 Proceed if it is
               </h3>
               <p>Clear</p>
@@ -276,76 +346,82 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
           </div>
         </div>
       `,
-      toolbar: {
-        actions: [
-          {
-            label: 'Looks off',
-            cssClasses: 'dispatch-hotspots hotspot-element--cancel',
-          },
-          {
-            label: 'Looks good',
-            action: () => {
-              if (this.homeConfig.firstTimeDose) {
-                this.showStepSurvey();
-              }
-              else {
-                this._store.dispatch(new fromSharedStore.SliderPageClear());
-                this.goTo('home/start-dose/ready-to-inject');
-              }
+        toolbar: {
+          actions: [
+            {
+              label: 'Looks off',
+              cssClasses: 'dispatch-hotspots hotspot-element--cancel',
             },
-          }
-        ],
-      }
-    }));
+            {
+              label: 'Looks good',
+              action: () => {
+                if (this.homeConfig.firstTimeDose) {
+                  this.showStepSurvey();
+                } else {
+                  this._store.dispatch(new fromSharedStore.SliderPageClear());
+                  this.goTo('home/start-dose/ready-to-inject');
+                }
+              },
+            },
+          ],
+        },
+      })
+    );
   }
 
   showStepSurvey() {
-    this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
-      template: `
+    this._store.dispatch(
+      new fromSharedStore.SliderPageSetContentOptions({
+        template: `
         <div class="start-dose-prepare__survey">
-          <h1 class="font-heading-1--bold">While you’re waiting, how are you feeling?</h1>
+          <h1 class="font-heading-1--bold">While you are waiting, how are you feeling?</h1>
           <p>Tracking these ratings over time can help you<br> and your care team understand how Theryx®<br> impacts your condition.</p>
         </div>
       `,
-      component: 'start-dose-prepare-survey',
-      toolbar: {
-        actions: [
-          {
-            label: 'Skip',
-            action: () => {
-              this.showStepWaitingToInject();
+        component: 'start-dose-prepare-survey',
+        toolbar: {
+          actions: [
+            {
+              label: 'Skip',
+              action: () => {
+                this.showStepWaitingToInject();
+              },
             },
-          },
-          {
-            label: 'Proceed',
-            action: () => {
-              this.showStepWaitingToInject();
+            {
+              label: 'Proceed',
+              action: () => {
+                this.showStepWaitingToInject();
+              },
             },
-          }
-        ],
-      }
-    }));
+          ],
+        },
+      })
+    );
   }
 
   showStepWaitingToInject() {
-    this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
-      template: null,
-      component: 'start-dose-prepare-waiting-to-inject',
-      toolbar: {
-        actions: [
-          {
-            label: 'Ok, let’s go!',
-            // button will be disabled until finish the timer
-            disabled: true
-          },
-        ],
-      }
-    }));
+    this._store.dispatch(
+      new fromSharedStore.SliderPageSetContentOptions({
+        template: null,
+        component: 'start-dose-prepare-waiting-to-inject',
+        toolbar: {
+          actions: [
+            {
+              label: "Ok, let's go!",
+              // button will be disabled until finish the timer
+              disabled: true,
+            },
+          ],
+        },
+      })
+    );
   }
 
   goTo(path: string) {
-    this._store.dispatch(new fromCoreStore.Go({
-      path: [path]
-    }));
+    this._store.dispatch(
+      new fromCoreStore.Go({
+        path: [path],
+      })
+    );
   }
 }

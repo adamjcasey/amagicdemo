@@ -1,24 +1,30 @@
-import { 
-  Component, 
-  Input, 
-  ViewEncapsulation 
-} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, Input, ViewEncapsulation } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { IonButton, IonIcon, IonImg } from '@ionic/angular/standalone';
 
-import * as moment from 'moment';
+import moment from 'moment';
 
 @Component({
   selector: 'automagic-feed-card',
   templateUrl: 'feed-card.component.html',
   styleUrls: ['feed-card.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    IonImg,
+    IonButton,
+    IonIcon,
+  ],
 })
 export class FeedCardComponent {
   @Input() config: any;
 
-  constructor(
-    private _sanitizer: DomSanitizer,
-  ) {}
+  constructor(private _sanitizer: DomSanitizer) {}
 
   postAtFormatDate(date: Date) {
     return moment(date).fromNow();

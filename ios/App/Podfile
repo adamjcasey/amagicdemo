@@ -21,7 +21,6 @@ def capacitor_pods
   pod 'CapacitorStatusBar', :path => '../../node_modules/@capacitor/status-bar'
   pod 'CapacitorNativeSettings', :path => '../../node_modules/capacitor-native-settings'
   pod 'CapacitorVideoPlayer', :path => '../../node_modules/capacitor-video-player'
-  pod 'PowerMode', :path => '../../node_modules/power-mode'
 end
 
 target 'App' do

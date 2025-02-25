@@ -34,7 +34,7 @@ export const initialLayoutState: LayoutState = {
     isConnected: false,
     battery: false,
   },
-  noDeviceMode: false,
+  noDeviceMode: true,
   noDeviceModeOopsFlow: false,
   noDeviceModeBatteryLowFlow: false,
   debuggingDeviceMode: false

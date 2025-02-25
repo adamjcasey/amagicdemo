@@ -1,23 +1,39 @@
-import { 
-  Component,
-  ViewEncapsulation, 
-  OnInit,
-  OnDestroy,
-} from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import {
+  FormArray,
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Store } from '@ngrx/store';
+import moment from 'moment';
 import { Observable, Subject, takeUntil } from 'rxjs';
-import * as moment from 'moment';
 
-import * as fromCoreStore from '@core/store';
 import * as fromActivityStore from '@activity/store';
+import { CommonModule } from '@angular/common';
+import { RatingFieldComponent } from '@app/shared/components';
+import * as fromCoreStore from '@core/store';
+import { IonCheckbox, IonIcon, IonInput } from '@ionic/angular/standalone';
 import * as fromSharedStore from '@shared/store';
 
 @Component({
   selector: 'automagic-add-symptom-form',
   templateUrl: 'add-symptom-form.component.html',
   styleUrls: ['add-symptom-form.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    IonCheckbox,
+    IonIcon,
+    IonInput,
+    // fromCoreStore.CoreStoreModule,
+    RatingFieldComponent,
+  ],
 })
 export class AddSymptomFormComponent implements OnInit, OnDestroy {
   public sliderPageConfig$!: Observable<any>;
@@ -31,10 +47,14 @@ export class AddSymptomFormComponent implements OnInit, OnDestroy {
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
-    private _formBuilder: FormBuilder,
+    private _formBuilder: FormBuilder
   ) {
-    this.sliderPageConfig$ = this._store.select(fromSharedStore.getSliderPageConfig);
-    this.activityConfig$ = this._store.select(fromActivityStore.getActivityConfig);
+    this.sliderPageConfig$ = this._store.select(
+      fromSharedStore.getSliderPageConfig
+    );
+    this.activityConfig$ = this._store.select(
+      fromActivityStore.getActivityConfig
+    );
     this.addSymptomFormGroup = this._formBuilder.group({
       date: ['', ''],
       feelingOverall: [1, [Validators.required]],
@@ -57,7 +77,7 @@ export class AddSymptomFormComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.sliderPageConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(sliderPageConfig => {
+      .subscribe((sliderPageConfig) => {
         if (sliderPageConfig) {
           this.sliderPageConfig = sliderPageConfig;
         }
@@ -65,7 +85,7 @@ export class AddSymptomFormComponent implements OnInit, OnDestroy {
 
     this.activityConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(activityConfig => {
+      .subscribe((activityConfig) => {
         if (activityConfig) {
           if (activityConfig.symptomReportSelected) {
             this.detailView = true;
@@ -73,11 +93,12 @@ export class AddSymptomFormComponent implements OnInit, OnDestroy {
             this.addSymptomFormGroup.patchValue({
               ...this.reportSelected,
             });
-            this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
-              toolbar: null,
-            }));
-          }
-          else {
+            this._store.dispatch(
+              new fromSharedStore.SliderPageSetContentOptions({
+                toolbar: null,
+              })
+            );
+          } else {
             this.detailView = false;
             this.reportSelected = null;
           }
@@ -90,46 +111,51 @@ export class AddSymptomFormComponent implements OnInit, OnDestroy {
         if (actions) {
           if (this.addSymptomFormGroup.valid) {
             if (!this.detailView) {
-              this._store.dispatch(new fromActivityStore.SetData({
-                currentSymptomCreating: {
-                  ...this.addSymptomFormGroup.value
-                }
-              }));
+              this._store.dispatch(
+                new fromActivityStore.SetData({
+                  currentSymptomCreating: {
+                    ...this.addSymptomFormGroup.value,
+                  },
+                })
+              );
 
               if (this.addSymptomFormGroup.get('date')?.value === '') {
                 this.addSymptomFormGroup.patchValue({
                   date: new Date(),
                 });
               }
-    
-              if ((actions[1].disabled)) {
-                this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
+
+              if (actions[1].disabled) {
+                this._store.dispatch(
+                  new fromSharedStore.SliderPageSetContentOptions({
+                    toolbar: {
+                      actions: [
+                        actions[0],
+                        {
+                          ...actions[1],
+                          disabled: false,
+                        },
+                      ],
+                    },
+                  })
+                );
+              }
+            }
+          } else {
+            if (!actions[1].disabled) {
+              this._store.dispatch(
+                new fromSharedStore.SliderPageSetContentOptions({
                   toolbar: {
                     actions: [
                       actions[0],
                       {
                         ...actions[1],
-                        disabled: false,
-                      }
-                    ]
-                  }
-                }));
-              }
-            }
-          }
-          else {
-            if (!actions[1].disabled) {
-              this._store.dispatch(new fromSharedStore.SliderPageSetContentOptions({
-                toolbar: {
-                  actions: [
-                    actions[0],
-                    {
-                      ...actions[1],
-                      disabled: true,
-                    }
-                  ]
-                }
-              }));
+                        disabled: true,
+                      },
+                    ],
+                  },
+                })
+              );
             }
           }
         }
@@ -147,9 +173,10 @@ export class AddSymptomFormComponent implements OnInit, OnDestroy {
     const symptomsField = this.addSymptomFormGroup.get('symptoms') as FormArray;
     if (!symptomsField?.value.includes(this.symptoms[index])) {
       symptomsField.push(this._formBuilder.control(this.symptoms[index]));
-    }
-    else {
-      const indexToDelete = symptomsField.value.findIndex((symptom: string) => symptom === this.symptoms[index]);
+    } else {
+      const indexToDelete = symptomsField.value.findIndex(
+        (symptom: string) => symptom === this.symptoms[index]
+      );
       symptomsField.removeAt(indexToDelete);
     }
   }

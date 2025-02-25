@@ -1,18 +1,33 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
+import moment from 'moment';
 import { Observable, Subject, takeUntil } from 'rxjs';
-import * as moment from 'moment';
 
 import * as fromStore from '@activity/store';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AccordionComponent } from '@app/shared/components';
+import { ReversePipe } from '@app/shared/pipes';
 import * as fromCoreStore from '@core/store';
 import * as fromHomeStore from '@home/store';
-import * as fromSharedStore from '@shared/store';
+import { IonButton, IonContent, IonIcon } from '@ionic/angular/standalone';
 import * as fromSharedServices from '@shared/services';
 
 @Component({
   selector: 'automagic-symptom-report',
   templateUrl: 'symptom-report.page.html',
   styleUrls: ['symptom-report.page.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    AccordionComponent,
+    ReversePipe,
+    IonContent,
+    IonButton,
+    IonIcon,
+  ],
 })
 export class SymptomReportPage implements OnInit, OnDestroy {
   public activityConfig$!: Observable<any>;
@@ -24,7 +39,7 @@ export class SymptomReportPage implements OnInit, OnDestroy {
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
-    private _utils: fromSharedServices.UtilsService,
+    private _utils: fromSharedServices.UtilsService
   ) {
     this.activityConfig$ = this._store.select(fromStore.getActivityConfig);
     this.homeConfig$ = this._store.select(fromHomeStore.getHomeConfig);
@@ -33,7 +48,7 @@ export class SymptomReportPage implements OnInit, OnDestroy {
   ngOnInit() {
     this.homeConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(homeConfig => {
+      .subscribe((homeConfig) => {
         if (homeConfig) {
           this.homeConfig = homeConfig;
         }
@@ -41,47 +56,60 @@ export class SymptomReportPage implements OnInit, OnDestroy {
 
     this.activityConfig$
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(activityConfig => {
+      .subscribe((activityConfig) => {
         if (activityConfig) {
           this.activityConfig = activityConfig;
 
           if (this.activityConfig.symptomReports) {
-            this.symptomReports = this.activityConfig.symptomReports.map((report: any) => {
-              return {
-                title: moment(report.date).format('MMM D, H:mm A'),
-                template: `
+            this.symptomReports = this.activityConfig.symptomReports.map(
+              (report: any) => {
+                return {
+                  title: moment(report.date).format('MMM D, H:mm A'),
+                  template: `
                   <div class="symptom-report-widget">
                     <div class="row-field symptoms">
                       <h5>Symptoms</h5>
                       <p>${report.symptoms.join(', ')}</p>
                     </div>
-      
+
                     <div class="row-field severity">
                       <h5>Severity</h5>
-                      <p class="level-${report.severity}">${this.humanizeSeveritySymptom(report.severity)}</p>
+                      <p class="level-${
+                        report.severity
+                      }">${this.humanizeSeveritySymptom(report.severity)}</p>
                     </div>
                   </div>
                 `,
-                onClick: () => {
-                  this._store.dispatch(new fromStore.SetData({
-                    symptomReportSelected: report,
-                  }));
-                  this.goTo('symptoms/add');
-                }
+                  onClick: () => {
+                    this._store.dispatch(
+                      new fromStore.SetData({
+                        symptomReportSelected: report,
+                      })
+                    );
+                    this.goTo('symptoms/add');
+                  },
+                };
               }
-            });
+            );
           }
 
-          if (!this.activityConfig.symptomReportPageVisited && this.homeConfig) {
-            const onBoardingTasks = this.homeConfig.onBoardingTasks.map((task: any) => {
-              return {
-                ...task,
+          if (
+            !this.activityConfig.symptomReportPageVisited &&
+            this.homeConfig
+          ) {
+            const onBoardingTasks = this.homeConfig.onBoardingTasks.map(
+              (task: any) => {
+                return {
+                  ...task,
+                };
               }
-            });
+            );
             onBoardingTasks[3].completed = true;
-            this._store.dispatch(new fromHomeStore.SetData({
-              onBoardingTasks: onBoardingTasks,
-            }));
+            this._store.dispatch(
+              new fromHomeStore.SetData({
+                onBoardingTasks: onBoardingTasks,
+              })
+            );
           }
         }
       });
@@ -97,8 +125,10 @@ export class SymptomReportPage implements OnInit, OnDestroy {
   }
 
   goTo(path: string) {
-    this._store.dispatch(new fromCoreStore.Go({
-      path: [path]
-    }));
+    this._store.dispatch(
+      new fromCoreStore.Go({
+        path: [path],
+      })
+    );
   }
 }

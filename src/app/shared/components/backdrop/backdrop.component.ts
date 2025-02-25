@@ -1,33 +1,66 @@
 import {
-    Component,
-    OnInit,
-    ViewChild,
-    ViewEncapsulation,
-    ViewContainerRef,
-    AfterViewInit,
+  AfterViewInit,
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  ElementRef,
+  OnInit,
+  ViewChild,
+  ViewContainerRef,
+  ViewEncapsulation,
 } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
 import { animate, spring } from 'motion';
-import { SwiperComponent } from 'swiper/angular';
+import { Observable } from 'rxjs';
+import { register } from 'swiper/element/bundle';
+import { EffectFade } from 'swiper/modules';
 
-// Swiper Config
-import SwiperCore, { EffectFade } from 'swiper';
-SwiperCore.use([EffectFade]);
+// Register Swiper custom elements
+register();
 
-import * as fromStore from '@shared/store';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  DynamicInnerHtmlDirective,
+  ThreeFingerTapDirective,
+} from '@app/shared/directives';
 import * as fromCoreStore from '@core/store';
-import * as fromSharedServices from '@shared/services';
-import * as fromWelcomeComponents from '@welcome/components';
-import * as fromHomeStore from '@home/store';
 import * as fromHomeComponents from '@home/components';
+import * as fromHomeStore from '@home/store';
+import { IonButton, IonIcon, IonImg } from '@ionic/angular/standalone';
+import * as fromSharedServices from '@shared/services';
+import * as fromStore from '@shared/store';
+import * as fromWelcomeComponents from '@welcome/components';
+import { addIcons } from 'ionicons';
+import {
+  chevronBackOutline,
+  chevronForwardOutline,
+  chevronUpOutline,
+  closeOutline,
+  constructOutline,
+  warningOutline,
+} from 'ionicons/icons';
+import type { SwiperContainer } from 'swiper/element';
+import { CardComponent } from '../card/card.component';
 
 @Component({
   selector: 'automagic-backdrop',
   templateUrl: 'backdrop.component.html',
   styleUrls: ['backdrop.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    ThreeFingerTapDirective,
+    DynamicInnerHtmlDirective,
+    CardComponent,
+    IonButton,
+    IonImg,
+    IonIcon,
+  ],
 })
 export class BackdropComponent implements OnInit, AfterViewInit {
   public config$: Observable<any>;
@@ -42,17 +75,29 @@ export class BackdropComponent implements OnInit, AfterViewInit {
   public isShowDebuggingStatus: boolean = false;
   public initialSlide: number = 0;
   public batteryLevel: number = 0;
-  @ViewChild('sliderMainMenu', { static: false }) sliderMainMenu!: SwiperComponent;
-  @ViewChild('sliderHighlightsTour', { static: false }) sliderHighlightsTour!: SwiperComponent;
-  @ViewChild('sliderShareFlow', { static: false }) sliderShareFlow!: SwiperComponent;
-  @ViewChild('contentComponent', { read: ViewContainerRef }) contentComponent!: ViewContainerRef;
+  @ViewChild('sliderMainMenu') sliderMainMenu!: ElementRef<SwiperContainer>;
+  @ViewChild('sliderHighlightsTour')
+  sliderHighlightsTour!: ElementRef<SwiperContainer>;
+  @ViewChild('sliderShareFlow') sliderShareFlow!: ElementRef<SwiperContainer>;
+  @ViewChild('sliderReturnFlow') sliderReturnFlow!: ElementRef<SwiperContainer>;
+  @ViewChild('contentComponent', { read: ViewContainerRef })
+  contentComponent!: ViewContainerRef;
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
     private _sanitizer: DomSanitizer,
     private _utils: fromSharedServices.UtilsService,
-    private _bluetoothService: fromSharedServices.BluetoothService,
+    private _bluetoothService: fromSharedServices.BluetoothService
   ) {
+    addIcons({
+      chevronBackOutline,
+      warningOutline,
+      constructOutline,
+      chevronForwardOutline,
+      chevronUpOutline,
+      closeOutline,
+    });
+
     this.config$ = this._store.select(fromStore.getBackdropConfig);
     this.layoutConfig$ = this._store.select(fromCoreStore.getLayoutConfig);
     this.homeConfig$ = this._store.select(fromHomeStore.getHomeConfig);
@@ -62,18 +107,14 @@ export class BackdropComponent implements OnInit, AfterViewInit {
     let type = '';
     if (this.config.highlights) {
       type = 'highlights-tour';
-    }
-    else if (this.config.returnFlow) {
+    } else if (this.config.returnFlow) {
       type = 'return-flow';
-    }
-    else if (this.config.shareFlow) {
+    } else if (this.config.shareFlow) {
       type = 'share-flow';
-    }
-    else {
+    } else {
       if (!this.config.template && !this.config.component) {
         type = 'menu-main';
-      }
-      else {
+      } else {
         type = 'dinamic';
       }
     }
@@ -81,14 +122,13 @@ export class BackdropComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.config$.subscribe(config => {
+    this.config$.subscribe((config) => {
       if (config) {
         this.config = config;
         if (this.config.show) {
           if (this.config.component !== null) {
             this._loadComponent(this.config.component);
-          }
-          else {
+          } else {
             this.contentComponent?.clear();
           }
 
@@ -97,8 +137,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
               this.setGoBackMenuButton();
             }
           }
-        }
-        else {
+        } else {
           // wait until close totally backdrop
           if (this.initialized) {
             setTimeout(() => {
@@ -114,18 +153,22 @@ export class BackdropComponent implements OnInit, AfterViewInit {
       }
     });
 
-    this.layoutConfig$.subscribe(layoutConfig => {
+    this.layoutConfig$.subscribe((layoutConfig) => {
       if (layoutConfig) {
         this.layoutConfig = layoutConfig;
         if (this.layoutConfig.dosageDevice?.isConnected) {
           this.batteryLevel = this.layoutConfig.dosageDevice.battery;
         }
 
-        this.isShowDebuggingStatus = layoutConfig.noDeviceMode || layoutConfig.noDeviceModeOopsFlow || layoutConfig.noDeviceModeBatteryLowFlow || layoutConfig.debuggingDeviceMode;
+        this.isShowDebuggingStatus =
+          layoutConfig.noDeviceMode ||
+          layoutConfig.noDeviceModeOopsFlow ||
+          layoutConfig.noDeviceModeBatteryLowFlow ||
+          layoutConfig.debuggingDeviceMode;
       }
     });
 
-    this.homeConfig$.subscribe(homeConfig => {
+    this.homeConfig$.subscribe((homeConfig) => {
       if (homeConfig) {
         this.homeConfig = homeConfig;
       }
@@ -134,20 +177,50 @@ export class BackdropComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.initialized = true;
+    this.initializeSwipers();
+  }
+
+  private async initializeSwipers() {
+    await customElements.whenDefined('swiper-container');
+
+    // Initialize all swipers
+    const swipers = [
+      this.sliderMainMenu?.nativeElement,
+      this.sliderHighlightsTour?.nativeElement,
+      this.sliderShareFlow?.nativeElement,
+      this.sliderReturnFlow?.nativeElement,
+    ].filter((swiper) => swiper) as SwiperContainer[]; // Cast to correct type
+
+    for (const swiperEl of swipers) {
+      // Configure each swiper
+      Object.assign(swiperEl, {
+        modules: [EffectFade],
+        effect: 'fade',
+        fadeEffect: {
+          crossFade: true,
+        },
+        allowTouchMove: false,
+        speed: 500,
+      });
+
+      // Initialize swiper
+      await swiperEl.initialize();
+    }
   }
 
   toggle() {
     if (!this.config.show) {
       if (!this.homeConfig.dosingStarted) {
-        this._store.dispatch(new fromStore.BackdropShow({
-          transition: 'move',
-          header: true,
-        }));
+        this._store.dispatch(
+          new fromStore.BackdropShow({
+            transition: 'move',
+            header: true,
+          })
+        );
       }
-    }
-    else {
+    } else {
       if (!this.config.blockClose) {
-        this._store.dispatch(new fromStore.BackdropHide);
+        this._store.dispatch(new fromStore.BackdropHide());
       }
     }
   }
@@ -160,20 +233,23 @@ export class BackdropComponent implements OnInit, AfterViewInit {
           label: 'Back',
           action: () => {
             this.goToSlideZero();
-          }
+          },
         };
       }
     }
   }
 
   onMenuChange() {
-    if (this.sliderMainMenu && this.sliderMainMenu.swiperRef.activeIndex > 0) {
+    if (
+      this.sliderMainMenu &&
+      this.sliderMainMenu.nativeElement.swiper.activeIndex > 0
+    ) {
       if (this.config.showBackButton) {
         this.backButton = {
           label: 'Back',
           action: () => {
             this.goToSlideZero();
-          }
+          },
         };
       }
     }
@@ -181,20 +257,23 @@ export class BackdropComponent implements OnInit, AfterViewInit {
 
   goToSubmenu(step: number) {
     if (this.sliderMainMenu) {
-      this.sliderMainMenu?.swiperRef.slideTo(step);
+      this.sliderMainMenu.nativeElement.swiper.slideTo(step);
     }
 
-    if (this.sliderHighlightsTour && this.sliderHighlightsTour.swiperRef.slides[step]) {
-      this.sliderHighlightsTour?.swiperRef.slideTo(step);
+    if (
+      this.sliderHighlightsTour &&
+      this.sliderHighlightsTour.nativeElement.swiper.slides[step]
+    ) {
+      this.sliderHighlightsTour.nativeElement.swiper.slideTo(step);
     }
   }
 
-    showDebugging = () => {
-        if (this.sliderMainMenu) {
-            this.isShowDebugging = true;
-            this.sliderMainMenu?.swiperRef.slideTo(4);
-        }
+  showDebugging = () => {
+    if (this.sliderMainMenu) {
+      this.isShowDebugging = true;
+      this.sliderMainMenu.nativeElement.swiper.slideTo(4);
     }
+  };
 
   goBackToMenu(stepToGo?: number) {
     if (this.config.fullScreen) {
@@ -203,17 +282,19 @@ export class BackdropComponent implements OnInit, AfterViewInit {
 
     this.backButton = null;
     this.contentComponent?.clear();
-    this._store.dispatch(new fromStore.BackdropSetConfig({
-      transition: 'move',
-      header: true,
-      bgTemplate: this.config.bgTemplate ? null : null,
-      fullScreen: this.config.fullScreen ? false : null,
-      template: null,
-      component: null,
-      highlights: null,
-      returnFlow: null,
-      shareFlow: null,
-    }));
+    this._store.dispatch(
+      new fromStore.BackdropSetConfig({
+        transition: 'move',
+        header: true,
+        bgTemplate: this.config.bgTemplate ? null : null,
+        fullScreen: this.config.fullScreen ? false : null,
+        template: null,
+        component: null,
+        highlights: null,
+        returnFlow: null,
+        shareFlow: null,
+      })
+    );
 
     if (stepToGo) {
       this.initialSlide = stepToGo;
@@ -221,8 +302,8 @@ export class BackdropComponent implements OnInit, AfterViewInit {
   }
 
   onBackToMenu(): void {
-      this.isShowDebugging = false;
-      this.goToSlideZero();
+    this.isShowDebugging = false;
+    this.goToSlideZero();
   }
 
   setGoBackMenuButton() {
@@ -230,25 +311,21 @@ export class BackdropComponent implements OnInit, AfterViewInit {
       label: 'Menu',
       action: () => {
         this.goBackToMenu();
-      }
-    }
+      },
+    };
   }
 
   getPercentageBatteryAsset(battery: number) {
     let percentage = 100;
     if (battery > 50 && battery <= 75) {
       percentage = 75;
-    }
-    else if (battery > 25 && battery <= 50) {
+    } else if (battery > 25 && battery <= 50) {
       percentage = 50;
-    }
-    else if (battery > 5 && battery <= 25) {
+    } else if (battery > 5 && battery <= 25) {
       percentage = 25;
-    }
-    else if (battery <= 5) {
+    } else if (battery <= 5) {
       percentage = 5;
-    }
-    else if (battery === 0) {
+    } else if (battery === 0) {
       percentage = 0;
     }
     return percentage.toString();
@@ -263,37 +340,42 @@ export class BackdropComponent implements OnInit, AfterViewInit {
             this.animateFullScreenToDefault();
           }
 
-          this._store.dispatch(new fromStore.BackdropSetConfig({
-            transition: 'move',
-            header: true,
-            fullScreen: false,
-            component: 'start-guided-demo',
-            contentCentered: true,
-            highlights: null,
-          }));
-        }
+          this._store.dispatch(
+            new fromStore.BackdropSetConfig({
+              transition: 'move',
+              header: true,
+              fullScreen: false,
+              component: 'start-guided-demo',
+              contentCentered: true,
+              highlights: null,
+            })
+          );
+        },
       };
     }
 
-    const wrapper = this.sliderHighlightsTour.swiperRef.slides[0].querySelector('.masonry-layout');
+    const wrapper =
+      this.sliderHighlightsTour.nativeElement.swiper.slides[0].querySelector(
+        '.masonry-layout'
+      );
     if (wrapper) {
       this._utils.createMasonryLayout(wrapper);
     }
   }
 
   onHighlightsTourChange() {
-    const activeIndex = this.sliderHighlightsTour.swiperRef.activeIndex;
+    const activeIndex =
+      this.sliderHighlightsTour.nativeElement.swiper.activeIndex;
     if (activeIndex > 0) {
       if (this.config.showBackButton) {
         this.backButton = {
           label: 'Back',
           action: () => {
-            this.sliderHighlightsTour.swiperRef.slideTo(0);
-          }
+            this.sliderHighlightsTour.nativeElement.swiper.slideTo(0);
+          },
         };
       }
-    }
-    else if (activeIndex === 0) {
+    } else if (activeIndex === 0) {
       this.backButton = {
         label: 'Back',
         action: () => {
@@ -301,39 +383,47 @@ export class BackdropComponent implements OnInit, AfterViewInit {
             this.animateFullScreenToDefault();
           }
 
-          this._store.dispatch(new fromStore.BackdropSetConfig({
-            transition: 'move',
-            header: true,
-            fullScreen: false,
-            component: 'start-guided-demo',
-            contentCentered: true,
-            highlights: null,
-            showBackButton: false,
-          }));
-        }
+          this._store.dispatch(
+            new fromStore.BackdropSetConfig({
+              transition: 'move',
+              header: true,
+              fullScreen: false,
+              component: 'start-guided-demo',
+              contentCentered: true,
+              highlights: null,
+              showBackButton: false,
+            })
+          );
+        },
       };
     }
   }
 
   showShareFlow() {
-    const element = document.querySelector('#backdrop .backdrop__wrapper') as HTMLElement;
+    const element = document.querySelector(
+      '#backdrop .backdrop__wrapper'
+    ) as HTMLElement;
     element.style.removeProperty('height');
 
-    this._store.dispatch(new fromStore.BackdropSetConfig({
-      shareFlow: true,
-      returnFlow: null,
-      contentCentered: null,
-    }));
+    this._store.dispatch(
+      new fromStore.BackdropSetConfig({
+        shareFlow: true,
+        returnFlow: null,
+        contentCentered: null,
+      })
+    );
 
     if (this.config.showBackButton) {
       this.backButton = {
         label: 'Back',
         action: () => {
-          this._store.dispatch(new fromStore.BackdropSetConfig({
-            shareFlow: null,
-          }));
+          this._store.dispatch(
+            new fromStore.BackdropSetConfig({
+              shareFlow: null,
+            })
+          );
           this.initialSlide = 1;
-        }
+        },
       };
     }
   }
@@ -341,25 +431,29 @@ export class BackdropComponent implements OnInit, AfterViewInit {
   slideNextShareFlow(event: any) {
     event.preventDefault();
     event.stopImmediatePropagation();
-    this.sliderShareFlow.swiperRef.slideNext();
+    this.sliderShareFlow.nativeElement.swiper.slideNext();
   }
 
   showReturnFlow() {
-    this._store.dispatch(new fromStore.BackdropSetConfig({
-      returnFlow: true,
-      shareFlow: null,
-      contentCentered: null,
-    }));
+    this._store.dispatch(
+      new fromStore.BackdropSetConfig({
+        returnFlow: true,
+        shareFlow: null,
+        contentCentered: null,
+      })
+    );
 
     if (this.config.showBackButton) {
       this.backButton = {
         label: 'Back',
         action: () => {
-          this._store.dispatch(new fromStore.BackdropSetConfig({
-            returnFlow: null,
-          }));
+          this._store.dispatch(
+            new fromStore.BackdropSetConfig({
+              returnFlow: null,
+            })
+          );
           this.initialSlide = 1;
-        }
+        },
       };
     }
   }
@@ -376,42 +470,48 @@ export class BackdropComponent implements OnInit, AfterViewInit {
         {
           easing: 'ease-in-out',
           duration: 0.2,
-        },
+        }
       );
     }
 
     animate(
       '#backdrop .backdrop__wrapper',
-      { height: [
+      {
+        height: [
           `${window.innerHeight}px`,
-          `${(window.innerHeight) * 0.9}px`,
-          `${(window.innerHeight) * 0.8}px`,
-          `${(window.innerHeight) * 0.75}px`,
-      ] },
-      { easing: spring({
-        stiffness: 100,
-        damping: 15,
-        mass: 1,
-        velocity: 800,
-      }) }
+          `${window.innerHeight * 0.9}px`,
+          `${window.innerHeight * 0.8}px`,
+          `${window.innerHeight * 0.75}px`,
+        ],
+      },
+      {
+        easing: spring({
+          stiffness: 100,
+          damping: 15,
+          mass: 1,
+          velocity: 800,
+        }),
+      }
     );
   }
 
   doAnotherInjection() {
-    this._store.dispatch(new fromHomeStore.SetData({
-      firstTimeDose: false,
-      doses: this.homeConfig.doses.map((dose: any, index: number) => {
-        return {
-          marked: index === 0 ? dose.marked : false,
-          date: dose.date,
-          bodyPartInjected: index === 0 ? dose.bodyPartInjected : '',
-          notes: index === 0 ? dose.notes : null,
-        }
-      }),
-      timeTravelingDemoDone: true,
-      flareUpsDemoDone: true,
-      allCompletedDoses: false,
-    }));
+    this._store.dispatch(
+      new fromHomeStore.SetData({
+        firstTimeDose: false,
+        doses: this.homeConfig.doses.map((dose: any, index: number) => {
+          return {
+            marked: index === 0 ? dose.marked : false,
+            date: dose.date,
+            bodyPartInjected: index === 0 ? dose.bodyPartInjected : '',
+            notes: index === 0 ? dose.notes : null,
+          };
+        }),
+        timeTravelingDemoDone: true,
+        flareUpsDemoDone: true,
+        allCompletedDoses: false,
+      })
+    );
     this.toggle();
     this.goTo('home/start-dose/prepare');
   }
@@ -426,29 +526,45 @@ export class BackdropComponent implements OnInit, AfterViewInit {
   toggleDebuggingOptions(option: string) {
     switch (option) {
       case 'no-device-mode':
-        this._store.dispatch(new fromCoreStore.SetNoDeviceMode(!this.layoutConfig.noDeviceMode));
+        this._store.dispatch(
+          new fromCoreStore.SetNoDeviceMode(!this.layoutConfig.noDeviceMode)
+        );
         break;
       case 'oops-flow':
         if (this.layoutConfig.noDeviceMode) {
-          this._store.dispatch(new fromCoreStore.SetNoDeviceModeOopsFlow(!this.layoutConfig.noDeviceModeOopsFlow));
+          this._store.dispatch(
+            new fromCoreStore.SetNoDeviceModeOopsFlow(
+              !this.layoutConfig.noDeviceModeOopsFlow
+            )
+          );
         }
         break;
       case 'battery-low':
         if (this.layoutConfig.noDeviceMode) {
-          this._store.dispatch(new fromCoreStore.SetNoDeviceModeBatteryLowFlow(!this.layoutConfig.noDeviceModeBatteryLowFlow));
+          this._store.dispatch(
+            new fromCoreStore.SetNoDeviceModeBatteryLowFlow(
+              !this.layoutConfig.noDeviceModeBatteryLowFlow
+            )
+          );
           this._bluetoothService.setBattery(5);
         }
         break;
       case 'device-debugging':
-        this._store.dispatch(new fromCoreStore.SetDeviceDebugging(!this.layoutConfig.debuggingDeviceMode));
+        this._store.dispatch(
+          new fromCoreStore.SetDeviceDebugging(
+            !this.layoutConfig.debuggingDeviceMode
+          )
+        );
         break;
     }
   }
 
   goTo(path: string) {
-    this._store.dispatch(new fromCoreStore.Go({
-      path: [path]
-    }));
+    this._store.dispatch(
+      new fromCoreStore.Go({
+        path: [path],
+      })
+    );
   }
 
   getModelDeviceNumber(model: any) {
@@ -458,23 +574,31 @@ export class BackdropComponent implements OnInit, AfterViewInit {
 
   private _loadComponent(component: any) {
     this.contentComponent.clear();
-    switch(component) {
+    switch (component) {
       case 'welcome-sign-up':
-        this.contentComponent.createComponent(fromWelcomeComponents.WelcomeSignUpComponent);
+        this.contentComponent.createComponent(
+          fromWelcomeComponents.WelcomeSignUpComponent
+        );
         break;
       case 'start-guided-demo':
-        this.contentComponent.createComponent(fromHomeComponents.StartGuidedDemoComponent);
+        this.contentComponent.createComponent(
+          fromHomeComponents.StartGuidedDemoComponent
+        );
         break;
       case 'time-traveling':
-        this.contentComponent.createComponent(fromHomeComponents.TimeTravelingComponent);
+        this.contentComponent.createComponent(
+          fromHomeComponents.TimeTravelingComponent
+        );
         break;
       case 'dosing-try-again':
-        this.contentComponent.createComponent(fromHomeComponents.DosingTryAgainComponent);
+        this.contentComponent.createComponent(
+          fromHomeComponents.DosingTryAgainComponent
+        );
         break;
     }
   }
   private goToSlideZero(): void {
-    this.sliderMainMenu.swiperRef.slideTo(0);
+    this.sliderMainMenu.nativeElement.swiper.slideTo(0);
     this.backButton = null;
   }
 }
