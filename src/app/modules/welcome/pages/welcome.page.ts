@@ -272,7 +272,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
       }, 400);
     };
 
-    const welcomeGifDuration = 3800;
+    const welcomeGifDuration = 3250;
 
     setTimeout(() => {
       showWelcomeScreen();
