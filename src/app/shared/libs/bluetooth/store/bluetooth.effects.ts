@@ -185,18 +185,12 @@ export class BluetoothEffects {
   disconnect$ = createEffect(() =>
     this.actions$.pipe(
       ofType(fromActions.BluetoothActionTypes.Disconnect),
-      switchMap(() => {
-        // Check if the disconnection is already in progress to avoid circular calls
-        if (this.bluetoothService.Connected) {
-          return from(this.bluetoothService.disconnectDevice()).pipe(
-            map(() => new fromActions.DisconnectSuccess()),
-            catchError((error) => of(new fromActions.DisconnectFailure(error)))
-          );
-        } else {
-          // If already disconnected, just return success
-          return of(new fromActions.DisconnectSuccess());
-        }
-      })
+      switchMap(() =>
+        from(this.bluetoothService.stop()).pipe(
+          map(() => new fromActions.DisconnectSuccess()),
+          catchError((error) => of(new fromActions.DisconnectFailure(error)))
+        )
+      )
     )
   );
 
