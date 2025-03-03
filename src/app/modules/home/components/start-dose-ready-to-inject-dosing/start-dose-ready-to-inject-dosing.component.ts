@@ -11,10 +11,10 @@ import { Observable, Subject, takeUntil } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BluetoothService } from '@app/shared/libs/bluetooth';
 import * as fromCoreStore from '@core/store';
 import * as fromStore from '@home/store';
 import { IonImg } from '@ionic/angular/standalone';
-import * as fromSharedServices from '@shared/services';
 import * as fromSharedStore from '@shared/store';
 
 @Component({
@@ -45,7 +45,7 @@ export class StartDoseReadyToInjectDosingComponent
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
-    private _bluetoothService: fromSharedServices.BluetoothService
+    private _bluetoothService: BluetoothService
   ) {
     this.layoutConfig$ = this._store.select(fromCoreStore.getLayoutConfig);
     this.homeConfig$ = this._store.select(fromStore.getHomeConfig);

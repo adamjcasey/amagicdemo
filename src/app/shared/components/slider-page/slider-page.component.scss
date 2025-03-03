@@ -114,6 +114,8 @@
           .actions-wrapper {
             grid-row: 1;
             align-items: center;
+            position: absolute;
+            bottom: 37px;
           }
         }
       }
@@ -139,7 +141,8 @@
 
       .wrapper-small__navigation {
         grid-row: 1;
-        padding-top: var(--size-l);
+        // TODO: solve bullets and pagination
+        padding-top: var(--size-xs);
 
         &.visibility-hidden {
           display: none;
@@ -219,14 +222,16 @@
         grid-row: 2;
 
         .wrapper-small__slide {
-          display: grid;
+          display: flex;
+          flex-direction: column;
           grid-template-rows: auto max-content;
           gap: var(--size-xxs);
           max-width: 100vw;
           padding: var(--size-xxxs) var(--size-xs) var(--size-xl);
           box-sizing: border-box;
           text-align: center;
-          overflow-y: scroll;
+          overflow-y: auto;
+          position: relative;
 
           &:not(.swiper-slide-active) {
             opacity: 0 !important;
@@ -243,6 +248,13 @@
             gap: var(--size-xxxs);
             justify-content: center;
             min-height: 48px;
+            position: absolute;
+            bottom: 37px;
+            left: 0;
+            right: 0;
+            width: 100%;
+            padding: 0 var(--size-xs);
+            box-sizing: border-box;
           }
 
           .template-wrapper {
@@ -313,9 +325,10 @@
 
       .wrapper-large__toolbar {
         grid-row: 2;
-        padding: var(--size-xs) var(--size-s) var(--size-xl);
+        padding: var(--size-xs) var(--size-s) calc(37px + var(--size-xs));
         box-shadow: 0px -4px 16px rgba(0, 0, 0, 0.1);
         border-radius: 16px 16px 0px 0px;
+        position: relative;
 
         .wrapper-large__toolbar-template {
           margin-bottom: var(--size-xs);
@@ -332,6 +345,9 @@
           align-items: center;
           justify-content: center;
           gap: var(--size-xxxs);
+          position: relative;
+          bottom: 0;
+          padding-bottom: 0;
         }
       }
     }
