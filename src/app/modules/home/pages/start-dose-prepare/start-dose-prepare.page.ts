@@ -10,11 +10,11 @@ import { firstValueFrom, Observable, Subject, takeUntil } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BluetoothService } from '@app/shared/libs/bluetooth';
 import * as fromCoreStore from '@core/store';
 import * as fromStore from '@home/store';
 import { IonContent } from '@ionic/angular/standalone';
 import * as fromSharedComponents from '@shared/components';
-import * as fromSharedServices from '@shared/services';
 import * as fromSharedStore from '@shared/store';
 import { addIcons } from 'ionicons';
 import { checkmarkCircle, closeCircle } from 'ionicons/icons';
@@ -46,7 +46,7 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
-    private _bluetoothService: fromSharedServices.BluetoothService
+    private _bluetoothService: BluetoothService
   ) {
     addIcons({ closeCircle, checkmarkCircle });
 

@@ -27,6 +27,7 @@ import {
   BottomToolbarComponent,
   TopBarComponent,
 } from '@app/shared/components';
+import { BluetoothService } from '@app/shared/libs/bluetooth';
 import * as fromStore from '@core/store';
 import * as fromHomeStore from '@home/store';
 import { AlertController } from '@ionic/angular';
@@ -100,7 +101,7 @@ export class LayoutPage implements OnInit, AfterContentInit, OnDestroy {
 
   constructor(
     private _store: Store<fromStore.LayoutState>,
-    private _bluetoothService: fromSharedServices.BluetoothService,
+    private _bluetoothService: BluetoothService,
     private _alertController: AlertController
   ) {
     this.config$ = this._store.select(fromStore.getLayoutConfig);
