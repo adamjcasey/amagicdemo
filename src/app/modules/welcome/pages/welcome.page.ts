@@ -21,7 +21,6 @@ import { Store } from '@ngrx/store';
 import { filter, Observable, Subject, take, takeUntil, timeout } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
-import { BluetoothService } from '@app/shared/libs/bluetooth';
 import * as fromCoreStore from '@core/store';
 import { IonContent, IonImg } from '@ionic/angular/standalone';
 import * as fromSharedComponents from '@shared/components';
@@ -47,7 +46,6 @@ import * as fromStore from '../store';
 export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
   private _store = inject(Store<fromCoreStore.CoreState>);
   private _formBuilder = inject(FormBuilder);
-  private _bluetoothService = inject(BluetoothService);
 
   public config$: Observable<any> = this._store.select(
     fromStore.getWelcomeConfig
@@ -376,17 +374,26 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
       try {
         this._store.dispatch(new fromBluetoothStore.CheckPermissions());
 
-        const checkPermissions =
-          await this._bluetoothService.checkPermissions();
-        if (checkPermissions === 'granted') {
+        // Wait for the permissions result from the store
+        const permissionsStatus = await new Promise<'granted' | 'not-allowed'>(
+          (resolve) => {
+            this._store
+              .select(fromBluetoothStore.getPermissionsStatus)
+              .pipe(
+                filter((status) => status !== 'unknown'),
+                take(1)
+              )
+              .subscribe((status) => {
+                resolve(status as 'granted' | 'not-allowed');
+              });
+          }
+        );
+
+        if (permissionsStatus === 'granted') {
           this._store.dispatch(
             new fromStore.SetData({
               bleAllowed: true,
             })
-          );
-
-          this._store.dispatch(
-            new fromBluetoothStore.PermissionsResult('granted')
           );
 
           this._store.dispatch(
@@ -401,10 +408,6 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
               bleAllowed: false,
             })
           );
-
-          this._store.dispatch(
-            new fromBluetoothStore.PermissionsResult('not-allowed')
-          );
         }
       } catch (error) {
         this._store.dispatch(
@@ -413,7 +416,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
               {
                 label: 'Open Settings to Allow Bluetooth',
                 action: () => {
-                  this._bluetoothService.openSettingsApp();
+                  this._store.dispatch(new fromBluetoothStore.OpenSettings());
                   this.sliderPage.slideNext();
 
                   this._store.dispatch(
@@ -443,8 +446,8 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
     this.sliderPage.slideNext();
 
     try {
-      this._store.dispatch(new fromBluetoothStore.DisconnectSuccess());
-      this._store.dispatch(new fromBluetoothStore.Connect());
+      // Start scanning for devices
+      this._store.dispatch(new fromBluetoothStore.StartScan());
 
       const connected = await new Promise<boolean>((resolve) => {
         console.log('Setting up connection monitoring...');
@@ -476,13 +479,13 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
           .subscribe({
             next: (devices) => {
               console.log('Devices found:', devices);
-              // TODO: connect to the device with biggest RSSI
+              // Connect to the first device found
               if (devices.length > 0 && !this.isConnected) {
                 console.log(
                   'Attempting to connect to found device:',
                   devices[0]
                 );
-                this._bluetoothService.connect(devices[0]);
+                this._store.dispatch(new fromBluetoothStore.Connect());
               }
               devicesSubscription.unsubscribe();
             },

@@ -24,6 +24,7 @@ export enum BluetoothActionTypes {
 
   CheckPermissions = '[Bluetooth] Check Permissions',
   PermissionsResult = '[Bluetooth] Permissions Result',
+  OpenSettings = '[Bluetooth] Open Settings',
 
   SetError = '[Bluetooth] Set Error',
 
@@ -124,6 +125,10 @@ export class PermissionsResult implements Action {
   constructor(public payload: 'granted' | 'not-allowed') {}
 }
 
+export class OpenSettings implements Action {
+  readonly type = BluetoothActionTypes.OpenSettings;
+}
+
 export class SetError implements Action {
   readonly type = BluetoothActionTypes.SetError;
   constructor(public payload: any) {}
@@ -168,5 +173,6 @@ export type BluetoothActions =
   | UseMockDevice
   | CheckPermissions
   | PermissionsResult
+  | OpenSettings
   | SetError
   | InitializeBluetoothState;
