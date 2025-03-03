@@ -26,7 +26,7 @@
     <swiper-container #sliderHeader [init]="false" effect="fade">
       <swiper-slide *ngFor="let slide of slides" class="slider-page__header-slide">
         <div class="asset-wrapper" *ngIf="slide.header?.asset">
-          <img [src]="slide.header.asset" />
+          <img [src]="slide.header.asset" [alt]="slide.header?.assetAlt || 'Slide image'" />
         </div>
 
         <div class="content-wrapper">
@@ -85,14 +85,14 @@
             </div>
           </div>
 
-          <div class="actions-wrapper" *ngIf="config.content?.actions">
-            <ion-button *ngFor="let button of config.content.actions; let i = index"
+          <div class="actions-wrapper" *ngIf="slide.content?.actions">
+            <ion-button *ngFor="let button of slide.content.actions; let i = index"
               class="hotspot-element {{ button.cssClasses ? button.cssClasses : null }}" color="purple" size="large"
               [ngClass]="{ 'is-hidden': button.hidden, 'is-blocked': blockNavigation }"
               [disabled]="button.disabled ? true : null" (click)="button.action ? button.action($event) : null" [fill]="
                 button.fill
                 ? button.fill
-                : (i % 2 !== 1 && config.content.actions.length > 1
+                : (i % 2 !== 1 && slide.content.actions.length > 1
                   ? 'outline'
                   : null)
               ">

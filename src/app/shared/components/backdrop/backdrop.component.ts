@@ -24,6 +24,7 @@ import {
   DynamicInnerHtmlDirective,
   ThreeFingerTapDirective,
 } from '@app/shared/directives';
+import { BluetoothService } from '@app/shared/libs/bluetooth';
 import * as fromCoreStore from '@core/store';
 import * as fromHomeComponents from '@home/components';
 import * as fromHomeStore from '@home/store';
@@ -87,7 +88,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
     private _store: Store<fromCoreStore.CoreState>,
     private _sanitizer: DomSanitizer,
     private _utils: fromSharedServices.UtilsService,
-    private _bluetoothService: fromSharedServices.BluetoothService
+    private _bluetoothService: BluetoothService
   ) {
     addIcons({
       chevronBackOutline,
