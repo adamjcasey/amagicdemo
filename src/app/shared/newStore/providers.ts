@@ -1,23 +1,24 @@
-import { provideStore, provideState } from '@ngrx/store';
-import { provideEffects } from '@ngrx/effects';
-import { provideStoreDevtools } from '@ngrx/store-devtools';
-import { Storage } from '@ionic/storage';
-import { environment } from 'src/environments/environment';
 import {
   CoreEffects,
   CoreReducer,
   LayoutReducer,
   metaReducers,
 } from '@app/core/store';
-import { HomeEffects, HomeReducer } from '@app/modules/home/store';
-import { SharedEffects, SharedReducer } from '../store';
-import { WelcomeEffects, WelcomeReducer } from '@app/modules/welcome/store';
 import { ActivityEffects, ActivityReducer } from '@app/modules/activity/store';
-import { SettingsEffects, SettingsReducer } from '@app/modules/settings/store';
+import { HomeEffects, HomeReducer } from '@app/modules/home/store';
 import {
   ResourcesEffects,
   ResourcesReducer,
 } from '@app/modules/resources/store';
+import { SettingsEffects, SettingsReducer } from '@app/modules/settings/store';
+import { WelcomeEffects, WelcomeReducer } from '@app/modules/welcome/store';
+import { Storage } from '@ionic/storage';
+import { provideEffects } from '@ngrx/effects';
+import { provideState, provideStore } from '@ngrx/store';
+import { provideStoreDevtools } from '@ngrx/store-devtools';
+import { environment } from 'src/environments/environment';
+import { BluetoothEffects, bluetoothReducer } from '../libs/bluetooth/store';
+import { SharedEffects, SharedReducer } from '../store';
 import { createMiddlewareReducer } from './meta-reducers';
 
 export function provideAppStore() {
@@ -39,6 +40,7 @@ export function provideAppStore() {
     provideState('layout', LayoutReducer),
     provideState('home', HomeReducer),
     provideState('shared', SharedReducer),
+    provideState('bluetooth', bluetoothReducer),
     provideState('welcome', WelcomeReducer),
     provideState('activity', ActivityReducer),
     provideState('settings', SettingsReducer),
@@ -48,6 +50,7 @@ export function provideAppStore() {
       CoreEffects,
       HomeEffects,
       SharedEffects,
+      BluetoothEffects,
       WelcomeEffects,
       ActivityEffects,
       SettingsEffects,
