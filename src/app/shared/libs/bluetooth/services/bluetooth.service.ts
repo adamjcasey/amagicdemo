@@ -150,7 +150,6 @@ export class BluetoothService {
             state: state,
           })
         );
-        // Dispatch to Bluetooth store
         this.#store.dispatch(new fromBluetoothStore.UpdateDeviceState(state));
       }
     });
@@ -162,7 +161,6 @@ export class BluetoothService {
             state_data: stateData,
           })
         );
-        // Dispatch to Bluetooth store
         this.#store.dispatch(
           new fromBluetoothStore.UpdateDeviceStateData(stateData)
         );
@@ -264,14 +262,12 @@ export class BluetoothService {
     this.#state.next(newState);
     this.#deviceStateSignal.set(newState);
 
-    // Update Bluetooth store
     this.#store.dispatch(new fromBluetoothStore.UpdateDeviceState(newState));
   }
 
   #updateStateData(newStateData: number): void {
     this.#stateData.next(newStateData);
 
-    // Update Bluetooth store
     this.#store.dispatch(
       new fromBluetoothStore.UpdateDeviceStateData(newStateData)
     );
@@ -469,9 +465,6 @@ export class BluetoothService {
    * Simulates connecting to a mocked device
    */
   async #connectToMockedDevice(mockDevice: any): Promise<void> {
-    console.log('Connecting to mocked device');
-
-    // Set device and connection properties
     this.#device = mockDevice;
     this.#connected = true;
     this.#connectedSignal.set(true);
@@ -483,7 +476,6 @@ export class BluetoothService {
     this.#hardwareRevision = '2.0.0';
     this.#battery = 85;
 
-    // Update the store
     this.#store.dispatch(
       new fromCoreStore.SetDosageDeviceInfo({
         isConnected: true,
@@ -491,7 +483,6 @@ export class BluetoothService {
       })
     );
 
-    // Update Bluetooth store
     this.#store.dispatch(
       new fromBluetoothStore.ConnectSuccess({
         deviceInfo: {
@@ -816,7 +807,7 @@ export class BluetoothService {
               filter((connected) => connected),
               map(() => true)
             ),
-            timer(5000).pipe(map(() => false)) // 5 second timeout
+            timer(5000).pipe(map(() => false))
           )
         );
         return result;
@@ -843,7 +834,6 @@ export class BluetoothService {
         );
         await this.connect(this.#devices[0]);
 
-        // Wait for connection to complete
         const connected = await firstValueFrom(
           race(
             this.connected$.pipe(
@@ -851,7 +841,7 @@ export class BluetoothService {
               map(() => true),
               take(1)
             ),
-            timer(5000).pipe(map(() => false)) // 5 second timeout
+            timer(5000).pipe(map(() => false))
           )
         );
 
