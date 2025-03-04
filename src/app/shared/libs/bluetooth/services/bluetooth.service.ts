@@ -5,7 +5,6 @@ import {
   numberToUUID,
   ScanResult,
 } from '@capacitor-community/bluetooth-le';
-import { App } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { Device } from '@capacitor/device';
 import * as fromCoreStore from '@core/store';
@@ -174,7 +173,6 @@ export class BluetoothService {
 
   constructor() {
     this.#initializeSubscriptions();
-    this.#initializeAppStateListener();
     this.#checkDeviceInfo();
   }
 
@@ -218,14 +216,6 @@ export class BluetoothService {
         this.#store.dispatch(
           new fromBluetoothStore.UpdateDeviceStateData(stateData)
         );
-      }
-    });
-  }
-
-  #initializeAppStateListener(): void {
-    App.addListener('appStateChange', async ({ isActive }) => {
-      if (isActive && this.#connected) {
-        await this.stop();
       }
     });
   }
