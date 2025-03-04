@@ -150,6 +150,28 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
     },
     {
       header: {
+        color: '--color-bg-pastel-blue',
+        asset: '/assets/images/welcome-step-2.svg',
+      },
+      content: {
+        hideNavigation: null,
+        template: `
+          <h1 class="font-heading-1--bold">This experience requires bluetooth</h1>
+          <p>You'll need to allow Bluetooth for AutoMagic in your settings to continue this app experience.</p>
+        `,
+        actions: [
+          {
+            label: 'Open Settings to Allow Bluetooth',
+            action: () => {
+              this._store.dispatch(new fromBluetoothStore.OpenSettings());
+              this.sliderPage.slideNext();
+            },
+          },
+        ],
+      },
+    },
+    {
+      header: {
         color: '--color-bg-pastel-green-dark',
         asset: '/assets/images/welcome-step-2-2.svg',
       },
@@ -282,12 +304,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
   private devices$: Observable<any[]> = this._store.select(
     fromBluetoothStore.getDevices
   );
-  private connectionInProgress$: Observable<boolean> = this._store.select(
-    fromBluetoothStore.getConnectionInProgress
-  );
   private isConnected: boolean = false;
-  private devices: any[] = [];
-  private connectionInProgress: boolean = false;
 
   ngOnInit() {
     this.config$
@@ -312,16 +329,6 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
         this.isConnected = isConnected;
       });
 
-    this.devices$.pipe(takeUntil(this._ngUnsubscribe)).subscribe((devices) => {
-      this.devices = devices;
-    });
-
-    this.connectionInProgress$
-      .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe((inProgress) => {
-        this.connectionInProgress = inProgress;
-      });
-
     this.setupConnectionMonitoring();
   }
 
@@ -330,7 +337,6 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    console.log('ngOnDestroy');
     this._ngUnsubscribe.next();
     this._ngUnsubscribe.complete();
   }
@@ -369,7 +375,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
       this._store.dispatch(
         new fromSharedStore.TopbarChangeColor('--color-bg-pastel-green-dark')
       );
-      this.sliderPage.slideNext();
+      this.sliderPage.slideTo(4);
     } else {
       try {
         this._store.dispatch(new fromBluetoothStore.CheckPermissions());
@@ -401,13 +407,14 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
               '--color-bg-pastel-green-dark'
             )
           );
-          this.sliderPage.slideNext();
+          this.sliderPage.slideTo(4);
         } else {
           this._store.dispatch(
             new fromStore.SetData({
               bleAllowed: false,
             })
           );
+          this.sliderPage.slideNext();
         }
       } catch (error) {
         this._store.dispatch(
