@@ -17,6 +17,7 @@ import {
 } from '@angular/forms';
 import { Capacitor } from '@capacitor/core';
 import { PushNotifications } from '@capacitor/push-notifications';
+import { Keyboard } from "@capacitor/keyboard";
 import { Store } from '@ngrx/store';
 import { filter, Observable, Subject, take, takeUntil, timeout } from 'rxjs';
 
@@ -305,6 +306,15 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
     fromBluetoothStore.getDevices
   );
   private isConnected: boolean = false;
+
+  constructor() {
+    Keyboard.addListener('keyboardDidShow', () => {
+      const content = document.querySelector('ion-content');
+      if (content) {
+        content.scrollToBottom(300);
+      }
+    });
+  }
 
   ngOnInit() {
     this.config$
