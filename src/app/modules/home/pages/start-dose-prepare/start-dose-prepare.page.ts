@@ -244,7 +244,7 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
           ? `
           <div class="start-dose-prepare__instructions">
             <img src="assets/images/drug-cold-temp.svg" />
-            <h1 class="font-heading-1--bold">Theryx® temperature</h1>
+            <h1 class="font-heading-1--bold ion-text-nowrap">Theryx® temperature</h1>
 
             <div class="temperature-status">
               <p class="indicator">
@@ -263,7 +263,7 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
           : `
           <div class="start-dose-prepare__instructions">
             <img src="assets/images/drug-cold-temp.svg" />
-            <h1 class="font-heading-1--bold">Theryx® temperature</h1>
+            <h1 class="font-heading-1--bold ion-text-nowrap">Theryx® temperature</h1>
 
             <div class="temperature-status">
               <p class="indicator green">
@@ -324,7 +324,7 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
         template: `
         <div class="start-dose-prepare__instructions">
           <img src="assets/images/drug-window.svg" />
-          <h1 class="font-heading-1--bold">Inspect your Theryx®</h1>
+          <h1 class="font-heading-1--bold ion-text-nowrap">Inspect your Theryx®</h1>
           <div class="inspection">
             <div class="statement incorrect">
               <h3>
