@@ -35,7 +35,7 @@ import { IonButton, IonInput } from '@ionic/angular/standalone';
 import * as fromStore from '@shared/store';
 import * as fromWelcomeComponents from '@welcome/components';
 import * as fromWelcomeStore from '@welcome/store';
-import { CardComponent } from '../card/card.component';
+import { CardComponent } from '@shared/components';
 
 @Component({
   selector: 'automagic-slider-page',
@@ -68,8 +68,8 @@ export class SliderPageComponent implements OnInit, OnDestroy {
   public configHeaderTemplate: any;
 
   @Input() slides!: Array<any>;
-  @Output() onPrevSlide = new EventEmitter<any>();
-  @Output() onNextSlide = new EventEmitter<any>();
+  @Output() prevSlide = new EventEmitter<any>();
+  @Output() nextSlide = new EventEmitter<any>();
   @ViewChild('wrapper') wrapper!: ElementRef;
   @ViewChild('sliderHeader') sliderHeader!: ElementRef<SwiperContainer>;
   @ViewChild('sliderContent') sliderContent!: ElementRef<SwiperContainer>;
@@ -299,8 +299,8 @@ export class SliderPageComponent implements OnInit, OnDestroy {
         this.componentsHeader?.toArray()[activeIndex].clear();
       }
 
-      if (this.onPrevSlide.observers.length > 0) {
-        this.onPrevSlide.emit({
+      if (this.prevSlide.observers.length > 0) {
+        this.prevSlide.emit({
           asset: this.sliderHeader.nativeElement.swiper,
           content: this.sliderContent.nativeElement.swiper,
         });
@@ -325,8 +325,8 @@ export class SliderPageComponent implements OnInit, OnDestroy {
         this.componentsHeader?.toArray()[activeIndex].clear();
       }
 
-      if (this.onNextSlide.observers.length > 0) {
-        this.onNextSlide.emit({
+      if (this.nextSlide.observers.length > 0) {
+        this.nextSlide.emit({
           asset: this.sliderHeader.nativeElement.swiper,
           content: this.sliderContent.nativeElement.swiper,
         });
@@ -345,6 +345,10 @@ export class SliderPageComponent implements OnInit, OnDestroy {
   slideTo(index: number) {
     this.sliderHeader.nativeElement.swiper.slideTo(index);
     this.sliderContent.nativeElement.swiper.slideTo(index);
+  }
+
+  trackBySlideFn(index: number, item: any) {
+    return item?.header?.asset || index;
   }
 
   handlerEnterKey(event: any) {
@@ -552,17 +556,17 @@ export class SliderPageComponent implements OnInit, OnDestroy {
     Object.assign(contentSwiperEl, { params: contentParams });
 
     // Add event listeners
-    headerSwiperEl.addEventListener('swiperready', (event: any) => {
+    headerSwiperEl.addEventListener('swiperready', () => {
       console.log('Header Swiper is ready!');
       this.onSliderInit();
     });
 
-    contentSwiperEl.addEventListener('swiperready', (event: any) => {
+    contentSwiperEl.addEventListener('swiperready', () => {
       console.log('Content Swiper is ready!');
       this.onSliderInit();
     });
 
-    contentSwiperEl.addEventListener('swiperslidechange', (event: any) => {
+    contentSwiperEl.addEventListener('swiperslidechange', () => {
       console.log('Slide changed!');
       this.onSlideChange();
     });
