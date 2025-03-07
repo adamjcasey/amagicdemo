@@ -1,9 +1,9 @@
 <ion-content [fullscreen]="true" [scrollY]="false">
   <section class="start-dose-prepare">
-    <automagic-slider-page 
+    <automagic-slider-page
       #sliderPage
       [slides]="slides"
-      (onNextSlide)="slideNext($event)"
+      (nextSlide)="slideNext($event)"
     ></automagic-slider-page>
   </section>
 </ion-content>
