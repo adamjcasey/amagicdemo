@@ -1,0 +1,21 @@
+.battery-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-weight: var(--font-weight-extrabold);
+  font-size: 12px;
+
+  &__aria-outline {
+    width: 78px;
+    height: 26px;
+  }
+
+  &__status {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    top: -20px;
+    left: -6px;
+  }
+}
