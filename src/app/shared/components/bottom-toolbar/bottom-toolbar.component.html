@@ -1,12 +1,7 @@
-<ion-tab-bar
-  id="bottom-toolbar"
-  class="bottom-toolbar"
-  [ngClass]="{
+<ion-tab-bar id="bottom-toolbar" class="bottom-toolbar" [ngClass]="{
     'is-open': isOpen,
     'visibility-hidden': excludedPaths.includes(currentRoute)
-  }"
-  slot="bottom"
-  color="light">
+  }" slot="bottom" color="light">
 
   <ion-tab-button tab="home" (click)="goTo('home')" [ngClass]="{
     'is-active': isActivePath('home'),
@@ -22,20 +17,16 @@
     'is-blocked': !homeConfig.allCompletedDoses,
     'hotspot-element': homeConfig.allCompletedDoses,
   }">
-    <ion-icon
-      size="medium" src="/assets/icons/activity.svg">
+    <ion-icon size="medium" src="/assets/icons/activity.svg">
     </ion-icon>
     Activity
   </ion-tab-button>
 
   <ion-tab-button>
-    <ion-button
-      [ngClass]="{
+    <ion-button [ngClass]="{
         'hotspot-element': homeConfig.flareUpsDemoDone,
         'is-blocked': !homeConfig.flareUpsDemoDone,
-      }"
-      (click)="toggle()"
-      fill="solid" shape="circle" color="purple" size="large">
+      }" (click)="toggle()" fill="solid" shape="circle" color="purple" size="large">
       <ion-icon slot="icon-only" [name]="isOpen ? 'close-outline' : 'add-outline'"></ion-icon>
     </ion-button>
   </ion-tab-button>
@@ -60,16 +51,14 @@
   <section class="bottom-toolbar__content">
     <div class="cta" (click)="goTo('/home/start-dose/prepare')">
       <ion-img src="/assets/images/start-dose.svg"></ion-img>
-      <ion-button
-        color="purple">
+      <ion-button color="purple">
         Start dose
       </ion-button>
     </div>
 
     <div class="cta" (click)="goTo('symptoms/add')">
       <ion-img src="/assets/images/add-symptom.svg"></ion-img>
-      <ion-button
-        color="purple">
+      <ion-button color="purple">
         Add Symptom
       </ion-button>
     </div>

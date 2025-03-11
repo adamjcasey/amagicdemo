@@ -305,6 +305,7 @@
       // transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
 
       .wrapper-large__content {
+        gap: 24px;
         grid-row: 1;
         display: grid;
         grid-template-rows: max-content auto;

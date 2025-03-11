@@ -32,10 +32,10 @@ import * as fromCoreStore from '@core/store';
 import * as fromHomeComponents from '@home/components';
 import * as fromHomeStore from '@home/store';
 import { IonButton, IonInput } from '@ionic/angular/standalone';
+import { CardComponent } from '@shared/components';
 import * as fromStore from '@shared/store';
 import * as fromWelcomeComponents from '@welcome/components';
 import * as fromWelcomeStore from '@welcome/store';
-import { CardComponent } from '@shared/components';
 
 @Component({
   selector: 'automagic-slider-page',
@@ -225,7 +225,9 @@ export class SliderPageComponent implements OnInit, OnDestroy {
   }
 
   onSliderInit() {
-    console.log('SLIDER INIT', this.slides);
+    if (this.slides.length === 0) {
+      return;
+    }
 
     this.currentSlide = this.slides[0];
     if (this.currentSlide.header) {
@@ -255,8 +257,6 @@ export class SliderPageComponent implements OnInit, OnDestroy {
       this.sliderContent.nativeElement.swiper.activeIndex;
     this.currentSlide = this.slides[swiperActiveIndex];
 
-    console.log('CURRENT SLIDE', this.currentSlide, swiperActiveIndex);
-
     if (this.currentSlide.header) {
       // update config for header section based on the currentSlide
       this._store.dispatch(
@@ -275,6 +275,7 @@ export class SliderPageComponent implements OnInit, OnDestroy {
           ...this.currentSlide.content,
           form: null,
           currentSlide: swiperActiveIndex,
+          cards: this.currentSlide.content.cards || null,
         })
       );
     }
@@ -503,18 +504,16 @@ export class SliderPageComponent implements OnInit, OnDestroy {
   }
 
   private async initializeSwipers() {
+    if (this.slides.length === 0) {
+      return;
+    }
+
     await customElements.whenDefined('swiper-container');
 
     this.onSliderInit();
 
     const headerSwiperEl = this.sliderHeader.nativeElement;
     const contentSwiperEl = this.sliderContent.nativeElement;
-
-    console.log('Content Swiper Element:', contentSwiperEl);
-    console.log(
-      'Pagination Element:',
-      document.querySelector('.swiper-pagination')
-    );
 
     // Set up parameters before initialization
     headerSwiperEl.setAttribute('effect', 'fade');
