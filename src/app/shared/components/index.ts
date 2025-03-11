@@ -10,11 +10,13 @@ import { SliderPageComponent } from './slider-page/slider-page.component';
 import { AlertComponent } from './alert/alert.component';
 import { AccordionComponent } from './accordion/accordion.component';
 import { FeedCardComponent } from './feed-card/feed-card.component';
+import { BatteryIndicatorComponent } from './battery-indicator/battery-indicator.component';
 
 export const components: any[] = [
   TopBarComponent,
   BackdropComponent,
   BottomToolbarComponent,
+  BatteryIndicatorComponent,
   CardComponent,
   PinInputComponent,
   RatingFieldComponent,
@@ -29,6 +31,7 @@ export const components: any[] = [
 export * from './topbar/topbar.component';
 export * from './backdrop/backdrop.component';
 export * from './bottom-toolbar/bottom-toolbar.component';
+export * from './battery-indicator/battery-indicator.component';
 export * from './card/card.component';
 export * from './pin-input/pin-input.component';
 export * from './datepicker/datepicker.component';
