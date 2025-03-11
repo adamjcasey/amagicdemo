@@ -294,7 +294,7 @@
 
     .main-menu,
     .highlights-tour {
-      display: flex;
+      display: block;
       color: var(--color-white);
 
       swiper-container {
@@ -310,8 +310,8 @@
 
     .main-menu {
       align-items: center;
-      padding-right: var(--size-xxl);
-      padding-left: var(--size-xxl);
+      padding-right: var(--size-l);
+      padding-left: var(--size-l);
 
       swiper-container {
         .swiper-slide {

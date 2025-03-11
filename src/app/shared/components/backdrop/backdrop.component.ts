@@ -11,7 +11,6 @@ import {
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
 import { animate, spring } from 'motion';
-import { Observable } from 'rxjs';
 import { register } from 'swiper/element/bundle';
 import { EffectFade } from 'swiper/modules';
 
@@ -26,6 +25,7 @@ import {
 } from '@app/shared/directives';
 import { BluetoothService } from '@app/shared/libs/bluetooth';
 import * as fromCoreStore from '@core/store';
+import * as fromBluetoothStore from '@shared/libs/bluetooth/store';
 import * as fromHomeComponents from '@home/components';
 import * as fromHomeStore from '@home/store';
 import { IonButton, IonIcon, IonImg } from '@ionic/angular/standalone';
@@ -42,7 +42,7 @@ import {
   warningOutline,
 } from 'ionicons/icons';
 import type { SwiperContainer } from 'swiper/element';
-import { CardComponent } from '../card/card.component';
+import { CardComponent, BatteryIndicatorComponent } from '@shared/components';
 
 @Component({
   selector: 'automagic-backdrop',
@@ -61,21 +61,23 @@ import { CardComponent } from '../card/card.component';
     IonButton,
     IonImg,
     IonIcon,
+    BatteryIndicatorComponent,
   ],
 })
 export class BackdropComponent implements OnInit, AfterViewInit {
-  public config$: Observable<any>;
+  public config$ = this._store.select(fromStore.getBackdropConfig);
+  public layoutConfig$ = this._store.select(fromCoreStore.getLayoutConfig);
+  public isConnected$ = this._store.select(fromBluetoothStore.getIsConnected);
+  public batteryLevel$ = this._store.select(fromBluetoothStore.getBatteryLevel);
+  public homeConfig$ = this._store.select(fromHomeStore.getHomeConfig);
   public config: any;
-  public layoutConfig$: Observable<any>;
   public layoutConfig: any;
-  public homeConfig$: Observable<any>;
   public homeConfig: any;
   public backButton!: any;
   public initialized: boolean = false;
   public isShowDebugging: boolean = false;
   public isShowDebuggingStatus: boolean = false;
   public initialSlide: number = 0;
-  public batteryLevel: number = 0;
   @ViewChild('sliderMainMenu') sliderMainMenu!: ElementRef<SwiperContainer>;
   @ViewChild('sliderHighlightsTour')
   sliderHighlightsTour!: ElementRef<SwiperContainer>;
@@ -98,10 +100,6 @@ export class BackdropComponent implements OnInit, AfterViewInit {
       chevronUpOutline,
       closeOutline,
     });
-
-    this.config$ = this._store.select(fromStore.getBackdropConfig);
-    this.layoutConfig$ = this._store.select(fromCoreStore.getLayoutConfig);
-    this.homeConfig$ = this._store.select(fromHomeStore.getHomeConfig);
   }
 
   getType(): string {
@@ -157,9 +155,6 @@ export class BackdropComponent implements OnInit, AfterViewInit {
     this.layoutConfig$.subscribe((layoutConfig) => {
       if (layoutConfig) {
         this.layoutConfig = layoutConfig;
-        if (this.layoutConfig.dosageDevice?.isConnected) {
-          this.batteryLevel = this.layoutConfig.dosageDevice.battery;
-        }
 
         this.isShowDebuggingStatus =
           layoutConfig.noDeviceMode ||
