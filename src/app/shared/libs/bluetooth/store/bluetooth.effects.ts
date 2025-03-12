@@ -183,6 +183,7 @@ export class BluetoothEffects {
   );
 
   disconnect$ = createEffect(() =>
+    // DISCONNECT ONLY WHEN IT'S CONNECTED
     this.actions$.pipe(
       ofType(fromActions.BluetoothActionTypes.Disconnect),
       switchMap(() =>

@@ -113,7 +113,8 @@
           [innerHTML]="sanitizeContent(config.content.template)"></div>
 
         <div class="cards-wrapper" *ngIf="config.content?.cards">
-          <automagic-card *ngFor="let card of config.content.cards" [card]="card"></automagic-card>
+          <automagic-card *ngFor="let card of config.content.cards; trackBy: trackByCardFn"
+            [card]="card"></automagic-card>
         </div>
 
         <div *ngIf="config.content?.component" class="wrapper-large__component">
