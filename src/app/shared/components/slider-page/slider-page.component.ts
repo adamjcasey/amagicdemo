@@ -197,6 +197,7 @@ export class SliderPageComponent implements OnInit, OnDestroy {
           }
         } else {
           if (this.config.content?.component) {
+            // Wait for the component to be initialized
             setTimeout(() => {
               if (this.componentContent) {
                 this.componentContent.clear();
@@ -377,7 +378,7 @@ export class SliderPageComponent implements OnInit, OnDestroy {
     ) {
       console.warn('Swiper not initialized yet, waiting...');
 
-      // Wait for swiper to initialize
+      // Workaround: Wait for swiper to initialize
       setTimeout(() => {
         this.slideTo(index);
       }, 100);
