@@ -15,7 +15,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DeviceStateCode } from '@app/shared/libs/bluetooth';
 import * as fromBluetoothStore from '@app/shared/libs/bluetooth/store';
 import * as fromCoreStore from '@core/store';
-import { IonContent, IonIcon } from '@ionic/angular/standalone';
+import { IonContent } from '@ionic/angular/standalone';
 import * as fromSharedComponents from '@shared/components';
 import * as fromSharedStore from '@shared/store';
 import { addIcons } from 'ionicons';
@@ -45,7 +45,6 @@ export enum CassetteJourneySlides {
     ReactiveFormsModule,
     fromSharedComponents.SliderPageComponent,
     IonContent,
-    IonIcon,
   ],
 })
 export class CassetteJourneyPage implements OnInit, OnDestroy, AfterViewInit {
@@ -62,6 +61,12 @@ export class CassetteJourneyPage implements OnInit, OnDestroy, AfterViewInit {
   );
   isCassetteVerified$: Observable<boolean> = this.#store.select(
     fromBluetoothStore.isCassetteVerifiedState
+  );
+  isCassetteLoadingError$: Observable<boolean> = this.#store.select(
+    fromBluetoothStore.isCassetteLoadingErrorState
+  );
+  isCassetteExpired$: Observable<boolean> = this.#store.select(
+    fromBluetoothStore.isCassetteExpiredState
   );
 
   isDeviceConnected$: Observable<boolean> = this.#store.select(
@@ -121,7 +126,7 @@ export class CassetteJourneyPage implements OnInit, OnDestroy, AfterViewInit {
             {
               label: 'Cancel',
               action: () => {
-                this.goTo('/home');
+                this.#goTo('/home');
               },
             },
             {
@@ -175,7 +180,7 @@ export class CassetteJourneyPage implements OnInit, OnDestroy, AfterViewInit {
             {
               label: 'Proceed',
               action: () => {
-                this.goTo('/home/start-dose/prepare');
+                this.#goTo('/home/start-dose/prepare');
               },
             },
           ],
@@ -223,50 +228,135 @@ export class CassetteJourneyPage implements OnInit, OnDestroy, AfterViewInit {
     this.#initStateSubscriptions();
   }
 
+  ngOnDestroy() {
+    this.#ngUnsubscribe.next();
+    this.#ngUnsubscribe.complete();
+  }
+
+  slideNext(sliders: any) {
+    sliders.asset.slideNext(500);
+    sliders.content.slideNext(500);
+  }
+
   #initStateSubscriptions() {
     combineLatest([
       this.isDeviceConnected$,
       this.isCassetteInsertionRequired$,
       this.isCassetteBeingPrepared$,
       this.isCassetteVerified$,
+      this.isCassetteLoadingError$,
+      this.isCassetteExpired$,
     ])
       .pipe(
         filter(([isConnected]) => isConnected),
         takeUntil(this.#ngUnsubscribe)
       )
-      .subscribe(
-        ([isConnected, isInsertionRequired, isBeingPrepared, isVerified]) => {
-          if (isInsertionRequired) {
-            console.log('Navigating to InspectCassette slide');
-            this.sliderPage.slideTo(CassetteJourneySlides.InspectCassette);
-          } else if (isBeingPrepared) {
-            console.log('Navigating to InsertCassette slide');
-            this.sliderPage.slideTo(CassetteJourneySlides.CheckCassette);
-          } else if (isVerified) {
-            setTimeout(() => {
-              console.log('Navigating to CassetteVerified slide');
-              this.sliderPage.slideTo(CassetteJourneySlides.CassetteVerified);
-            });
-          }
-        }
-      );
+      .subscribe(this.#handleDeviceStateChange.bind(this));
   }
 
-  ngOnDestroy() {
-    this.#ngUnsubscribe.next();
-    this.#ngUnsubscribe.complete();
+  #handleDeviceStateChange([
+    isConnected,
+    isInsertionRequired,
+    isBeingPrepared,
+    isVerified,
+    isLoadingError,
+    isExpired,
+  ]: boolean[]): void {
+    if (isLoadingError) {
+      this.#handleCassetteLoadingError();
+    } else if (isExpired) {
+      this.#handleCassetteExpired();
+    } else if (isInsertionRequired) {
+      this.#handleCassetteInsertionRequired();
+    } else if (isBeingPrepared) {
+      this.#handleCassetteBeingPrepared();
+    } else if (isVerified) {
+      this.#handleCassetteVerified();
+    }
   }
 
-  async slideNext(sliders: any) {
-    sliders.asset.slideNext(500);
-    sliders.content.slideNext(500);
+  #handleCassetteLoadingError(): void {
+    this.#showCassetteErrorAlert();
   }
 
-  goTo(path: string) {
+  #handleCassetteExpired(): void {
+    this.#showDrugExpiredAlert();
+  }
+
+  #handleCassetteInsertionRequired(): void {
+    console.log('Navigating to InspectCassette slide');
+    this.sliderPage.slideTo(CassetteJourneySlides.InspectCassette);
+  }
+
+  #handleCassetteBeingPrepared(): void {
+    console.log('Navigating to InsertCassette slide');
+    this.sliderPage.slideTo(CassetteJourneySlides.CheckCassette);
+  }
+
+  #handleCassetteVerified(): void {
+    setTimeout(() => {
+      console.log('Navigating to CassetteVerified slide');
+      this.sliderPage.slideTo(CassetteJourneySlides.CassetteVerified);
+    });
+  }
+
+  #showCassetteErrorAlert() {
+    this.#store.dispatch(
+      new fromSharedStore.AlertShow({
+        mode: 'full',
+        template: `
+      <img src="assets/images/cassette-expired.svg" />
+      <h1 class="font-heading-1--bold">Cassette Loading Error</h1>
+      <p>The cassette may be defective or was not loaded properly.</p>
+      <p><b>Please check the cassette and reload a different cassette if problem persists.<b></p>
+    `,
+        actions: [
+          {
+            label: 'Reload cassette',
+            fill: 'outline',
+            action: () => {
+              this.#store.dispatch(new fromSharedStore.AlertHide());
+              this.#handleCassetteInsertionRequired();
+            },
+          },
+        ],
+      })
+    );
+  }
+
+  #showDrugExpiredAlert() {
+    this.#store.dispatch(
+      new fromSharedStore.AlertShow({
+        mode: 'full',
+        template: `
+      <img src="assets/images/cassette-expired.svg" />
+      <h1 class="font-heading-1--bold">Drug expired</h1>
+      <p>The dose has expired and is not safe to use.</p>
+      <p><b>Please remove the cassette and replace with unexpired cassette and contact your Pharmacy for a new dose.</b></p>
+    `,
+        actions: [
+          {
+            label: 'Ok',
+            fill: 'outline',
+            action: () => {
+              this.#store.dispatch(new fromSharedStore.AlertHide());
+              this.#handleCassetteInsertionRequired();
+            },
+          },
+          {
+            label: 'My Pharmacy',
+            fill: 'outline',
+            action: () => {
+              this.#store.dispatch(new fromSharedStore.AlertHide());
+              this.#handleCassetteInsertionRequired();
+            },
+          },
+        ],
+      })
+    );
+  }
+
+  #goTo(path: string) {
     this.#store.dispatch(new fromCoreStore.Go({ path: [path] }));
-  }
-
-  navigateToSlide(slideIndex: CassetteJourneySlides): void {
-    this.sliderPage.slideTo(slideIndex);
   }
 }
