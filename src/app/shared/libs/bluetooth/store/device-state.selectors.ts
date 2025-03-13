@@ -64,7 +64,18 @@ export const isCassetteVerifiedState = createSelector(
     state === DeviceStateCode.ReadyForInjection ||
     state === DeviceStateCode.Injecting ||
     state === DeviceStateCode.DwellTime ||
-    state === DeviceStateCode.LiftFromInjectionSite ||
-    state === DeviceStateCode.ReleasingCassette ||
-    state === DeviceStateCode.RemoveCassette
+    state === DeviceStateCode.LiftFromInjectionSite
+);
+
+export const isCassetteLoadingErrorState = createSelector(
+  getDeviceState,
+  (state: number) =>
+    state === DeviceStateCode.WarningCassette ||
+    state === DeviceStateCode.WarningCassetteUsed ||
+    state === DeviceStateCode.WarningCassetteUnknown
+);
+
+export const isCassetteExpiredState = createSelector(
+  getDeviceState,
+  (state: number) => state === DeviceStateCode.WarningCassetteExpired
 );

@@ -33,7 +33,10 @@ export enum DeviceStateCode {
   ReleasingCassette = 0x87,
   RemoveCassette = 0x88,
   WarningInjectionIncomplete = 0xa0,
-  WarningCassette = 0xa1,
+  WarningCassette = 0xb0,
+  WarningCassetteUsed = 0xb1,
+  WarningCassetteExpired = 0xb2,
+  WarningCassetteUnknown = 0xb3,
 }
 
 export const STATUS_NAMES: Record<DeviceStateCode, string> = {
@@ -56,6 +59,9 @@ export const STATUS_NAMES: Record<DeviceStateCode, string> = {
   [DeviceStateCode.RemoveCassette]: 'RemoveCassette',
   [DeviceStateCode.WarningInjectionIncomplete]: 'WarningInjectionIncomplete',
   [DeviceStateCode.WarningCassette]: 'WarningCassette',
+  [DeviceStateCode.WarningCassetteUsed]: 'WarningCassetteUsed',
+  [DeviceStateCode.WarningCassetteExpired]: 'WarningCassetteExpired',
+  [DeviceStateCode.WarningCassetteUnknown]: 'WarningCassetteUnknown',
 };
 
 export const ARIA_ADVERTISING_NAME = 'Aria NIS';
