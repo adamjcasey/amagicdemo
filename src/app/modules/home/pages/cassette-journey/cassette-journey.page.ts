@@ -12,8 +12,8 @@ import { combineLatest, filter, Observable, Subject, takeUntil } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { DeviceStateCode } from '@app/shared/libs/bluetooth';
 import * as fromBluetoothStore from '@app/shared/libs/bluetooth/store';
-import { DeviceStateCode } from '@app/shared/libs/bluetooth/store/device-state.selectors';
 import * as fromCoreStore from '@core/store';
 import { IonContent, IonIcon } from '@ionic/angular/standalone';
 import * as fromSharedComponents from '@shared/components';

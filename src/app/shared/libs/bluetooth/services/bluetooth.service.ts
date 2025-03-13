@@ -29,6 +29,7 @@ import {
   CHARACTERISTIC_SERIAL_NUMBER_STRING,
   CHARACTERISTIC_SOFTWARE_REVISION_STRING,
   CONNECTION_TIMEOUT_MS,
+  DeviceStateCode,
   SCAN_TIMEOUT_MS,
   SERVICE_ARIA_BATTERY,
   SERVICE_ARIA_DEVICE_INFORMATION,
@@ -122,7 +123,7 @@ export class BluetoothService {
   }
 
   get State(): string {
-    const currentState = this.#state.value;
+    const currentState = this.#state.value as DeviceStateCode;
     return STATUS_NAMES[currentState];
   }
 
