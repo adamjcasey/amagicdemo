@@ -1,0 +1,111 @@
+@import 'src/theme/base/mixins';
+
+.cassette-journey {
+  h3 {
+    @include paragraph-xl;
+    font-weight: var(--font-weight-bold);
+  }
+
+  .temperature-status {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--size-xs);
+
+    .indicator {
+      margin-top: var(--size-xxxs);
+      margin-bottom: var(--size-xxxs);
+      font-size: 4rem;
+      font-weight: var(--font-weight-extra-light);
+      text-align: center;
+
+      span {
+        display: block;
+        font-size: var(--font-size-paragraph-s);
+      }
+
+      &:first-child {
+        color: var(--color-primary-blue);
+
+        span {
+          color: var(--color-text);
+        }
+      }
+
+      &.green {
+        color: var(--color-primary-green);
+
+        span {
+          color: var(--color-primary-green);
+        }
+      }
+    }
+  }
+
+  .inspection {
+    .statement {
+      margin-bottom: var(--size-l);
+      padding-left: calc(var(--size-l) * 2);
+      text-align: left;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      h3 {
+        position: relative;
+        margin-bottom: var(--size-xs);
+      }
+
+      ion-icon {
+        position: absolute;
+        top: -10px;
+        left: -3.2rem;
+        font-size: 2.8rem;
+      }
+
+      p {
+        margin-bottom: 0;
+        margin-top: var(--size-xxxs);
+      }
+
+      &.incorrect {
+        ion-icon {
+          color: var(--color-primary-salmon);
+        }
+      }
+
+      &.correct {
+        ion-icon {
+          color: var(--color-primary-green);
+        }
+      }
+    }
+  }
+}
+
+.start-dose-prepare__connecting {
+  .loader {
+    margin-top: 10vh;
+  }
+}
+
+.cassette-inspection {
+  .inspection {
+    h3 {
+      display: flex;
+      align-items: center;
+      font-weight: bold;
+      margin-bottom: 10px;
+
+      ion-icon {
+        margin-right: 8px;
+      font-size: 20px;
+    }
+    }
+  }
+
+  .cassette-check__image {
+    margin-top: 2rem;
+  }
+}

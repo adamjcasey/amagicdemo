@@ -1,5 +1,8 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { STATUS_NAMES } from '../constants/bluetooth.constants';
+import {
+  DeviceStateCode,
+  STATUS_NAMES,
+} from '../constants/bluetooth.constants';
 import * as fromActions from './bluetooth.actions';
 import { BluetoothState, initialBluetoothState } from './bluetooth.store';
 
@@ -165,7 +168,7 @@ export function bluetoothReducer(
   }
 }
 
-function getStateName(stateCode: number): string {
+function getStateName(stateCode: DeviceStateCode): string {
   return STATUS_NAMES[stateCode] || 'Unknown';
 }
 

@@ -54,6 +54,7 @@ export class BottomToolbarComponent implements OnInit, OnDestroy {
     // list of excluded pages to shown bottom toolbar component
     this.excludedPaths = [
       '/welcome',
+      '/home/cassette-journey',
       '/home/start-dose/prepare',
       '/home/start-dose/ready-to-inject',
       '/home/start-dose/inject-done',

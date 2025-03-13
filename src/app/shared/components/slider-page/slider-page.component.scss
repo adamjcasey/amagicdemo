@@ -294,41 +294,74 @@
       left: 0;
       width: 100%;
       height: 100%;
-      display: grid;
-      grid-template-rows: auto max-content;
-      gap: var(--size-xxs);
-      padding-top: var(--size-l);
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
       opacity: 0;
       pointer-events: none;
-      box-sizing: border-box;
-      // transform: translateX(100%);
-      // transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+      padding-top: var(--size-l);
+      padding-top: calc(var(--size-l) + env(safe-area-inset-top));
+      padding-bottom: env(safe-area-inset-bottom);
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+      overflow: hidden;
 
       .wrapper-large__content {
-        grid-row: 1;
-        display: grid;
-        grid-template-rows: max-content auto;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
         padding-right: var(--size-s);
         padding-left: var(--size-s);
         overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+
+        &::-webkit-scrollbar {
+          display: none;
+        }
 
         .wrapper-large__template {
-          grid-row: 1;
           color: var(--color-black);
           text-align: center;
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+
+          section {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+          }
+
+          img {
+            max-width: 100%;
+            height: auto;
+          }
+
+          h1 {
+            margin: var(--size-m) 0;
+          }
         }
 
         .wrapper-large__component {
-          grid-row: 2;
+          flex: 1;
+          width: 100%;
+          min-height: 0;
+          overflow: hidden;
         }
       }
 
       .wrapper-large__toolbar {
         grid-row: 2;
-        padding: var(--size-xs) var(--size-s) calc(37px + var(--size-xs));
+        padding: var(--size-xs) var(--size-s) var(--size-s);
         box-shadow: 0px -4px 16px rgba(0, 0, 0, 0.1);
         border-radius: 16px 16px 0px 0px;
         position: relative;
+        background-color: inherit;
+        z-index: 2;
 
         .wrapper-large__toolbar-template {
           margin-bottom: var(--size-xs);

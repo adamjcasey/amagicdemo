@@ -8,7 +8,6 @@ import {
 import { Capacitor } from '@capacitor/core';
 import { Device } from '@capacitor/device';
 import * as fromCoreStore from '@core/store';
-import * as fromHomeStore from '@home/store';
 import { Store } from '@ngrx/store';
 import * as fromSharedStore from '@shared/store';
 import {
@@ -30,6 +29,7 @@ import {
   CHARACTERISTIC_SERIAL_NUMBER_STRING,
   CHARACTERISTIC_SOFTWARE_REVISION_STRING,
   CONNECTION_TIMEOUT_MS,
+  DeviceStateCode,
   SCAN_TIMEOUT_MS,
   SERVICE_ARIA_BATTERY,
   SERVICE_ARIA_DEVICE_INFORMATION,
@@ -73,11 +73,6 @@ export class BluetoothService {
   #stateData = new BehaviorSubject<number>(0);
   readonly stateData$ = this.#stateData.asObservable();
 
-  readonly layoutConfig$ = this.#store.select(fromCoreStore.getLayoutConfig);
-  layoutConfig: any;
-  readonly homeConfig$ = this.#store.select(fromHomeStore.getHomeConfig);
-  homeConfig: any;
-
   readonly trackingDateForm = this.#formBuilder.group({
     device: ['', [Validators.required, Validators.minLength(5)]],
     previous_state: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
@@ -102,6 +97,9 @@ export class BluetoothService {
     ],
   });
 
+  /**
+   * @deprecated The method should not be used
+   */
   #connectedSubject = new BehaviorSubject<boolean>(false);
   readonly connected$ = this.#connectedSubject.asObservable();
 
@@ -125,7 +123,7 @@ export class BluetoothService {
   }
 
   get State(): string {
-    const currentState = this.#state.value;
+    const currentState = this.#state.value as DeviceStateCode;
     return STATUS_NAMES[currentState];
   }
 
@@ -180,39 +178,14 @@ export class BluetoothService {
   // Initialization Methods
   //--------------------------------------------------
   #initializeSubscriptions(): void {
-    this.layoutConfig$.subscribe((layoutConfig) => {
-      if (layoutConfig) {
-        this.layoutConfig = layoutConfig;
-        if (this.layoutConfig.dosageDevice.isConnected !== this.#connected) {
-          this.#connected = this.layoutConfig.dosageDevice.isConnected;
-        }
-      }
-    });
-
-    this.homeConfig$.subscribe((homeConfig) => {
-      if (homeConfig) {
-        this.homeConfig = homeConfig;
-      }
-    });
-
     this.state$.subscribe((state: number) => {
       if (state) {
-        this.#store.dispatch(
-          new fromCoreStore.SetDosageDeviceInfo({
-            state: state,
-          })
-        );
         this.#store.dispatch(new fromBluetoothStore.UpdateDeviceState(state));
       }
     });
 
     this.stateData$.subscribe((stateData: number) => {
       if (stateData) {
-        this.#store.dispatch(
-          new fromCoreStore.SetDosageDeviceInfo({
-            state_data: stateData,
-          })
-        );
         this.#store.dispatch(
           new fromBluetoothStore.UpdateDeviceStateData(stateData)
         );
@@ -256,14 +229,7 @@ export class BluetoothService {
   async scan(): Promise<void> {
     console.log('Starting Bluetooth scan...');
 
-    // If already scanning, stop the current scan first
     if (this.#scanning) {
-      // console.log('Scan already in progress, stopping current scan first');
-      // try {
-      //   await this.#stopScan();
-      // } catch (error) {
-      //   console.error('Error stopping existing scan:', error);
-      // }
       return;
     }
 
@@ -462,7 +428,7 @@ export class BluetoothService {
           this.#device = device;
           await BleClient.connect(device.device.deviceId, () => {
             console.log('Device disconnected callback triggered');
-            this.#handleDisconnection();
+            this.#store.dispatch(new fromBluetoothStore.Disconnect());
           });
 
           console.log('Connected to device successfully');
@@ -507,30 +473,16 @@ export class BluetoothService {
       await this.#startDeviceStateNotifications();
       await this.#getDeviceData();
       await this.#getBatteryLevel();
+      await this.#getDeviceState();
       console.log('Device initialization complete');
     } catch (error) {
       console.error('Device initialization error:', error);
-      await this.#handleDisconnection();
+      this.#store.dispatch(new fromBluetoothStore.Disconnect());
     }
-  }
-
-  #handleDisconnection(): void {
-    console.log('Handling device disconnection');
-    this.#connected = false;
-    this.#connectedSubject.next(false);
-    this.#store.dispatch(
-      new fromCoreStore.SetDosageDeviceInfo({
-        isConnected: false,
-      })
-    );
-
-    this.#store.dispatch(new fromBluetoothStore.Disconnect());
   }
 
   async stop(): Promise<void> {
     console.log('Stopping device connection');
-
-    this.#store.dispatch(new fromBluetoothStore.Disconnect());
 
     if (this.#isNativePlatform && this.#device?.device?.deviceId) {
       try {
@@ -541,7 +493,8 @@ export class BluetoothService {
         this.#store.dispatch(new fromBluetoothStore.DisconnectFailure(error));
       }
     }
-    this.#handleDisconnection();
+    this.#connected = false;
+    this.#connectedSubject.next(false);
     this.#devices = [];
   }
 
@@ -630,16 +583,30 @@ export class BluetoothService {
         this.#battery = dataViewToDecimal(result_battery);
 
         this.#store.dispatch(
-          new fromCoreStore.SetDosageDeviceInfo({
-            battery: this.#battery,
-          })
-        );
-
-        this.#store.dispatch(
           new fromBluetoothStore.UpdateBatteryLevel(this.#battery)
         );
       } catch (error) {
         console.error('Error reading battery level:', error);
+        return false;
+      }
+    }
+    return true;
+  }
+
+  async #getDeviceState(): Promise<boolean> {
+    if (this.#isNativePlatform) {
+      try {
+        const result_device_state = await BleClient.read(
+          this.#device.device.deviceId,
+          SERVICE_ARIA_DEVICE_STATUS,
+          CHARACTERISTIC_DEVICE_STATE
+        );
+        const { high_byte, low_byte } =
+          dataViewToHighLowBytes(result_device_state);
+        this.#updateState(high_byte);
+        this.#updateStateData(low_byte);
+      } catch (error) {
+        console.error('Error reading device state:', error);
         return false;
       }
     }
@@ -976,11 +943,6 @@ export class BluetoothService {
 
   setBattery(value: number): void {
     this.#battery = value;
-    this.#store.dispatch(
-      new fromCoreStore.SetDosageDeviceInfo({
-        battery: value,
-      })
-    );
   }
 
   /**
@@ -1040,13 +1002,6 @@ export class BluetoothService {
     this.#softwareRevision = '1.0.0';
     this.#hardwareRevision = '2.0.0';
     this.#battery = 85;
-
-    this.#store.dispatch(
-      new fromCoreStore.SetDosageDeviceInfo({
-        isConnected: true,
-        battery: this.#battery,
-      })
-    );
 
     this.#store.dispatch(
       new fromBluetoothStore.ConnectSuccess({

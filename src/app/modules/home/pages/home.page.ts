@@ -72,7 +72,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
         {
           label: 'Start dose',
           action: () => {
-            this.goTo('/home/start-dose/prepare');
+            this.goTo('/home/cassette-journey');
           },
         },
       ],

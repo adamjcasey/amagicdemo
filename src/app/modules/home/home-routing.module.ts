@@ -17,4 +17,8 @@ export default [
     path: 'start-dose/inject-done',
     component: fromPages.StartDoseInjectDonePage,
   },
+  {
+    path: 'cassette-journey',
+    component: fromPages.CassetteJourneyPage,
+  },
 ];
