@@ -8,7 +8,14 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { combineLatest, filter, Observable, Subject, takeUntil } from 'rxjs';
+import {
+  combineLatest,
+  filter,
+  Observable,
+  Subject,
+  take,
+  takeUntil,
+} from 'rxjs';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -291,6 +298,29 @@ export class CassetteJourneyPage implements OnInit, OnDestroy, AfterViewInit {
   #handleCassetteBeingPrepared(): void {
     console.log('Navigating to InsertCassette slide');
     this.sliderPage.slideTo(CassetteJourneySlides.CheckCassette);
+
+    // Start a 10-second timer to check if state hasn't changed
+    const timeoutId = setTimeout(() => {
+      this.isCassetteBeingPrepared$
+        .pipe(takeUntil(this.#ngUnsubscribe), take(1))
+        .subscribe((isStillBeingPrepared) => {
+          if (isStillBeingPrepared) {
+            this.#showCassetteErrorAlert();
+          }
+        });
+    }, 10000);
+
+    // Store the timeout ID to potentially clear it if state changes before timeout
+    this.#store
+      .select(fromBluetoothStore.isCassetteBeingPreparedState)
+      .pipe(
+        filter((isBeingPrepared) => !isBeingPrepared),
+        take(1),
+        takeUntil(this.#ngUnsubscribe)
+      )
+      .subscribe(() => {
+        clearTimeout(timeoutId);
+      });
   }
 
   #handleCassetteVerified(): void {
