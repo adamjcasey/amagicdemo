@@ -8,7 +8,14 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { combineLatest, filter, Observable, Subject, takeUntil } from 'rxjs';
+import {
+  combineLatest,
+  filter,
+  Observable,
+  Subject,
+  take,
+  takeUntil,
+} from 'rxjs';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -71,6 +78,10 @@ export class CassetteJourneyPage implements OnInit, OnDestroy, AfterViewInit {
 
   isDeviceConnected$: Observable<boolean> = this.#store.select(
     fromBluetoothStore.getIsConnected
+  );
+
+  deviceState$: Observable<number> = this.#store.select(
+    fromBluetoothStore.getDeviceState
   );
 
   slides: Array<any> = [
@@ -276,7 +287,41 @@ export class CassetteJourneyPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   #handleCassetteLoadingError(): void {
-    this.#showCassetteErrorAlert();
+    this.deviceState$.pipe(take(1)).subscribe((deviceState) => {
+      let title = 'Cassette Loading Error';
+      let message = 'The cassette may be defective or was not loaded properly.';
+
+      if (deviceState === DeviceStateCode.WarningCassetteUsed) {
+        title = 'Cassette has been used';
+        message = 'The cassette has already been used and cannot be re-used.';
+      } else if (deviceState === DeviceStateCode.WarningCassetteUnknown) {
+        title = 'Cassette is not known';
+        message =
+          'The cassette cannot be verified and may be from an unknown source.';
+      }
+
+      this.#store.dispatch(
+        new fromSharedStore.AlertShow({
+          mode: 'full',
+          template: `
+      <img src="assets/images/cassette-expired.svg" />
+      <h1 class="font-heading-1--bold">${title}</h1>
+      <p>${message}</p>
+      <p><b>Please check the cassette and reload a different cassette if problem persists.<b></p>
+    `,
+          actions: [
+            {
+              label: 'Reload cassette',
+              fill: 'outline',
+              action: () => {
+                this.#store.dispatch(new fromSharedStore.AlertHide());
+                this.#handleCassetteInsertionRequired();
+              },
+            },
+          ],
+        })
+      );
+    });
   }
 
   #handleCassetteExpired(): void {
@@ -291,6 +336,29 @@ export class CassetteJourneyPage implements OnInit, OnDestroy, AfterViewInit {
   #handleCassetteBeingPrepared(): void {
     console.log('Navigating to InsertCassette slide');
     this.sliderPage.slideTo(CassetteJourneySlides.CheckCassette);
+
+    // Start a 10-second timer to check if state hasn't changed
+    const timeoutId = setTimeout(() => {
+      this.isCassetteBeingPrepared$
+        .pipe(takeUntil(this.#ngUnsubscribe), take(1))
+        .subscribe((isStillBeingPrepared) => {
+          if (isStillBeingPrepared) {
+            this.#handleCassetteLoadingError();
+          }
+        });
+    }, 10000);
+
+    // Store the timeout ID to potentially clear it if state changes before timeout
+    this.#store
+      .select(fromBluetoothStore.isCassetteBeingPreparedState)
+      .pipe(
+        filter((isBeingPrepared) => !isBeingPrepared),
+        take(1),
+        takeUntil(this.#ngUnsubscribe)
+      )
+      .subscribe(() => {
+        clearTimeout(timeoutId);
+      });
   }
 
   #handleCassetteVerified(): void {
@@ -298,30 +366,6 @@ export class CassetteJourneyPage implements OnInit, OnDestroy, AfterViewInit {
       console.log('Navigating to CassetteVerified slide');
       this.sliderPage.slideTo(CassetteJourneySlides.CassetteVerified);
     });
-  }
-
-  #showCassetteErrorAlert() {
-    this.#store.dispatch(
-      new fromSharedStore.AlertShow({
-        mode: 'full',
-        template: `
-      <img src="assets/images/cassette-expired.svg" />
-      <h1 class="font-heading-1--bold">Cassette Loading Error</h1>
-      <p>The cassette may be defective or was not loaded properly.</p>
-      <p><b>Please check the cassette and reload a different cassette if problem persists.<b></p>
-    `,
-        actions: [
-          {
-            label: 'Reload cassette',
-            fill: 'outline',
-            action: () => {
-              this.#store.dispatch(new fromSharedStore.AlertHide());
-              this.#handleCassetteInsertionRequired();
-            },
-          },
-        ],
-      })
-    );
   }
 
   #showDrugExpiredAlert() {
