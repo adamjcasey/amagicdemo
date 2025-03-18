@@ -58,70 +58,53 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
     this.slides = [
       {
         header: {
-          color: '--color-bg-pastel-purple',
-          asset: '/assets/images/start-dose-prepare-1.svg',
+          color: '--color-white',
         },
         content: {
+          isExpanded: true,
           hide: false,
           hideNavigation: true,
-          template: `
-            <h1 class="font-heading-1--bold">Take the autoinjector out of the box.</h1>
-            <p>Your Automagic autoinjector will turn on automatically when you pick it up.</p>
-          `,
-          actions: [
-            {
-              label: 'Continue',
-              action: () => {
-                this.sliderPage.slideNext();
-                this._store.dispatch(
-                  new fromSharedStore.TopbarChangeColor(
-                    '--color-bg-pastel-mint'
-                  )
-                );
-              },
-            },
-          ],
-        },
-      },
-      {
-        header: {
-          color: '--color-bg-pastel-mint',
-          asset: '/assets/images/start-dose-prepare-2.svg',
-        },
-        content: {
-          hideNavigation: true,
-          actions: null,
-          template: `
-            <div class="start-dose-prepare__connecting">
-              <h1 class="font-heading-1--bold">Connecting...</h1>
-              <div class="loader"></div>
+          template:
+            this.homeConfig?.firstTimeDose || true
+              ? `
+          <div class="start-dose-prepare__instructions">
+            <img src="assets/images/drug-cold-temp.svg" />
+            <h1 class="font-heading-1--bold ion-text-nowrap">Theryx® temperature</h1>
+
+            <div class="temperature-status">
+              <p class="indicator">
+                46°
+                <span>Current</span>
+              </p>
+              <p class="indicator">
+                65°
+                <span>Recommended</span>
+              </p>
             </div>
-          `,
-        },
-      },
-      {
-        header: {
-          color: '--color-bg-pastel-mint',
-          asset: '/assets/images/start-dose-prepare-3.svg',
-        },
-        content: {
-          hideNavigation: true,
-          template: `
-            <h1 class="font-heading-1--bold">Connected!</h1>
-          `,
-          cards: [
-            {
-              asset: '/assets/images/dose.svg',
-              title: 'Theryx®, 80mg',
-              description: 'Synthesized in Dayton, OH on 05/04/2023',
-              disclamerText: 'Expires 06/24/2024',
-            },
-          ],
+            <h3>Your Theryx® is currently too cold for a comfortable injection.</h3>
+            <p>It's best to let it warm up for a bit to room temperature (65°F) before injecting.</p>
+          </div>
+        `
+              : `
+          <div class="start-dose-prepare__instructions">
+            <img src="assets/images/drug-cold-temp.svg" />
+            <h1 class="font-heading-1--bold ion-text-nowrap">Theryx® temperature</h1>
+
+            <div class="temperature-status">
+              <p class="indicator green">
+                68°
+                <span>Current</span>
+              </p>
+            </div>
+            <h3>Theryx® is warm enough for a comfortable injection.</h3>
+            <p>Good job taking it out of the fridge ahead of time!</p>
+          </div>
+        `,
           actions: [
             {
-              label: 'Continue',
+              label: 'Proceed',
               action: () => {
-                this.showStepTemperature();
+                this.showStepTempTimer();
               },
             },
           ],
@@ -132,7 +115,7 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this._store.dispatch(
-      new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple')
+      new fromSharedStore.TopbarChangeColor('--color-white')
     );
 
     // Subscribe to connection state changes
