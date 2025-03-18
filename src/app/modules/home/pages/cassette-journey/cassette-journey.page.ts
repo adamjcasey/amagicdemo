@@ -337,28 +337,46 @@ export class CassetteJourneyPage implements OnInit, OnDestroy, AfterViewInit {
     console.log('Navigating to InsertCassette slide');
     this.sliderPage.slideTo(CassetteJourneySlides.CheckCassette);
 
+    const validStates = [
+      DeviceStateCode.RemoveNeedleCap,
+      DeviceStateCode.ReadyForInjection,
+    ];
+
     // Start a 10-second timer to check if state hasn't changed
     const timeoutId = setTimeout(() => {
-      this.isCassetteBeingPrepared$
+      this.deviceState$
         .pipe(takeUntil(this.#ngUnsubscribe), take(1))
-        .subscribe((isStillBeingPrepared) => {
-          if (isStillBeingPrepared) {
-            this.#handleCassetteLoadingError();
-          }
+        .subscribe((deviceState) => {
+          this.#checkDeviceStateAfterTimeout(deviceState, validStates);
         });
     }, 10000);
 
-    // Store the timeout ID to potentially clear it if state changes before timeout
-    this.#store
-      .select(fromBluetoothStore.isCassetteBeingPreparedState)
+    // Store the timeout ID to potentially clear it if state changes to a valid state before timeout
+    this.deviceState$
       .pipe(
-        filter((isBeingPrepared) => !isBeingPrepared),
-        take(1),
+        filter((deviceState) => validStates.includes(deviceState)),
         takeUntil(this.#ngUnsubscribe)
       )
-      .subscribe(() => {
+      .subscribe((deviceState) => {
+        console.log(
+          'Device reached a valid state, clearing timeout:',
+          deviceState
+        );
         clearTimeout(timeoutId);
       });
+  }
+
+  #checkDeviceStateAfterTimeout(
+    deviceState: number,
+    validStates: number[]
+  ): void {
+    if (validStates.includes(deviceState)) {
+      // Device is in a valid state, no action needed
+      console.log('Device is in a valid state after 10 seconds:', deviceState);
+      return;
+    }
+
+    this.#handleCassetteLoadingError();
   }
 
   #handleCassetteVerified(): void {
