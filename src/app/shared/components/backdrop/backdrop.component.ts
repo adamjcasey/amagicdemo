@@ -79,8 +79,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
   public isShowDebuggingStatus: boolean = false;
   public initialSlide: number = 0;
   @ViewChild('sliderMainMenu') sliderMainMenu!: ElementRef<SwiperContainer>;
-  @ViewChild('sliderHighlightsTour')
-  sliderHighlightsTour!: ElementRef<SwiperContainer>;
+  @ViewChild('sliderHighlightsTour') sliderHighlightsTour!: ElementRef<SwiperContainer>;
   @ViewChild('sliderShareFlow') sliderShareFlow!: ElementRef<SwiperContainer>;
   @ViewChild('sliderReturnFlow') sliderReturnFlow!: ElementRef<SwiperContainer>;
   @ViewChild('contentComponent', { read: ViewContainerRef })

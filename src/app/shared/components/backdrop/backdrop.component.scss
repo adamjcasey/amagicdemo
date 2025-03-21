@@ -143,6 +143,11 @@
     margin-left: auto;
     padding-top: var(--size-xxxl);
 
+    p {
+      font-size: var(--font-size-paragraph-l);
+      font-weight: var(--font-weight-medium);
+    }
+
     > * {
       width: 100%;
     }
@@ -150,11 +155,8 @@
     .backdrop__template {
       color: var(--color-white);
       text-align: center;
-
-      p {
-        font-size: var(--font-size-paragraph-l);
-        font-weight: var(--font-weight-medium);
-      }
+      padding-right: var(--size-l);
+      padding-left: var(--size-l);
 
       ion-button {
         display: inline-block;

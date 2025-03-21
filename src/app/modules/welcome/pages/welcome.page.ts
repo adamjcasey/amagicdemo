@@ -366,6 +366,20 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
 
     setTimeout(() => {
       showWelcomeScreen();
+      this._store.dispatch(
+        new fromSharedStore.BackdropShow({
+          transition: 'move',
+          fullScreen: false,
+          header: true,
+          showBackButton: false,
+          template: `
+          <h1 class="font-heading-1--bold">Welcome</h1>
+          <p>For this demo, this black overlay will sometimes appear to provide additional context.</p>
+          <p>You can access it at any  time by clicking the ‘i’ at the top.</p>
+          <p>Anything you see on this overlay would NOT be visible to patients / end users.</p>
+        `,
+        })
+      );
     }, welcomeGifDuration);
   }
 
