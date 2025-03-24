@@ -18,14 +18,12 @@
   </ion-content>
 </ion-menu>
 
-<ion-app id="automagic" class="automagic {{ config.userDevice?.model }}" [ngClass]="{ 'iphone-8': config.userDevice?.model ? getModelDeviceNumber(config.userDevice?.model) < 10.5 : null }">
+<ion-app id="automagic" class="automagic {{ config.userDevice?.model }}"
+  [ngClass]="{ 'iphone-8': config.userDevice?.model ? getModelDeviceNumber(config.userDevice?.model) < 10.5 : null }">
   <automagic-alert></automagic-alert>
+  <automagic-overlay></automagic-overlay>
   <automagic-topbar></automagic-topbar>
-  <main 
-    #main 
-    role="main" 
-    class="automagic__wrapper" 
-    [ngClass]="{ 
+  <main #main role="main" class="automagic__wrapper" [ngClass]="{
       'is-full-screen': config.fullScreen
     }">
 

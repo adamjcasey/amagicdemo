@@ -9,7 +9,7 @@
   position: absolute;
   top: calc(var(--backdrop-size) * -1);
   left: 0;
-  z-index: 100;
+  z-index: 200;
   width: 100vw;
 
   &::before {
@@ -716,7 +716,7 @@
 
     .icon-cta {
       position: absolute;
-      top: 0;
+      top: 12px;
       left: calc(50% - 22vw);
       display: grid;
       grid-template-columns: 1fr max-content 1fr;

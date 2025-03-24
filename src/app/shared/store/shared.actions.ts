@@ -4,6 +4,9 @@ export enum ActionTypes {
   AlertShow = '[Alert] Show',
   AlertHide = '[Alert] Hide',
   AlertSetConfig = '[Alert] Set Config',
+  OverlayShow = '[Overlay] Show',
+  OverlayHide = '[Overlay] Hide',
+  OverlaySetConfig = '[Overlay] Set Config',
   BackdropShow = '[Backdrop] Show',
   BackdropHide = '[Backdrop] Close',
   BackdropSetConfig = '[Backdrop] Set Config',
@@ -18,7 +21,7 @@ export enum ActionTypes {
   SliderPageSlidePrev = '[SliderPage] Go Slide Prev',
   SliderPageSlideNext = '[SliderPage] Go Slide Next',
   SliderPageClearMovement = '[SliderPage] Clear Movements',
-  TopbarChangeColor = '[Topbar] Chnage Color',
+  TopbarChangeColor = '[Topbar] Change Color',
   TopbarPendingNotifications = '[Topbar] Pending Notifications',
 }
 
@@ -32,6 +35,22 @@ export class AlertHide implements Action {
 }
 export class AlertSetConfig implements Action {
   readonly type = ActionTypes.AlertSetConfig;
+
+  constructor(public payload: any) {}
+}
+
+export class OverlayShow implements Action {
+  readonly type = ActionTypes.OverlayShow;
+
+  constructor(public payload: any) {}
+}
+
+export class OverlayHide implements Action {
+  readonly type = ActionTypes.OverlayHide;
+}
+
+export class OverlaySetConfig implements Action {
+  readonly type = ActionTypes.OverlaySetConfig;
 
   constructor(public payload: any) {}
 }
@@ -106,13 +125,16 @@ export class TopbarPendingNotifications implements Action {
   constructor(public payload: any) {}
 }
 
-export type ActionsUnion 
-  = AlertShow 
+export type ActionsUnion =
+  | AlertShow
   | AlertHide
-  | BackdropShow 
+  | AlertSetConfig
+  | OverlayShow
+  | OverlayHide
+  | OverlaySetConfig
+  | BackdropShow
   | BackdropHide
   | BackdropSetConfig
-  | AlertSetConfig
   | BottomToolbarShow
   | BottomToolbarHide
   | SliderPageSetHeader

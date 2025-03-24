@@ -1,11 +1,11 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 
-import * as fromStore from './shared.store';
 import * as fromActions from './shared.actions';
+import * as fromStore from './shared.store';
 
 export function SharedReducer(
   state = fromStore.initialState,
-  action: fromActions.ActionsUnion,
+  action: fromActions.ActionsUnion
 ): fromStore.SharedState {
   switch (action.type) {
     case fromActions.ActionTypes.SliderPageSetHeader: {
@@ -16,8 +16,8 @@ export function SharedReducer(
           header: {
             ...fromStore.initialState.sliderPageConfig.header,
             ...action.payload,
-          }
-        }
+          },
+        },
       };
     }
     case fromActions.ActionTypes.SliderPageSetHeaderOptions: {
@@ -28,8 +28,8 @@ export function SharedReducer(
           header: {
             ...state.sliderPageConfig.header,
             ...action.payload,
-          }
-        }
+          },
+        },
       };
     }
     case fromActions.ActionTypes.SliderPageSetContent: {
@@ -40,8 +40,8 @@ export function SharedReducer(
           content: {
             ...fromStore.initialState.sliderPageConfig.content,
             ...action.payload,
-          }
-        }
+          },
+        },
       };
     }
     case fromActions.ActionTypes.SliderPageSetContentOptions: {
@@ -52,16 +52,16 @@ export function SharedReducer(
           content: {
             ...state.sliderPageConfig.content,
             ...action.payload,
-          }
-        }
+          },
+        },
       };
     }
     case fromActions.ActionTypes.SliderPageClear: {
       return {
         ...state,
         sliderPageConfig: {
-          ...fromStore.initialState.sliderPageConfig
-        }
+          ...fromStore.initialState.sliderPageConfig,
+        },
       };
     }
     case fromActions.ActionTypes.SliderPageSlidePrev: {
@@ -70,7 +70,7 @@ export function SharedReducer(
         sliderPageConfig: {
           ...state.sliderPageConfig,
           movePrev: true,
-        }
+        },
       };
     }
     case fromActions.ActionTypes.SliderPageSlideNext: {
@@ -79,7 +79,7 @@ export function SharedReducer(
         sliderPageConfig: {
           ...state.sliderPageConfig,
           moveNext: true,
-        }
+        },
       };
     }
     case fromActions.ActionTypes.SliderPageSlideTo: {
@@ -88,7 +88,7 @@ export function SharedReducer(
         sliderPageConfig: {
           ...state.sliderPageConfig,
           moveTo: action.payload,
-        }
+        },
       };
     }
     case fromActions.ActionTypes.SliderPageClearMovement: {
@@ -99,7 +99,7 @@ export function SharedReducer(
           moveTo: null,
           movePrev: null,
           moveNext: null,
-        }
+        },
       };
     }
 
@@ -107,7 +107,7 @@ export function SharedReducer(
       return {
         ...state,
         alertConfig: {
-          ...fromStore.initialState.alertConfig, 
+          ...fromStore.initialState.alertConfig,
           ...action.payload,
           show: true,
         },
@@ -129,7 +129,42 @@ export function SharedReducer(
           ...state.alertConfig,
           ...action.payload,
           template: action.payload?.template ? action.payload?.template : null,
-          component: action.payload?.component ? action.payload?.component : null,
+          component: action.payload?.component
+            ? action.payload?.component
+            : null,
+        },
+      };
+    }
+
+    case fromActions.ActionTypes.OverlayShow: {
+      return {
+        ...state,
+        overlayConfig: {
+          ...fromStore.initialState.overlayConfig,
+          ...action.payload,
+          show: true,
+        },
+      };
+    }
+    case fromActions.ActionTypes.OverlayHide: {
+      return {
+        ...state,
+        overlayConfig: {
+          ...state.overlayConfig,
+          show: false,
+        },
+      };
+    }
+    case fromActions.ActionTypes.OverlaySetConfig: {
+      return {
+        ...state,
+        overlayConfig: {
+          ...state.overlayConfig,
+          ...action.payload,
+          template: action.payload?.template ? action.payload?.template : null,
+          component: action.payload?.component
+            ? action.payload?.component
+            : null,
         },
       };
     }
@@ -138,7 +173,7 @@ export function SharedReducer(
       return {
         ...state,
         backdropConfig: {
-          ...fromStore.initialState.backdropConfig, 
+          ...fromStore.initialState.backdropConfig,
           ...action.payload,
           show: true,
         },
@@ -160,7 +195,9 @@ export function SharedReducer(
           ...state.backdropConfig,
           ...action.payload,
           template: action.payload?.template ? action.payload?.template : null,
-          component: action.payload?.component ? action.payload?.component : null,
+          component: action.payload?.component
+            ? action.payload?.component
+            : null,
         },
       };
     }
@@ -207,15 +244,40 @@ export function SharedReducer(
   }
 }
 
-const exportBackdropSetConfig = (state: fromStore.SharedState) => state.backdropConfig;
-const exportSliderPageConfig = (state: fromStore.SharedState) => state.sliderPageConfig;
+const exportBackdropSetConfig = (state: fromStore.SharedState) =>
+  state.backdropConfig;
+const exportSliderPageConfig = (state: fromStore.SharedState) =>
+  state.sliderPageConfig;
 const exportAlertConfig = (state: fromStore.SharedState) => state.alertConfig;
-const exportBottomToolbarConfig = (state: fromStore.SharedState) => state.bottomToolbarConfig;
+const exportOverlayConfig = (state: fromStore.SharedState) =>
+  state.overlayConfig;
+const exportBottomToolbarConfig = (state: fromStore.SharedState) =>
+  state.bottomToolbarConfig;
 const exportTopbarConfig = (state: fromStore.SharedState) => state.topbarConfig;
-const selectSharedState = createFeatureSelector<fromStore.SharedState>('shared');
+const selectSharedState =
+  createFeatureSelector<fromStore.SharedState>('shared');
 
-export const getBackdropConfig = createSelector(selectSharedState, exportBackdropSetConfig);
-export const getSliderPageConfig = createSelector(selectSharedState, exportSliderPageConfig);
-export const getAlertConfig = createSelector(selectSharedState, exportAlertConfig);
-export const getBottomToolbarConfig = createSelector(selectSharedState, exportBottomToolbarConfig);
-export const getTopbarConfig = createSelector(selectSharedState, exportTopbarConfig);
+export const getBackdropConfig = createSelector(
+  selectSharedState,
+  exportBackdropSetConfig
+);
+export const getSliderPageConfig = createSelector(
+  selectSharedState,
+  exportSliderPageConfig
+);
+export const getAlertConfig = createSelector(
+  selectSharedState,
+  exportAlertConfig
+);
+export const getOverlayConfig = createSelector(
+  selectSharedState,
+  exportOverlayConfig
+);
+export const getBottomToolbarConfig = createSelector(
+  selectSharedState,
+  exportBottomToolbarConfig
+);
+export const getTopbarConfig = createSelector(
+  selectSharedState,
+  exportTopbarConfig
+);
