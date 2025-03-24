@@ -43,6 +43,7 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
+import { OverlayComponent } from '@shared/components/overlay/overlay.component';
 import * as fromSharedServices from '@shared/services';
 import { GestureController } from '@shared/services/gestureController';
 import * as fromSharedStore from '@shared/store';
@@ -78,6 +79,7 @@ type ExtendedIOSSettings = IOSSettings | CustomIOSSettings;
     // fromStore.CoreStoreModule,
     TopBarComponent,
     AlertComponent,
+    OverlayComponent,
     BottomToolbarComponent,
   ],
 })
@@ -167,7 +169,7 @@ export class LayoutPage implements OnInit, AfterContentInit, OnDestroy {
               const alert = await this._alertController.create({
                 header: 'Your device is not supported',
                 message:
-                  'This application is designed for<br>iPhones with a 5.85” or larger display.<br><br>This unsupported device will not demonstrate the intended screen layout and user experience.',
+                  'This application is designed for<br>iPhones with a 5.85" or larger display.<br><br>This unsupported device will not demonstrate the intended screen layout and user experience.',
                 buttons: [
                   {
                     text: 'Ok',
@@ -227,7 +229,7 @@ export class LayoutPage implements OnInit, AfterContentInit, OnDestroy {
                   template: `
                   <img src="assets/images/on-boarding-done.svg" />
                   <h1 class="font-heading-1--bold">Onboarding complete!</h1>
-                  <p>Way to go! You’ve finished all of your onboarding tasks.</p>
+                  <p>Way to go! You've finished all of your onboarding tasks.</p>
                 `,
                   actions: [
                     {
@@ -375,7 +377,7 @@ export class LayoutPage implements OnInit, AfterContentInit, OnDestroy {
           template: `
           <h1 class="font-heading-1--bold">This demo does <br>not support low <br>power mode.</h1>
           <img src="assets/images/low-power-mode.svg" />
-          <p>Please disable low power mode in <br>your phone’s battery settings and <br>restart the app.</p>
+          <p>Please disable low power mode in <br>your phone's battery settings and <br>restart the app.</p>
           <br>
           <br>
         `,

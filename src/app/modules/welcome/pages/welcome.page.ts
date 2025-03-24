@@ -16,8 +16,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { Capacitor } from '@capacitor/core';
+import { Keyboard } from '@capacitor/keyboard';
 import { PushNotifications } from '@capacitor/push-notifications';
-import { Keyboard } from "@capacitor/keyboard";
 import { Store } from '@ngrx/store';
 import { filter, Observable, Subject, take, takeUntil, timeout } from 'rxjs';
 
@@ -28,7 +28,6 @@ import * as fromSharedComponents from '@shared/components';
 import * as fromBluetoothStore from '@shared/libs/bluetooth/store';
 import * as fromSharedStore from '@shared/store';
 import * as fromStore from '../store';
-import { DeviceConnectionService } from '@shared/libs/bluetooth/services/device-connection.service';
 
 @Component({
   selector: 'automagic-welcome',
@@ -48,7 +47,6 @@ import { DeviceConnectionService } from '@shared/libs/bluetooth/services/device-
 export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
   private _store = inject(Store<fromCoreStore.CoreState>);
   private _formBuilder = inject(FormBuilder);
-  private _deviceConnectionService = inject(DeviceConnectionService);
 
   public config$: Observable<any> = this._store.select(
     fromStore.getWelcomeConfig
@@ -342,7 +340,6 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
       });
 
     this.setupConnectionMonitoring();
-    this._deviceConnectionService.monitorConnection();
   }
 
   async ngAfterViewInit() {

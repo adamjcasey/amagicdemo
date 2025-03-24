@@ -1,21 +1,11 @@
 import {
   AfterViewInit,
   Component,
-  inject,
-  OnDestroy,
   OnInit,
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
-import { Store } from '@ngrx/store';
-import {
-  combineLatest,
-  filter,
-  Observable,
-  Subject,
-  take,
-  takeUntil,
-} from 'rxjs';
+import { combineLatest, filter, Observable, take, takeUntil } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -23,6 +13,7 @@ import { DeviceStateCode } from '@app/shared/libs/bluetooth';
 import * as fromBluetoothStore from '@app/shared/libs/bluetooth/store';
 import * as fromCoreStore from '@core/store';
 import { IonContent } from '@ionic/angular/standalone';
+import { DeviceConnectionAbstract } from '@shared/abstracts/device-connection.abstract';
 import * as fromSharedComponents from '@shared/components';
 import * as fromSharedStore from '@shared/store';
 import { addIcons } from 'ionicons';
@@ -54,33 +45,30 @@ export enum CassetteJourneySlides {
     IonContent,
   ],
 })
-export class CassetteJourneyPage implements OnInit, OnDestroy, AfterViewInit {
-  #store = inject(Store<fromCoreStore.CoreState>);
-
+export class CassetteJourneyPage
+  extends DeviceConnectionAbstract
+  implements OnInit, AfterViewInit
+{
   @ViewChild('sliderPage', { static: false })
   sliderPage!: fromSharedComponents.SliderPageComponent;
 
-  isCassetteInsertionRequired$: Observable<boolean> = this.#store.select(
+  isCassetteInsertionRequired$: Observable<boolean> = this.store.select(
     fromBluetoothStore.isCassetteInsertionRequiredState
   );
-  isCassetteBeingPrepared$: Observable<boolean> = this.#store.select(
+  isCassetteBeingPrepared$: Observable<boolean> = this.store.select(
     fromBluetoothStore.isCassetteBeingPreparedState
   );
-  isCassetteVerified$: Observable<boolean> = this.#store.select(
+  isCassetteVerified$: Observable<boolean> = this.store.select(
     fromBluetoothStore.isCassetteVerifiedState
   );
-  isCassetteLoadingError$: Observable<boolean> = this.#store.select(
+  isCassetteLoadingError$: Observable<boolean> = this.store.select(
     fromBluetoothStore.isCassetteLoadingErrorState
   );
-  isCassetteExpired$: Observable<boolean> = this.#store.select(
+  isCassetteExpired$: Observable<boolean> = this.store.select(
     fromBluetoothStore.isCassetteExpiredState
   );
 
-  isDeviceConnected$: Observable<boolean> = this.#store.select(
-    fromBluetoothStore.getIsConnected
-  );
-
-  deviceState$: Observable<number> = this.#store.select(
+  deviceState$: Observable<number> = this.store.select(
     fromBluetoothStore.getDeviceState
   );
 
@@ -218,9 +206,8 @@ export class CassetteJourneyPage implements OnInit, OnDestroy, AfterViewInit {
   CassetteJourneySlides = CassetteJourneySlides;
   DeviceStateCode = DeviceStateCode;
 
-  #ngUnsubscribe: Subject<void> = new Subject<void>();
-
   constructor() {
+    super();
     addIcons({
       closeCircle,
       checkmarkCircle,
@@ -230,18 +217,12 @@ export class CassetteJourneyPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit() {
-    this.#store.dispatch(
-      new fromSharedStore.TopbarChangeColor('--color-white')
-    );
+    this.store.dispatch(new fromSharedStore.TopbarChangeColor('--color-white'));
+    this.initDeviceConnectionMonitoring();
   }
 
   ngAfterViewInit() {
     this.#initStateSubscriptions();
-  }
-
-  ngOnDestroy() {
-    this.#ngUnsubscribe.next();
-    this.#ngUnsubscribe.complete();
   }
 
   slideNext(sliders: any) {
@@ -260,7 +241,7 @@ export class CassetteJourneyPage implements OnInit, OnDestroy, AfterViewInit {
     ])
       .pipe(
         filter(([isConnected]) => isConnected),
-        takeUntil(this.#ngUnsubscribe)
+        takeUntil(this.ngUnsubscribe)
       )
       .subscribe(this.#handleDeviceStateChange.bind(this));
   }
@@ -300,7 +281,7 @@ export class CassetteJourneyPage implements OnInit, OnDestroy, AfterViewInit {
           'The cassette cannot be verified and may be from an unknown source.';
       }
 
-      this.#store.dispatch(
+      this.store.dispatch(
         new fromSharedStore.AlertShow({
           mode: 'full',
           template: `
@@ -314,7 +295,7 @@ export class CassetteJourneyPage implements OnInit, OnDestroy, AfterViewInit {
               label: 'Reload cassette',
               fill: 'outline',
               action: () => {
-                this.#store.dispatch(new fromSharedStore.AlertHide());
+                this.store.dispatch(new fromSharedStore.AlertHide());
                 this.#handleCassetteInsertionRequired();
               },
             },
@@ -345,7 +326,7 @@ export class CassetteJourneyPage implements OnInit, OnDestroy, AfterViewInit {
     // Start a 10-second timer to check if state hasn't changed
     const timeoutId = setTimeout(() => {
       this.deviceState$
-        .pipe(takeUntil(this.#ngUnsubscribe), take(1))
+        .pipe(takeUntil(this.ngUnsubscribe), take(1))
         .subscribe((deviceState) => {
           this.#checkDeviceStateAfterTimeout(deviceState, validStates);
         });
@@ -355,7 +336,7 @@ export class CassetteJourneyPage implements OnInit, OnDestroy, AfterViewInit {
     this.deviceState$
       .pipe(
         filter((deviceState) => validStates.includes(deviceState)),
-        takeUntil(this.#ngUnsubscribe)
+        takeUntil(this.ngUnsubscribe)
       )
       .subscribe((deviceState) => {
         console.log(
@@ -387,7 +368,7 @@ export class CassetteJourneyPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   #showDrugExpiredAlert() {
-    this.#store.dispatch(
+    this.store.dispatch(
       new fromSharedStore.AlertShow({
         mode: 'full',
         template: `
@@ -401,7 +382,7 @@ export class CassetteJourneyPage implements OnInit, OnDestroy, AfterViewInit {
             label: 'Ok',
             fill: 'outline',
             action: () => {
-              this.#store.dispatch(new fromSharedStore.AlertHide());
+              this.store.dispatch(new fromSharedStore.AlertHide());
               this.#handleCassetteInsertionRequired();
             },
           },
@@ -409,7 +390,7 @@ export class CassetteJourneyPage implements OnInit, OnDestroy, AfterViewInit {
             label: 'My Pharmacy',
             fill: 'outline',
             action: () => {
-              this.#store.dispatch(new fromSharedStore.AlertHide());
+              this.store.dispatch(new fromSharedStore.AlertHide());
               this.#handleCassetteInsertionRequired();
             },
           },
@@ -419,6 +400,6 @@ export class CassetteJourneyPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   #goTo(path: string) {
-    this.#store.dispatch(new fromCoreStore.Go({ path: [path] }));
+    this.store.dispatch(new fromCoreStore.Go({ path: [path] }));
   }
 }

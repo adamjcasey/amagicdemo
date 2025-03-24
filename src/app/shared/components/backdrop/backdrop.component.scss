@@ -9,7 +9,7 @@
   position: absolute;
   top: calc(var(--backdrop-size) * -1);
   left: 0;
-  z-index: 100;
+  z-index: 200;
   width: 100vw;
 
   &::before {

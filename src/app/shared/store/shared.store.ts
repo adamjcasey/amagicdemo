@@ -2,6 +2,7 @@ export interface SharedState {
   backdropConfig?: any;
   sliderPageConfig?: any;
   alertConfig?: any;
+  overlayConfig?: any;
   bottomToolbarConfig?: any;
   topbarConfig: any;
 }
@@ -12,6 +13,13 @@ export const initialState: SharedState = {
     mode: 'move',
     template: null,
     component: null,
+  },
+  overlayConfig: {
+    show: false,
+    template: null,
+    component: null,
+    closeOnOverlayClick: true,
+    actions: null,
   },
   backdropConfig: {
     show: false,
@@ -49,4 +57,4 @@ export const initialState: SharedState = {
       toolbar: null,
     },
   },
-}
+};
