@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
-import * as fromCoreStore from '@core/store';
-import { IonButton, IonContent } from '@ionic/angular/standalone';
+import { Component, EventEmitter, inject, OnDestroy, OnInit, Output } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { IonButton, IonContent } from '@ionic/angular/standalone';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import * as fromCoreStore from '@core/store';
 import * as fromBluetoothStore from '@shared/libs/bluetooth/store';
 
 export enum ConnectDeviceScreens {
@@ -18,18 +20,20 @@ export enum ConnectDeviceScreens {
   standalone: true,
   imports: [IonContent, IonButton, CommonModule],
 })
-export class ConnectDeviceComponent implements OnInit {
+export class ConnectDeviceComponent implements OnInit, OnDestroy {
   @Output() connectionComplete = new EventEmitter<void>();
 
   #store = inject(Store<fromCoreStore.CoreState>);
+  protected ngUnsubscribe: Subject<void> = new Subject<void>();
 
   ConnectDeviceScreens = ConnectDeviceScreens;
-
   currentScreen = ConnectDeviceScreens.Initial;
 
   ngOnInit() {
+    this.currentScreen = ConnectDeviceScreens.Initial;
     this.#store
       .select(fromBluetoothStore.getIsConnected)
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((isConnected) => {
         if (isConnected) {
           this.#store.dispatch(new fromBluetoothStore.StopScan());
@@ -45,5 +49,10 @@ export class ConnectDeviceComponent implements OnInit {
 
   finishConnection(): void {
     this.connectionComplete.emit();
+  }
+
+  ngOnDestroy(): void {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 }
