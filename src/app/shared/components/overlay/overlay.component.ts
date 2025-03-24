@@ -52,8 +52,23 @@ export class OverlayComponent implements OnInit, AfterViewInit {
             wrapper.classList.add('is-shown');
           } else {
             if (wrapper.classList.contains('is-shown')) {
-              wrapper.classList.remove('is-shown');
-              console.log('Overlay closed');
+              const content =
+                this.overlay.nativeElement.querySelector('.overlay__content');
+              if (content) {
+                content.style.transform = '';
+
+                void content.offsetWidth;
+
+                content.style.transform = 'translateY(100%)';
+
+                setTimeout(() => {
+                  wrapper.classList.remove('is-shown');
+                  console.log('Overlay closed');
+                }, 400);
+              } else {
+                wrapper.classList.remove('is-shown');
+                console.log('Overlay closed');
+              }
             }
           }
         }
@@ -82,7 +97,17 @@ export class OverlayComponent implements OnInit, AfterViewInit {
 
   closeOverlay(): void {
     console.log('Closing overlay');
-    this.#store.dispatch(new fromStore.OverlayHide());
+    if (this.overlay) {
+      const content =
+        this.overlay.nativeElement.querySelector('.overlay__content');
+      if (content) {
+        content.style.transform = 'translateY(100%)';
+      }
+    }
+
+    setTimeout(() => {
+      this.#store.dispatch(new fromStore.OverlayHide());
+    }, 50);
   }
 
   private _loadComponent(componentName: string) {

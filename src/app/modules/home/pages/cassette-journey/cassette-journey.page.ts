@@ -218,7 +218,6 @@ export class CassetteJourneyPage
 
   ngOnInit() {
     this.store.dispatch(new fromSharedStore.TopbarChangeColor('--color-white'));
-    this.initDeviceConnectionMonitoring();
   }
 
   ngAfterViewInit() {

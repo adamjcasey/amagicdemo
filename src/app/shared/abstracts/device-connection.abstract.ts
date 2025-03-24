@@ -16,12 +16,14 @@ export abstract class DeviceConnectionAbstract implements OnDestroy {
 
   protected ngUnsubscribe: Subject<void> = new Subject<void>();
 
-  protected initDeviceConnectionMonitoring(): void {
+  constructor() {
     this.isDeviceConnected$
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((isConnected) => {
         if (!isConnected) {
-          this.showConnectDeviceOverlay();
+          setTimeout(() => {
+            this.showConnectDeviceOverlay();
+          }, 500);
         }
       });
   }
