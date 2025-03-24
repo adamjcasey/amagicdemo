@@ -74,7 +74,7 @@
           (swiper)="onMenuInit()" (slidechange)="onMenuChange()">
           <swiper-slide>
             <h1 class="font-heading-1--bold">Demo Menu</h1>
-            <p>Here you’ll find guidance on resetting, packing, and sharing this demo experience.</p>
+            <p>Here you'll find guidance on resetting, packing, and sharing this demo experience.</p>
             <div *ngIf="(isConnected$ | async)" class="battery-indicator">
               <p>AutoMagic Injector Battery:</p>
               <automagic-battery-indicator [batteryLevel]="(batteryLevel$ | async) ?? 0"></automagic-battery-indicator>
@@ -83,7 +83,7 @@
             <div class="links-container">
               <a class="link hotspot-element" (click)="goToSubmenu(1)">
                 <ion-icon src="/assets/icons/flag.svg" slot="start" size="large"></ion-icon>
-                <ion-label>I’m all done with the demo</ion-label>
+                <ion-label>I'm all done with the demo</ion-label>
                 <ion-icon name="chevron-forward-outline" slot="end" color="light"></ion-icon>
               </a>
               <a class="link hotspot-element" (click)="resetApp()">
@@ -94,7 +94,7 @@
           </swiper-slide>
 
           <swiper-slide>
-            <h1 class="font-heading-1--bold">I’m all done with the demo</h1>
+            <h1 class="font-heading-1--bold">I'm all done with the demo</h1>
 
             <div class="buttons-container">
               <ion-button class="hotspot-element" fill="outline" expand="block" color="light" (click)="showShareFlow()">
@@ -387,40 +387,8 @@
         'backdrop-fold-bg-debugging': isShowDebugging
       }">
 
-      <ng-container *ngIf="layoutConfig.userDevice">
-        <ion-img class="background" *ngIf="getModelDeviceNumber(layoutConfig.userDevice?.model) < 10.5"
-          src="/assets/images/backdrop-fold-bg--iphone-8.png"></ion-img>
-        <ion-img class="background" *ngIf="layoutConfig.userDevice?.model === 'iphone10.6'"
-          src="/assets/images/backdrop-fold-bg--iphone-x.svg"></ion-img>
-        <ion-img class="background" *ngIf="[
-            'iphone12.1',
-            'iphone12.2',
-            'iphone12.3',
-            'iphone12.4',
-            'iphone12.5'
-          ].includes(layoutConfig.userDevice?.model)" src="/assets/images/backdrop-fold-bg--iphone-11.svg"></ion-img>
-        <ion-img class="background" *ngIf="[
-            'iphone13.1',
-            'iphone13.2',
-            'iphone13.3',
-            'iphone13.4',
-            'iphone13.5'
-          ].includes(layoutConfig.userDevice?.model)" src="/assets/images/backdrop-fold-bg--iphone-12.png"></ion-img>
-        <ion-img class="background" *ngIf="[
-            'iphone14.1',
-            'iphone14.2',
-            'iphone14.3',
-            'iphone14.4',
-            'iphone14.5'
-          ].includes(layoutConfig.userDevice?.model)" src="/assets/images/backdrop-fold-bg--iphone-13.svg"></ion-img>
-        <ion-img class="background" *ngIf="['iphone14.7', 'iphone14.8'].includes(layoutConfig.userDevice?.model)"
-          src="/assets/images/backdrop-fold-bg--iphone-14.svg"></ion-img>
-        <ion-img class="background" *ngIf="['iphone15.2', 'iphone15.3'].includes(layoutConfig.userDevice?.model)"
-          src="/assets/images/backdrop-fold-bg--iphone-14-pro.svg"></ion-img>
-      </ng-container>
-
-      <ng-container *ngIf="!layoutConfig.userDevice">
-        <ion-img class="background" src="/assets/images/backdrop-fold-bg.svg"></ion-img>
+      <ng-container>
+        <ion-img class="background" [src]="foldBackgroundImage"></ion-img>
       </ng-container>
 
       <div class="icon-cta">

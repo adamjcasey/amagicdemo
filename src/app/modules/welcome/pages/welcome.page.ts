@@ -16,10 +16,10 @@ import {
   Validators,
 } from '@angular/forms';
 import { Capacitor } from '@capacitor/core';
+import { Keyboard } from '@capacitor/keyboard';
 import { PushNotifications } from '@capacitor/push-notifications';
-import { Keyboard } from "@capacitor/keyboard";
 import { Store } from '@ngrx/store';
-import { filter, Observable, Subject, take, takeUntil, timeout } from 'rxjs';
+import { filter, Observable, take, takeUntil, timeout } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
 import * as fromCoreStore from '@core/store';
@@ -28,6 +28,7 @@ import * as fromSharedComponents from '@shared/components';
 import * as fromBluetoothStore from '@shared/libs/bluetooth/store';
 import * as fromSharedStore from '@shared/store';
 import * as fromStore from '../store';
+import {DeviceConnectionAbstract} from "@shared/abstracts/device-connection.abstract";
 
 @Component({
   selector: 'automagic-welcome',
@@ -44,7 +45,7 @@ import * as fromStore from '../store';
     IonImg,
   ],
 })
-export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
+export class WelcomePage extends DeviceConnectionAbstract implements OnInit, AfterViewInit, OnDestroy {
   private _store = inject(Store<fromCoreStore.CoreState>);
   private _formBuilder = inject(FormBuilder);
 
@@ -292,13 +293,11 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
       },
     },
   ];
-  public isFullPowerMode: boolean = true;
 
   @ViewChild('videoWrapper') videoWrapper!: ElementRef;
   @ViewChild('sliderPage', { static: false })
   sliderPage!: fromSharedComponents.SliderPageComponent;
 
-  private _ngUnsubscribe: Subject<void> = new Subject<void>();
   private isConnected$: Observable<boolean> = this._store.select(
     fromBluetoothStore.getIsConnected
   );
@@ -308,6 +307,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
   private isConnected: boolean = false;
 
   constructor() {
+    super();
     Keyboard.addListener('keyboardDidShow', () => {
       const content = document.querySelector('ion-content');
       if (content) {
@@ -318,7 +318,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.config$
-      .pipe(takeUntil(this._ngUnsubscribe))
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((config: any) => {
         this.config = config;
 
@@ -328,13 +328,13 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
       });
 
     this.backdropConfig$
-      .pipe(takeUntil(this._ngUnsubscribe))
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((backdropConfig: any) => {
         this.backdropConfig = backdropConfig;
       });
 
     this.isConnected$
-      .pipe(takeUntil(this._ngUnsubscribe))
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((isConnected) => {
         this.isConnected = isConnected;
       });
@@ -344,11 +344,6 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
 
   async ngAfterViewInit() {
     this.playIntroAnimation();
-  }
-
-  ngOnDestroy() {
-    this._ngUnsubscribe.next();
-    this._ngUnsubscribe.complete();
   }
 
   playIntroAnimation() {
@@ -553,7 +548,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
 
   setupConnectionMonitoring() {
     this.isConnected$
-      .pipe(takeUntil(this._ngUnsubscribe))
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((connected) => {
         console.log('Connection state changed:', connected);
 

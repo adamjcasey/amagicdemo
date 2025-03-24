@@ -25,10 +25,11 @@ import {
 } from '@app/shared/directives';
 import { BluetoothService } from '@app/shared/libs/bluetooth';
 import * as fromCoreStore from '@core/store';
-import * as fromBluetoothStore from '@shared/libs/bluetooth/store';
 import * as fromHomeComponents from '@home/components';
 import * as fromHomeStore from '@home/store';
 import { IonButton, IonIcon, IonImg } from '@ionic/angular/standalone';
+import { BatteryIndicatorComponent, CardComponent } from '@shared/components';
+import * as fromBluetoothStore from '@shared/libs/bluetooth/store';
 import * as fromSharedServices from '@shared/services';
 import * as fromStore from '@shared/store';
 import * as fromWelcomeComponents from '@welcome/components';
@@ -42,7 +43,6 @@ import {
   warningOutline,
 } from 'ionicons/icons';
 import type { SwiperContainer } from 'swiper/element';
-import { CardComponent, BatteryIndicatorComponent } from '@shared/components';
 
 @Component({
   selector: 'automagic-backdrop',
@@ -78,6 +78,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
   public isShowDebugging: boolean = false;
   public isShowDebuggingStatus: boolean = false;
   public initialSlide: number = 0;
+  public foldBackgroundImage: string = '/assets/images/backdrop-fold-bg.svg';
   @ViewChild('sliderMainMenu') sliderMainMenu!: ElementRef<SwiperContainer>;
   @ViewChild('sliderHighlightsTour') sliderHighlightsTour!: ElementRef<SwiperContainer>;
   @ViewChild('sliderShareFlow') sliderShareFlow!: ElementRef<SwiperContainer>;
@@ -160,6 +161,8 @@ export class BackdropComponent implements OnInit, AfterViewInit {
           layoutConfig.noDeviceModeOopsFlow ||
           layoutConfig.noDeviceModeBatteryLowFlow ||
           layoutConfig.debuggingDeviceMode;
+
+        this.foldBackgroundImage = this.getFoldBackgroundImage();
       }
     });
 
@@ -565,6 +568,69 @@ export class BackdropComponent implements OnInit, AfterViewInit {
   getModelDeviceNumber(model: any) {
     model = model.replaceAll(/[a-z]/g, '');
     return Number(model);
+  }
+
+  getFoldBackgroundImage(): string {
+    if (!this.layoutConfig.userDevice) {
+      return '/assets/images/backdrop-fold-bg.svg';
+    }
+
+    const model = this.layoutConfig.userDevice.model;
+    const modelNumber = this.getModelDeviceNumber(model);
+
+    if (modelNumber < 10.5) {
+      return '/assets/images/backdrop-fold-bg--iphone-8.png';
+    }
+
+    if (model === 'iphone10.6') {
+      return '/assets/images/backdrop-fold-bg--iphone-x.svg';
+    }
+
+    if (
+      [
+        'iphone12.1',
+        'iphone12.2',
+        'iphone12.3',
+        'iphone12.4',
+        'iphone12.5',
+      ].includes(model)
+    ) {
+      return '/assets/images/backdrop-fold-bg--iphone-11.svg';
+    }
+
+    if (
+      [
+        'iphone13.1',
+        'iphone13.2',
+        'iphone13.3',
+        'iphone13.4',
+        'iphone13.5',
+      ].includes(model)
+    ) {
+      return '/assets/images/backdrop-fold-bg--iphone-12.png';
+    }
+
+    if (
+      [
+        'iphone14.1',
+        'iphone14.2',
+        'iphone14.3',
+        'iphone14.4',
+        'iphone14.5',
+      ].includes(model)
+    ) {
+      return '/assets/images/backdrop-fold-bg--iphone-13.svg';
+    }
+
+    if (['iphone14.7', 'iphone14.8'].includes(model)) {
+      return '/assets/images/backdrop-fold-bg--iphone-14.svg';
+    }
+
+    if (['iphone15.2', 'iphone15.3'].includes(model)) {
+      return '/assets/images/backdrop-fold-bg--iphone-14-pro.svg';
+    }
+
+    return '/assets/images/backdrop-fold-bg--iphone.svg';
   }
 
   private _loadComponent(component: any) {

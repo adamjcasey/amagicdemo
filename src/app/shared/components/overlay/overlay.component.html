@@ -1,0 +1,18 @@
+<section #overlay id="overlay" class="overlay" (click)="handleOverlayClick($event)" [ngClass]="{
+    'is-open': config?.show
+  }">
+
+  <div class="overlay__content">
+    <div class="overlay__template" *ngIf="config?.template" [innerHTML]="sanitizeContent(config.template)"></div>
+
+    <ng-container #contentComponent></ng-container>
+
+    <div class="overlay__actions" *ngIf="config?.actions">
+      <ion-button *ngFor="let button of config.actions; let i = index" class="hotspot-element" color="purple"
+        size="large" [disabled]="button.disabled ? true : null" (click)="button.action ? button.action($event) : null"
+        [fill]="i % 2 !== 1 && config.actions.length > 1 ? 'outline': null">
+        {{ button.label }}
+      </ion-button>
+    </div>
+  </div>
+</section>
