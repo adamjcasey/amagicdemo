@@ -46,6 +46,7 @@ import {
 import { OverlayComponent } from '@shared/components/overlay/overlay.component';
 import * as fromSharedServices from '@shared/services';
 import { GestureController } from '@shared/services/gestureController';
+import { StoreMiddlewareService } from '@shared/services/store-middleware.service';
 import * as fromSharedStore from '@shared/store';
 import { addIcons } from 'ionicons';
 import { copyOutline } from 'ionicons/icons';
@@ -85,6 +86,7 @@ type ExtendedIOSSettings = IOSSettings | CustomIOSSettings;
 })
 export class LayoutPage implements OnInit, AfterContentInit, OnDestroy {
   #utilsService = inject(fromSharedServices.UtilsService);
+  #storeMiddlewareService = inject(StoreMiddlewareService);
 
   public config$: Observable<any>;
   public config: any;

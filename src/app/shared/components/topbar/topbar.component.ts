@@ -23,6 +23,7 @@ import * as fromStore from '@shared/store';
 import { addIcons } from 'ionicons';
 import { chevronBackOutline, hammerOutline } from 'ionicons/icons';
 import { BackdropComponent } from '../backdrop/backdrop.component';
+import { LogButtonComponent } from '../log-button/log-button.component';
 
 @Component({
   selector: 'automagic-topbar',
@@ -41,6 +42,7 @@ import { BackdropComponent } from '../backdrop/backdrop.component';
     IonButton,
     IonIcon,
     IonMenuButton,
+    LogButtonComponent,
   ],
 })
 export class TopBarComponent implements OnInit, OnDestroy {

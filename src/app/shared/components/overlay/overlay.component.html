@@ -5,7 +5,9 @@
   <div class="overlay__content">
     <div class="overlay__template" *ngIf="config?.template" [innerHTML]="sanitizeContent(config.template)"></div>
 
-    <ng-container #contentComponent></ng-container>
+    <div class="overlay__component-container">
+      <ng-container #contentComponent></ng-container>
+    </div>
 
     <div class="overlay__actions" *ngIf="config?.actions">
       <ion-button *ngFor="let button of config.actions; let i = index" class="hotspot-element" color="purple"

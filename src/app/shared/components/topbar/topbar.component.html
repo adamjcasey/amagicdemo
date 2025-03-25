@@ -30,6 +30,8 @@
           </div>
         </div>
         <ng-template #default>
+          <automagic-log-button></automagic-log-button>
+
           <ion-button class="notifications-cta" [ngClass]="{
               'hotspot-element': config.pendingNotifications > 0,
             }" (click)="goTo('notifications')" [disabled]="config.pendingNotifications === 0">

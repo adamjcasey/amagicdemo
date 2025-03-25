@@ -1,0 +1,13 @@
+<div class="log-viewer">
+    <ion-content class="log-viewer__content">
+        <div class="log-entry" *ngFor="let log of logs$ | async">
+            <div class="log-entry__timestamp">{{ formatDate(log.timestamp) }}</div>
+            <div class="log-entry__action">{{ log.action }}</div>
+            <pre class="log-entry__payload" *ngIf="log.payload">{{ formatPayload(log.payload) }}</pre>
+        </div>
+
+        <div class="log-viewer__empty" *ngIf="(logs$ | async)?.length === 0">
+            No logs recorded yet
+        </div>
+    </ion-content>
+</div>
