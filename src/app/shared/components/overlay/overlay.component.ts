@@ -50,6 +50,12 @@ export class OverlayComponent implements OnInit, AfterViewInit {
           const wrapper = this.overlay.nativeElement.parentElement;
           if (this.config.show) {
             wrapper.classList.add('is-shown');
+            // Reset transform when showing overlay
+            const content =
+              this.overlay.nativeElement.querySelector('.overlay__content');
+            if (content) {
+              content.style.transform = '';
+            }
           } else {
             if (wrapper.classList.contains('is-shown')) {
               const content =
