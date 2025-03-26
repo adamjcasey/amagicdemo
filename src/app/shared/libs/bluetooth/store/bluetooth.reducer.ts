@@ -144,12 +144,6 @@ export function bluetoothReducer(
         },
       };
 
-    case fromActions.BluetoothActionTypes.UseMockDevice:
-      return {
-        ...state,
-        useMockDevice: action.payload,
-      };
-
     case fromActions.BluetoothActionTypes.PermissionsResult:
       return {
         ...state,

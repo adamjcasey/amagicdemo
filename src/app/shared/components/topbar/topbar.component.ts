@@ -67,8 +67,6 @@ export class TopBarComponent implements OnInit, OnDestroy {
     private _router: Router,
     private _cdr: ChangeDetectorRef
   ) {
-    console.log('AUTOMAGIC TOPBAR');
-
     addIcons({
       chevronBackOutline,
       hammerOutline,
@@ -90,8 +88,6 @@ export class TopBarComponent implements OnInit, OnDestroy {
     this._router.events
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe((event: RoutingEvent) => {
-        console.log('Router event:', event);
-
         if (event instanceof NavigationEnd) {
           this.currentRoute = event.urlAfterRedirects;
           if (this.currentRoute.includes('symptoms/add')) {
@@ -110,8 +106,6 @@ export class TopBarComponent implements OnInit, OnDestroy {
               this.settingsScope = this.currentRoute.includes('settings/');
             }
           }
-
-          console.log('this.currentRoute', this.currentRoute);
 
           switch (this.currentRoute) {
             case '/welcome':

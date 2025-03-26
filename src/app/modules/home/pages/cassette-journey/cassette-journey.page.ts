@@ -1,7 +1,6 @@
 import {
   AfterViewInit,
   Component,
-  OnInit,
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
@@ -10,6 +9,7 @@ import { combineLatest, filter, Observable, take, takeUntil } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DeviceStateCode } from '@app/shared/libs/bluetooth';
+import { MOCK_SCENARIO_IDS } from '@app/shared/libs/bluetooth/constants/bluetooth-mock.constants';
 import * as fromBluetoothStore from '@app/shared/libs/bluetooth/store';
 import { IonContent } from '@ionic/angular/standalone';
 import { DeviceConnectionAbstract } from '@shared/abstracts/device-connection.abstract';
@@ -46,7 +46,7 @@ export enum CassetteJourneySlides {
 })
 export class CassetteJourneyPage
   extends DeviceConnectionAbstract
-  implements OnInit, AfterViewInit
+  implements AfterViewInit
 {
   @ViewChild('sliderPage', { static: false })
   sliderPage!: fromSharedComponents.SliderPageComponent;
@@ -84,6 +84,12 @@ export class CassetteJourneyPage
               label: 'Looks good',
               action: () => {
                 this.sliderPage.slideNext();
+
+                this.store.dispatch(
+                  new fromBluetoothStore.StartMockScenario(
+                    MOCK_SCENARIO_IDS.CASSETTE_JOURNEY_HAPPY_PATH
+                  )
+                );
               },
             },
           ],
@@ -200,9 +206,6 @@ export class CassetteJourneyPage
     },
   ];
 
-  CassetteJourneySlides = CassetteJourneySlides;
-  DeviceStateCode = DeviceStateCode;
-
   constructor() {
     super();
     addIcons({
@@ -211,10 +214,6 @@ export class CassetteJourneyPage
       alertCircle,
       informationCircle,
     });
-  }
-
-  ngOnInit() {
-    this.store.dispatch(new fromSharedStore.TopbarChangeColor('--color-white'));
   }
 
   ngAfterViewInit() {
@@ -306,6 +305,12 @@ export class CassetteJourneyPage
   }
 
   #handleCassetteInsertionRequired(): void {
+    const currentSlideIndex = this.sliderPage.config.content.currentSlide;
+
+    if (currentSlideIndex <= CassetteJourneySlides.InsertCassette) {
+      return;
+    }
+
     console.log('Navigating to InspectCassette slide');
     this.sliderPage.slideTo(CassetteJourneySlides.InspectCassette);
   }
