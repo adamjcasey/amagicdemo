@@ -85,11 +85,16 @@ export class CassetteJourneyPage
               action: () => {
                 this.sliderPage.slideNext();
 
-                this.store.dispatch(
-                  new fromBluetoothStore.StartMockScenario(
-                    MOCK_SCENARIO_IDS.CASSETTE_JOURNEY_HAPPY_PATH
-                  )
-                );
+                this.deviceState$.pipe(take(1)).subscribe((deviceState) => {
+                  const scenarioId =
+                    deviceState === DeviceStateCode.PoweringOff
+                      ? MOCK_SCENARIO_IDS.CASSETTE_JOURNEY_HAPPY_PATH
+                      : MOCK_SCENARIO_IDS.CASSETTE_JOURNEY_USED_CASSETTE_PATH;
+
+                  this.store.dispatch(
+                    new fromBluetoothStore.StartMockScenario(scenarioId)
+                  );
+                });
               },
             },
           ],
@@ -167,6 +172,7 @@ export class CassetteJourneyPage
             <div class="loader"></div>
           </section>
         `,
+        toolbar: {},
       },
     },
     {
@@ -319,9 +325,10 @@ export class CassetteJourneyPage
     console.log('Navigating to InsertCassette slide');
     this.sliderPage.slideTo(CassetteJourneySlides.CheckCassette);
 
-    const validStates = [
+    const noAlertStates = [
       DeviceStateCode.RemoveNeedleCap,
       DeviceStateCode.ReadyForInjection,
+      DeviceStateCode.WarningCassetteUsed,
     ];
 
     // Start a 10-second timer to check if state hasn't changed
@@ -329,14 +336,14 @@ export class CassetteJourneyPage
       this.deviceState$
         .pipe(takeUntil(this.ngUnsubscribe), take(1))
         .subscribe((deviceState) => {
-          this.#checkDeviceStateAfterTimeout(deviceState, validStates);
+          this.#checkDeviceStateAfterTimeout(deviceState, noAlertStates);
         });
     }, 10000);
 
     // Store the timeout ID to potentially clear it if state changes to a valid state before timeout
     this.deviceState$
       .pipe(
-        filter((deviceState) => validStates.includes(deviceState)),
+        filter((deviceState) => noAlertStates.includes(deviceState)),
         takeUntil(this.ngUnsubscribe)
       )
       .subscribe((deviceState) => {

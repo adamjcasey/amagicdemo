@@ -120,6 +120,7 @@ export function bluetoothReducer(
         state: action.payload,
         stateRaw: (action.payload << 8) | state.stateData,
         stateName,
+        isConnected: action.payload !== DeviceStateCode.PoweringOff,
       };
 
     case fromActions.BluetoothActionTypes.UpdateDeviceStateData:
