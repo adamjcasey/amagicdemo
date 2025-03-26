@@ -241,6 +241,7 @@ export class BluetoothService {
     if (!this.#isNativePlatform || this.#isVirtualDevice) {
       console.log('Using mocked device in non-native or virtual environment');
       await this.#bluetoothMockDeviceProvider.provideMockDevice();
+      this.#scanning = false;
       return;
     }
 
@@ -700,6 +701,7 @@ export class BluetoothService {
         console.log('Using mock device for non-native/virtual environment');
         await this.#bluetoothMockDeviceProvider.provideMockDevice();
         this.#connectionInProgress = false;
+        this.#scanning = false;
         return true;
       }
 
@@ -758,7 +760,7 @@ export class BluetoothService {
     }
   }
 
-  // TODO: will be rewritten (maybe removed while we implemented actions)
+  // TODO: will be rewritten (maybe removed when we implement related actions)
   async waitForDosingStart(continueDose?: boolean): Promise<boolean> {
     console.log('waitForDosingStart');
 
@@ -806,7 +808,7 @@ export class BluetoothService {
     }
   }
 
-  // TODO: will be rewritten (maybe removed while we implemented actions)
+  // TODO: will be rewritten (maybe removed when we implement related actions)
   async checkDosing(): Promise<boolean> {
     try {
       // Wait for either completion, incomplete, or error state

@@ -85,16 +85,24 @@ export class CassetteJourneyPage
               action: () => {
                 this.sliderPage.slideNext();
 
-                this.deviceState$.pipe(take(1)).subscribe((deviceState) => {
-                  const scenarioId =
-                    deviceState === DeviceStateCode.PoweringOff
-                      ? MOCK_SCENARIO_IDS.CASSETTE_JOURNEY_HAPPY_PATH
-                      : MOCK_SCENARIO_IDS.CASSETTE_JOURNEY_USED_CASSETTE_PATH;
+                this.store.dispatch(
+                  new fromBluetoothStore.StartMockScenario(
+                    MOCK_SCENARIO_IDS.CASSETTE_JOURNEY_HAPPY_PATH
+                  )
+                );
 
-                  this.store.dispatch(
-                    new fromBluetoothStore.StartMockScenario(scenarioId)
-                  );
-                });
+                // TODO: switch between happy path and used cassette path
+
+                // this.deviceState$.pipe(take(1)).subscribe((deviceState) => {
+                //   const scenarioId =
+                //     deviceState === DeviceStateCode.PoweringOff
+                //       ? MOCK_SCENARIO_IDS.CASSETTE_JOURNEY_HAPPY_PATH
+                //       : MOCK_SCENARIO_IDS.CASSETTE_JOURNEY_USED_CASSETTE_PATH;
+
+                //   this.store.dispatch(
+                //     new fromBluetoothStore.StartMockScenario(scenarioId)
+                //   );
+                // });
               },
             },
           ],

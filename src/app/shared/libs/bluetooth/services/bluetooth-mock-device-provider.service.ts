@@ -32,10 +32,7 @@ export class BluetoothMockDeviceProvider {
   async provideMockDevice(provideMockDeviceTimeout = true): Promise<void> {
     console.log('Providing mock device');
 
-    if (this.#connected) {
-      console.log('Already connected to mock device, skipping creation');
-      return Promise.resolve();
-    }
+    this.#connected = false;
 
     if (!this.#mockDevices.length) {
       const mockDevice = {
