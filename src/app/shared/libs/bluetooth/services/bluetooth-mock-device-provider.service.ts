@@ -29,7 +29,7 @@ export class BluetoothMockDeviceProvider {
     this.#mockDevices = [];
   }
 
-  async provideMockDevice(timeout = 0): Promise<void> {
+  async provideMockDevice(provideMockDeviceTimeout = true): Promise<void> {
     console.log('Providing mock device');
 
     if (this.#connected) {
@@ -55,13 +55,16 @@ export class BluetoothMockDeviceProvider {
 
     // Wait to simulate real scanning
     return new Promise((resolve) => {
-      setTimeout(() => {
-        if (!this.#connected) {
-          this.connectToMockDevice(this.#mockDevices[0]).then(resolve);
-        } else {
-          resolve();
-        }
-      }, timeout);
+      setTimeout(
+        () => {
+          if (!this.#connected) {
+            this.connectToMockDevice(this.#mockDevices[0]).then(resolve);
+          } else {
+            resolve();
+          }
+        },
+        provideMockDeviceTimeout ? 3000 : 0
+      );
     });
   }
 

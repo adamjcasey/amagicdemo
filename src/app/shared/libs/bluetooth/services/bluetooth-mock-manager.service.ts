@@ -45,7 +45,7 @@ export class BluetoothMockManagerService {
           if (isConnected) {
             this.runCurrentStep();
           } else {
-            this.#mockDeviceProvider.provideMockDevice().then(() => {
+            this.#mockDeviceProvider.provideMockDevice(false).then(() => {
               this.runCurrentStep();
             });
           }

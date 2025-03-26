@@ -240,7 +240,7 @@ export class BluetoothService {
 
     if (!this.#isNativePlatform || this.#isVirtualDevice) {
       console.log('Using mocked device in non-native or virtual environment');
-      await this.#bluetoothMockDeviceProvider.provideMockDevice(3000);
+      await this.#bluetoothMockDeviceProvider.provideMockDevice();
       return;
     }
 
@@ -698,7 +698,7 @@ export class BluetoothService {
     try {
       if (!this.#isNativePlatform || this.#isVirtualDevice) {
         console.log('Using mock device for non-native/virtual environment');
-        await this.#bluetoothMockDeviceProvider.provideMockDevice(3000);
+        await this.#bluetoothMockDeviceProvider.provideMockDevice();
         this.#connectionInProgress = false;
         return true;
       }
