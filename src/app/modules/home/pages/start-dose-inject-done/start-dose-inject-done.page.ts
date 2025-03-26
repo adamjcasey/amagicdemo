@@ -1,13 +1,12 @@
 import {
   Component,
-  OnDestroy,
   OnInit,
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import moment from 'moment';
-import { Observable, Subject, takeUntil } from 'rxjs';
+import { Observable, takeUntil } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -20,6 +19,7 @@ import * as fromSharedStore from '@shared/store';
 import { addIcons } from 'ionicons';
 import { informationCircleOutline } from 'ionicons/icons';
 import { environment } from 'src/environments/environment';
+import { DeviceConnectionAbstract } from '@shared/abstracts/device-connection.abstract';
 
 @Component({
   selector: 'automagic-start-dose-inject-done',
@@ -35,7 +35,10 @@ import { environment } from 'src/environments/environment';
     IonContent,
   ],
 })
-export class StartDoseInjectDonePage implements OnInit, OnDestroy {
+export class StartDoseInjectDonePage
+  extends DeviceConnectionAbstract
+  implements OnInit {
+
   public homeConfig$!: Observable<any>;
   public homeConfig: any;
   public sliderPageConfig$!: Observable<any>;
@@ -43,9 +46,9 @@ export class StartDoseInjectDonePage implements OnInit, OnDestroy {
   public slides: Array<any> = [];
   @ViewChild('sliderPage', { static: false })
   sliderPage!: fromSharedComponents.SliderPageComponent;
-  private _ngUnsubscribe: Subject<void> = new Subject<void>();
 
   constructor(private _store: Store<fromCoreStore.CoreState>) {
+    super()
     addIcons({ informationCircleOutline });
 
     this.sliderPageConfig$ = this._store.select(
@@ -136,7 +139,7 @@ export class StartDoseInjectDonePage implements OnInit, OnDestroy {
       new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow')
     );
     this.sliderPageConfig$
-      .pipe(takeUntil(this._ngUnsubscribe))
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((sliderPageConfig) => {
         if (sliderPageConfig) {
           this.sliderPageConfig = sliderPageConfig;
@@ -144,7 +147,7 @@ export class StartDoseInjectDonePage implements OnInit, OnDestroy {
       });
 
     this.homeConfig$
-      .pipe(takeUntil(this._ngUnsubscribe))
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((homeConfig) => {
         if (homeConfig) {
           this.homeConfig = homeConfig;
@@ -341,19 +344,6 @@ export class StartDoseInjectDonePage implements OnInit, OnDestroy {
       });
 
     this.setDoses();
-  }
-
-  ngOnDestroy() {
-    this._ngUnsubscribe.next();
-    this._ngUnsubscribe.complete();
-  }
-
-  goTo(path: string) {
-    this._store.dispatch(
-      new fromCoreStore.Go({
-        path: [path],
-      })
-    );
   }
 
   setDoses(): void {
