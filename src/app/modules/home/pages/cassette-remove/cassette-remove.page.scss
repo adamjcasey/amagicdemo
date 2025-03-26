@@ -1,0 +1,30 @@
+.cassette-remove {
+  .pro-tip {
+    position: relative;
+    padding-left: var(--size-l);
+    text-align: left;
+
+    ion-icon {
+      position: absolute;
+      top: 0;
+      left: 0;
+      font-size: var(--size-m);
+    }
+
+    p {
+      margin-top: 0;
+      margin-bottom: var(--size-xs);
+      font-size: var(--font-size-paragraph-m);
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  .slider-page__header {
+    swiper {
+      height: 100%;
+    }
+  }
+}

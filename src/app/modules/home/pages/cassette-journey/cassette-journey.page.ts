@@ -11,7 +11,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DeviceStateCode } from '@app/shared/libs/bluetooth';
 import * as fromBluetoothStore from '@app/shared/libs/bluetooth/store';
-import * as fromCoreStore from '@core/store';
 import { IonContent } from '@ionic/angular/standalone';
 import { DeviceConnectionAbstract } from '@shared/abstracts/device-connection.abstract';
 import * as fromSharedComponents from '@shared/components';
@@ -74,13 +73,11 @@ export class CassetteJourneyPage
 
   slides: Array<any> = [
     {
-      header: {
-        color: '--color-white',
-      },
       content: {
         isExpanded: true,
         hide: false,
         hideNavigation: true,
+        bgColor: '--color-white',
         toolbar: {
           actions: [
             {
@@ -125,7 +122,7 @@ export class CassetteJourneyPage
             {
               label: 'Cancel',
               action: () => {
-                this.#goTo('/home');
+                this.goTo('/home');
               },
             },
             {
@@ -179,7 +176,7 @@ export class CassetteJourneyPage
             {
               label: 'Proceed',
               action: () => {
-                this.#goTo('/home/start-dose/prepare');
+                this.goTo('/home/start-dose/prepare');
               },
             },
           ],
@@ -295,7 +292,7 @@ export class CassetteJourneyPage
               fill: 'outline',
               action: () => {
                 this.store.dispatch(new fromSharedStore.AlertHide());
-                this.#handleCassetteInsertionRequired();
+                this.#goToRemoveCassette();
               },
             },
           ],
@@ -382,7 +379,7 @@ export class CassetteJourneyPage
             fill: 'outline',
             action: () => {
               this.store.dispatch(new fromSharedStore.AlertHide());
-              this.#handleCassetteInsertionRequired();
+              this.#goToRemoveCassette();
             },
           },
           {
@@ -390,7 +387,7 @@ export class CassetteJourneyPage
             fill: 'outline',
             action: () => {
               this.store.dispatch(new fromSharedStore.AlertHide());
-              this.#handleCassetteInsertionRequired();
+              this.#goToRemoveCassette();
             },
           },
         ],
@@ -398,7 +395,7 @@ export class CassetteJourneyPage
     );
   }
 
-  #goTo(path: string) {
-    this.store.dispatch(new fromCoreStore.Go({ path: [path] }));
+  #goToRemoveCassette(): void {
+    this.goTo('/home/cassette-remove');
   }
 }

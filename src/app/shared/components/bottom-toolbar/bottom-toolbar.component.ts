@@ -55,6 +55,7 @@ export class BottomToolbarComponent implements OnInit, OnDestroy {
     this.excludedPaths = [
       '/welcome',
       '/home/cassette-journey',
+      '/home/cassette-remove',
       '/home/start-dose/prepare',
       '/home/start-dose/ready-to-inject',
       '/home/start-dose/inject-done',
