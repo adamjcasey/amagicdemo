@@ -1,13 +1,12 @@
 import {
   AfterViewInit,
   Component,
-  OnDestroy,
   OnInit,
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable, Subject, takeUntil } from 'rxjs';
+import { Observable, takeUntil } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -17,6 +16,7 @@ import * as fromStore from '@home/store';
 import { IonContent } from '@ionic/angular/standalone';
 import * as fromSharedComponents from '@shared/components';
 import * as fromSharedStore from '@shared/store';
+import { DeviceConnectionAbstract } from '@shared/abstracts/device-connection.abstract';
 
 @Component({
   selector: 'automagic-start-dose-ready-to-inject',
@@ -33,11 +33,11 @@ import * as fromSharedStore from '@shared/store';
   ],
 })
 export class StartDoseReadyToInjectPage
-  implements OnInit, AfterViewInit, OnDestroy
-{
+  extends DeviceConnectionAbstract
+  implements OnInit, AfterViewInit {
+
   public homeConfig$!: Observable<any>;
   public sliderPageConfig$!: Observable<any>;
-  private _ngUnsubscribe: Subject<void> = new Subject<void>();
   public homeConfig: any;
   public sliderPageConfig: any;
   public slides: Array<any> = [];
@@ -49,6 +49,7 @@ export class StartDoseReadyToInjectPage
     private _store: Store<fromCoreStore.CoreState>,
     private _bluetoothService: BluetoothService
   ) {
+    super()
     this.sliderPageConfig$ = this._store.select(
       fromSharedStore.getSliderPageConfig
     );
@@ -60,7 +61,7 @@ export class StartDoseReadyToInjectPage
       new fromSharedStore.TopbarChangeColor('--color-bg-pastel-green')
     );
     this.sliderPageConfig$
-      .pipe(takeUntil(this._ngUnsubscribe))
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((sliderPageConfig) => {
         if (sliderPageConfig) {
           this.sliderPageConfig = sliderPageConfig;
@@ -68,7 +69,7 @@ export class StartDoseReadyToInjectPage
       });
 
     this.homeConfig$
-      .pipe(takeUntil(this._ngUnsubscribe))
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((homeConfig) => {
         if (homeConfig) {
           this.homeConfig = homeConfig;
@@ -546,11 +547,6 @@ export class StartDoseReadyToInjectPage
         },
       }
     );
-  }
-
-  ngOnDestroy() {
-    this._ngUnsubscribe.next();
-    this._ngUnsubscribe.complete();
   }
 
   playVideo() {
