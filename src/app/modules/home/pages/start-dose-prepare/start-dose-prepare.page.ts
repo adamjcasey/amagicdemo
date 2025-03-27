@@ -1,12 +1,11 @@
 import {
   Component,
-  OnDestroy,
   OnInit,
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { firstValueFrom, Observable, Subject, takeUntil } from 'rxjs';
+import { firstValueFrom, Observable, takeUntil } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -18,6 +17,7 @@ import * as fromSharedComponents from '@shared/components';
 import * as fromSharedStore from '@shared/store';
 import { addIcons } from 'ionicons';
 import { checkmarkCircle, closeCircle } from 'ionicons/icons';
+import { DeviceConnectionAbstract } from '@shared/abstracts/device-connection.abstract';
 
 @Component({
   selector: 'automagic-start-dose-prepare',
@@ -33,12 +33,14 @@ import { checkmarkCircle, closeCircle } from 'ionicons/icons';
     IonContent,
   ],
 })
-export class StartDosePreparePage implements OnInit, OnDestroy {
+export class StartDosePreparePage
+  extends DeviceConnectionAbstract
+  implements OnInit {
+
   public homeConfig$!: Observable<any>;
   public homeConfig: any;
   public layoutConfig$!: Observable<any>;
   public layoutConfig: any;
-  private _ngUnsubscribe: Subject<void> = new Subject<void>();
   public slides: Array<any> = [];
   @ViewChild('sliderPage', { static: false })
   sliderPage!: fromSharedComponents.SliderPageComponent;
@@ -48,6 +50,7 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
     private _store: Store<fromCoreStore.CoreState>,
     private _bluetoothService: BluetoothService
   ) {
+    super()
     addIcons({ closeCircle, checkmarkCircle });
 
     this.homeConfig$ = this._store.select(fromStore.getHomeConfig);
@@ -100,14 +103,17 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
             <p>Good job taking it out of the fridge ahead of time!</p>
           </div>
         `,
-          actions: [
-            {
-              label: 'Proceed',
-              action: () => {
-                this.showStepTempTimer();
+          cards: null,
+          toolbar: {
+            actions: [
+              {
+                label: 'Proceed',
+                action: () => {
+                  this.showStepTempTimer();
+                },
               },
-            },
-          ],
+            ],
+          },
         },
       },
     ];
@@ -120,7 +126,7 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
 
     // Subscribe to connection state changes
     this._bluetoothService.connected$
-      .pipe(takeUntil(this._ngUnsubscribe))
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(async (isConnected) => {
         if (!isConnected) {
           // Get current slide from the config
@@ -135,7 +141,7 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
       });
 
     this.homeConfig$
-      .pipe(takeUntil(this._ngUnsubscribe))
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((homeConfig) => {
         if (homeConfig) {
           this.homeConfig = homeConfig;
@@ -160,17 +166,12 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
       });
 
     this.layoutConfig$
-      .pipe(takeUntil(this._ngUnsubscribe))
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((layoutConfig) => {
         if (layoutConfig) {
           this.layoutConfig = layoutConfig;
         }
       });
-  }
-
-  ngOnDestroy() {
-    this._ngUnsubscribe.next();
-    this._ngUnsubscribe.complete();
   }
 
   async slideNext(sliders: any) {
@@ -396,14 +397,6 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
             },
           ],
         },
-      })
-    );
-  }
-
-  goTo(path: string) {
-    this._store.dispatch(
-      new fromCoreStore.Go({
-        path: [path],
       })
     );
   }

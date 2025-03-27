@@ -21,4 +21,8 @@ export default [
     path: 'cassette-journey',
     component: fromPages.CassetteJourneyPage,
   },
+  {
+    path: 'cassette-remove',
+    component: fromPages.CassetteRemovePage,
+  },
 ];

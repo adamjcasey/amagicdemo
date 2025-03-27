@@ -24,11 +24,11 @@ import { filter, Observable, take, takeUntil, timeout } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import * as fromCoreStore from '@core/store';
 import { IonContent, IonImg } from '@ionic/angular/standalone';
+import { DeviceConnectionAbstract } from '@shared/abstracts/device-connection.abstract';
 import * as fromSharedComponents from '@shared/components';
 import * as fromBluetoothStore from '@shared/libs/bluetooth/store';
 import * as fromSharedStore from '@shared/store';
 import * as fromStore from '../store';
-import {DeviceConnectionAbstract} from "@shared/abstracts/device-connection.abstract";
 
 @Component({
   selector: 'automagic-welcome',
@@ -45,7 +45,10 @@ import {DeviceConnectionAbstract} from "@shared/abstracts/device-connection.abst
     IonImg,
   ],
 })
-export class WelcomePage extends DeviceConnectionAbstract implements OnInit, AfterViewInit, OnDestroy {
+export class WelcomePage
+  extends DeviceConnectionAbstract
+  implements OnInit, AfterViewInit, OnDestroy
+{
   private _store = inject(Store<fromCoreStore.CoreState>);
   private _formBuilder = inject(FormBuilder);
 
@@ -307,7 +310,8 @@ export class WelcomePage extends DeviceConnectionAbstract implements OnInit, Aft
   private isConnected: boolean = false;
 
   constructor() {
-    super();
+    super({ waitForDeviceConnection: true });
+
     Keyboard.addListener('keyboardDidShow', () => {
       const content = document.querySelector('ion-content');
       if (content) {
@@ -674,14 +678,6 @@ export class WelcomePage extends DeviceConnectionAbstract implements OnInit, Aft
             },
           ],
         },
-      })
-    );
-  }
-
-  goTo(path: string) {
-    this._store.dispatch(
-      new fromCoreStore.Go({
-        path: [path],
       })
     );
   }

@@ -42,6 +42,7 @@ import {
   dataViewToDecimal,
   dataViewToHighLowBytes,
 } from '../utils/data-converters';
+import { BluetoothMockDeviceProvider } from './bluetooth-mock-device-provider.service';
 
 @Injectable({
   providedIn: 'root',
@@ -50,6 +51,7 @@ export class BluetoothService {
   #store = inject(Store<fromCoreStore.LayoutState>);
   #ngZone = inject(NgZone);
   #formBuilder = inject(FormBuilder);
+  #bluetoothMockDeviceProvider = inject(BluetoothMockDeviceProvider);
 
   #devices: ScanResult[] = [];
   #connected = false;
@@ -238,7 +240,8 @@ export class BluetoothService {
 
     if (!this.#isNativePlatform || this.#isVirtualDevice) {
       console.log('Using mocked device in non-native or virtual environment');
-      await this.#provideMockedDevice();
+      await this.#bluetoothMockDeviceProvider.provideMockDevice();
+      this.#scanning = false;
       return;
     }
 
@@ -417,7 +420,7 @@ export class BluetoothService {
 
       if (!this.#isNativePlatform || this.#isVirtualDevice) {
         this.#store.dispatch(new fromBluetoothStore.Connect(device));
-        await this.#connectToMockedDevice(device);
+        await this.#bluetoothMockDeviceProvider.connectToMockDevice(device);
         return;
       }
 
@@ -696,8 +699,9 @@ export class BluetoothService {
     try {
       if (!this.#isNativePlatform || this.#isVirtualDevice) {
         console.log('Using mock device for non-native/virtual environment');
-        await this.#provideMockedDevice();
+        await this.#bluetoothMockDeviceProvider.provideMockDevice();
         this.#connectionInProgress = false;
+        this.#scanning = false;
         return true;
       }
 
@@ -756,7 +760,7 @@ export class BluetoothService {
     }
   }
 
-  // TODO: will be rewritten (maybe removed while we implemented actions)
+  // TODO: will be rewritten (maybe removed when we implement related actions)
   async waitForDosingStart(continueDose?: boolean): Promise<boolean> {
     console.log('waitForDosingStart');
 
@@ -804,7 +808,7 @@ export class BluetoothService {
     }
   }
 
-  // TODO: will be rewritten (maybe removed while we implemented actions)
+  // TODO: will be rewritten (maybe removed when we implement related actions)
   async checkDosing(): Promise<boolean> {
     try {
       // Wait for either completion, incomplete, or error state
@@ -943,85 +947,5 @@ export class BluetoothService {
 
   setBattery(value: number): void {
     this.#battery = value;
-  }
-
-  /**
-   * Provides a mocked device for development and testing
-   */
-  async #provideMockedDevice(): Promise<void> {
-    console.log('Providing mocked device');
-
-    if (this.#connected) {
-      console.log('Already connected, skipping mock device creation');
-      return Promise.resolve();
-    }
-
-    if (!this.#devices.length) {
-      this.#store.dispatch(new fromBluetoothStore.UseMockDevice(true));
-
-      const mockDevice = {
-        device: {
-          name: 'AutoMagic Mock Device',
-          deviceId: 'mock-device-id',
-        },
-        rssi: -45,
-        advertisementData: {
-          localName: 'AutoMagic Mock',
-          serviceUUIDs: ['MOCKED_UUID'],
-        },
-      };
-
-      this.#devices.push(mockDevice as unknown as ScanResult);
-    }
-
-    // Wait to simulate real scanning
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        this.#scanning = false;
-
-        if (!this.#connected) {
-          this.#connectToMockedDevice(this.#devices[0]).then(resolve);
-        } else {
-          resolve();
-        }
-      }, 3000);
-    });
-  }
-
-  /**
-   * Simulates connecting to a mocked device
-   */
-  async #connectToMockedDevice(mockDevice: any): Promise<void> {
-    this.#device = mockDevice;
-    this.#connected = true;
-    this.#connectedSubject.next(true);
-    this.#name = 'AutoMagic Mock Device';
-    this.#manufacturer = 'Theryx';
-    this.#model = 'AutoMagic Demo';
-    this.#serial = 'MOCK123456';
-    this.#softwareRevision = '1.0.0';
-    this.#hardwareRevision = '2.0.0';
-    this.#battery = 85;
-
-    this.#store.dispatch(
-      new fromBluetoothStore.ConnectSuccess({
-        deviceInfo: {
-          manufacturer: this.#manufacturer,
-          model: this.#model,
-          serial: this.#serial,
-          softwareRevision: this.#softwareRevision,
-          hardwareRevision: this.#hardwareRevision,
-          name: this.#name,
-          rssi: this.#rssi,
-        },
-      })
-    );
-
-    // Set initial state (ReadyForInjection)
-    this.#updateState(0x83);
-    this.#updateStateData(0);
-
-    console.log('Mock device connected successfully');
-    return Promise.resolve();
   }
 }

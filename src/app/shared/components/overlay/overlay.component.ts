@@ -1,5 +1,4 @@
 import {
-  AfterViewInit,
   Component,
   ElementRef,
   inject,
@@ -18,6 +17,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ConnectDeviceComponent } from '@core/components/connect-device/connect-device.component';
 import { IonButton } from '@ionic/angular/standalone';
 import * as fromStore from '@shared/store';
+import { DebugMenuComponent } from '../debug-menu/debug-menu.component';
 import { LogViewerComponent } from '../log-viewer/log-viewer.component';
 
 @Component({
@@ -33,9 +33,10 @@ import { LogViewerComponent } from '../log-viewer/log-viewer.component';
     IonButton,
     ConnectDeviceComponent,
     LogViewerComponent,
+    DebugMenuComponent,
   ],
 })
-export class OverlayComponent implements OnInit, AfterViewInit, OnDestroy {
+export class OverlayComponent implements OnInit, OnDestroy {
   #store = inject(Store<fromStore.SharedState>);
   #sanitizer = inject(DomSanitizer);
   #destroy$ = new Subject<void>();
@@ -48,7 +49,7 @@ export class OverlayComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('contentComponent', { read: ViewContainerRef })
   contentComponent!: ViewContainerRef;
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.config$.pipe(takeUntil(this.#destroy$)).subscribe((config) => {
       if (config) {
         this.config = config;
@@ -57,19 +58,21 @@ export class OverlayComponent implements OnInit, AfterViewInit, OnDestroy {
 
           if (this.config.show) {
             wrapper.classList.add('is-shown');
-
-            if (this.config.component && this.contentComponent) {
-              this._loadComponent(this.config.component);
+            // Reset transform when showing overlay
+            const content =
+              this.overlay.nativeElement.querySelector('.overlay__content');
+            if (content) {
+              content.style.transform = '';
             }
+            // Load the component when showing the overlay
+            this._loadComponent(this.config.component);
           } else {
             if (wrapper.classList.contains('is-shown')) {
               const content =
                 this.overlay.nativeElement.querySelector('.overlay__content');
               if (content) {
                 content.style.transform = '';
-
                 void content.offsetWidth;
-
                 content.style.transform = 'translateY(100%)';
 
                 setTimeout(() => {
@@ -91,27 +94,9 @@ export class OverlayComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  ngAfterViewInit() {
-    this.config$.pipe(takeUntil(this.#destroy$)).subscribe((config) => {
-      if (config && config.show && config.component && this.contentComponent) {
-        this._loadComponent(config.component);
-      }
-    });
-  }
-
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.#destroy$.next();
     this.#destroy$.complete();
-  }
-
-  sanitizeContent(htmlContent: string): SafeHtml {
-    return this.#sanitizer.bypassSecurityTrustHtml(htmlContent);
-  }
-
-  handleOverlayClick(event: any) {
-    if (event.target.id === 'overlay' && this.config.closeOnOverlayClick) {
-      this.closeOverlay();
-    }
   }
 
   closeOverlay(): void {
@@ -127,6 +112,20 @@ export class OverlayComponent implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(() => {
       this.#store.dispatch(new fromStore.OverlayHide());
     }, 50);
+  }
+
+  handleOverlayClick(event: MouseEvent): void {
+    if (
+      event.target instanceof HTMLElement &&
+      event.target.id === 'overlay' &&
+      this.config.closeOnOverlayClick
+    ) {
+      this.closeOverlay();
+    }
+  }
+
+  sanitizeContent(htmlContent: string): SafeHtml {
+    return this.#sanitizer.bypassSecurityTrustHtml(htmlContent);
   }
 
   private _loadComponent(componentName: string) {
@@ -153,6 +152,9 @@ export class OverlayComponent implements OnInit, AfterViewInit, OnDestroy {
           break;
         case 'LogViewerComponent':
           this.contentComponent.createComponent(LogViewerComponent);
+          break;
+        case 'DebugMenuComponent':
+          this.contentComponent.createComponent(DebugMenuComponent);
           break;
         default:
           console.warn('Unknown component:', componentName);
