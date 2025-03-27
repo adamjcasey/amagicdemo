@@ -18,7 +18,7 @@ export class LogButtonComponent implements OnInit, OnDestroy {
   #store = inject(Store);
   destroy$ = new Subject<void>();
 
-  isLogViewerVisible = false;
+  isDebugMenuVisible = false;
 
   constructor() {
     addIcons({
@@ -31,8 +31,8 @@ export class LogButtonComponent implements OnInit, OnDestroy {
       .select(fromSharedStore.getOverlayConfig)
       .pipe(takeUntil(this.destroy$))
       .subscribe((config) => {
-        this.isLogViewerVisible = !!(
-          config?.show && config?.component === 'LogViewerComponent'
+        this.isDebugMenuVisible = !!(
+          config?.show && config?.component === 'DebugMenuComponent'
         );
       });
   }
@@ -42,14 +42,14 @@ export class LogButtonComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  toggleLogViewer(): void {
-    if (this.isLogViewerVisible) {
+  toggleDebugMenu(): void {
+    if (this.isDebugMenuVisible) {
       this.#store.dispatch(new fromSharedStore.OverlayHide());
     } else {
       this.#store.dispatch(
         new fromSharedStore.OverlayShow({
           show: true,
-          component: 'LogViewerComponent',
+          component: 'DebugMenuComponent',
         })
       );
     }
