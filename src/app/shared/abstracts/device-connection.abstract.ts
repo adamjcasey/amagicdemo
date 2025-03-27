@@ -7,21 +7,27 @@ import { BaseComponentAbstract } from './base-component.abstract';
 
 @Directive()
 export abstract class DeviceConnectionAbstract extends BaseComponentAbstract {
-  protected isAlreadyConnected = false;
+  waitForDeviceConnection = false;
 
   protected isDeviceConnected$: Observable<boolean> = this.store.select(
     fromBluetoothStore.getIsConnected
   );
 
-  protected constructor() {
+  protected constructor(
+    options: { waitForDeviceConnection: boolean } = {
+      waitForDeviceConnection: false,
+    }
+  ) {
     super();
+    this.waitForDeviceConnection = options.waitForDeviceConnection;
+
     this.isDeviceConnected$
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((isConnected) => {
-        if (this.isAlreadyConnected && !isConnected) {
+        if (!this.waitForDeviceConnection && !isConnected) {
           this.showDeviceDisconnectedAlert();
         }
-        this.isAlreadyConnected = isConnected;
+        this.waitForDeviceConnection = isConnected;
       });
   }
 

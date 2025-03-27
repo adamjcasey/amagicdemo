@@ -1,4 +1,6 @@
 import { Action } from '@ngrx/store';
+import { DeviceStateCode } from '../constants/bluetooth.constants';
+import { MockScenario } from '../models/bluetooth-mock.models';
 
 export enum BluetoothActionTypes {
   Connect = '[Bluetooth] Connect',
@@ -20,8 +22,6 @@ export enum BluetoothActionTypes {
   UpdateBatteryLevel = '[Bluetooth] Update Battery Level',
   UpdateDeviceInfo = '[Bluetooth] Update Device Info',
 
-  UseMockDevice = '[Bluetooth] Use Mock Device',
-
   CheckPermissions = '[Bluetooth] Check Permissions',
   PermissionsResult = '[Bluetooth] Permissions Result',
   OpenSettings = '[Bluetooth] Open Settings',
@@ -29,6 +29,11 @@ export enum BluetoothActionTypes {
   SetError = '[Bluetooth] Set Error',
 
   InitializeBluetoothState = '[Bluetooth] Initialize State',
+
+  StartMockScenario = '[Bluetooth] Start Mock Scenario',
+  StopMockScenario = '[Bluetooth] Stop Mock Scenario',
+  CreateMockScenario = '[Bluetooth] Create Mock Scenario',
+  MockScenarioStepExecuted = '[Bluetooth] Mock Scenario Step Executed',
 }
 
 export class Connect implements Action {
@@ -111,11 +116,6 @@ export class UpdateDeviceInfo implements Action {
   ) {}
 }
 
-export class UseMockDevice implements Action {
-  readonly type = BluetoothActionTypes.UseMockDevice;
-  constructor(public payload: boolean = true) {}
-}
-
 export class CheckPermissions implements Action {
   readonly type = BluetoothActionTypes.CheckPermissions;
 }
@@ -154,6 +154,31 @@ export class InitializeBluetoothState implements Action {
   ) {}
 }
 
+export class StartMockScenario implements Action {
+  readonly type = BluetoothActionTypes.StartMockScenario;
+  constructor(public payload: string) {}
+}
+
+export class StopMockScenario implements Action {
+  readonly type = BluetoothActionTypes.StopMockScenario;
+}
+
+export class CreateMockScenario implements Action {
+  readonly type = BluetoothActionTypes.CreateMockScenario;
+  constructor(public payload: MockScenario) {}
+}
+
+export class MockScenarioStepExecuted implements Action {
+  readonly type = BluetoothActionTypes.MockScenarioStepExecuted;
+  constructor(
+    public payload: {
+      stepIndex: number;
+      totalSteps: number;
+      state: DeviceStateCode;
+    }
+  ) {}
+}
+
 export type BluetoothActions =
   | Connect
   | ConnectSuccess
@@ -170,9 +195,12 @@ export type BluetoothActions =
   | UpdateDeviceStateData
   | UpdateBatteryLevel
   | UpdateDeviceInfo
-  | UseMockDevice
   | CheckPermissions
   | PermissionsResult
   | OpenSettings
   | SetError
-  | InitializeBluetoothState;
+  | InitializeBluetoothState
+  | StartMockScenario
+  | StopMockScenario
+  | CreateMockScenario
+  | MockScenarioStepExecuted;

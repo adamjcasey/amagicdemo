@@ -8,6 +8,7 @@ import { Observable, takeUntil } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MOCK_SCENARIO_IDS } from '@app/shared/libs/bluetooth/constants/bluetooth-mock.constants';
 import * as fromBluetoothStore from '@app/shared/libs/bluetooth/store';
 import * as fromHomeStore from '@home/store';
 import { IonContent } from '@ionic/angular/standalone';
@@ -18,8 +19,8 @@ import { addIcons } from 'ionicons';
 import { informationCircleOutline } from 'ionicons/icons';
 
 export enum CassetteRemoveSlides {
-  RemoveCassete = 1,
-  DiscardInjection = 2,
+  RemoveCassete = 0,
+  DiscardInjection = 1,
 }
 
 @Component({
@@ -107,6 +108,12 @@ export class CassetteRemovePage
     addIcons({
       informationCircleOutline,
     });
+
+    this.store.dispatch(
+      new fromBluetoothStore.StartMockScenario(
+        MOCK_SCENARIO_IDS.CASSETTE_REMOVE_HAPPY_PATH
+      )
+    );
   }
 
   ngAfterViewInit() {
@@ -136,6 +143,12 @@ export class CassetteRemovePage
   }
 
   #handleDisposeCassette(): void {
+    const currentSlideIndex = this.sliderPage.config.content.currentSlide;
+
+    if (currentSlideIndex <= CassetteRemoveSlides.DiscardInjection) {
+      return;
+    }
+
     console.log('Navigating to DiscardInjection slide');
     this.sliderPage.slideTo(CassetteRemoveSlides.DiscardInjection);
 
@@ -168,7 +181,7 @@ export class CassetteRemovePage
           ],
         })
       );
-    }, 2000);
+    }, 1000);
   }
 
   #handleCloseAction(): void {

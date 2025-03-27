@@ -12,6 +12,7 @@ import {
   tap,
   withLatestFrom,
 } from 'rxjs/operators';
+import { BluetoothMockManagerService } from '../services/bluetooth-mock-manager.service';
 import { BluetoothService } from '../services/bluetooth.service';
 import * as fromActions from './bluetooth.actions';
 import * as fromSelector from './bluetooth.reducer';
@@ -22,7 +23,8 @@ export class BluetoothEffects {
   constructor(
     private actions$: Actions,
     private store: Store<{ bluetooth: BluetoothState }>,
-    private bluetoothService: BluetoothService
+    private bluetoothService: BluetoothService,
+    private mockManager: BluetoothMockManagerService
   ) {}
 
   // Initialize platform detection and device info
@@ -280,6 +282,70 @@ export class BluetoothEffects {
             })
           );
         })
+      ),
+    { dispatch: false }
+  );
+
+  startMockScenario$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(fromActions.BluetoothActionTypes.StartMockScenario),
+        withLatestFrom(this.store.select(fromSelector.getUseMockDevice)),
+        tap(
+          ([action, useMockDevice]: [
+            fromActions.StartMockScenario,
+            boolean
+          ]) => {
+            if (useMockDevice) {
+              this.mockManager.startScenario(action.payload);
+            } else {
+              console.error(
+                'Cannot start mock scenario: Mock device is not enabled'
+              );
+            }
+          }
+        )
+      ),
+    { dispatch: false }
+  );
+
+  stopMockScenario$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(fromActions.BluetoothActionTypes.StopMockScenario),
+        withLatestFrom(this.store.select(fromSelector.getUseMockDevice)),
+        tap(([_, useMockDevice]: [fromActions.StopMockScenario, boolean]) => {
+          if (useMockDevice) {
+            this.mockManager.stopScenario();
+          } else {
+            console.error(
+              'Cannot stop mock scenario: Mock device is not enabled'
+            );
+          }
+        })
+      ),
+    { dispatch: false }
+  );
+
+  createMockScenario$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(fromActions.BluetoothActionTypes.CreateMockScenario),
+        withLatestFrom(this.store.select(fromSelector.getUseMockDevice)),
+        tap(
+          ([action, useMockDevice]: [
+            fromActions.CreateMockScenario,
+            boolean
+          ]) => {
+            if (useMockDevice) {
+              this.mockManager.createScenario(action.payload);
+            } else {
+              console.error(
+                'Cannot create mock scenario: Mock device is not enabled'
+              );
+            }
+          }
+        )
       ),
     { dispatch: false }
   );
