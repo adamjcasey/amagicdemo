@@ -158,6 +158,24 @@ export function bluetoothReducer(
         loading: false,
       };
 
+    case fromActions.BluetoothActionTypes.StartMockScenario:
+      return {
+        ...state,
+        mockScenariosHistory: [...state.mockScenariosHistory, action.payload],
+      };
+
+    case fromActions.BluetoothActionTypes.StopMockScenario:
+      return state;
+
+    case fromActions.BluetoothActionTypes.CreateMockScenario:
+      return state;
+
+    case fromActions.BluetoothActionTypes.MockScenarioStepExecuted:
+      return {
+        ...state,
+        state: action.payload.state,
+      };
+
     default:
       return state;
   }
@@ -248,4 +266,9 @@ export const getIsVirtualDevice = createSelector(
 export const getConnectionInProgress = createSelector(
   getBluetoothState,
   (state: BluetoothState) => state.connectionInProgress
+);
+
+export const getMockScenariosHistory = createSelector(
+  getBluetoothState,
+  (state: BluetoothState) => state.mockScenariosHistory
 );

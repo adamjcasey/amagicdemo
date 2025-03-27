@@ -11,6 +11,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DeviceStateCode } from '@app/shared/libs/bluetooth';
 import { MOCK_SCENARIO_IDS } from '@app/shared/libs/bluetooth/constants/bluetooth-mock.constants';
 import * as fromBluetoothStore from '@app/shared/libs/bluetooth/store';
+import { getMockScenariosHistory } from '@app/shared/libs/bluetooth/store/bluetooth.reducer';
 import { IonContent } from '@ionic/angular/standalone';
 import { DeviceConnectionAbstract } from '@shared/abstracts/device-connection.abstract';
 import * as fromSharedComponents from '@shared/components';
@@ -71,6 +72,8 @@ export class CassetteJourneyPage
     fromBluetoothStore.getDeviceState
   );
 
+  mockScenariosHistory$ = this.store.select(getMockScenariosHistory);
+
   slides: Array<any> = [
     {
       content: {
@@ -85,24 +88,7 @@ export class CassetteJourneyPage
               action: () => {
                 this.sliderPage.slideNext();
 
-                this.store.dispatch(
-                  new fromBluetoothStore.StartMockScenario(
-                    MOCK_SCENARIO_IDS.CASSETTE_JOURNEY_HAPPY_PATH
-                  )
-                );
-
-                // TODO: switch between happy path and used cassette path
-
-                // this.deviceState$.pipe(take(1)).subscribe((deviceState) => {
-                //   const scenarioId =
-                //     deviceState === DeviceStateCode.PoweringOff
-                //       ? MOCK_SCENARIO_IDS.CASSETTE_JOURNEY_HAPPY_PATH
-                //       : MOCK_SCENARIO_IDS.CASSETTE_JOURNEY_USED_CASSETTE_PATH;
-
-                //   this.store.dispatch(
-                //     new fromBluetoothStore.StartMockScenario(scenarioId)
-                //   );
-                // });
+                this.#mockScenario();
               },
             },
           ],
@@ -417,5 +403,18 @@ export class CassetteJourneyPage
 
   #goToRemoveCassette(): void {
     this.goTo('/home/cassette-remove');
+  }
+
+  #mockScenario(): void {
+    this.mockScenariosHistory$.pipe(take(1)).subscribe((history) => {
+      const hasUsedCassetteBeenRun = history.includes(
+        MOCK_SCENARIO_IDS.CASSETTE_JOURNEY_USED_CASSETTE_PATH
+      );
+      const scenarioId = hasUsedCassetteBeenRun
+        ? MOCK_SCENARIO_IDS.CASSETTE_JOURNEY_HAPPY_PATH
+        : MOCK_SCENARIO_IDS.CASSETTE_JOURNEY_USED_CASSETTE_PATH;
+
+      this.store.dispatch(new fromBluetoothStore.StartMockScenario(scenarioId));
+    });
   }
 }
