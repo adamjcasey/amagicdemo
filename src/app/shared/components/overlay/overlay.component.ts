@@ -1,8 +1,8 @@
 import {
-  AfterViewInit,
   Component,
   ElementRef,
   inject,
+  OnDestroy,
   OnInit,
   ViewChild,
   ViewContainerRef,
@@ -10,13 +10,15 @@ import {
 } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ConnectDeviceComponent } from '@core/components/connect-device/connect-device.component';
 import { IonButton } from '@ionic/angular/standalone';
 import * as fromStore from '@shared/store';
+import { DebugMenuComponent } from '../debug-menu/debug-menu.component';
+import { LogViewerComponent } from '../log-viewer/log-viewer.component';
 
 @Component({
   selector: 'automagic-overlay',
@@ -30,11 +32,16 @@ import * as fromStore from '@shared/store';
     ReactiveFormsModule,
     IonButton,
     ConnectDeviceComponent,
+    LogViewerComponent,
+    DebugMenuComponent,
   ],
 })
-export class OverlayComponent implements OnInit, AfterViewInit {
+export class OverlayComponent implements OnInit, OnDestroy {
   #store = inject(Store<fromStore.SharedState>);
   #sanitizer = inject(DomSanitizer);
+  #destroy$ = new Subject<void>();
+
+  #lastComponentName = '';
 
   config$: Observable<any> = this.#store.select(fromStore.getOverlayConfig);
   config: any;
@@ -42,12 +49,13 @@ export class OverlayComponent implements OnInit, AfterViewInit {
   @ViewChild('contentComponent', { read: ViewContainerRef })
   contentComponent!: ViewContainerRef;
 
-  ngOnInit() {
-    this.config$.subscribe((config) => {
+  ngOnInit(): void {
+    this.config$.pipe(takeUntil(this.#destroy$)).subscribe((config) => {
       if (config) {
         this.config = config;
         if (this.overlay) {
           const wrapper = this.overlay.nativeElement.parentElement;
+
           if (this.config.show) {
             wrapper.classList.add('is-shown');
             // Reset transform when showing overlay
@@ -56,20 +64,24 @@ export class OverlayComponent implements OnInit, AfterViewInit {
             if (content) {
               content.style.transform = '';
             }
+            // Load the component when showing the overlay
+            this._loadComponent(this.config.component);
           } else {
             if (wrapper.classList.contains('is-shown')) {
               const content =
                 this.overlay.nativeElement.querySelector('.overlay__content');
               if (content) {
                 content.style.transform = '';
-
                 void content.offsetWidth;
-
                 content.style.transform = 'translateY(100%)';
 
                 setTimeout(() => {
                   wrapper.classList.remove('is-shown');
                   console.log('Overlay closed');
+                  this.#lastComponentName = '';
+                  if (this.contentComponent) {
+                    this.contentComponent.clear();
+                  }
                 }, 400);
               } else {
                 wrapper.classList.remove('is-shown');
@@ -82,23 +94,9 @@ export class OverlayComponent implements OnInit, AfterViewInit {
     });
   }
 
-  ngAfterViewInit() {
-    this.config$.subscribe((config) => {
-      if (config && config.show && config.component && this.contentComponent) {
-        this.contentComponent.clear();
-        this._loadComponent(config.component);
-      }
-    });
-  }
-
-  sanitizeContent(htmlContent: string): SafeHtml {
-    return this.#sanitizer.bypassSecurityTrustHtml(htmlContent);
-  }
-
-  handleOverlayClick(event: any) {
-    if (event.target.id === 'overlay' && this.config.closeOnOverlayClick) {
-      this.closeOverlay();
-    }
+  ngOnDestroy(): void {
+    this.#destroy$.next();
+    this.#destroy$.complete();
   }
 
   closeOverlay(): void {
@@ -116,8 +114,30 @@ export class OverlayComponent implements OnInit, AfterViewInit {
     }, 50);
   }
 
+  handleOverlayClick(event: MouseEvent): void {
+    if (
+      event.target instanceof HTMLElement &&
+      event.target.id === 'overlay' &&
+      this.config.closeOnOverlayClick
+    ) {
+      this.closeOverlay();
+    }
+  }
+
+  sanitizeContent(htmlContent: string): SafeHtml {
+    return this.#sanitizer.bypassSecurityTrustHtml(htmlContent);
+  }
+
   private _loadComponent(componentName: string) {
+    if (this.#lastComponentName === componentName) {
+      console.log('Component already loaded:', componentName);
+      return;
+    }
+
+    console.log('Loading component:', componentName);
+
     this.contentComponent.clear();
+    this.#lastComponentName = componentName;
 
     try {
       switch (componentName) {
@@ -130,12 +150,20 @@ export class OverlayComponent implements OnInit, AfterViewInit {
             this.closeOverlay();
           });
           break;
+        case 'LogViewerComponent':
+          this.contentComponent.createComponent(LogViewerComponent);
+          break;
+        case 'DebugMenuComponent':
+          this.contentComponent.createComponent(DebugMenuComponent);
+          break;
         default:
           console.warn('Unknown component:', componentName);
+          this.#lastComponentName = '';
           break;
       }
     } catch (error) {
       console.error('Error loading component:', componentName, error);
+      this.#lastComponentName = '';
     }
   }
 }

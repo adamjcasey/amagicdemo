@@ -6,7 +6,6 @@ import {
   ScanResult,
 } from '@capacitor-community/bluetooth-le';
 import { Capacitor } from '@capacitor/core';
-import { Device } from '@capacitor/device';
 import * as fromCoreStore from '@core/store';
 import { Store } from '@ngrx/store';
 import * as fromSharedStore from '@shared/store';
@@ -37,6 +36,7 @@ import {
   STATUS_NAMES,
 } from '../constants/bluetooth.constants';
 import * as fromBluetoothStore from '../store';
+import { getUseMockDevice } from '../store/bluetooth.reducer';
 import {
   dataViewToAsciiString,
   dataViewToDecimal,
@@ -67,7 +67,6 @@ export class BluetoothService {
   #softwareRevision = '';
   #hardwareRevision = '';
   readonly #isNativePlatform = Capacitor.isNativePlatform();
-  #isVirtualDevice = false;
 
   #state = new BehaviorSubject<number>(0);
   readonly state$ = this.#state.asObservable();
@@ -173,7 +172,6 @@ export class BluetoothService {
 
   constructor() {
     this.#initializeSubscriptions();
-    this.#checkDeviceInfo();
   }
 
   //--------------------------------------------------
@@ -193,18 +191,6 @@ export class BluetoothService {
         );
       }
     });
-  }
-
-  async #checkDeviceInfo(): Promise<void> {
-    if (this.#isNativePlatform) {
-      try {
-        const info = await Device.getInfo();
-        this.#isVirtualDevice = info.isVirtual;
-      } catch (error) {
-        console.error('Error getting device info:', error);
-        this.#isVirtualDevice = false;
-      }
-    }
   }
 
   //--------------------------------------------------
@@ -238,8 +224,11 @@ export class BluetoothService {
     this.#devices = [];
     this.#scanning = true;
 
-    if (!this.#isNativePlatform || this.#isVirtualDevice) {
-      console.log('Using mocked device in non-native or virtual environment');
+    const useMockDevice = await firstValueFrom(
+      this.#store.select(getUseMockDevice)
+    );
+    if (useMockDevice) {
+      console.log('Using mocked device');
       await this.#bluetoothMockDeviceProvider.provideMockDevice();
       this.#scanning = false;
       return;
@@ -418,7 +407,10 @@ export class BluetoothService {
     try {
       await this.#stopScan();
 
-      if (!this.#isNativePlatform || this.#isVirtualDevice) {
+      const useMockDevice = await firstValueFrom(
+        this.#store.select(getUseMockDevice)
+      );
+      if (useMockDevice) {
         this.#store.dispatch(new fromBluetoothStore.Connect(device));
         await this.#bluetoothMockDeviceProvider.connectToMockDevice(device);
         return;
@@ -697,8 +689,11 @@ export class BluetoothService {
     this.#connectionInProgress = true;
 
     try {
-      if (!this.#isNativePlatform || this.#isVirtualDevice) {
-        console.log('Using mock device for non-native/virtual environment');
+      const useMockDevice = await firstValueFrom(
+        this.#store.select(getUseMockDevice)
+      );
+      if (useMockDevice) {
+        console.log('Using mock device');
         await this.#bluetoothMockDeviceProvider.provideMockDevice();
         this.#connectionInProgress = false;
         this.#scanning = false;
