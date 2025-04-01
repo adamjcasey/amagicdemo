@@ -116,6 +116,9 @@
 
         .wrapper-small__slide {
           grid-template-rows: auto;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-end;
 
           .content-wrapper {
             display: none;
@@ -124,8 +127,11 @@
           .actions-wrapper {
             grid-row: 1;
             align-items: center;
-            position: absolute;
-            bottom: 37px;
+            position: relative;
+            z-index: 3;
+            background-color: var(--color-white);
+            margin-top: auto;
+            padding-bottom: var(--size-s);
           }
         }
       }
@@ -140,14 +146,18 @@
     border-radius: 16px 16px 0px 0px;
     background-color: var(--color-white);
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
 
     .wrapper-small {
       position: relative;
-      display: grid;
-      grid-template-rows: max-content auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
       gap: var(--size-xxxxs);
       height: 100%;
-      // transition: opacity 0.3s ease-in-out;
+      min-height: var(--slider-page-content-min-size);
 
       .wrapper-small__navigation {
         grid-row: 1;
@@ -178,6 +188,8 @@
         grid-template-rows: 1fr 1fr;
         grid-template-columns: 1fr 1fr;
         padding: var(--size-xs) var(--size-s) 0;
+        position: relative;
+        z-index: 1;
 
         .timeline-bar-progress {
           grid-row: 1;
@@ -230,6 +242,8 @@
 
       swiper-container {
         grid-row: 2;
+        position: relative;
+        z-index: 2;
 
         .wrapper-small__slide {
           display: flex;
@@ -242,6 +256,7 @@
           text-align: center;
           overflow-y: auto;
           position: relative;
+          min-height: 100%;
 
           &:not(.swiper-slide-active) {
             opacity: 0 !important;
@@ -250,6 +265,9 @@
 
           .content-wrapper {
             grid-row: 1;
+            flex: 1;
+            position: relative;
+            z-index: 1;
           }
 
           .actions-wrapper {
@@ -258,13 +276,12 @@
             gap: var(--size-xxxs);
             justify-content: center;
             min-height: 48px;
-            position: absolute;
-            bottom: 37px;
-            left: 0;
-            right: 0;
+            position: relative;
+            z-index: 3;
             width: 100%;
             padding: 0 var(--size-xs);
             box-sizing: border-box;
+            background-color: var(--color-white);
           }
 
           .template-wrapper {
