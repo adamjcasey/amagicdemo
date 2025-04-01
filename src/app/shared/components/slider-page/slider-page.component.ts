@@ -86,11 +86,14 @@ export class SliderPageComponent implements OnInit, OnDestroy {
   contentSwiperModules = [EffectFade, Pagination];
 
   headerSwiperConfig = {
-    // effect: 'fade',
-    // fadeEffect: {
-    //   crossFade: true,
-    // },
-    // allowTouchMove: false,
+    effect: 'fade',
+    fadeEffect: {
+      crossFade: true,
+    },
+    allowTouchMove: false,
+    speed: 500,
+    modules: [EffectFade],
+    lazy: false,
   };
 
   contentSwiperConfig = {
@@ -602,6 +605,7 @@ export class SliderPageComponent implements OnInit, OnDestroy {
 
       // Set up parameters before initialization
       headerSwiperEl.setAttribute('effect', 'fade');
+      headerSwiperEl.setAttribute('lazy', 'false');
 
       // Update content swiper attributes
       contentSwiperEl.setAttribute('effect', 'fade');
@@ -617,6 +621,7 @@ export class SliderPageComponent implements OnInit, OnDestroy {
         allowTouchMove: false,
         speed: 500,
         modules: [EffectFade],
+        lazy: false,
       };
 
       const contentParams = {

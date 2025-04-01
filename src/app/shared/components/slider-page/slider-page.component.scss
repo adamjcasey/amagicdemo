@@ -33,6 +33,16 @@
           opacity: 0 !important;
           pointer-events: none;
         }
+
+        .asset-wrapper {
+          img {
+            display: block;
+            width: 100%;
+            height: auto;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+          }
+        }
       }
     }
 

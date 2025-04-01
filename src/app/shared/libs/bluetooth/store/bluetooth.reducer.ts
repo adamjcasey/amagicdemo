@@ -120,6 +120,7 @@ export function bluetoothReducer(
         state: action.payload,
         stateRaw: (action.payload << 8) | state.stateData,
         stateName,
+        isConnected: action.payload !== DeviceStateCode.PoweringOff,
       };
 
     case fromActions.BluetoothActionTypes.UpdateDeviceStateData:
@@ -144,12 +145,6 @@ export function bluetoothReducer(
         },
       };
 
-    case fromActions.BluetoothActionTypes.UseMockDevice:
-      return {
-        ...state,
-        useMockDevice: action.payload,
-      };
-
     case fromActions.BluetoothActionTypes.PermissionsResult:
       return {
         ...state,
@@ -161,6 +156,24 @@ export function bluetoothReducer(
         ...state,
         error: action.payload,
         loading: false,
+      };
+
+    case fromActions.BluetoothActionTypes.StartMockScenario:
+      return {
+        ...state,
+        mockScenariosHistory: [...state.mockScenariosHistory, action.payload],
+      };
+
+    case fromActions.BluetoothActionTypes.StopMockScenario:
+      return state;
+
+    case fromActions.BluetoothActionTypes.CreateMockScenario:
+      return state;
+
+    case fromActions.BluetoothActionTypes.MockScenarioStepExecuted:
+      return {
+        ...state,
+        state: action.payload.state,
       };
 
     default:
@@ -253,4 +266,9 @@ export const getIsVirtualDevice = createSelector(
 export const getConnectionInProgress = createSelector(
   getBluetoothState,
   (state: BluetoothState) => state.connectionInProgress
+);
+
+export const getMockScenariosHistory = createSelector(
+  getBluetoothState,
+  (state: BluetoothState) => state.mockScenariosHistory
 );

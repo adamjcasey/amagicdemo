@@ -122,7 +122,7 @@
         </div>
       </div>
 
-      <div class="wrapper-large__toolbar" *ngIf="config.content?.toolbar"
+      <div class="wrapper-large__toolbar" *ngIf="config.content?.toolbar?.template || config.content?.toolbar?.actions"
         [style.background-color]="'var(--color-white)'">
         <div class="wrapper-large__toolbar-template" *ngIf="config.content?.toolbar?.template"
           [innerHTML]="sanitizeContent(config.content.toolbar.template)"></div>

@@ -20,7 +20,7 @@ automagic-overlay {
     pointer-events: auto;
 
     .overlay__content {
-      transform: translateY(0);
+      transform: translateY(0) !important;
     }
   }
 }
@@ -49,6 +49,24 @@ automagic-overlay {
     text-align: center;
     transform: translateY(100%);
     transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .overlay__component-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: auto;
+
+    > * {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
   }
 
   .overlay__template {
@@ -76,5 +94,12 @@ automagic-overlay {
     display: flex;
     flex-direction: column;
     gap: var(--size-s);
+  }
+
+  ::ng-deep automagic-overlay {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
   }
 }

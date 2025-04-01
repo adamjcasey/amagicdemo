@@ -310,7 +310,8 @@ export class WelcomePage
   private isConnected: boolean = false;
 
   constructor() {
-    super();
+    super({ waitForDeviceConnection: true });
+
     Keyboard.addListener('keyboardDidShow', () => {
       const content = document.querySelector('ion-content');
       if (content) {

@@ -1,0 +1,119 @@
+.debug-menu {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  color: var(--color-dark);
+  background-color: var(--color-white);
+
+  &__content {
+    flex: 1;
+    --padding-start: 16px;
+    --padding-end: 16px;
+    --padding-top: var(--topbar-size);
+    --padding-bottom: 16px;
+    overflow-y: auto;
+  }
+
+  &__section {
+    margin: 24px 0 48px;
+
+    &:last-child {
+      margin-bottom: 24px;
+    }
+  }
+
+  &__section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    position: relative;
+  }
+
+  &__section-title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 500;
+    padding-bottom: 24px;
+  }
+
+  &__state-grid {
+    background-color: var(--color-lightest-gray, #f8f8f8);
+    border-radius: 8px;
+    padding: 12px;
+  }
+
+  &__state-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--color-light-gray, #f0f0f0);
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  &__state-label {
+    font-weight: 500;
+    color: var(--color-medium-gray);
+  }
+
+  &__state-value {
+    font-family: monospace;
+    font-size: 14px;
+  }
+
+  &__logs {
+    background-color: var(--color-lightest-gray, #f8f8f8);
+    border-radius: 8px;
+    padding: 12px;
+  }
+
+  &__empty {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color: var(--color-medium-gray);
+    font-style: italic;
+  }
+}
+
+.log-entry {
+  margin-bottom: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  background-color: var(--color-white);
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &__timestamp {
+    font-size: 12px;
+    color: var(--color-medium-gray);
+    margin-bottom: 4px;
+  }
+
+  &__action {
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+
+  &__payload {
+    font-family: monospace;
+    font-size: 12px;
+    background-color: var(--color-light-gray, #f0f0f0);
+    padding: 8px;
+    border-radius: 4px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    margin: 0;
+  }
+}

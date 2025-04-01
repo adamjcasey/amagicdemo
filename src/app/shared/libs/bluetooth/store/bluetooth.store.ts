@@ -38,6 +38,9 @@ export interface BluetoothState {
   // Error handling
   error: any;
   loading: boolean;
+
+  // Mock scenarios history
+  mockScenariosHistory: string[];
 }
 
 export const initialBluetoothState: BluetoothState = {
@@ -71,4 +74,6 @@ export const initialBluetoothState: BluetoothState = {
 
   error: null,
   loading: false,
+
+  mockScenariosHistory: [],
 };

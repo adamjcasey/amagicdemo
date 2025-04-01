@@ -1,0 +1,71 @@
+<div class="debug-menu">
+  <ion-content class="debug-menu__content">
+    <ion-list>
+      <ion-item lines="none">
+        <ion-label>Use Mock Device</ion-label>
+        <ion-toggle slot="end" [checked]="useMockDevice$ | async" (ionChange)="toggleMockDevice($event)"></ion-toggle>
+      </ion-item>
+    </ion-list>
+
+    <div class="debug-menu__section">
+      <div class="debug-menu__section-header">
+        <h3 class="debug-menu__section-title">Bluetooth State</h3>
+      </div>
+      <div class="debug-menu__state-grid">
+        <div class="debug-menu__state-item">
+          <span class="debug-menu__state-label">Is Connected:</span>
+          <span class="debug-menu__state-value">{{ (bluetoothState$ | async)?.isConnected }}</span>
+        </div>
+        <div class="debug-menu__state-item">
+          <span class="debug-menu__state-label">Is Scanning:</span>
+          <span class="debug-menu__state-value">{{ (bluetoothState$ | async)?.isScanning }}</span>
+        </div>
+        <div class="debug-menu__state-item">
+          <span class="debug-menu__state-label">Name:</span>
+          <span class="debug-menu__state-value">{{ (bluetoothState$ | async)?.deviceInfo?.name }}</span>
+        </div>
+        <div class="debug-menu__state-item">
+          <span class="debug-menu__state-label">State:</span>
+          <span class="debug-menu__state-value">{{ (bluetoothState$ | async)?.state }} ({{ (bluetoothState$ |
+            async)?.stateName }})</span>
+        </div>
+        <div class="debug-menu__state-item">
+          <span class="debug-menu__state-label">State Data:</span>
+          <span class="debug-menu__state-value">{{ (bluetoothState$ | async)?.stateData }}</span>
+        </div>
+        <div class="debug-menu__state-item">
+          <span class="debug-menu__state-label">Battery:</span>
+          <span class="debug-menu__state-value">{{ (bluetoothState$ | async)?.battery }}%</span>
+        </div>
+        <div class="debug-menu__state-item">
+          <span class="debug-menu__state-label">Use Mock Device:</span>
+          <span class="debug-menu__state-value">{{ (bluetoothState$ | async)?.useMockDevice }}</span>
+        </div>
+        <div class="debug-menu__state-item">
+          <span class="debug-menu__state-label">Permissions Status:</span>
+          <span class="debug-menu__state-value">{{ (bluetoothState$ | async)?.permissionsStatus }}</span>
+        </div>
+        <div class="debug-menu__state-item">
+          <span class="debug-menu__state-label">Loading:</span>
+          <span class="debug-menu__state-value">{{ (bluetoothState$ | async)?.loading }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="debug-menu__section">
+      <div class="debug-menu__section-header">
+        <h3 class="debug-menu__section-title">Logs</h3>
+      </div>
+      <div class="debug-menu__logs">
+        <div class="log-entry" *ngFor="let log of logs$ | async">
+          <div class="log-entry__timestamp">{{ formatDate(log.timestamp) }}</div>
+          <div class="log-entry__action">{{ log.action }}</div>
+          <pre class="log-entry__payload" *ngIf="log.payload">{{ formatPayload(log.payload) }}</pre>
+        </div>
+        <div class="debug-menu__empty" *ngIf="(logs$ | async)?.length === 0">
+          No logs recorded yet
+        </div>
+      </div>
+    </div>
+  </ion-content>
+</div>
