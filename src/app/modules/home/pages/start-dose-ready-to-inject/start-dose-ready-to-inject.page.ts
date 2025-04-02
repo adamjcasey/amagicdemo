@@ -72,6 +72,11 @@ export class StartDoseReadyToInjectPage
       new fromSharedStore.TopbarChangeColor('--color-bg-pastel-green')
     );
 
+    // TESTING: Automatically navigate to plunger retracting slide
+    // setTimeout(() => {
+    //   this.sliderPage.slideTo(7);
+    // }, 100);
+
     this.sliderPageConfig$
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((sliderPageConfig) => {
@@ -564,6 +569,13 @@ export class StartDoseReadyToInjectPage
           hide: true,
         },
         onLoad: () => {
+          // Mock injection
+          this._store.dispatch(
+            new fromBluetoothStore.StartMockScenario(
+              MOCK_SCENARIO_IDS.START_INJECTION_HAPPY_PATH
+            )
+          );
+
           if (!this.homeConfig.firstTimeDose || this.homeConfig.dosingError) {
             this.startWaitingForStartDosing();
 
@@ -637,12 +649,7 @@ export class StartDoseReadyToInjectPage
         new fromSharedStore.TopbarChangeColor('--color-transparent')
       );
 
-      this._store.dispatch(
-        new fromBluetoothStore.StartMockScenario(
-          MOCK_SCENARIO_IDS.START_INJECTION_HAPPY_PATH
-        )
-      );
-
+      // Subscribe to the injection state
       this._store
         .select(isInjectingState)
         .pipe(takeUntil(this.ngUnsubscribe))

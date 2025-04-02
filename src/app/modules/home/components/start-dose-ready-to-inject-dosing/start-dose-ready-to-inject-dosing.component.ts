@@ -112,11 +112,17 @@ export class StartDoseReadyToInjectDosingComponent
           if (progress >= 95) {
             this.title = 'Hold...';
             this.doseStatus = 'The injection is almost done...';
-            this._cdr.detectChanges();
+            this._store.dispatch(
+              new fromSharedStore.SliderPageSetHeaderOptions({
+                color: '--color-bg-pastel-blue',
+              })
+            );
           } else {
             this.title = 'Dosing...';
             this.doseStatus = 'The injection is in progress...';
           }
+
+          this._cdr.detectChanges();
         }
       });
 
@@ -130,11 +136,11 @@ export class StartDoseReadyToInjectDosingComponent
           this.doseStatus = 'Done!';
           this._cdr.detectChanges();
           this._store.dispatch(
-            new fromSharedStore.TopbarChangeColor('--color-bg-pastel-lime')
+            new fromSharedStore.TopbarChangeColor('--color-bg-pastel-mint')
           );
           this._store.dispatch(
             new fromSharedStore.SliderPageSetHeaderOptions({
-              color: '--color-bg-pastel-lime',
+              color: '--color-bg-pastel-mint',
             })
           );
 

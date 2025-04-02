@@ -16,8 +16,10 @@
   </div>
 
   <div class="dosing-box">
-    <ion-img *ngIf="!doseDone" class="dosing-box__indicator" src="/assets/images/dosing-box-indicator.svg"></ion-img>
+    <ion-img *ngIf="!doseDone" class="dosing-box__indicator" [style.top.%]="dosePercentageCompleted"
+      src="/assets/images/dosing-box-indicator.svg"></ion-img>
     <ion-img *ngIf="doseDone" class="dosing-box__indicator"
       src="/assets/images/dosing-box-indicator--done.svg"></ion-img>
+    <div class="dosing-box__background" [style.height.%]="100 - dosePercentageCompleted"></div>
   </div>
 </div>
