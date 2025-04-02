@@ -7,7 +7,7 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { filter, Observable, takeUntil } from 'rxjs';
+import { filter, Observable, take, takeUntil } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -613,6 +613,18 @@ export class StartDoseReadyToInjectPage
             </div>
           `,
         },
+        onLoad: () => {
+          this._store
+            .select(fromBluetoothStore.isRemoveCassetteState)
+            .pipe(
+              takeUntil(this.ngUnsubscribe),
+              filter((isRemoveCassetteState) => isRemoveCassetteState),
+              take(1)
+            )
+            .subscribe(() => {
+              this.goTo('/home/cassette-remove');
+            });
+        },
       }
     );
   }
@@ -649,7 +661,6 @@ export class StartDoseReadyToInjectPage
         new fromSharedStore.TopbarChangeColor('--color-transparent')
       );
 
-      // Subscribe to the injection state
       this._store
         .select(isInjectingState)
         .pipe(takeUntil(this.ngUnsubscribe))

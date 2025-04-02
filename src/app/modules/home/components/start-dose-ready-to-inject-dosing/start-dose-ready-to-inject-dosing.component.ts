@@ -8,13 +8,16 @@ import {
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import moment from 'moment';
-import { Observable, Subject, takeUntil } from 'rxjs';
+import { filter, Observable, Subject, take, takeUntil } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BluetoothService } from '@app/shared/libs/bluetooth';
 import * as fromBluetoothStore from '@app/shared/libs/bluetooth/store';
-import { isLiftFromInjectionSiteState } from '@app/shared/libs/bluetooth/store/device-state.selectors';
+import {
+  isLiftFromInjectionSiteState,
+  isReleasingCassetteState,
+} from '@app/shared/libs/bluetooth/store/device-state.selectors';
 import * as fromCoreStore from '@core/store';
 import * as fromStore from '@home/store';
 import { IonImg } from '@ionic/angular/standalone';
@@ -37,7 +40,6 @@ export class StartDoseReadyToInjectDosingComponent
   public layoutConfig: any;
   public homeConfig$!: Observable<any>;
   public homeConfig: any;
-  public totalTime: number = 10; // 10 seconds
   public nextDose: any;
   public startDosing: boolean = false;
   public errorDosing: boolean = false;
@@ -56,6 +58,7 @@ export class StartDoseReadyToInjectDosingComponent
   }
 
   ngOnInit() {
+    this.dosePercentageCompleted = 0;
     this._store.dispatch(
       new fromSharedStore.TopbarChangeColor('--color-bg-pastel-purple')
     );
@@ -107,7 +110,10 @@ export class StartDoseReadyToInjectDosingComponent
         if (stateData !== null) {
           // Convert hex to percentage (00 to FF = 0 to 255)
           const progress = (stateData / 255) * 100;
-          this.dosePercentageCompleted = progress;
+
+          if (progress > this.dosePercentageCompleted) {
+            this.dosePercentageCompleted = progress;
+          }
 
           if (progress >= 95) {
             this.title = 'Hold...';
@@ -144,6 +150,17 @@ export class StartDoseReadyToInjectDosingComponent
             })
           );
 
+          this._store
+            .select(isReleasingCassetteState)
+            .pipe(
+              takeUntil(this._ngUnsubscribe),
+              filter((isReleasingCassette) => isReleasingCassette),
+              take(1)
+            )
+            .subscribe(() => {
+              this.handleReleasingCassetteScreen();
+            });
+
           const markedDoses = this.homeConfig.doses.filter(
             (dose: any) => dose.marked
           );
@@ -162,6 +179,10 @@ export class StartDoseReadyToInjectDosingComponent
           currentDoseDate.set('minute', moment().get('minute'));
           const doseDateFormatted =
             currentDoseDate.format('D MMMM YYYY H:mm A');
+
+          this._store.dispatch(
+            new fromBluetoothStore.IncrementSuccessfulDoses()
+          );
 
           this._store.dispatch(
             new fromSharedStore.AlertShow({
@@ -268,6 +289,17 @@ export class StartDoseReadyToInjectDosingComponent
         }
       });
     */
+  }
+
+  handleReleasingCassetteScreen() {
+    this._store.dispatch(new fromSharedStore.AlertHide());
+    this._store.dispatch(new fromSharedStore.SliderPageClear());
+    this._store.dispatch(
+      new fromStore.SetData({
+        dosingStarted: false,
+      })
+    );
+    this._store.dispatch(new fromSharedStore.SliderPageSlideNext());
   }
 
   async continueDosing() {

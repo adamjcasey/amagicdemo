@@ -35,6 +35,8 @@ export enum BluetoothActionTypes {
   StopMockScenario = '[Bluetooth] Stop Mock Scenario',
   CreateMockScenario = '[Bluetooth] Create Mock Scenario',
   MockScenarioStepExecuted = '[Bluetooth] Mock Scenario Step Executed',
+
+  IncrementSuccessfulDoses = '[Bluetooth] Increment Successful Doses',
 }
 
 export class Connect implements Action {
@@ -185,6 +187,10 @@ export class MockScenarioStepExecuted implements Action {
   ) {}
 }
 
+export class IncrementSuccessfulDoses implements Action {
+  readonly type = BluetoothActionTypes.IncrementSuccessfulDoses;
+}
+
 export type BluetoothActions =
   | Connect
   | ConnectSuccess
@@ -210,4 +216,5 @@ export type BluetoothActions =
   | StartMockScenario
   | StopMockScenario
   | CreateMockScenario
-  | MockScenarioStepExecuted;
+  | MockScenarioStepExecuted
+  | IncrementSuccessfulDoses;

@@ -178,6 +178,12 @@ export function bluetoothReducer(
         state: action.payload.state,
       };
 
+    case fromActions.BluetoothActionTypes.IncrementSuccessfulDoses:
+      return {
+        ...state,
+        successfulDoses: state.successfulDoses + 1,
+      };
+
     default:
       return state;
   }
@@ -273,4 +279,9 @@ export const getConnectionInProgress = createSelector(
 export const getMockScenariosHistory = createSelector(
   getBluetoothState,
   (state: BluetoothState) => state.mockScenariosHistory
+);
+
+export const getSuccessfulDoses = createSelector(
+  getBluetoothState,
+  (state: BluetoothState) => state.successfulDoses
 );

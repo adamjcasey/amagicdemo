@@ -77,11 +77,11 @@ export const mockScenarios: { [key: string]: MockScenario } = {
       },
       {
         state: DeviceStateCode.Injecting,
-        duration: 10000,
+        duration: 5000,
         progressiveStateData: {
           start: 0, // Start from 00
           end: 255, // End at FF
-          interval: 40, // Update every 40ms to complete in ~10 seconds
+          interval: 20, // Update every 40ms to complete in ~10 seconds
         },
       },
       {
@@ -94,6 +94,14 @@ export const mockScenarios: { [key: string]: MockScenario } = {
       },
       {
         state: DeviceStateCode.ReleasingCassette,
+        duration: 3000,
+      },
+      {
+        state: DeviceStateCode.RemoveCassette,
+        duration: 3000,
+      },
+      {
+        state: DeviceStateCode.PoweringOff,
         duration: 3000,
       },
     ],
