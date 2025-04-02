@@ -63,7 +63,7 @@
 
       <swiper-container #sliderContent [init]="false" effect="fade" pagination="true" pagination-clickable="true"
         pagination-el=".swiper-pagination">
-        <swiper-slide *ngFor=" let slide of slides" class="wrapper-small__slide">
+        <swiper-slide *ngFor=" let slide of slides; trackBy: trackBySlideFn" class="wrapper-small__slide">
           <div class="content-wrapper">
             <div class="template-wrapper" *ngIf="slide.content?.template"
               [innerHTML]="sanitizeContent(slide.content.template)"></div>
