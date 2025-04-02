@@ -30,6 +30,7 @@ export enum BluetoothActionTypes {
 
   InitializeBluetoothState = '[Bluetooth] Initialize State',
 
+  MockDeviceState = '[Bluetooth] Mock Device State',
   StartMockScenario = '[Bluetooth] Start Mock Scenario',
   StopMockScenario = '[Bluetooth] Stop Mock Scenario',
   CreateMockScenario = '[Bluetooth] Create Mock Scenario',
@@ -154,6 +155,11 @@ export class InitializeBluetoothState implements Action {
   ) {}
 }
 
+export class MockDeviceState implements Action {
+  readonly type = BluetoothActionTypes.MockDeviceState;
+  constructor(public payload: number) {}
+}
+
 export class StartMockScenario implements Action {
   readonly type = BluetoothActionTypes.StartMockScenario;
   constructor(public payload: string) {}
@@ -200,6 +206,7 @@ export type BluetoothActions =
   | OpenSettings
   | SetError
   | InitializeBluetoothState
+  | MockDeviceState
   | StartMockScenario
   | StopMockScenario
   | CreateMockScenario

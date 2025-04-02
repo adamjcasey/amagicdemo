@@ -89,7 +89,7 @@
             <ion-button *ngFor="let button of slide.content.actions; let i = index"
               class="hotspot-element {{ button.cssClasses ? button.cssClasses : null }}" color="purple" size="large"
               [ngClass]="{ 'is-hidden': button.hidden, 'is-blocked': blockNavigation }"
-              [disabled]="button.disabled ? false : null" (click)="button.action ? button.action($event) : null" [fill]="
+              [disabled]="button.disabled ? true : null" (click)="button.action ? button.action($event) : null" [fill]="
                 button.fill
                 ? button.fill
                 : (i % 2 !== 1 && slide.content.actions.length > 1

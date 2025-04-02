@@ -73,7 +73,7 @@ export const mockScenarios: { [key: string]: MockScenario } = {
     steps: [
       {
         state: DeviceStateCode.ReadyForInjection,
-        duration: 10000,
+        duration: 6000,
       },
       {
         state: DeviceStateCode.Injecting,

@@ -101,7 +101,6 @@ export class BluetoothMockManagerService {
       const { start, end, interval } = step.progressiveStateData;
       let currentValue = start;
 
-      // Set initial state data
       this.#store.dispatch(
         new fromBluetoothStore.UpdateDeviceStateData(currentValue)
       );

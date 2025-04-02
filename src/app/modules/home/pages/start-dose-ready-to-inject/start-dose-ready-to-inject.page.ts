@@ -11,7 +11,7 @@ import { filter, Observable, takeUntil } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BluetoothService } from '@app/shared/libs/bluetooth';
+import { BluetoothService, DeviceStateCode } from '@app/shared/libs/bluetooth';
 import { MOCK_SCENARIO_IDS } from '@app/shared/libs/bluetooth/constants/bluetooth-mock.constants';
 import * as fromBluetoothStore from '@app/shared/libs/bluetooth/store';
 import { isInjectingState } from '@app/shared/libs/bluetooth/store/device-state.selectors';
@@ -71,6 +71,7 @@ export class StartDoseReadyToInjectPage
     this._store.dispatch(
       new fromSharedStore.TopbarChangeColor('--color-bg-pastel-green')
     );
+
     this.sliderPageConfig$
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((sliderPageConfig) => {
@@ -423,6 +424,15 @@ export class StartDoseReadyToInjectPage
                     )
                   );
                   this.sliderPage.slideNext();
+
+                  // Mocking value
+                  window.setTimeout(() => {
+                    this._store.dispatch(
+                      new fromBluetoothStore.MockDeviceState(
+                        DeviceStateCode.ReadyForInjection
+                      )
+                    );
+                  }, 1000);
                 },
               },
             ],
@@ -440,7 +450,7 @@ export class StartDoseReadyToInjectPage
                     <h5><strong>Pro Tip</strong></h5>
                     <p>
                       <ng-container>
-                        The status light will turn green after the cap is removed to show that it’s ready to inject.
+                        The status light will turn green after the cap is removed to show that it's ready to inject.
                       </ng-container>
                     </p>
                    </div>
@@ -576,6 +586,21 @@ export class StartDoseReadyToInjectPage
         content: {
           hide: true,
         },
+      },
+      {
+        content: {
+          isExpanded: true,
+          bgColor: '--color-bg-pastel-beige',
+          template: `
+            <div class="start-dose-ready-to-inject-waiting-to-start-injection">
+              <h1 class="font-heading-1--bold">Plunger is retracting...</h1>
+              <img src="assets/images/plunger-retracting.svg">
+              <p>You will hear a motor sound while the plunger is retracting.</p>
+              <p>Do not attempt to remove the cassette until the plunger is fully retracted.</p>
+              <div class="loader"></div>
+            </div>
+          `,
+        },
       }
     );
   }
@@ -618,7 +643,6 @@ export class StartDoseReadyToInjectPage
         )
       );
 
-      // Subscribe to the injection state
       this._store
         .select(isInjectingState)
         .pipe(takeUntil(this.ngUnsubscribe))

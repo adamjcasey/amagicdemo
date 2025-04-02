@@ -100,7 +100,6 @@ export class StartDoseReadyToInjectDosingComponent
   }
 
   checkDosingProcess() {
-    // Subscribe to device state data for progress
     this._store
       .select(fromBluetoothStore.getDeviceStateData)
       .pipe(takeUntil(this._ngUnsubscribe))
@@ -110,19 +109,17 @@ export class StartDoseReadyToInjectDosingComponent
           const progress = (stateData / 255) * 100;
           this.dosePercentageCompleted = progress;
 
-          // Update title and status based on progress
-          if (progress >= 90) {
+          if (progress >= 95) {
             this.title = 'Hold...';
             this.doseStatus = 'The injection is almost done...';
+            this._cdr.detectChanges();
           } else {
             this.title = 'Dosing...';
             this.doseStatus = 'The injection is in progress...';
           }
-          this._cdr.detectChanges();
         }
       });
 
-    // Subscribe to lift from injection site state
     this._store
       .select(isLiftFromInjectionSiteState)
       .pipe(takeUntil(this._ngUnsubscribe))
@@ -166,7 +163,7 @@ export class StartDoseReadyToInjectDosingComponent
               template: `
               <h1 class="font-heading-1--bold">Full dose delivered!</h1>
               <p><b>The injection is complete.<br />It's ok to lift the autoinjector.</b></p>
-              <img src="assets/images/dose-delivered.svg" />
+              <img src="assets/images/dose-delivered.svg" style="margin: 0 auto; width: 240px;" />
               <h3>Theryx®, 80mg</h3>
               <p>Dose Completed:</p>
               <p>${doseDateFormatted}</p>
@@ -184,9 +181,7 @@ export class StartDoseReadyToInjectDosingComponent
                       })
                     );
                     this._store.dispatch(
-                      new fromCoreStore.Go({
-                        path: ['/home/start-dose/inject-done'],
-                      })
+                      new fromSharedStore.SliderPageSlideNext()
                     );
                   },
                 },
@@ -196,7 +191,6 @@ export class StartDoseReadyToInjectDosingComponent
         }
       });
 
-    // Subscribe to injection state for error handling
     /* Commenting out error handling for now
     this._store
       .select(isInjectingState)

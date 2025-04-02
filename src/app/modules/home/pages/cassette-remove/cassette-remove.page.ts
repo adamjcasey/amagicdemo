@@ -8,6 +8,7 @@ import { Observable, takeUntil } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { DeviceStateCode } from '@app/shared/libs/bluetooth';
 import { MOCK_SCENARIO_IDS } from '@app/shared/libs/bluetooth/constants/bluetooth-mock.constants';
 import * as fromBluetoothStore from '@app/shared/libs/bluetooth/store';
 import * as fromHomeStore from '@home/store';
@@ -126,13 +127,13 @@ export class CassetteRemovePage
   }
 
   #initStateSubscriptions() {
-    this.isRemoveCassetteState$
+    this.deviceState$
       .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((isRemoveCassette) => {
-        if (isRemoveCassette) {
-          this.#handleCassetteRemove();
-        } else {
+      .subscribe((deviceState) => {
+        if (deviceState === DeviceStateCode.PoweringOff) {
           this.#handleDisposeCassette();
+        } else {
+          this.#handleCassetteRemove();
         }
       });
   }
