@@ -125,7 +125,6 @@ export function bluetoothReducer(
       };
 
     case fromActions.BluetoothActionTypes.UpdateDeviceStateData:
-      console.log('action.payload', action.payload);
       return {
         ...state,
         stateData: action.payload,

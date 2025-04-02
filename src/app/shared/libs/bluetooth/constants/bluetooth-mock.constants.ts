@@ -81,7 +81,7 @@ export const mockScenarios: { [key: string]: MockScenario } = {
         progressiveStateData: {
           start: 0, // Start from 00
           end: 255, // End at FF
-          interval: 20, // Update every 40ms to complete in ~10 seconds
+          interval: 20, // Update every 20ms to complete in ~10 seconds
         },
       },
       {
