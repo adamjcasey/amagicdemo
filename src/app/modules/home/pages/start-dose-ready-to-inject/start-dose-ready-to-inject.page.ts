@@ -1,12 +1,13 @@
 import {
-  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   OnInit,
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable, takeUntil } from 'rxjs';
+import { filter, Observable, takeUntil } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -16,6 +17,7 @@ import * as fromStore from '@home/store';
 import { IonContent } from '@ionic/angular/standalone';
 import * as fromSharedComponents from '@shared/components';
 import * as fromSharedStore from '@shared/store';
+import * as fromBluetoothStore from '@shared/libs/bluetooth/store';
 import { DeviceConnectionAbstract } from '@shared/abstracts/device-connection.abstract';
 
 @Component({
@@ -23,6 +25,7 @@ import { DeviceConnectionAbstract } from '@shared/abstracts/device-connection.ab
   templateUrl: 'start-dose-ready-to-inject.page.html',
   styleUrls: ['start-dose-ready-to-inject.page.scss'],
   encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
     CommonModule,
@@ -34,12 +37,14 @@ import { DeviceConnectionAbstract } from '@shared/abstracts/device-connection.ab
 })
 export class StartDoseReadyToInjectPage
   extends DeviceConnectionAbstract
-  implements OnInit, AfterViewInit {
+  implements OnInit {
 
   public homeConfig$!: Observable<any>;
+  public deviceStateName$!: Observable<string>
   public sliderPageConfig$!: Observable<any>;
   public homeConfig: any;
   public sliderPageConfig: any;
+  public readyForInjection: boolean = false;
   public slides: Array<any> = [];
 
   @ViewChild('sliderPage', { static: false })
@@ -47,13 +52,15 @@ export class StartDoseReadyToInjectPage
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
-    private _bluetoothService: BluetoothService
+    private _bluetoothService: BluetoothService,
+    private _cdr: ChangeDetectorRef
   ) {
     super()
     this.sliderPageConfig$ = this._store.select(
       fromSharedStore.getSliderPageConfig
     );
     this.homeConfig$ = this._store.select(fromStore.getHomeConfig);
+    this.deviceStateName$ = this._store.select(fromBluetoothStore.getDeviceStateName);
   }
 
   ngOnInit() {
@@ -73,216 +80,227 @@ export class StartDoseReadyToInjectPage
       .subscribe((homeConfig) => {
         if (homeConfig) {
           this.homeConfig = homeConfig;
-          if (this.slides.length === 0) {
-            this.slides = [
-              {
-                header: {
-                  color: '--color-bg-pastel-green',
-                  template: this.homeConfig.firstTimeDose
-                    ? `
+          this.buildSlides();
+          this._cdr.detectChanges();
+        }
+      });
+
+    this.deviceStateName$
+      .pipe(
+        filter(stateName => stateName === 'ReadyForInjection'),
+        takeUntil(this.ngUnsubscribe)
+      ).subscribe(() => {
+        this.readyForInjection = true;
+        this.buildSlides();
+        this._cdr.detectChanges();
+    });
+  }
+
+  private buildSlides() {
+    this.slides = [
+      {
+        header: {
+          color: '--color-bg-pastel-green',
+          template: this.homeConfig.firstTimeDose
+            ? `
                       <div class="start-dose-ready-to-inject__content">
                         <h1 class="font-heading-1--bold">You’ve got this!</h1>
                         <p><strong>This guide will walk you through every step.</strong></p>
                         <img src="assets/images/start-dose-ready-to-inject-start--first.svg">
                       </div>`
-                    : `
+            : `
                       <div class="start-dose-ready-to-inject__content">
                         <h1 class="font-heading-1--bold">Ready to inject?</h1>
                         <p><strong>At this point you’re a pro, want to inject without guidance?</strong></p>
                         <img src="assets/images/start-dose-ready-to-inject-start.svg">
                       </div>`,
-                },
-                content: {
-                  hideNavigation: true,
-                  actions: [
-                    {
-                      label: this.homeConfig?.firstTimeDose
-                        ? 'Postpone'
-                        : 'View Guide',
-                      action: () => {
-                        if (this.homeConfig.firstTimeDose) {
-                          this._store.dispatch(
-                            new fromSharedStore.BackdropShow({
-                              transition: 'move',
-                              header: true,
-                              contentCentered: true,
-                              showBackButton: false,
-                              template: `
+        },
+        content: {
+          hideNavigation: true,
+          actions: [
+            {
+              label: this.homeConfig?.firstTimeDose
+                ? 'Postpone'
+                : 'View Guide',
+              action: () => {
+                if (this.homeConfig.firstTimeDose) {
+                  this._store.dispatch(
+                    new fromSharedStore.BackdropShow({
+                      transition: 'move',
+                      header: true,
+                      contentCentered: true,
+                      showBackButton: false,
+                      template: `
                               <div class="no-needless-message">
                                 <h1 class="font-heading-1--bold">Postpone gives patients control.</h1>
                                 <p>This Postpone feature is for patients who encounter anxiety at their dose time.</p>
                                 <p>For the purpose of this demo, please <strong>Continue</strong></p>
                               </div>
                             `,
-                            })
-                          );
-                        } else {
-                          this.sliderPage.slideNext();
-                        }
-                      },
-                    },
-                    {
-                      label: 'Continue',
-                      action: () => {
-                        this._store.dispatch(
-                          new fromSharedStore.TopbarChangeColor(
-                            '--color-bg-pastel-honey-yellow'
-                          )
-                        );
-                        const bodyShapeSlideIndex = this.slides.findIndex(
-                          (slide: any) => slide.bodyShapeStep
-                        );
-                        this.sliderPage.slideTo(bodyShapeSlideIndex);
-                      },
-                    },
-                  ],
-                },
+                    })
+                  );
+                } else {
+                  this.sliderPage.slideNext();
+                }
               },
-              {
-                header: {
-                  color: '--color-bg-pastel-green',
-                  template: `
+            },
+            {
+              label: 'Continue',
+              action: () => {
+                this._store.dispatch(
+                  new fromSharedStore.TopbarChangeColor(
+                    '--color-bg-pastel-honey-yellow'
+                  )
+                );
+                const bodyShapeSlideIndex = this.slides.findIndex(
+                  (slide: any) => slide.bodyShapeStep
+                );
+                this.sliderPage.slideTo(bodyShapeSlideIndex);
+              },
+            },
+          ],
+        },
+      },
+      {
+        header: {
+          color: '--color-bg-pastel-green',
+          template: `
                     <h1 class="font-heading-1--bold">Injection quick guide</h1>
                   `,
-                  cards: [
-                    {
-                      type: 'guide-step',
-                      indicator: 1,
-                      title: 'Select the injection site',
-                      asset: '/assets/images/injection-quick-guide-1.svg',
-                    },
-                    {
-                      type: 'guide-step',
-                      indicator: 2,
-                      title: 'Clean the site',
-                      asset: '/assets/images/injection-quick-guide-2.svg',
-                    },
-                    {
-                      type: 'guide-step',
-                      indicator: 3,
-                      title: 'Remove the cap',
-                      asset: '/assets/images/injection-quick-guide-3.svg',
-                    },
-                    {
-                      type: 'guide-step',
-                      indicator: 4,
-                      title: 'Pinch skin and press injector against skin',
-                      asset: '/assets/images/injection-quick-guide-4.svg',
-                    },
-                    {
-                      type: 'guide-step',
-                      indicator: 5,
-                      title: 'Hold injector against skin for 10 seconds ',
-                      asset: '/assets/images/injection-quick-guide-5.svg',
-                    },
-                    {
-                      type: 'guide-step',
-                      indicator: 6,
-                      title: 'Injector will turn green when dose is complete.',
-                      asset: '/assets/images/injection-quick-guide-6.svg',
-                    },
-                  ],
-                },
-                content: {
-                  actions: [
-                    {
-                      label: 'Continue',
-                      action: () => {
-                        this._store.dispatch(
-                          new fromSharedStore.TopbarChangeColor(
-                            '--color-bg-pastel-honey-yellow'
-                          )
-                        );
-                        this.sliderPage.slideNext();
-                      },
-                    },
-                  ],
-                },
+          cards: [
+            {
+              type: 'guide-step',
+              indicator: 1,
+              title: 'Select the injection site',
+              asset: '/assets/images/injection-quick-guide-1.svg',
+            },
+            {
+              type: 'guide-step',
+              indicator: 2,
+              title: 'Clean the site',
+              asset: '/assets/images/injection-quick-guide-2.svg',
+            },
+            {
+              type: 'guide-step',
+              indicator: 3,
+              title: 'Remove the cap',
+              asset: '/assets/images/injection-quick-guide-3.svg',
+            },
+            {
+              type: 'guide-step',
+              indicator: 4,
+              title: 'Pinch skin and press injector against skin',
+              asset: '/assets/images/injection-quick-guide-4.svg',
+            },
+            {
+              type: 'guide-step',
+              indicator: 5,
+              title: 'Hold injector against skin for 10 seconds ',
+              asset: '/assets/images/injection-quick-guide-5.svg',
+            },
+            {
+              type: 'guide-step',
+              indicator: 6,
+              title: 'Injector will turn green when dose is complete.',
+              asset: '/assets/images/injection-quick-guide-6.svg',
+            },
+          ],
+        },
+        content: {
+          actions: [
+            {
+              label: 'Continue',
+              action: () => {
+                this._store.dispatch(
+                  new fromSharedStore.TopbarChangeColor(
+                    '--color-bg-pastel-honey-yellow'
+                  )
+                );
+                this.sliderPage.slideNext();
               },
-              {
-                bodyShapeStep: true,
-                header: {
-                  color: '--color-bg-pastel-honey-yellow',
-                  template: null,
-                  component: 'start-dose-ready-to-inject-body-part-selector',
-                },
-                content: {
-                  actions: [
-                    {
-                      label: 'Previous step',
-                      action: () => {
-                        // clear previous selection
-                        this._store.dispatch(
-                          new fromStore.SetData({
-                            bodyPartSelected: null,
-                          })
-                        );
+            },
+          ],
+        },
+      },
+      {
+        bodyShapeStep: true,
+        header: {
+          color: '--color-bg-pastel-honey-yellow',
+          template: null,
+          component: 'start-dose-ready-to-inject-body-part-selector',
+        },
+        content: {
+          actions: [
+            {
+              label: 'Previous step',
+              action: () => {
+                // clear previous selection
+                this._store.dispatch(
+                  new fromStore.SetData({
+                    bodyPartSelected: null,
+                  })
+                );
 
-                        this._store.dispatch(
-                          new fromSharedStore.TopbarChangeColor(
-                            '--color-bg-pastel-green'
-                          )
-                        );
-                        if (this.homeConfig?.firstTimeDose) {
-                          this.sliderPage.slideTo(2);
-                        } else {
-                          this.sliderPage.slideTo(0);
-                        }
-                      },
-                    },
-                    {
-                      label: this.homeConfig.firstTimeDose
-                        ? 'Next Step'
-                        : 'Ready to inject',
-                      disabled: true,
-                      action: () => {
-                        this.sliderPage.slideNext();
-                        if (this.homeConfig.firstTimeDose) {
-                          this._store.dispatch(
-                            new fromSharedStore.TopbarChangeColor(
-                              '--color-bg-pastel-blue'
-                            )
-                          );
-                          setTimeout(() => {
-                            this._store.dispatch(
-                              new fromSharedStore.BackdropShow({
-                                transition: 'move',
-                                fullScreen: true,
-                                header: true,
-                                bgTemplate: 'top-hole',
-                                showBackButton: false,
-                                template: `
+                this._store.dispatch(
+                  new fromSharedStore.TopbarChangeColor(
+                    '--color-bg-pastel-green'
+                  )
+                );
+                if (this.homeConfig?.firstTimeDose) {
+                  this.sliderPage.slideTo(2);
+                } else {
+                  this.sliderPage.slideTo(0);
+                }
+              },
+            },
+            {
+              label: this.homeConfig.firstTimeDose
+                ? 'Next Step'
+                : 'Ready to inject',
+              disabled: !this.homeConfig.bodyPartSelected,
+              action: () => {
+                this.sliderPage.slideNext();
+                if (this.homeConfig.firstTimeDose) {
+                  this._store.dispatch(
+                    new fromSharedStore.TopbarChangeColor(
+                      '--color-bg-pastel-blue'
+                    )
+                  );
+                  setTimeout(() => {
+                    this._store.dispatch(
+                      new fromSharedStore.BackdropShow({
+                        transition: 'move',
+                        fullScreen: true,
+                        header: true,
+                        bgTemplate: 'top-hole',
+                        showBackButton: false,
+                        template: `
                                 <div class="no-need-to-clean-message">
                                   <h1 class="font-heading-1--bold">No need to clean!</h1>
                                   <p>For this demo you will not need to use an alcohol swab.</p>
                                 </div>
                               `,
-                                buttons: [
-                                  {
-                                    label: 'Got it',
-                                    action: () => {
-                                      this._store.dispatch(
-                                        new fromSharedStore.BackdropHide()
-                                      );
-                                    },
-                                  },
-                                ],
-                              })
-                            );
-                          }, 1500);
-                        }
-                      },
-                    },
-                  ],
-                },
+                        buttons: [
+                          {
+                            label: 'Got it',
+                            action: () => {
+                              this._store.dispatch(
+                                new fromSharedStore.BackdropHide()
+                              );
+                            },
+                          },
+                        ],
+                      })
+                    );
+                  }, 1500);
+                }
               },
-            ];
-          }
-        }
-      });
-  }
+            },
+          ],
+        },
+      },
+    ];
 
-  ngAfterViewInit() {
     // if this is the first dose
     if (this.homeConfig.firstTimeDose) {
       // set steps for video training
@@ -413,8 +431,17 @@ export class StartDoseReadyToInjectPage
             template: `
               <div class="start-dose-ready-to-inject__content">
                 <h1 class="font-heading-1--bold">Uncap injector.</h1>
-                <img src="assets/images/start-dose-ready-to-inject-uncap.gif">
-              </div>
+                <img src="assets/images/start-dose-ready-to-inject-uncap.svg">
+                <div class="pro-tip">
+                    <ion-icon name="information-circle-outline"></ion-icon>
+                    <h5><strong>Pro Tip</strong></h5>
+                    <p>
+                      <ng-container>
+                        The status light will turn green after the cap is removed to show that it’s ready to inject.
+                      </ng-container>
+                    </p>
+                   </div>
+                </div>
             `,
           },
           content: {
@@ -433,6 +460,7 @@ export class StartDoseReadyToInjectPage
               },
               {
                 label: 'Next Step',
+                disabled: !this.readyForInjection,
                 action: () => {
                   this._store.dispatch(
                     new fromSharedStore.TopbarChangeColor(
