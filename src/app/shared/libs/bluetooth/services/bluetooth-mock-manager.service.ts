@@ -18,6 +18,7 @@ export class BluetoothMockManagerService {
   #activeScenario: MockScenario | null = null;
   #currentStepIndex = 0;
   #timeoutId: any = null;
+  #progressiveIntervalId: any = null;
   #isRunning = false;
 
   #useMockDevice$ = this.#store.select(getUseMockDevice);
@@ -63,6 +64,11 @@ export class BluetoothMockManagerService {
       this.#timeoutId = null;
     }
 
+    if (this.#progressiveIntervalId) {
+      clearInterval(this.#progressiveIntervalId);
+      this.#progressiveIntervalId = null;
+    }
+
     this.#activeScenario = null;
     this.#isRunning = false;
     console.log('Stopped mock scenario');
@@ -90,7 +96,31 @@ export class BluetoothMockManagerService {
 
     this.#store.dispatch(new fromBluetoothStore.UpdateDeviceState(step.state));
 
-    if (step.stateData !== undefined) {
+    // Handle progressive state data if defined
+    if (step.progressiveStateData) {
+      const { start, end, interval } = step.progressiveStateData;
+      let currentValue = start;
+
+      // Set initial state data
+      this.#store.dispatch(
+        new fromBluetoothStore.UpdateDeviceStateData(currentValue)
+      );
+
+      // Start progressive updates
+      this.#progressiveIntervalId = setInterval(() => {
+        if (currentValue >= end) {
+          clearInterval(this.#progressiveIntervalId);
+          this.#progressiveIntervalId = null;
+          return;
+        }
+
+        currentValue = Math.min(currentValue + 1, end);
+        this.#store.dispatch(
+          new fromBluetoothStore.UpdateDeviceStateData(currentValue)
+        );
+      }, interval);
+    } else if (step.stateData !== undefined) {
+      // Handle static state data
       this.#store.dispatch(
         new fromBluetoothStore.UpdateDeviceStateData(step.stateData)
       );

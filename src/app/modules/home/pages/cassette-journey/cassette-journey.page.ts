@@ -4,7 +4,7 @@ import {
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
-import { combineLatest, filter, Observable, take, takeUntil } from 'rxjs';
+import { combineLatest, filter, Observable, take, takeUntil, tap } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -337,6 +337,9 @@ export class CassetteJourneyPage
     // Store the timeout ID to potentially clear it if state changes to a valid state before timeout
     this.deviceState$
       .pipe(
+        tap((deviceState) => {
+          console.log('Device state:', deviceState);
+        }),
         filter((deviceState) => noAlertStates.includes(deviceState)),
         takeUntil(this.ngUnsubscribe)
       )

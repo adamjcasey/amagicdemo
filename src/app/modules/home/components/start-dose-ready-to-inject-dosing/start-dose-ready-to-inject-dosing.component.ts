@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  ChangeDetectorRef,
   Component,
   OnDestroy,
   OnInit,
@@ -12,6 +13,8 @@ import { Observable, Subject, takeUntil } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BluetoothService } from '@app/shared/libs/bluetooth';
+import * as fromBluetoothStore from '@app/shared/libs/bluetooth/store';
+import { isLiftFromInjectionSiteState } from '@app/shared/libs/bluetooth/store/device-state.selectors';
 import * as fromCoreStore from '@core/store';
 import * as fromStore from '@home/store';
 import { IonImg } from '@ionic/angular/standalone';
@@ -45,7 +48,8 @@ export class StartDoseReadyToInjectDosingComponent
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
-    private _bluetoothService: BluetoothService
+    private _bluetoothService: BluetoothService,
+    private _cdr: ChangeDetectorRef
   ) {
     this.layoutConfig$ = this._store.select(fromCoreStore.getLayoutConfig);
     this.homeConfig$ = this._store.select(fromStore.getHomeConfig);
@@ -93,144 +97,177 @@ export class StartDoseReadyToInjectDosingComponent
   startDose() {
     this.title = 'Dosing...';
     this.startDosing = true;
-    const loop = setInterval(() => {
-      this.totalTime--;
-      if (this.totalTime === 0 || this.errorDosing) {
-        clearInterval(loop);
-      }
-    }, 1000);
   }
 
-  async checkDosingProcess() {
-    try {
-      const dosingProcess = await this._bluetoothService.checkDosing();
-      if (dosingProcess) {
-        this.doseDone = true;
-        this.title = 'Full dose delivered!';
-        this.doseStatus = 'Done!';
-        this._store.dispatch(
-          new fromSharedStore.TopbarChangeColor('--color-bg-pastel-lime')
-        );
-        this._store.dispatch(
-          new fromSharedStore.SliderPageSetHeaderOptions({
-            color: '--color-bg-pastel-lime',
-          })
-        );
+  checkDosingProcess() {
+    // Subscribe to device state data for progress
+    this._store
+      .select(fromBluetoothStore.getDeviceStateData)
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((stateData) => {
+        if (stateData !== null) {
+          // Convert hex to percentage (00 to FF = 0 to 255)
+          const progress = (stateData / 255) * 100;
+          this.dosePercentageCompleted = progress;
 
-        const markedDoses = this.homeConfig.doses.filter(
-          (dose: any) => dose.marked
-        );
-        const unMarkedDoses = this.homeConfig.doses.filter(
-          (dose: any) => !dose.marked
-        );
-        const currentDoseDate =
-          unMarkedDoses.length > 0
-            ? moment(unMarkedDoses[0].date)
-            : moment(markedDoses[markedDoses.length - 1].date).add(2, 'weeks');
+          // Update title and status based on progress
+          if (progress >= 90) {
+            this.title = 'Hold...';
+            this.doseStatus = 'The injection is almost done...';
+          } else {
+            this.title = 'Dosing...';
+            this.doseStatus = 'The injection is in progress...';
+          }
+          this._cdr.detectChanges();
+        }
+      });
 
-        currentDoseDate.set('hour', moment().get('hour'));
-        currentDoseDate.set('minute', moment().get('minute'));
-        const doseDateFormatted = currentDoseDate.format('D MMMM YYYY H:mm A');
+    // Subscribe to lift from injection site state
+    this._store
+      .select(isLiftFromInjectionSiteState)
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((isLiftFromSite) => {
+        if (isLiftFromSite) {
+          this.doseDone = true;
+          this.title = 'Full dose delivered!';
+          this.doseStatus = 'Done!';
+          this._cdr.detectChanges();
+          this._store.dispatch(
+            new fromSharedStore.TopbarChangeColor('--color-bg-pastel-lime')
+          );
+          this._store.dispatch(
+            new fromSharedStore.SliderPageSetHeaderOptions({
+              color: '--color-bg-pastel-lime',
+            })
+          );
 
-        this._store.dispatch(
-          new fromSharedStore.AlertShow({
-            mode: 'window',
-            template: `
-            <img src="assets/images/dose-delivered.svg" />
-            <h1 class="font-heading-1--bold">Full dose delivered!</h1>
-            <h3>Theryx®, 80mg</h3>
-            <p>Dose Completed:</p>
-            <p>${doseDateFormatted}</p>
-          `,
-            actions: [
-              {
-                label: 'Done',
-                fill: 'outline',
-                action: () => {
-                  this._store.dispatch(new fromSharedStore.AlertHide());
-                  this._store.dispatch(new fromSharedStore.SliderPageClear());
-                  this._store.dispatch(
-                    new fromStore.SetData({
-                      dosingStarted: false,
-                    })
-                  );
-                  this._store.dispatch(
-                    new fromCoreStore.Go({
-                      path: ['/home/start-dose/inject-done'],
-                    })
-                  );
+          const markedDoses = this.homeConfig.doses.filter(
+            (dose: any) => dose.marked
+          );
+          const unMarkedDoses = this.homeConfig.doses.filter(
+            (dose: any) => !dose.marked
+          );
+          const currentDoseDate =
+            unMarkedDoses.length > 0
+              ? moment(unMarkedDoses[0].date)
+              : moment(markedDoses[markedDoses.length - 1].date).add(
+                  2,
+                  'weeks'
+                );
+
+          currentDoseDate.set('hour', moment().get('hour'));
+          currentDoseDate.set('minute', moment().get('minute'));
+          const doseDateFormatted =
+            currentDoseDate.format('D MMMM YYYY H:mm A');
+
+          this._store.dispatch(
+            new fromSharedStore.AlertShow({
+              mode: 'window',
+              template: `
+              <h1 class="font-heading-1--bold">Full dose delivered!</h1>
+              <p><b>The injection is complete.<br />It's ok to lift the autoinjector.</b></p>
+              <img src="assets/images/dose-delivered.svg" />
+              <h3>Theryx®, 80mg</h3>
+              <p>Dose Completed:</p>
+              <p>${doseDateFormatted}</p>
+            `,
+              actions: [
+                {
+                  label: 'Done',
+                  fill: 'outline',
+                  action: () => {
+                    this._store.dispatch(new fromSharedStore.AlertHide());
+                    this._store.dispatch(new fromSharedStore.SliderPageClear());
+                    this._store.dispatch(
+                      new fromStore.SetData({
+                        dosingStarted: false,
+                      })
+                    );
+                    this._store.dispatch(
+                      new fromCoreStore.Go({
+                        path: ['/home/start-dose/inject-done'],
+                      })
+                    );
+                  },
                 },
-              },
-            ],
-          })
-        );
-      }
-    } catch (error) {
-      this._bluetoothService.logger('Error in Dosing Component ', `${error}`);
-      this.errorDosing = true;
-      this._store.dispatch(
-        new fromStore.SetData({
-          dosingError: true,
-        })
-      );
-      this._store.dispatch(
-        new fromCoreStore.SetDosageDeviceInfo({
-          isConnected: false,
-        })
-      );
-      this.dosePercentageCompleted = 100 - (this.totalTime * 100) / 10;
-      this._store.dispatch(
-        new fromSharedStore.TopbarChangeColor('--color-bg-pastel-salmon')
-      );
-      this._store.dispatch(
-        new fromSharedStore.SliderPageSetHeaderOptions({
-          color: '--color-bg-pastel-salmon',
-        })
-      );
-      this._store.dispatch(
-        new fromSharedStore.AlertShow({
-          mode: 'window',
-          template: `
-          <div class="dosing-error-alert">
-            <img src="assets/images/dose-dosing-error.svg" />
-            <h1 class="font-heading-1--bold">Oops!</h1>
-            <p>You lifted off early and the dose was only ${
-              this.dosePercentageCompleted === 100
-                ? 90
-                : this.dosePercentageCompleted
-            }% administered.</p>
-            <h5>Please contact your HCP for guidance.</h5><br>
-          </div>
-        `,
-          actions: [
-            {
-              label: 'Ok',
-              action: () => {
-                if (this.layoutConfig.noDeviceModeOopsFlow) {
-                  this._store.dispatch(
-                    new fromCoreStore.SetNoDeviceModeOopsFlow(false)
-                  );
-                }
-                this._store.dispatch(new fromSharedStore.AlertHide());
-                this.continueDosing();
-              },
-            },
-            {
-              label: 'My HCP',
-              action: () => {
-                if (this.layoutConfig.noDeviceModeOopsFlow) {
-                  this._store.dispatch(
-                    new fromCoreStore.SetNoDeviceModeOopsFlow(false)
-                  );
-                }
-                this._store.dispatch(new fromSharedStore.AlertHide());
-                this.continueDosing();
-              },
-            },
-          ],
-        })
-      );
-    }
+              ],
+            })
+          );
+        }
+      });
+
+    // Subscribe to injection state for error handling
+    /* Commenting out error handling for now
+    this._store
+      .select(isInjectingState)
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((isInjecting) => {
+        if (!isInjecting && this.startDosing && !this.doseDone) {
+          this.errorDosing = true;
+          this._store.dispatch(
+            new fromStore.SetData({
+              dosingError: true,
+            })
+          );
+          this._store.dispatch(
+            new fromCoreStore.SetDosageDeviceInfo({
+              isConnected: false,
+            })
+          );
+          this._store.dispatch(
+            new fromSharedStore.TopbarChangeColor('--color-bg-pastel-salmon')
+          );
+          this._store.dispatch(
+            new fromSharedStore.SliderPageSetHeaderOptions({
+              color: '--color-bg-pastel-salmon',
+            })
+          );
+          this._store.dispatch(
+            new fromSharedStore.AlertShow({
+              mode: 'window',
+              template: `
+              <div class="dosing-error-alert">
+                <img src="assets/images/dose-dosing-error.svg" />
+                <h1 class="font-heading-1--bold">Oops!</h1>
+                <p>You lifted off early and the dose was only ${
+                  this.dosePercentageCompleted === 100
+                    ? 90
+                    : this.dosePercentageCompleted
+                }% administered.</p>
+                <h5>Please contact your HCP for guidance.</h5><br>
+              </div>
+            `,
+              actions: [
+                {
+                  label: 'Ok',
+                  action: () => {
+                    if (this.layoutConfig.noDeviceModeOopsFlow) {
+                      this._store.dispatch(
+                        new fromCoreStore.SetNoDeviceModeOopsFlow(false)
+                      );
+                    }
+                    this._store.dispatch(new fromSharedStore.AlertHide());
+                    this.continueDosing();
+                  },
+                },
+                {
+                  label: 'My HCP',
+                  action: () => {
+                    if (this.layoutConfig.noDeviceModeOopsFlow) {
+                      this._store.dispatch(
+                        new fromCoreStore.SetNoDeviceModeOopsFlow(false)
+                      );
+                    }
+                    this._store.dispatch(new fromSharedStore.AlertHide());
+                    this.continueDosing();
+                  },
+                },
+              ],
+            })
+          );
+        }
+      });
+    */
   }
 
   async continueDosing() {

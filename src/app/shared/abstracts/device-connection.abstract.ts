@@ -25,7 +25,7 @@ export abstract class DeviceConnectionAbstract extends BaseComponentAbstract {
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((isConnected) => {
         if (!this.waitForDeviceConnection && !isConnected) {
-          this.showDeviceDisconnectedAlert();
+          // this.showDeviceDisconnectedAlert();
         }
         this.waitForDeviceConnection = isConnected;
       });

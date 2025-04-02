@@ -135,6 +135,14 @@
     }
   }
 
+  &.is-hold {
+    .dosing-box {
+      &::before {
+        background-color: var(--color-primary-green);
+      }
+    }
+  }
+
   &.is-done {
     .dosing-counter {
       .digit {
@@ -147,6 +155,7 @@
     .dosing-box {
       &::before {
         height: 20%;
+        background-color: var(--color-primary-green);
       }
 
       .dosing-box__indicator {
