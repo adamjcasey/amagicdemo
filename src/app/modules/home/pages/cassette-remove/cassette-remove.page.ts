@@ -8,8 +8,10 @@ import { Observable, takeUntil } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { DeviceStateCode } from '@app/shared/libs/bluetooth';
 import { MOCK_SCENARIO_IDS } from '@app/shared/libs/bluetooth/constants/bluetooth-mock.constants';
 import * as fromBluetoothStore from '@app/shared/libs/bluetooth/store';
+import { getSuccessfulDoses } from '@app/shared/libs/bluetooth/store';
 import * as fromHomeStore from '@home/store';
 import { IonContent } from '@ionic/angular/standalone';
 import { BaseComponentAbstract } from '@shared/abstracts/base-component.abstract';
@@ -126,13 +128,13 @@ export class CassetteRemovePage
   }
 
   #initStateSubscriptions() {
-    this.isRemoveCassetteState$
+    this.deviceState$
       .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((isRemoveCassette) => {
-        if (isRemoveCassette) {
-          this.#handleCassetteRemove();
-        } else {
+      .subscribe((deviceState) => {
+        if (deviceState === DeviceStateCode.PoweringOff) {
           this.#handleDisposeCassette();
+        } else {
+          this.#handleCassetteRemove();
         }
       });
   }
@@ -185,7 +187,13 @@ export class CassetteRemovePage
   }
 
   #handleCloseAction(): void {
-    this.goTo('/home/cassette-journey');
+    this.store.select(getSuccessfulDoses).subscribe((count) => {
+      if (count === 0) {
+        this.goTo('/home/cassette-journey');
+      } else if (count === 1) {
+        this.goTo('/home/start-dose/inject-done');
+      }
+    });
 
     // TODO: navigate to cassette journey or dose done procedure when it's implemented
   }

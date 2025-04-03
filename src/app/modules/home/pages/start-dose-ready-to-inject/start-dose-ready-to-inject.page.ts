@@ -7,18 +7,20 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { filter, Observable, takeUntil } from 'rxjs';
+import { filter, Observable, take, takeUntil } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BluetoothService } from '@app/shared/libs/bluetooth';
+import { BluetoothService, DeviceStateCode } from '@app/shared/libs/bluetooth';
+import { MOCK_SCENARIO_IDS } from '@app/shared/libs/bluetooth/constants/bluetooth-mock.constants';
+import * as fromBluetoothStore from '@app/shared/libs/bluetooth/store';
+import { isInjectingState } from '@app/shared/libs/bluetooth/store/device-state.selectors';
 import * as fromCoreStore from '@core/store';
 import * as fromStore from '@home/store';
 import { IonContent } from '@ionic/angular/standalone';
+import { DeviceConnectionAbstract } from '@shared/abstracts/device-connection.abstract';
 import * as fromSharedComponents from '@shared/components';
 import * as fromSharedStore from '@shared/store';
-import * as fromBluetoothStore from '@shared/libs/bluetooth/store';
-import { DeviceConnectionAbstract } from '@shared/abstracts/device-connection.abstract';
 
 @Component({
   selector: 'automagic-start-dose-ready-to-inject',
@@ -37,10 +39,10 @@ import { DeviceConnectionAbstract } from '@shared/abstracts/device-connection.ab
 })
 export class StartDoseReadyToInjectPage
   extends DeviceConnectionAbstract
-  implements OnInit {
-
+  implements OnInit
+{
   public homeConfig$!: Observable<any>;
-  public deviceStateName$!: Observable<string>
+  public deviceStateName$!: Observable<string>;
   public sliderPageConfig$!: Observable<any>;
   public homeConfig: any;
   public sliderPageConfig: any;
@@ -55,18 +57,26 @@ export class StartDoseReadyToInjectPage
     private _bluetoothService: BluetoothService,
     private _cdr: ChangeDetectorRef
   ) {
-    super()
+    super();
     this.sliderPageConfig$ = this._store.select(
       fromSharedStore.getSliderPageConfig
     );
     this.homeConfig$ = this._store.select(fromStore.getHomeConfig);
-    this.deviceStateName$ = this._store.select(fromBluetoothStore.getDeviceStateName);
+    this.deviceStateName$ = this._store.select(
+      fromBluetoothStore.getDeviceStateName
+    );
   }
 
   ngOnInit() {
     this._store.dispatch(
       new fromSharedStore.TopbarChangeColor('--color-bg-pastel-green')
     );
+
+    // TESTING: Automatically navigate to plunger retracting slide
+    // setTimeout(() => {
+    //   this.sliderPage.slideTo(7);
+    // }, 100);
+
     this.sliderPageConfig$
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((sliderPageConfig) => {
@@ -87,13 +97,14 @@ export class StartDoseReadyToInjectPage
 
     this.deviceStateName$
       .pipe(
-        filter(stateName => stateName === 'ReadyForInjection'),
+        filter((stateName) => stateName === 'ReadyForInjection'),
         takeUntil(this.ngUnsubscribe)
-      ).subscribe(() => {
+      )
+      .subscribe(() => {
         this.readyForInjection = true;
         this.buildSlides();
         this._cdr.detectChanges();
-    });
+      });
   }
 
   private buildSlides() {
@@ -104,14 +115,14 @@ export class StartDoseReadyToInjectPage
           template: this.homeConfig.firstTimeDose
             ? `
                       <div class="start-dose-ready-to-inject__content">
-                        <h1 class="font-heading-1--bold">You’ve got this!</h1>
+                        <h1 class="font-heading-1--bold">You've got this!</h1>
                         <p><strong>This guide will walk you through every step.</strong></p>
                         <img src="assets/images/start-dose-ready-to-inject-start--first.svg">
                       </div>`
             : `
                       <div class="start-dose-ready-to-inject__content">
                         <h1 class="font-heading-1--bold">Ready to inject?</h1>
-                        <p><strong>At this point you’re a pro, want to inject without guidance?</strong></p>
+                        <p><strong>At this point you're a pro, want to inject without guidance?</strong></p>
                         <img src="assets/images/start-dose-ready-to-inject-start.svg">
                       </div>`,
         },
@@ -119,9 +130,7 @@ export class StartDoseReadyToInjectPage
           hideNavigation: true,
           actions: [
             {
-              label: this.homeConfig?.firstTimeDose
-                ? 'Postpone'
-                : 'View Guide',
+              label: this.homeConfig?.firstTimeDose ? 'Postpone' : 'View Guide',
               action: () => {
                 if (this.homeConfig.firstTimeDose) {
                   this._store.dispatch(
@@ -420,6 +429,15 @@ export class StartDoseReadyToInjectPage
                     )
                   );
                   this.sliderPage.slideNext();
+
+                  // Mocking value
+                  window.setTimeout(() => {
+                    this._store.dispatch(
+                      new fromBluetoothStore.MockDeviceState(
+                        DeviceStateCode.ReadyForInjection
+                      )
+                    );
+                  }, 1000);
                 },
               },
             ],
@@ -437,7 +455,7 @@ export class StartDoseReadyToInjectPage
                     <h5><strong>Pro Tip</strong></h5>
                     <p>
                       <ng-container>
-                        The status light will turn green after the cap is removed to show that it’s ready to inject.
+                        The status light will turn green after the cap is removed to show that it's ready to inject.
                       </ng-container>
                     </p>
                    </div>
@@ -551,6 +569,13 @@ export class StartDoseReadyToInjectPage
           hide: true,
         },
         onLoad: () => {
+          // Mock injection
+          this._store.dispatch(
+            new fromBluetoothStore.StartMockScenario(
+              MOCK_SCENARIO_IDS.START_INJECTION_HAPPY_PATH
+            )
+          );
+
           if (!this.homeConfig.firstTimeDose || this.homeConfig.dosingError) {
             this.startWaitingForStartDosing();
 
@@ -572,6 +597,33 @@ export class StartDoseReadyToInjectPage
         },
         content: {
           hide: true,
+        },
+      },
+      {
+        content: {
+          isExpanded: true,
+          bgColor: '--color-bg-pastel-beige',
+          template: `
+            <div class="start-dose-ready-to-inject-waiting-to-start-injection">
+              <h1 class="font-heading-1--bold">Plunger is retracting...</h1>
+              <img src="assets/images/plunger-retracting.svg">
+              <p>You will hear a motor sound while the plunger is retracting.</p>
+              <p>Do not attempt to remove the cassette until the plunger is fully retracted.</p>
+              <div class="loader"></div>
+            </div>
+          `,
+        },
+        onLoad: () => {
+          this._store
+            .select(fromBluetoothStore.isRemoveCassetteState)
+            .pipe(
+              takeUntil(this.ngUnsubscribe),
+              filter((isRemoveCassetteState) => isRemoveCassetteState),
+              take(1)
+            )
+            .subscribe(() => {
+              this.goTo('/home/cassette-remove');
+            });
         },
       }
     );
@@ -608,29 +660,34 @@ export class StartDoseReadyToInjectPage
       this._store.dispatch(
         new fromSharedStore.TopbarChangeColor('--color-transparent')
       );
-      const startDosing = await this._bluetoothService.waitForDosingStart();
-      if (startDosing) {
-        if (this.homeConfig.firstTimeDose) {
-          if (this.sliderPageConfig?.header.currentSlide === 7) {
+
+      this._store
+        .select(isInjectingState)
+        .pipe(takeUntil(this.ngUnsubscribe))
+        .subscribe((isInjecting) => {
+          if (isInjecting) {
+            if (this.homeConfig.firstTimeDose) {
+              if (this.sliderPageConfig?.header.currentSlide === 7) {
+                this._store.dispatch(
+                  new fromSharedStore.SliderPageSetHeaderOptions({
+                    template: null,
+                  })
+                );
+                this.sliderPage.slideTo(9);
+              } else {
+                this.sliderPage.slideNext();
+              }
+            } else {
+              this.sliderPage.slideNext();
+            }
+
             this._store.dispatch(
-              new fromSharedStore.SliderPageSetHeaderOptions({
-                template: null,
+              new fromStore.SetData({
+                dosingStarted: true,
               })
             );
-            this.sliderPage.slideTo(9);
-          } else {
-            this.sliderPage.slideNext();
           }
-        } else {
-          this.sliderPage.slideNext();
-        }
-
-        this._store.dispatch(
-          new fromStore.SetData({
-            dosingStarted: true,
-          })
-        );
-      }
+        });
     } catch (error) {
       console.log('startWaitingForStartDosing > error: ', error);
     }

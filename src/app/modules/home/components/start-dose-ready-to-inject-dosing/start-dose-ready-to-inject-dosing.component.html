@@ -1,29 +1,25 @@
-<div
-  class="start-dose-ready-to-inject__dosing"
-  [ngClass]="{
-    'is-done': totalTime === 0,
+<div class="start-dose-ready-to-inject__dosing" [ngClass]="{
+    'is-done': doseDone,
     'is-dosing': startDosing,
     'is-error-dosing': errorDosing,
   }">
 
   <h1 class="font-heading-1--bold">{{ title }}</h1>
-  <div class="dosing-counter">
-    <div class="dosing-counter__wrapper">
-      <div class="dosing-counter__digits" *ngIf="totalTime > 0">
-        <div class="digit" [innerText]="totalTime < 10 ? '0' : '1'"></div>
-        <div class="digit" [innerText]="totalTime < 10 ? totalTime : '0'"></div>
-      </div>
-        <div class="dosing-hold" *ngIf="totalTime <= 0">
-            <div class="hold"
-                 [ngClass]="{ 'is-done': doseDone }"
-            >{{ doseStatus }}</div>
-        </div>
-    </div>
-    <p *ngIf="totalTime > 0">seconds</p>
+
+  <div>
+    <p>
+      <b>{{ doseStatus }}</b>
+    </p>
+    <p>
+      Please keep the injector pressed down until directed to lift.
+    </p>
   </div>
 
   <div class="dosing-box">
-    <ion-img *ngIf="!doseDone" class="dosing-box__indicator" src="/assets/images/dosing-box-indicator.svg"></ion-img>
-    <ion-img *ngIf="doseDone" class="dosing-box__indicator" src="/assets/images/dosing-box-indicator--done.svg"></ion-img>
+    <ion-img *ngIf="!doseDone" class="dosing-box__indicator" [style.top.%]="dosePercentageCompleted * 0.9"
+      src="/assets/images/dosing-box-indicator.svg"></ion-img>
+    <ion-img *ngIf="doseDone" class="dosing-box__indicator"
+      src="/assets/images/dosing-box-indicator--done.svg"></ion-img>
+    <div class="dosing-box__background" [style.height.%]="100 - dosePercentageCompleted"></div>
   </div>
 </div>

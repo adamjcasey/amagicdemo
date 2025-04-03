@@ -322,7 +322,10 @@ export class CassetteJourneyPage
     const noAlertStates = [
       DeviceStateCode.RemoveNeedleCap,
       DeviceStateCode.ReadyForInjection,
+      DeviceStateCode.WarningCassette,
+      DeviceStateCode.WarningCassetteUnknown,
       DeviceStateCode.WarningCassetteUsed,
+      DeviceStateCode.WarningCassetteExpired,
     ];
 
     // Start a 10-second timer to check if state hasn't changed

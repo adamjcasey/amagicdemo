@@ -41,6 +41,9 @@ export interface BluetoothState {
 
   // Mock scenarios history
   mockScenariosHistory: string[];
+
+  // Dosing counter
+  successfulDoses: number;
 }
 
 export const initialBluetoothState: BluetoothState = {
@@ -76,4 +79,6 @@ export const initialBluetoothState: BluetoothState = {
   loading: false,
 
   mockScenariosHistory: [],
+
+  successfulDoses: 0,
 };

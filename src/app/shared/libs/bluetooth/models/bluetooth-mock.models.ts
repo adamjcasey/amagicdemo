@@ -4,6 +4,11 @@ export interface MockScenarioStep {
   state: DeviceStateCode;
   stateData?: number;
   duration: number;
+  progressiveStateData?: {
+    start: number;
+    end: number;
+    interval: number;
+  };
 }
 
 export interface MockScenario {
