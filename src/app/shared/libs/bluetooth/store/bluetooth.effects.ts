@@ -286,6 +286,21 @@ export class BluetoothEffects {
     { dispatch: false }
   );
 
+  mockDeviceState$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(fromActions.BluetoothActionTypes.MockDeviceState),
+      withLatestFrom(this.store.select(fromSelector.getUseMockDevice)),
+      switchMap(
+        ([action, useMockDevice]: [fromActions.MockDeviceState, boolean]) => {
+          if (useMockDevice) {
+            return of(new fromActions.UpdateDeviceState(action.payload));
+          }
+          return of();
+        }
+      )
+    )
+  );
+
   startMockScenario$ = createEffect(
     () =>
       this.actions$.pipe(

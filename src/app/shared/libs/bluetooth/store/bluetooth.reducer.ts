@@ -114,7 +114,6 @@ export function bluetoothReducer(
       };
 
     case fromActions.BluetoothActionTypes.UpdateDeviceState:
-    case fromActions.BluetoothActionTypes.MockDeviceState:
       const stateName = getStateName(action.payload);
       return {
         ...state,

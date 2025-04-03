@@ -1,9 +1,4 @@
-import {
-  Component,
-  OnInit,
-  ViewChild,
-  ViewEncapsulation,
-} from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Store } from '@ngrx/store';
 import moment from 'moment';
 import { Observable, takeUntil } from 'rxjs';
@@ -14,12 +9,12 @@ import { Capacitor } from '@capacitor/core';
 import * as fromCoreStore from '@core/store';
 import * as fromStore from '@home/store';
 import { IonContent } from '@ionic/angular/standalone';
+import { DeviceConnectionAbstract } from '@shared/abstracts/device-connection.abstract';
 import * as fromSharedComponents from '@shared/components';
 import * as fromSharedStore from '@shared/store';
 import { addIcons } from 'ionicons';
 import { informationCircleOutline } from 'ionicons/icons';
 import { environment } from 'src/environments/environment';
-import { DeviceConnectionAbstract } from '@shared/abstracts/device-connection.abstract';
 
 @Component({
   selector: 'automagic-start-dose-inject-done',
@@ -37,107 +32,103 @@ import { DeviceConnectionAbstract } from '@shared/abstracts/device-connection.ab
 })
 export class StartDoseInjectDonePage
   extends DeviceConnectionAbstract
-  implements OnInit {
-
-  public homeConfig$!: Observable<any>;
-  public homeConfig: any;
-  public sliderPageConfig$!: Observable<any>;
-  public sliderPageConfig: any;
-  public slides: Array<any> = [];
+  implements OnInit
+{
   @ViewChild('sliderPage', { static: false })
   sliderPage!: fromSharedComponents.SliderPageComponent;
 
-  constructor(private _store: Store<fromCoreStore.CoreState>) {
-    super()
-    addIcons({ informationCircleOutline });
-
-    this.sliderPageConfig$ = this._store.select(
-      fromSharedStore.getSliderPageConfig
-    );
-    this.homeConfig$ = this._store.select(fromStore.getHomeConfig);
-    this.slides = [
-      {
-        header: {
-          color: '--color-bg-pastel-honey-yellow',
-          component: 'start-dose-inject-done-progress',
-        },
-        content: {
-          hideNavigation: true,
+  homeConfig$: Observable<any> = this._store.select(fromStore.getHomeConfig);
+  homeConfig: any;
+  sliderPageConfig$: Observable<any> = this._store.select(
+    fromSharedStore.getSliderPageConfig
+  );
+  sliderPageConfig: any;
+  slides: Array<any> = [
+    {
+      header: {
+        color: '--color-bg-pastel-honey-yellow',
+        component: 'start-dose-inject-done-progress',
+      },
+      content: {
+        hideNavigation: true,
+        actions: [
+          {
+            label: 'Add dose notes',
+            action: () => {
+              this._store.dispatch(
+                new fromSharedStore.TopbarChangeColor('--color-white')
+              );
+              this.sliderPage.slideNext();
+            },
+          },
+          {
+            label: 'Done',
+            action: () => {
+              this._store.dispatch(
+                new fromSharedStore.TopbarChangeColor('--color-bg-pastel-mint')
+              );
+              this.sliderPage.slideTo(2);
+            },
+          },
+        ],
+      },
+    },
+    {
+      content: {
+        isExpanded: true,
+        component: 'start-dose-inject-dose-notes',
+        toolbar: {
           actions: [
             {
-              label: 'Add dose notes',
-              action: () => {
-                this._store.dispatch(
-                  new fromSharedStore.TopbarChangeColor('--color-white')
-                );
-                this.sliderPage.slideNext();
+              label: 'Skip',
+              action: (event: any) => {
+                if (this.homeConfig.firstTimeDose) {
+                  this._store.dispatch(
+                    new fromSharedStore.TopbarChangeColor(
+                      '--color-bg-pastel-mint'
+                    )
+                  );
+                } else {
+                  const markedDoses = this.homeConfig?.doses.filter(
+                    (dose: any) => dose.marked
+                  );
+                  if (markedDoses.length === 6) {
+                    this._store.dispatch(
+                      new fromSharedStore.TopbarChangeColor('--color-white')
+                    );
+                  }
+                }
+                event.target.nextElementSibling.click();
               },
             },
             {
-              label: 'Done',
+              label: 'Proceed',
+              // disabled: true,
               action: () => {
                 this._store.dispatch(
                   new fromSharedStore.TopbarChangeColor(
                     '--color-bg-pastel-mint'
                   )
                 );
-                this.sliderPage.slideTo(2);
+                this.sliderPage.slideNext();
               },
             },
           ],
         },
       },
-      {
-        content: {
-          isExpanded: true,
-          component: 'start-dose-inject-dose-notes',
-          toolbar: {
-            actions: [
-              {
-                label: 'Skip',
-                action: (event: any) => {
-                  if (this.homeConfig.firstTimeDose) {
-                    this._store.dispatch(
-                      new fromSharedStore.TopbarChangeColor(
-                        '--color-bg-pastel-mint'
-                      )
-                    );
-                  } else {
-                    const markedDoses = this.homeConfig?.doses.filter(
-                      (dose: any) => dose.marked
-                    );
-                    if (markedDoses.length === 6) {
-                      this._store.dispatch(
-                        new fromSharedStore.TopbarChangeColor('--color-white')
-                      );
-                    }
-                  }
-                  event.target.nextElementSibling.click();
-                },
-              },
-              {
-                label: 'Proceed',
-                // disabled: true,
-                action: () => {
-                  this._store.dispatch(
-                    new fromSharedStore.TopbarChangeColor(
-                      '--color-bg-pastel-mint'
-                    )
-                  );
-                  this.sliderPage.slideNext();
-                },
-              },
-            ],
-          },
-        },
-      },
-    ];
+    },
+  ];
+
+  constructor(private _store: Store<fromCoreStore.CoreState>) {
+    super();
+    addIcons({ informationCircleOutline });
   }
 
   ngOnInit() {
     this._store.dispatch(
       new fromSharedStore.TopbarChangeColor('--color-bg-pastel-honey-yellow')
     );
+
     this.sliderPageConfig$
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((sliderPageConfig) => {
