@@ -10,12 +10,8 @@
   'bg-template--bottom-ellipse-hole': config.bgTemplate === 'bottom-ellipse-hole',
   'has-buttons': config.buttons,
 }">
-  <div class="backdrop__wrapper" [style.background-image]="config.bgTemplate
-      ? 'url(' + '/assets/images/backdrop-' + config.bgTemplate + '.svg' + ')'
-      : null
-    " [style.--bg-debugging-color]="isShowDebugging ? '#2F3842' : 'black'">
-    <header class="backdrop__header" *ngIf="config.header" [automagicThreeFingerTap]="showDebugging"
-      [style.--bg-debugging-color]="isShowDebugging || isShowDebuggingStatus ? '#2F3842' : 'black'">
+  <div class="backdrop__wrapper" [style.background-image]="config.bgTemplate ? 'url(' + '/assets/images/backdrop-' + config.bgTemplate + '.svg' + ')' : null">
+    <header class="backdrop__header" *ngIf="config.header" [automagicThreeFingerTap]="showDebugging">
       <div class="back-button"
         *ngIf="(config.showBackButton !== null && config.showBackButton) && backButton && !isShowDebugging">
         <ion-button class="hotspot-element" (click)="backButton.action($event)" fill="clear" color="light" size="small">
@@ -41,7 +37,7 @@
           xmlns="http://www.w3.org/2000/svg">
           <g clip-path="url(#clip0_4220_169655)">
             <path d="M196 43C97.6 43 24.3333 18.3333 0 6V-373H390V6C366.333 18.3333 294.4 43 196 43Z"
-              [attr.fill]="isShowDebuggingStatus ? '#2F3842' : 'black'" />
+              [attr.fill]="'black'" />
             <path d="M0 6C24.3333 18.3333 97.6 43 196 43C294.4 43 366.333 18.3333 390 6" stroke="#616A74"
               stroke-linecap="round" />
           </g>
