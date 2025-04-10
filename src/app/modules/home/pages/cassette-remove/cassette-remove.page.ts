@@ -191,10 +191,9 @@ export class CassetteRemovePage
       if (count === 0) {
         this.goTo('/home/cassette-journey');
       } else if (count === 1) {
+        this.store.dispatch(new fromSharedStore.SliderPageClear());
         this.goTo('/home/start-dose/inject-done');
       }
     });
-
-    // TODO: navigate to cassette journey or dose done procedure when it's implemented
   }
 }

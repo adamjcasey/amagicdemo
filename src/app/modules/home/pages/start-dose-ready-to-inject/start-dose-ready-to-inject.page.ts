@@ -7,20 +7,42 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { filter, Observable, take, takeUntil } from 'rxjs';
+import { combineLatest, filter, Observable, take, takeUntil } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BluetoothService, DeviceStateCode } from '@app/shared/libs/bluetooth';
+import { DeviceStateCode } from '@app/shared/libs/bluetooth';
 import { MOCK_SCENARIO_IDS } from '@app/shared/libs/bluetooth/constants/bluetooth-mock.constants';
 import * as fromBluetoothStore from '@app/shared/libs/bluetooth/store';
-import { isInjectingState } from '@app/shared/libs/bluetooth/store/device-state.selectors';
 import * as fromCoreStore from '@core/store';
 import * as fromStore from '@home/store';
 import { IonContent } from '@ionic/angular/standalone';
 import { DeviceConnectionAbstract } from '@shared/abstracts/device-connection.abstract';
 import * as fromSharedComponents from '@shared/components';
 import * as fromSharedStore from '@shared/store';
+
+export enum FirstTimeSlides {
+  VideoTraining = 0,
+  Video = 1,
+  Welcome = 2,
+  QuickGuide = 3,
+  BodyPartSelector = 4,
+  CleanSite = 5,
+  UncapInjector = 6,
+  AlmostThere = 7,
+  WaitingToStart = 8,
+  Dosing = 9,
+  PlungerRetracting = 10,
+}
+
+export enum NonFirstTimeSlides {
+  Welcome = 0,
+  QuickGuide = 1,
+  BodyPartSelector = 2,
+  WaitingToStart = 3,
+  Dosing = 4,
+  PlungerRetracting = 5,
+}
 
 @Component({
   selector: 'automagic-start-dose-ready-to-inject',
@@ -49,12 +71,24 @@ export class StartDoseReadyToInjectPage
   public readyForInjection: boolean = false;
   public slides: Array<any> = [];
 
+  isReleasingCassette$: Observable<boolean> = this._store.select(
+    fromBluetoothStore.isReleasingCassetteState
+  );
+  isInjecting$: Observable<boolean> = this._store.select(
+    fromBluetoothStore.isInjectingState
+  );
+  isRemoveCassette$: Observable<boolean> = this._store.select(
+    fromBluetoothStore.isRemoveCassetteState
+  );
+  successfulDoses$: Observable<number> = this._store.select(
+    fromBluetoothStore.getSuccessfulDoses
+  );
+
   @ViewChild('sliderPage', { static: false })
   sliderPage!: fromSharedComponents.SliderPageComponent;
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
-    private _bluetoothService: BluetoothService,
     private _cdr: ChangeDetectorRef
   ) {
     super();
@@ -72,10 +106,22 @@ export class StartDoseReadyToInjectPage
       new fromSharedStore.TopbarChangeColor('--color-bg-pastel-green')
     );
 
-    // TESTING: Automatically navigate to plunger retracting slide
-    // setTimeout(() => {
-    //   this.sliderPage.slideTo(7);
-    // }, 100);
+    combineLatest([this.isReleasingCassette$, this.successfulDoses$])
+      .pipe(
+        filter(([isReleasingCassette]) => isReleasingCassette),
+        take(1)
+      )
+      .subscribe(([isReleasingCassette, successfulDoses]) => {
+        // TODO: slide to different indexes based on whether this is the first dose or not and whether the dosing errored
+        // this._store.dispatch(new fromSharedStore.AlertHide());
+        // this._store.dispatch(new fromSharedStore.SliderPageClear());
+        // this._store.dispatch(
+        //   new fromStore.SetData({
+        //     dosingStarted: false,
+        //   })
+        // );
+        // this.sliderPage.slideTo(FirstTimeSlides.PlungerRetracting);
+      });
 
     this.sliderPageConfig$
       .pipe(takeUntil(this.ngUnsubscribe))
@@ -161,9 +207,9 @@ export class StartDoseReadyToInjectPage
                     '--color-bg-pastel-honey-yellow'
                   )
                 );
-                const bodyShapeSlideIndex = this.slides.findIndex(
-                  (slide: any) => slide.bodyShapeStep
-                );
+                const bodyShapeSlideIndex = this.homeConfig?.firstTimeDose
+                  ? FirstTimeSlides.BodyPartSelector
+                  : NonFirstTimeSlides.BodyPartSelector;
                 this.sliderPage.slideTo(bodyShapeSlideIndex);
               },
             },
@@ -256,9 +302,9 @@ export class StartDoseReadyToInjectPage
                   )
                 );
                 if (this.homeConfig?.firstTimeDose) {
-                  this.sliderPage.slideTo(2);
+                  this.sliderPage.slideTo(FirstTimeSlides.Welcome);
                 } else {
-                  this.sliderPage.slideTo(0);
+                  this.sliderPage.slideTo(NonFirstTimeSlides.Welcome);
                 }
               },
             },
@@ -275,33 +321,34 @@ export class StartDoseReadyToInjectPage
                       '--color-bg-pastel-blue'
                     )
                   );
-                  setTimeout(() => {
-                    this._store.dispatch(
-                      new fromSharedStore.BackdropShow({
-                        transition: 'move',
-                        fullScreen: true,
-                        header: true,
-                        bgTemplate: 'top-hole',
-                        showBackButton: false,
-                        template: `
-                                <div class="no-need-to-clean-message">
-                                  <h1 class="font-heading-1--bold">No need to clean!</h1>
-                                  <p>For this demo you will not need to use an alcohol swab.</p>
-                                </div>
-                              `,
-                        buttons: [
-                          {
-                            label: 'Got it',
-                            action: () => {
-                              this._store.dispatch(
-                                new fromSharedStore.BackdropHide()
-                              );
-                            },
-                          },
-                        ],
-                      })
-                    );
-                  }, 1500);
+                  // NOTE: Temporarily hiding the no need to clean message
+                  // setTimeout(() => {
+                  //   this._store.dispatch(
+                  //     new fromSharedStore.BackdropShow({
+                  //       transition: 'move',
+                  //       fullScreen: true,
+                  //       header: true,
+                  //       bgTemplate: 'top-hole',
+                  //       showBackButton: false,
+                  //       template: `
+                  //               <div class="no-need-to-clean-message">
+                  //                 <h1 class="font-heading-1--bold">No need to clean!</h1>
+                  //                 <p>For this demo you will not need to use an alcohol swab.</p>
+                  //               </div>
+                  //             `,
+                  //       buttons: [
+                  //         {
+                  //           label: 'Got it',
+                  //           action: () => {
+                  //             this._store.dispatch(
+                  //               new fromSharedStore.BackdropHide()
+                  //             );
+                  //           },
+                  //         },
+                  //       ],
+                  //     })
+                  //   );
+                  // }, 1500);
                 }
               },
             },
@@ -326,7 +373,7 @@ export class StartDoseReadyToInjectPage
                 label: 'Skip',
                 fill: 'outline',
                 action: () => {
-                  this.sliderPage.slideTo(2);
+                  this.sliderPage.slideTo(FirstTimeSlides.Welcome);
                   this.showNoNeedlessMessage();
                 },
               },
@@ -400,7 +447,7 @@ export class StartDoseReadyToInjectPage
             component: null,
           },
           content: {
-            blockNavigationFor: 1500,
+            // blockNavigationFor: 1500,
             actions: [
               {
                 label: 'Previous step',
@@ -573,6 +620,7 @@ export class StartDoseReadyToInjectPage
           this._store.dispatch(
             new fromBluetoothStore.StartMockScenario(
               MOCK_SCENARIO_IDS.START_INJECTION_HAPPY_PATH
+              // MOCK_SCENARIO_IDS.START_INJECTION_INCOMPLETE_PATH
             )
           );
 
@@ -623,6 +671,7 @@ export class StartDoseReadyToInjectPage
             )
             .subscribe(() => {
               this.goTo('/home/cassette-remove');
+              this._store.dispatch(new fromSharedStore.AlertHide());
             });
         },
       }
@@ -661,19 +710,21 @@ export class StartDoseReadyToInjectPage
         new fromSharedStore.TopbarChangeColor('--color-transparent')
       );
 
-      this._store
-        .select(isInjectingState)
+      this.isInjecting$
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe((isInjecting) => {
           if (isInjecting) {
             if (this.homeConfig.firstTimeDose) {
-              if (this.sliderPageConfig?.header.currentSlide === 7) {
+              if (
+                this.sliderPageConfig?.header.currentSlide ===
+                FirstTimeSlides.AlmostThere
+              ) {
                 this._store.dispatch(
                   new fromSharedStore.SliderPageSetHeaderOptions({
                     template: null,
                   })
                 );
-                this.sliderPage.slideTo(9);
+                this.sliderPage.slideTo(FirstTimeSlides.Dosing);
               } else {
                 this.sliderPage.slideNext();
               }
