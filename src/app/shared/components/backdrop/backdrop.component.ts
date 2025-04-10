@@ -80,7 +80,8 @@ export class BackdropComponent implements OnInit, AfterViewInit {
   public initialSlide: number = 0;
   public foldBackgroundImage: string = '/assets/images/backdrop-fold-bg.svg';
   @ViewChild('sliderMainMenu') sliderMainMenu!: ElementRef<SwiperContainer>;
-  @ViewChild('sliderHighlightsTour') sliderHighlightsTour!: ElementRef<SwiperContainer>;
+  @ViewChild('sliderHighlightsTour')
+  sliderHighlightsTour!: ElementRef<SwiperContainer>;
   @ViewChild('sliderShareFlow') sliderShareFlow!: ElementRef<SwiperContainer>;
   @ViewChild('sliderReturnFlow') sliderReturnFlow!: ElementRef<SwiperContainer>;
   @ViewChild('contentComponent', { read: ViewContainerRef })
@@ -649,11 +650,6 @@ export class BackdropComponent implements OnInit, AfterViewInit {
       case 'time-traveling':
         this.contentComponent.createComponent(
           fromHomeComponents.TimeTravelingComponent
-        );
-        break;
-      case 'dosing-try-again':
-        this.contentComponent.createComponent(
-          fromHomeComponents.DosingTryAgainComponent
         );
         break;
     }
