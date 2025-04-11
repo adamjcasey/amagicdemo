@@ -1,5 +1,9 @@
 @import 'src/theme/base/mixins';
 
+:root {
+  font-family: var(--ion-font-family, inherit), sans-serif;
+}
+
 automagic-alert {
   position: absolute;
   top: 0;

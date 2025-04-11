@@ -3,6 +3,7 @@
 :root {
   --dosing-box-height: 440px;
   --dosing-box-indicator-size: 88px;
+  font-family: var(--ion-font-family, inherit), sans-serif;
 }
 
 @keyframes dosingAnimateIndicator {
