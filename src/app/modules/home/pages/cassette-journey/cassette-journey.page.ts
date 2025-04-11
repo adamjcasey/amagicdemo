@@ -95,7 +95,7 @@ export class CassetteJourneyPage
         },
         template: `
           <section class="cassette-inspection">
-            <img src="assets/images/cassette-inspect.svg" alt="Cassette inspection" />
+            <img class="cover-img" src="assets/images/cassette-inspect.svg" alt="Cassette inspection" />
             <h1 class="font-heading-1--bold ion-text-nowrap">Let's begin by<br>inspecting the cassette</h1>
             <div class="inspection">
               <div class="statement incorrect">

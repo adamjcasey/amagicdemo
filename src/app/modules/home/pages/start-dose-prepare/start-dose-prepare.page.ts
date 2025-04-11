@@ -306,29 +306,24 @@ export class StartDosePreparePage
       new fromSharedStore.SliderPageSetContentOptions({
         component: null,
         template: `
-        <div class="start-dose-prepare__instructions">
-          <img src="assets/images/drug-window.svg" />
+        <section class="start-dose-prepare__instructions">
+          <img class="cover-img" src="assets/images/drug-window.svg" />
           <h1 class="font-heading-1--bold ion-text-nowrap">Inspect your Theryx®</h1>
           <div class="inspection">
             <div class="statement incorrect">
               <h3>
-                <!-- <ion-icon name="close-circle"></ion-icon> -->
-                Do not proceed if it is
-              </h3>
+                <ion-icon name="close-circle"></ion-icon>Do not proceed if it is</h3>
               <p>Cloudy</p>
               <p>Has floating specks</p>
               <p>Has turned yellow</p>
             </div>
 
             <div class="statement correct">
-              <h3>
-                <!-- <ion-icon name="checkmark-circle"></ion-icon> -->
-                Proceed if it is
-              </h3>
+              <h3><ion-icon name="checkmark-circle"></ion-icon>Proceed if it is</h3>
               <p>Clear</p>
             </div>
           </div>
-        </div>
+        </section>
       `,
         toolbar: {
           actions: [
