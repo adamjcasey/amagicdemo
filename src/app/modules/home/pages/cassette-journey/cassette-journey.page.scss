@@ -8,7 +8,7 @@
 
   img {
     display: block;
-    width: 100%;
+    max-width: 250px;
     height: auto;
     opacity: 1;
     transition: opacity 0.3s ease;
@@ -117,7 +117,7 @@
     margin-top: 2rem;
   }
 
-  img {
-    width: 260px;
+  .cover-img {
+    width: 250px;
   }
 }
