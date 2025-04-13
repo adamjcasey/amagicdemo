@@ -98,6 +98,7 @@ export class StartDoseInjectDonePage
                     );
                   }
                 }
+                this.store.dispatch(new fromSharedStore.SliderPageClear());
                 event.target.nextElementSibling.click();
               },
             },
@@ -110,7 +111,8 @@ export class StartDoseInjectDonePage
                     '--color-bg-pastel-mint'
                   )
                 );
-                this.sliderPage.slideNext();
+                this.store.dispatch(new fromSharedStore.SliderPageClear());
+                this.sliderPage.slideTo(2);
               },
             },
           ],
