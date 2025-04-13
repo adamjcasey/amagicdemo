@@ -170,11 +170,10 @@ export class StartDoseReadyToInjectDosingComponent
         template: `
         <div class="no-needless-message">
           <h1 class="font-heading-1--bold">For this demo let's try that again</h1>
-          <img src="assets/images/no-needles.svg">
+          <img src="assets/images/injection-try-again.svg">
           <p>For the correct injection experience:</p>
-          <p>1. Press the injector against your leg</p>
-          <p>2. Wait for the injection to start</p>
-          <p>3. Act like a real patient and press the injector against your leg when instructed</p>
+          <p>1. Follow the app prompts to begin the injection.</p>
+          <p>2. <b>Hold the injector down until the app shows a completed injection (10 seconds).</b></p>
         </div>
       `,
       })

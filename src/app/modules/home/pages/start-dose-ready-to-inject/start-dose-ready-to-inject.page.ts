@@ -7,7 +7,7 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { combineLatest, filter, Observable, take, takeUntil } from 'rxjs';
+import { filter, Observable, take, takeUntil } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -71,9 +71,6 @@ export class StartDoseReadyToInjectPage
   public readyForInjection: boolean = false;
   public slides: Array<any> = [];
 
-  isReleasingCassette$: Observable<boolean> = this._store.select(
-    fromBluetoothStore.isReleasingCassetteState
-  );
   isInjecting$: Observable<boolean> = this._store.select(
     fromBluetoothStore.isInjectingState
   );
@@ -105,23 +102,6 @@ export class StartDoseReadyToInjectPage
     this._store.dispatch(
       new fromSharedStore.TopbarChangeColor('--color-bg-pastel-green')
     );
-
-    combineLatest([this.isReleasingCassette$, this.successfulDoses$])
-      .pipe(
-        filter(([isReleasingCassette]) => isReleasingCassette),
-        take(1)
-      )
-      .subscribe(([isReleasingCassette, successfulDoses]) => {
-        // TODO: slide to different indexes based on whether this is the first dose or not and whether the dosing errored
-        // this._store.dispatch(new fromSharedStore.AlertHide());
-        // this._store.dispatch(new fromSharedStore.SliderPageClear());
-        // this._store.dispatch(
-        //   new fromStore.SetData({
-        //     dosingStarted: false,
-        //   })
-        // );
-        // this.sliderPage.slideTo(FirstTimeSlides.PlungerRetracting);
-      });
 
     this.sliderPageConfig$
       .pipe(takeUntil(this.ngUnsubscribe))
