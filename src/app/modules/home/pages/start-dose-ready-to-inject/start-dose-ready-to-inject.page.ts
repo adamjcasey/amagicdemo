@@ -411,69 +411,70 @@ export class StartDoseReadyToInjectPage
           },
         }
       );
+    }
 
-      // set instruction steps to clean-site,
-      // uncap-injector, and pre-loading for dosing
-      this.slides.push(
-        {
-          header: {
-            color: '--color-bg-pastel-blue',
-            template: `
+    // set instruction steps to clean-site,
+    // uncap-injector, and pre-loading for dosing
+    this.slides.push(
+      {
+        header: {
+          color: '--color-bg-pastel-blue',
+          template: `
               <div class="start-dose-ready-to-inject__content">
                 <h1 class="font-heading-1--bold">Clean site.</h1>
                 <img src="assets/images/start-dose-ready-to-inject-clean.svg">
               </div>
             `,
-            component: null,
-          },
-          content: {
-            // blockNavigationFor: 1500,
-            actions: [
-              {
-                label: 'Previous step',
-                action: () => {
-                  // clear previous body part selection
-                  this._store.dispatch(
-                    new fromStore.SetData({
-                      bodyPartSelected: null,
-                    })
-                  );
-
-                  this._store.dispatch(
-                    new fromSharedStore.TopbarChangeColor(
-                      '--color-bg-pastel-honey-yellow'
-                    )
-                  );
-                  this.sliderPage.slidePrev();
-                },
-              },
-              {
-                label: 'Next Step',
-                action: () => {
-                  this._store.dispatch(
-                    new fromSharedStore.TopbarChangeColor(
-                      '--color-bg-pastel-green'
-                    )
-                  );
-                  this.sliderPage.slideNext();
-
-                  // Mocking value
-                  window.setTimeout(() => {
-                    this._store.dispatch(
-                      new fromBluetoothStore.MockDeviceState(
-                        DeviceStateCode.ReadyForInjection
-                      )
-                    );
-                  }, 1000);
-                },
-              },
-            ],
-          },
+          component: null,
         },
-        {
-          header: {
-            color: '--color-bg-pastel-green',
-            template: `
+        content: {
+          // blockNavigationFor: 1500,
+          actions: [
+            {
+              label: 'Previous step',
+              action: () => {
+                // clear previous body part selection
+                this._store.dispatch(
+                  new fromStore.SetData({
+                    bodyPartSelected: null,
+                  })
+                );
+
+                this._store.dispatch(
+                  new fromSharedStore.TopbarChangeColor(
+                    '--color-bg-pastel-honey-yellow'
+                  )
+                );
+                this.sliderPage.slidePrev();
+              },
+            },
+            {
+              label: 'Next Step',
+              action: () => {
+                this._store.dispatch(
+                  new fromSharedStore.TopbarChangeColor(
+                    '--color-bg-pastel-green'
+                  )
+                );
+                this.sliderPage.slideNext();
+
+                // Mocking value
+                window.setTimeout(() => {
+                  this._store.dispatch(
+                    new fromBluetoothStore.MockDeviceState(
+                      DeviceStateCode.ReadyForInjection
+                    )
+                  );
+                }, 1000);
+              },
+            },
+          ],
+        },
+      },
+      {
+        header: {
+          color: '--color-bg-pastel-green',
+          template: `
               <div class="start-dose-ready-to-inject__content">
                 <h1 class="font-heading-1--bold">Uncap injector.</h1>
                 <img src="assets/images/start-dose-ready-to-inject-uncap.svg">
@@ -488,100 +489,100 @@ export class StartDoseReadyToInjectPage
                    </div>
                 </div>
             `,
-          },
-          content: {
-            blockNavigationFor: null,
-            actions: [
-              {
-                label: 'Previous step',
-                action: () => {
-                  this._store.dispatch(
-                    new fromSharedStore.TopbarChangeColor(
-                      '--color-bg-pastel-blue'
-                    )
-                  );
-                  this.sliderPage.slidePrev();
-                },
-              },
-              {
-                label: 'Next Step',
-                disabled: !this.readyForInjection,
-                action: () => {
-                  this._store.dispatch(
-                    new fromSharedStore.TopbarChangeColor(
-                      '--color-bg-pastel-beige'
-                    )
-                  );
-                  this.sliderPage.slideNext();
-                },
-              },
-            ],
-          },
         },
-        {
-          header: {
-            color: '--color-bg-pastel-beige',
-            template: `
+        content: {
+          blockNavigationFor: null,
+          actions: [
+            {
+              label: 'Previous step',
+              action: () => {
+                this._store.dispatch(
+                  new fromSharedStore.TopbarChangeColor(
+                    '--color-bg-pastel-blue'
+                  )
+                );
+                this.sliderPage.slidePrev();
+              },
+            },
+            {
+              label: 'Next Step',
+              disabled: !this.readyForInjection,
+              action: () => {
+                this._store.dispatch(
+                  new fromSharedStore.TopbarChangeColor(
+                    '--color-bg-pastel-beige'
+                  )
+                );
+                this.sliderPage.slideNext();
+              },
+            },
+          ],
+        },
+      },
+      {
+        header: {
+          color: '--color-bg-pastel-beige',
+          template: `
               <div class="start-dose-ready-to-inject__content">
                 <h1 class="font-heading-1--bold">Almost there...</h1>
               </div>
             `,
-            cards: [
-              {
-                type: 'stepper',
-                indicator: '1',
-                title: 'To inject, firmly press and hold down',
-                asset: '/assets/images/start-dose-ready-to-inject-card-1.svg',
-                description:
-                  'On the next screen, press the injector against skin until it <strong>clicks</strong>.  The light will turn <strong>purple</strong> while injecting.',
+          cards: [
+            {
+              type: 'stepper',
+              indicator: '1',
+              title: 'To inject, firmly press and hold down',
+              asset: '/assets/images/start-dose-ready-to-inject-card-1.svg',
+              description:
+                'On the next screen, press the injector against skin until it <strong>clicks</strong>.  The light will turn <strong>purple</strong> while injecting.',
+            },
+            {
+              type: 'stepper',
+              indicator: '2',
+              title: 'Hold down for 10 seconds',
+              asset: '/assets/images/start-dose-ready-to-inject-card-2.svg',
+              description:
+                'The injection will take <strong>10 seconds</strong> to complete. Hold down for the entire time.',
+            },
+            {
+              type: 'stepper',
+              indicator: '3',
+              title: 'Green means finished',
+              asset: '/assets/images/start-dose-ready-to-inject-card-3.svg',
+              description:
+                'The light will turn <strong>green</strong> when the injection is complete and you can safely release.',
+            },
+          ],
+        },
+        content: {
+          actions: [
+            {
+              label: 'Previous step',
+              action: () => {
+                this._store.dispatch(
+                  new fromSharedStore.TopbarChangeColor(
+                    '--color-bg-pastel-green'
+                  )
+                );
+                this.sliderPage.slidePrev();
               },
-              {
-                type: 'stepper',
-                indicator: '2',
-                title: 'Hold down for 10 seconds',
-                asset: '/assets/images/start-dose-ready-to-inject-card-2.svg',
-                description:
-                  'The injection will take <strong>10 seconds</strong> to complete. Hold down for the entire time.',
+            },
+            {
+              label: 'Next Step',
+              action: () => {
+                this.sliderPage.slideNext();
               },
-              {
-                type: 'stepper',
-                indicator: '3',
-                title: 'Green means finished',
-                asset: '/assets/images/start-dose-ready-to-inject-card-3.svg',
-                description:
-                  'The light will turn <strong>green</strong> when the injection is complete and you can safely release.',
-              },
-            ],
-          },
-          content: {
-            actions: [
-              {
-                label: 'Previous step',
-                action: () => {
-                  this._store.dispatch(
-                    new fromSharedStore.TopbarChangeColor(
-                      '--color-bg-pastel-green'
-                    )
-                  );
-                  this.sliderPage.slidePrev();
-                },
-              },
-              {
-                label: 'Next Step',
-                action: () => {
-                  this.sliderPage.slideNext();
-                },
-              },
-            ],
-          },
-          onLoad: () => {
-            if (this.homeConfig.firstTimeDose) {
-              this.startWaitingForStartDosing();
-            }
-          },
-        }
-      );
-    }
+            },
+          ],
+        },
+        onLoad: () => {
+          if (this.homeConfig.firstTimeDose) {
+            this.startWaitingForStartDosing();
+          }
+        },
+      }
+    );
+    // }
 
     // set dosing step
     this.slides.push(
@@ -691,33 +692,31 @@ export class StartDoseReadyToInjectPage
       );
 
       this.isInjecting$
-        .pipe(takeUntil(this.ngUnsubscribe))
-        .subscribe((isInjecting) => {
-          if (isInjecting) {
-            if (this.homeConfig.firstTimeDose) {
-              if (
-                this.sliderPageConfig?.header.currentSlide ===
-                FirstTimeSlides.AlmostThere
-              ) {
-                this._store.dispatch(
-                  new fromSharedStore.SliderPageSetHeaderOptions({
-                    template: null,
-                  })
-                );
-                this.sliderPage.slideTo(FirstTimeSlides.Dosing);
-              } else {
-                this.sliderPage.slideNext();
-              }
+        .pipe(takeUntil(this.ngUnsubscribe), filter(Boolean))
+        .subscribe(() => {
+          if (this.homeConfig.firstTimeDose) {
+            if (
+              this.sliderPageConfig?.header.currentSlide ===
+              FirstTimeSlides.AlmostThere
+            ) {
+              this._store.dispatch(
+                new fromSharedStore.SliderPageSetHeaderOptions({
+                  template: null,
+                })
+              );
+              this.sliderPage.slideTo(FirstTimeSlides.Dosing);
             } else {
               this.sliderPage.slideNext();
             }
-
-            this._store.dispatch(
-              new fromStore.SetData({
-                dosingStarted: true,
-              })
-            );
+          } else {
+            this.sliderPage.slideNext();
           }
+
+          this._store.dispatch(
+            new fromStore.SetData({
+              dosingStarted: true,
+            })
+          );
         });
     } catch (error) {
       console.log('startWaitingForStartDosing > error: ', error);

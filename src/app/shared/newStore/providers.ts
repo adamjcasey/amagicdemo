@@ -30,8 +30,9 @@ export function provideAppStore() {
       runtimeChecks: {
         strictStateImmutability: true,
         strictActionImmutability: true,
-        strictStateSerializability: true,
-        strictActionSerializability: true,
+        // TODO: need to be false to support legacy actions flow. Let's change it when there's some time
+        strictStateSerializability: false,
+        strictActionSerializability: false,
         strictActionWithinNgZone: true,
         strictActionTypeUniqueness: true,
       },

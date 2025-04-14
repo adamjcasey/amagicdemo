@@ -10,7 +10,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import moment from 'moment';
-import { filter, Observable } from 'rxjs';
+import { filter, Observable, take } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -46,6 +46,7 @@ export class StartDoseReadyToInjectDosingComponent
   errorDosing: boolean = false;
   dosePercentageCompleted: number = 0;
   doseDone: boolean = false;
+  hasReached95Percent: boolean = false;
 
   injectionCompleted$: Observable<boolean> = this.#store
     .select(isLiftFromInjectionSiteState)
@@ -79,31 +80,33 @@ export class StartDoseReadyToInjectDosingComponent
   checkDosingProcess() {
     this.#store
       .select(fromBluetoothStore.getDeviceStateData)
-      .pipe(takeUntilDestroyed(this.#destroyRef))
+      .pipe(
+        takeUntilDestroyed(this.#destroyRef),
+        filter((stateData) => stateData !== null)
+      )
       .subscribe((stateData) => {
-        if (stateData !== null) {
-          // Convert hex to percentage (00 to FF = 0 to 255)
-          const progress = (stateData / 255) * 100;
+        // Convert hex to percentage (00 to FF = 0 to 255)
+        const progress = (stateData / 255) * 100;
 
-          if (progress > this.dosePercentageCompleted) {
-            this.dosePercentageCompleted = progress;
-          }
-
-          if (progress >= 80) {
-            this.title = 'Hold...';
-            this.doseStatus = 'The injection is almost done...';
-            this.#store.dispatch(
-              new fromSharedStore.SliderPageSetHeaderOptions({
-                color: '--color-bg-pastel-blue',
-              })
-            );
-          } else {
-            this.title = 'Dosing...';
-            this.doseStatus = 'The injection is in progress...';
-          }
-
-          this.#cdr.detectChanges();
+        if (progress > this.dosePercentageCompleted) {
+          this.dosePercentageCompleted = progress;
         }
+
+        if (progress >= 95) {
+          this.hasReached95Percent = true;
+          this.title = 'Hold...';
+          this.doseStatus = 'The injection is almost done...';
+          this.#store.dispatch(
+            new fromSharedStore.SliderPageSetHeaderOptions({
+              color: '--color-bg-pastel-blue',
+            })
+          );
+        } else if (!this.hasReached95Percent) {
+          this.title = 'Dosing...';
+          this.doseStatus = 'The injection is in progress...';
+        }
+
+        this.#cdr.detectChanges();
       });
 
     // Handle successful complete injection
@@ -121,7 +124,7 @@ export class StartDoseReadyToInjectDosingComponent
         })
       );
 
-      this.releasingCassette$.subscribe(() => {
+      this.releasingCassette$.pipe(take(1)).subscribe(() => {
         this.#handleReleasingCassetteScreen();
       });
 
@@ -144,7 +147,7 @@ export class StartDoseReadyToInjectDosingComponent
           })
         );
 
-        this.releasingCassette$.subscribe(() => {
+        this.releasingCassette$.pipe(take(1)).subscribe(() => {
           this.#handleReleasingCassetteScreen(false);
         });
 

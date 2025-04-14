@@ -5,11 +5,11 @@ import { Observable, takeUntil } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BaseComponentAbstract } from '@app/shared/abstracts/base-component.abstract';
 import { Capacitor } from '@capacitor/core';
 import * as fromCoreStore from '@core/store';
 import * as fromStore from '@home/store';
 import { IonContent } from '@ionic/angular/standalone';
-import { DeviceConnectionAbstract } from '@shared/abstracts/device-connection.abstract';
 import * as fromSharedComponents from '@shared/components';
 import * as fromSharedStore from '@shared/store';
 import { addIcons } from 'ionicons';
@@ -31,7 +31,7 @@ import { environment } from 'src/environments/environment';
   ],
 })
 export class StartDoseInjectDonePage
-  extends DeviceConnectionAbstract
+  extends BaseComponentAbstract
   implements OnInit
 {
   @ViewChild('sliderPage', { static: false })

@@ -409,15 +409,22 @@ export class CassetteJourneyPage
   }
 
   #mockScenario(): void {
-    this.mockScenariosHistory$.pipe(take(1)).subscribe((history) => {
-      const hasUsedCassetteBeenRun = history.includes(
-        MOCK_SCENARIO_IDS.CASSETTE_JOURNEY_USED_CASSETTE_PATH
-      );
-      const scenarioId = hasUsedCassetteBeenRun
-        ? MOCK_SCENARIO_IDS.CASSETTE_JOURNEY_HAPPY_PATH
-        : MOCK_SCENARIO_IDS.CASSETTE_JOURNEY_USED_CASSETTE_PATH;
+    this.store.dispatch(
+      new fromBluetoothStore.StartMockScenario(
+        MOCK_SCENARIO_IDS.CASSETTE_JOURNEY_HAPPY_PATH
+      )
+    );
 
-      this.store.dispatch(new fromBluetoothStore.StartMockScenario(scenarioId));
-    });
+    // NOTE: Logic to determine which mock scenario to run
+    // this.mockScenariosHistory$.pipe(take(1)).subscribe((history) => {
+    //   const hasUsedCassetteBeenRun = history.includes(
+    //     MOCK_SCENARIO_IDS.CASSETTE_JOURNEY_USED_CASSETTE_PATH
+    //   );
+    //   const scenarioId = hasUsedCassetteBeenRun
+    //     ? MOCK_SCENARIO_IDS.CASSETTE_JOURNEY_HAPPY_PATH
+    //     : MOCK_SCENARIO_IDS.CASSETTE_JOURNEY_USED_CASSETTE_PATH;
+
+    //   this.store.dispatch(new fromBluetoothStore.StartMockScenario(scenarioId));
+    // });
   }
 }

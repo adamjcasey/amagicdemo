@@ -1,4 +1,10 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnInit,
+  ViewEncapsulation,
+} from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 
@@ -21,13 +27,14 @@ import * as fromCoreStore from '@core/store';
   ],
 })
 export class StartDosePrepareSetupComponent implements OnInit {
-  public layoutConfig$!: Observable<any>;
-  public layoutConfig: any;
-  public timer!: number;
+  #store = inject(Store<fromCoreStore.CoreState>);
+  #cdr = inject(ChangeDetectorRef);
 
-  constructor(private _store: Store<fromCoreStore.CoreState>) {
-    this.layoutConfig$ = this._store.select(fromCoreStore.getLayoutConfig);
-  }
+  layoutConfig$: Observable<any> = this.#store.select(
+    fromCoreStore.getLayoutConfig
+  );
+  layoutConfig: any;
+  timer!: number;
 
   ngOnInit() {
     this.layoutConfig$.subscribe((layoutConfig) => {
@@ -36,6 +43,7 @@ export class StartDosePrepareSetupComponent implements OnInit {
 
         if (this.layoutConfig.rightCornerEl) {
           this.timer = this.layoutConfig.rightCornerEl.timer;
+          this.#cdr.markForCheck();
         }
       }
     });
