@@ -7,7 +7,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CardComponent } from '@app/shared/components';
 import * as fromCoreStore from '@core/store';
 import * as fromStore from '@home/store';
-import { IonImg } from '@ionic/angular/standalone';
+import { IonContent, IonImg } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'automagic-start-dose-inject-done-report',
@@ -21,6 +21,7 @@ import { IonImg } from '@ionic/angular/standalone';
     ReactiveFormsModule,
     CardComponent,
     IonImg,
+    IonContent,
   ],
 })
 export class StartDoseInjectDoneReportComponent implements OnInit {

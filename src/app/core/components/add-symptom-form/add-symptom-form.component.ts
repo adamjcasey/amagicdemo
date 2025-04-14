@@ -15,7 +15,12 @@ import * as fromActivityStore from '@activity/store';
 import { CommonModule } from '@angular/common';
 import { RatingFieldComponent } from '@app/shared/components';
 import * as fromCoreStore from '@core/store';
-import { IonCheckbox, IonIcon, IonInput } from '@ionic/angular/standalone';
+import {
+  IonCheckbox,
+  IonContent,
+  IonIcon,
+  IonInput,
+} from '@ionic/angular/standalone';
 import * as fromSharedStore from '@shared/store';
 
 @Component({
@@ -31,7 +36,7 @@ import * as fromSharedStore from '@shared/store';
     IonCheckbox,
     IonIcon,
     IonInput,
-    // fromCoreStore.CoreStoreModule,
+    IonContent,
     RatingFieldComponent,
   ],
 })

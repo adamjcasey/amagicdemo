@@ -4,7 +4,7 @@ import {
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
-import { Observable, takeUntil } from 'rxjs';
+import { Observable, take, takeUntil } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -187,13 +187,16 @@ export class CassetteRemovePage
   }
 
   #handleCloseAction(): void {
-    this.store.select(getSuccessfulDoses).subscribe((count) => {
-      if (count === 0) {
-        this.goTo('/home/cassette-journey');
-      } else if (count === 1) {
-        this.store.dispatch(new fromSharedStore.SliderPageClear());
-        this.goTo('/home/start-dose/inject-done');
-      }
-    });
+    this.store
+      .select(getSuccessfulDoses)
+      .pipe(takeUntil(this.ngUnsubscribe), take(1))
+      .subscribe((count) => {
+        if (count === 0) {
+          this.goTo('/home/cassette-journey');
+        } else {
+          this.store.dispatch(new fromSharedStore.SliderPageClear());
+          this.goTo('/home/start-dose/inject-done');
+        }
+      });
   }
 }

@@ -18,7 +18,7 @@ if (environment.production) {
   };
 } else {
   initialState = {
-    name: 'Developer',
+    name: 'Awesome Developer',
     doses: [],
     bleAllowed: false,
     notificationsAllowed: false,
