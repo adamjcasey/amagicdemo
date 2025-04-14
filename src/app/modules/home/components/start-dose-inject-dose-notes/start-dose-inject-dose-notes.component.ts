@@ -8,7 +8,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RatingFieldComponent } from '@app/shared/components';
 import * as fromCoreStore from '@core/store';
 import * as fromStore from '@home/store';
-import { IonCheckbox, IonIcon } from '@ionic/angular/standalone';
+import {
+  IonCheckbox,
+  IonContent,
+  IonIcon,
+  IonInput,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'automagic-start-dose-inject-dose-notes',
@@ -23,6 +28,8 @@ import { IonCheckbox, IonIcon } from '@ionic/angular/standalone';
     RatingFieldComponent,
     IonCheckbox,
     IonIcon,
+    IonInput,
+    IonContent,
   ],
 })
 export class StartDoseInjectDoseNotesFormComponent

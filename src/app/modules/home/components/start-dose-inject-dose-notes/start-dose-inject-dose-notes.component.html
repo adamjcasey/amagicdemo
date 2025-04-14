@@ -1,49 +1,36 @@
-<form class="start-dose-inject-dose-notes" [formGroup]="doseNotesFormGroup" autocomplete="off">
-  <h1 class="font-heading-1--bold">New Dose Note</h1>
-  <p>Recording details about your doses can help your HCP and give insight into your progress over time.</p>
-  <h3>Injection reaction</h3>
+<ion-content>
+  <form class="start-dose-inject-dose-notes" [formGroup]="doseNotesFormGroup" autocomplete="off">
+    <h1 class="font-heading-1--bold">New Dose Note</h1>
+    <p>Recording details about your doses can help your HCP and give insight into your progress over time.</p>
+    <h3>Injection reaction</h3>
 
-  <automagic-rating-field 
-    [value]="1"
-    [rates]="['Painful', 'Painless']"
-    (onChage)="ratingFieldUpdate($event, 'painful')"
-  ></automagic-rating-field>  
+    <automagic-rating-field [value]="1" [rates]="['Painful', 'Painless']"
+      (onChage)="ratingFieldUpdate($event, 'painful')"></automagic-rating-field>
 
-  <automagic-rating-field 
-    [value]="1" 
-    [rates]="['Anxious', 'Calm']" 
-    (onChage)="ratingFieldUpdate($event, 'mood')"
-  ></automagic-rating-field>
+    <automagic-rating-field [value]="1" [rates]="['Anxious', 'Calm']"
+      (onChage)="ratingFieldUpdate($event, 'mood')"></automagic-rating-field>
 
-  <div class="field-wrapper">
-    <p class="field-label">Symptoms</p>
-    <div class="field-checkboxes">
-      <ion-checkbox 
-        [checked]="doseNotesFormGroup.get('symptoms')?.value.includes(reaction)"
-        labelPlacement="end"
-        *ngFor="let reaction of symptoms; let i = index" 
-        (click)="markReaction($event, i)">
-        {{ reaction }}
-      </ion-checkbox>
+    <div class="field-wrapper">
+      <p class="field-label">Symptoms</p>
+      <div class="field-checkboxes">
+        <ion-checkbox [checked]="doseNotesFormGroup.get('symptoms')?.value.includes(reaction)" labelPlacement="end"
+          *ngFor="let reaction of symptoms; let i = index" (ionChange)="markReaction($event, i)">
+          {{ reaction }}
+        </ion-checkbox>
+      </div>
     </div>
-  </div>
 
-  <div class="add-photo-cta">
-    <a class="button--link">
-      <ion-icon slot="start" src="/assets/icons/add-photo.svg"></ion-icon>
-      Add photo
-    </a>
-  </div>
+    <div class="add-photo-cta">
+      <a class="button--link">
+        <ion-icon slot="start" src="/assets/icons/add-photo.svg"></ion-icon>
+        Add photo
+      </a>
+    </div>
 
-  <div class="field-wrapper">
-    <p class="field-label">Note</p>
-    <ion-input 
-      color="purple" 
-      fill="outline" 
-      mode="md" 
-      formControlName="note"
-      placeholder="Type or dictate a note here..."
-      (keyup.enter)="handlerEnterKey($event)"
-    ></ion-input>
-  </div>
-</form>
+    <div class="field-wrapper">
+      <p class="field-label">Note</p>
+      <ion-input color="purple" fill="outline" mode="md" formControlName="note"
+        placeholder="Type or dictate a note here..." (keyup.enter)="handlerEnterKey($event)"></ion-input>
+    </div>
+  </form>
+</ion-content>
