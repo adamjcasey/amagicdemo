@@ -1,10 +1,11 @@
-import { Injectable } from '@angular/core';
-import { Capacitor } from '@capacitor/core';
-import { Device } from '@capacitor/device';
+import {Injectable} from '@angular/core';
+import {Capacitor} from '@capacitor/core';
+import {Device} from '@capacitor/device';
 import * as fromCoreStore from '@core/store';
-import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { Store } from '@ngrx/store';
-import { from, of } from 'rxjs';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
+import {Storage} from "@ionic/storage";
+import {Store} from '@ngrx/store';
+import {from, of} from 'rxjs';
 import {
   catchError,
   map,
@@ -12,11 +13,11 @@ import {
   tap,
   withLatestFrom,
 } from 'rxjs/operators';
-import { BluetoothMockManagerService } from '../services/bluetooth-mock-manager.service';
-import { BluetoothService } from '../services/bluetooth.service';
+import {BluetoothMockManagerService} from '../services/bluetooth-mock-manager.service';
+import {BluetoothService} from '../services/bluetooth.service';
 import * as fromActions from './bluetooth.actions';
 import * as fromSelector from './bluetooth.reducer';
-import { BluetoothState } from './bluetooth.store';
+import {BluetoothState} from './bluetooth.store';
 
 @Injectable()
 export class BluetoothEffects {
@@ -24,8 +25,10 @@ export class BluetoothEffects {
     private actions$: Actions,
     private store: Store<{ bluetooth: BluetoothState }>,
     private bluetoothService: BluetoothService,
-    private mockManager: BluetoothMockManagerService
-  ) {}
+    private mockManager: BluetoothMockManagerService,
+    private storage: Storage
+  ) {
+  }
 
   // Initialize platform detection and device info
   initializePlatform$ = createEffect(() =>
@@ -38,28 +41,31 @@ export class BluetoothEffects {
         // If we're on a native platform, check if it's a virtual device
         if (isNativePlatform) {
           try {
-            const deviceInfo = await Device.getInfo();
-            isVirtualDevice = deviceInfo.isVirtual;
+            const mobileDeviceInfo = await Device.getInfo();
+            isVirtualDevice = mobileDeviceInfo.isVirtual;
           } catch (error) {
             console.error('Error getting device info:', error);
           }
         }
-
+        // try to get save device info
+        const savedState = JSON.parse(localStorage.getItem('state') || "");
+        const savedDeviceInfo = savedState?.bluetooth?.deviceInfo;
         const useMockDevice = !isNativePlatform || isVirtualDevice;
+        const deviceInfo = savedDeviceInfo.serial ? savedDeviceInfo || {
+          name: useMockDevice ? 'Mock Device' : '',
+          manufacturer: '',
+          model: '',
+          serial: '',
+          softwareRevision: '',
+          hardwareRevision: '',
+          rssi: 0,
+        }
 
         return new fromActions.InitializeBluetoothState({
           isNativePlatform,
           isVirtualDevice,
           useMockDevice,
-          deviceInfo: {
-            name: useMockDevice ? 'Mock Device' : '',
-            manufacturer: '',
-            model: '',
-            serial: '',
-            softwareRevision: '',
-            hardwareRevision: '',
-            rssi: 0,
-          },
+          deviceInfo
         });
       })
     )
