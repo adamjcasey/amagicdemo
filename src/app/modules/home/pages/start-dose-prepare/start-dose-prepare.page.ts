@@ -1,9 +1,4 @@
-import {
-  Component,
-  OnInit,
-  ViewChild,
-  ViewEncapsulation,
-} from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { firstValueFrom, Observable, takeUntil } from 'rxjs';
 
@@ -13,11 +8,11 @@ import { BluetoothService } from '@app/shared/libs/bluetooth';
 import * as fromCoreStore from '@core/store';
 import * as fromStore from '@home/store';
 import { IonContent } from '@ionic/angular/standalone';
+import { DeviceConnectionAbstract } from '@shared/abstracts/device-connection.abstract';
 import * as fromSharedComponents from '@shared/components';
 import * as fromSharedStore from '@shared/store';
 import { addIcons } from 'ionicons';
 import { checkmarkCircle, closeCircle } from 'ionicons/icons';
-import { DeviceConnectionAbstract } from '@shared/abstracts/device-connection.abstract';
 
 @Component({
   selector: 'automagic-start-dose-prepare',
@@ -35,8 +30,8 @@ import { DeviceConnectionAbstract } from '@shared/abstracts/device-connection.ab
 })
 export class StartDosePreparePage
   extends DeviceConnectionAbstract
-  implements OnInit {
-
+  implements OnInit
+{
   public homeConfig$!: Observable<any>;
   public homeConfig: any;
   public layoutConfig$!: Observable<any>;
@@ -50,7 +45,7 @@ export class StartDosePreparePage
     private _store: Store<fromCoreStore.CoreState>,
     private _bluetoothService: BluetoothService
   ) {
-    super()
+    super();
     addIcons({ closeCircle, checkmarkCircle });
 
     this.homeConfig$ = this._store.select(fromStore.getHomeConfig);
@@ -68,7 +63,8 @@ export class StartDosePreparePage
           hide: false,
           hideNavigation: true,
           template:
-            this.homeConfig?.firstTimeDose || true
+            // this.homeConfig?.firstTimeDose || true
+            false
               ? `
           <div class="start-dose-prepare__instructions">
             <img src="assets/images/drug-cold-temp.svg" />
@@ -109,7 +105,8 @@ export class StartDosePreparePage
               {
                 label: 'Proceed',
                 action: () => {
-                  this.showStepTempTimer();
+                  this._store.dispatch(new fromSharedStore.SliderPageClear());
+                  this.goTo('home/start-dose/ready-to-inject');
                 },
               },
             ],
@@ -224,8 +221,9 @@ export class StartDosePreparePage
     this._store.dispatch(
       new fromSharedStore.SliderPageSetContent({
         isExpanded: true,
-        template: this.homeConfig.firstTimeDose
-          ? `
+        template:
+          this.homeConfig.firstTimeDose || true
+            ? `
           <div class="start-dose-prepare__instructions">
             <img src="assets/images/drug-cold-temp.svg" />
             <h1 class="font-heading-1--bold ion-text-nowrap">Theryx® temperature</h1>
@@ -244,7 +242,7 @@ export class StartDosePreparePage
             <p>It's best to let it warm up for a bit to room temperature (65°F) before injecting.</p>
           </div>
         `
-          : `
+            : `
           <div class="start-dose-prepare__instructions">
             <img src="assets/images/drug-cold-temp.svg" />
             <h1 class="font-heading-1--bold ion-text-nowrap">Theryx® temperature</h1>

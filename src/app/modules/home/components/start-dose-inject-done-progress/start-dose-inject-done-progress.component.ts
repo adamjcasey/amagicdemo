@@ -1,6 +1,8 @@
 import {
   AfterViewInit,
+  ChangeDetectorRef,
   Component,
+  inject,
   OnInit,
   ViewEncapsulation,
 } from '@angular/core';
@@ -25,14 +27,13 @@ import { IonImg } from '@ionic/angular/standalone';
 export class StartDoseInjectDoneProgressComponent
   implements OnInit, AfterViewInit
 {
-  public title: string = 'Verifying...';
-  public homeConfig$!: Observable<any>;
-  public homeConfig: any;
-  public doseMarked: boolean = false;
+  #store = inject(Store<fromCoreStore.CoreState>);
+  #cdr = inject(ChangeDetectorRef);
 
-  constructor(private _store: Store<fromCoreStore.CoreState>) {
-    this.homeConfig$ = this._store.select(fromStore.getHomeConfig);
-  }
+  title: string = 'Verifying...';
+  homeConfig$: Observable<any> = this.#store.select(fromStore.getHomeConfig);
+  homeConfig: any;
+  doseMarked: boolean = false;
 
   ngOnInit() {
     this.homeConfig$.subscribe((homeConfig) => {
@@ -76,10 +77,12 @@ export class StartDoseInjectDoneProgressComponent
     }
 
     this.doseMarked = true;
-    this._store.dispatch(
+    this.#store.dispatch(
       new fromStore.SetData({
         doses: doses,
       })
     );
+
+    this.#cdr.detectChanges();
   }
 }
