@@ -57,7 +57,7 @@ const persistStoreInNativeDevice = async (storage: Storage, state: any) => {
     environment.db = db;
   }
   db.set('state', JSON.stringify(state));
-  
+
   if(isLastDoseDateExist(state)) {
     db.set('doses', JSON.stringify(state.home.doses));
   }
@@ -67,25 +67,7 @@ function isLastDoseDateExist(state: any): boolean {
   return state?.home?.doses?.[5]?.date;
 }
 
-export function middlewareReducer(storage: Storage): MetaReducer<fromStore.CoreState> {
-  return (reducer: ActionReducer<fromStore.CoreState>): ActionReducer<fromStore.CoreState> => {
-    return (state, action) => {
-      const nextState = reducer(state, action);
-      if (Capacitor.isNativePlatform()) {
-        persistStoreInNativeDevice(storage, nextState);
-      }
-      else {
-        localStorage.setItem('state', JSON.stringify(nextState));
-        if(isLastDoseDateExist(state)) {
-          localStorage.setItem('doses', JSON.stringify((nextState as any).home.doses));
-        }
-      }
-      return nextState;
-    };
-  };
-}
-
-export const metaReducers: MetaReducer<fromStore.CoreState>[] = 
+export const metaReducers: MetaReducer<fromStore.CoreState>[] =
   !environment.production
   ? [logger]
   : [];
@@ -96,7 +78,6 @@ metaReducers.push(clearState);
     CommonModule,
     StoreModule.forRoot(fromReducer.CoreReducer, { metaReducers: [
       ...metaReducers,
-      middlewareReducer(new Storage({ name: 'automagic_ally' }))
     ]}),
     StoreModule.forFeature('layout', fromReducer.LayoutReducer),
     EffectsModule.forRoot(fromEffects.CoreEffects),
