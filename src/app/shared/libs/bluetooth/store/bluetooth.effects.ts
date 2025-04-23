@@ -18,6 +18,7 @@ import {BluetoothService} from '../services/bluetooth.service';
 import * as fromActions from './bluetooth.actions';
 import * as fromSelector from './bluetooth.reducer';
 import {BluetoothState} from './bluetooth.store';
+import {StorageService} from "@shared/services/storage.service";
 
 @Injectable()
 export class BluetoothEffects {
@@ -26,7 +27,7 @@ export class BluetoothEffects {
     private store: Store<{ bluetooth: BluetoothState }>,
     private bluetoothService: BluetoothService,
     private mockManager: BluetoothMockManagerService,
-    private storage: Storage
+    private storageService: StorageService
   ) {
   }
 
@@ -48,10 +49,10 @@ export class BluetoothEffects {
           }
         }
         // try to get save device info
-        const savedState = JSON.parse(localStorage.getItem('state') || "");
+        const savedState = this.storageService.getStoredState();
         const savedDeviceInfo = savedState?.bluetooth?.deviceInfo;
         const useMockDevice = !isNativePlatform || isVirtualDevice;
-        const deviceInfo = savedDeviceInfo.serial ? savedDeviceInfo || {
+        const deviceInfo = savedDeviceInfo.serial ? savedDeviceInfo : {
           name: useMockDevice ? 'Mock Device' : '',
           manufacturer: '',
           model: '',
@@ -59,7 +60,7 @@ export class BluetoothEffects {
           softwareRevision: '',
           hardwareRevision: '',
           rssi: 0,
-        }
+        };
 
         return new fromActions.InitializeBluetoothState({
           isNativePlatform,
