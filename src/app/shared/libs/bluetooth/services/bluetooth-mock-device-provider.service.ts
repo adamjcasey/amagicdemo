@@ -21,7 +21,7 @@ export class BluetoothMockDeviceProvider {
     softwareRevision: '1.0.0',
     hardwareRevision: '2.0.0',
     rssi: -45,
-    battery: 85,
+    battery: 4,
   };
 
   resetConnectionState(): void {
