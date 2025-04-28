@@ -18,7 +18,7 @@ import {
 } from 'capacitor-native-settings';
 import moment from 'moment';
 // import { PowerMode } from 'power-mode';
-import { Observable, Subject, takeUntil } from 'rxjs';
+import { combineLatest, Observable, Subject, takeUntil } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -27,9 +27,10 @@ import {
   BottomToolbarComponent,
   TopBarComponent,
 } from '@app/shared/components';
-import { BluetoothService } from '@app/shared/libs/bluetooth';
+import { BluetoothService, DeviceStateCode } from '@app/shared/libs/bluetooth';
 import * as fromStore from '@core/store';
 import * as fromHomeStore from '@home/store';
+import * as fromBluetoothStore from '@shared/libs/bluetooth/store';
 import { AlertController } from '@ionic/angular';
 import {
   IonButton,
@@ -93,12 +94,13 @@ export class LayoutPage implements OnInit, AfterContentInit, OnDestroy {
   public backdropConfig$: Observable<any>;
   public backdropConfig: any;
   public homeConfig$: Observable<any>;
+  public deviceState$: Observable<any>;
   public homeConfig: any;
   private _ngUnsubscribe: Subject<void> = new Subject<void>();
   // disable of showing low power notification by setting unrealistic minimum level value
   // and left dedicated logic and layout untouched to be able switch in on in future
   // or remove it fully later after final testing of this major release
-  public minBatteryLevelDisabled: number = -1;
+  public minBatteryLevelDisabled: number = 5;
   public batteryLowMessageShowed: boolean = false;
   public deviceInfo: any;
   public lowPowerModeEnabled: boolean = false;
@@ -113,80 +115,74 @@ export class LayoutPage implements OnInit, AfterContentInit, OnDestroy {
       fromSharedStore.getBackdropConfig
     );
     this.homeConfig$ = this._store.select(fromHomeStore.getHomeConfig);
+    this.deviceState$ = this._store.select(fromBluetoothStore.getDeviceState);
 
     addIcons({ copyOutline });
   }
 
   ngOnInit() {
-    this.config$
+    combineLatest([this.deviceState$, this.config$])
       .pipe(takeUntil(this._ngUnsubscribe))
-      .subscribe(async (config) => {
-        if (config) {
-          this.config = config;
-          if (this.config.dosageDevice?.isConnected) {
-            const batteryLevel = this.config.dosageDevice.battery;
-            if (this.config.batteryLowAlertShownAt) {
-              const lastDateShown = moment(this.config.batteryLowAlertShownAt);
-              if (lastDateShown.diff(moment(), 'minutes') >= 30) {
-                this._store.dispatch(
-                  new fromStore.SetBatteryLowAlertShownAt(null)
-                );
-                if (batteryLevel < this.minBatteryLevelDisabled) {
-                  if (!this.backdropConfig.show) {
-                    this.showBatterLowAlert();
-                  }
-                }
-              }
-            } else {
-              if (batteryLevel < this.minBatteryLevelDisabled) {
-                if (!this.backdropConfig.show) {
-                  this.showBatterLowAlert();
-                }
+      .subscribe(async ([deviceState, config]) => {
+        if (!config) return;
+
+        this.config = config;
+
+        if (this.config.dosageDevice?.isConnected) {
+          const batteryLevel = this.config.dosageDevice.battery;
+
+          if (this.config.batteryLowAlertShownAt) {
+            const lastDateShown = moment(this.config.batteryLowAlertShownAt);
+            if (lastDateShown.diff(moment(), 'minutes') * -1 >= 10) {
+              this._store.dispatch(new fromStore.SetBatteryLowAlertShownAt(null));
+              if ((batteryLevel && batteryLevel < this.minBatteryLevelDisabled || deviceState === DeviceStateCode.BatteryLow) && !this.backdropConfig.show) {
+                this.showBatterLowAlert();
               }
             }
           } else {
-            if (this.config.noDeviceModeBatteryLowFlow) {
-              if (this.backdropConfig.show) {
-                this._store.dispatch(
-                  new fromSharedStore.BackdropSetConfig({
-                    onClose: () => {
-                      this._bluetoothService.setBattery(5);
-                      this.showBatterLowAlert();
-                    },
-                  })
-                );
-              }
+            if ((batteryLevel && batteryLevel < this.minBatteryLevelDisabled || deviceState === DeviceStateCode.BatteryLow) && !this.backdropConfig.show) {
+              this.showBatterLowAlert();
             }
           }
 
-          if (this.config.userDevice?.model) {
-            const model = this.config.userDevice.model.replaceAll(/[a-z]/g, '');
-            if (
-              Number(model) <= 10.5 ||
-              // iphone12,8 SE 2nd Generation
-              this.config.userDevice.model === 'iphone12.8' ||
-              // iphone14,6 SE 3rd Generation
-              this.config.userDevice.model === 'iphone14.6'
-            ) {
-              const alert = await this._alertController.create({
-                header: 'Your device is not supported',
-                message:
-                  'This application is designed for<br>iPhones with a 5.85" or larger display.<br><br>This unsupported device will not demonstrate the intended screen layout and user experience.',
-                buttons: [
-                  {
-                    text: 'Ok',
-                    role: 'cancel',
-                  },
-                  // {
-                  //   text: 'Quit',
-                  //   handler: () => {
-                  //     App.exitApp();
-                  //   },
-                  // }
-                ],
-              });
-              await alert.present();
-            }
+        } else {
+          if (this.config.noDeviceModeBatteryLowFlow && this.backdropConfig.show) {
+            this._store.dispatch(
+              new fromSharedStore.BackdropSetConfig({
+                onClose: () => {
+                  this._bluetoothService.setBattery(5);
+                  this.showBatterLowAlert();
+                },
+              })
+            );
+          }
+        }
+
+        if (this.config.userDevice?.model) {
+          const model = this.config.userDevice.model.replaceAll(/[a-z]/g, '');
+          if (
+            Number(model) <= 10.5 ||
+            this.config.userDevice.model === 'iphone12.8' ||
+            this.config.userDevice.model === 'iphone14.6'
+          ) {
+            const alert = await this._alertController.create({
+              header: 'Your device is not supported',
+              message:
+                'This application is designed for<br>iPhones with a 5.85" or larger display.<br><br>This unsupported device will not demonstrate the intended screen layout and user experience.',
+              buttons: [
+                {
+                  text: 'Ok',
+                  role: 'cancel',
+                },
+                // {
+                //   text: 'Quit',
+                //   handler: () => {
+                //     App.exitApp();
+                //   },
+                // }
+              ],
+            });
+            await alert.present();
           }
         }
       });
