@@ -67,7 +67,12 @@ export class StartDoseInjectDonePage
               this._store.dispatch(
                 new fromSharedStore.TopbarChangeColor('--color-bg-pastel-mint')
               );
-              this.sliderPage.slideTo(2);
+
+              if (this.homeConfig.firstTimeDose) {
+                this.sliderPage.slideTo(2);
+              } else {
+                this.sliderPage.slideTo(3);
+              }
             },
           },
         ],
@@ -203,27 +208,31 @@ export class StartDoseInjectDonePage
           const markedDoses = this.homeConfig?.doses.filter(
             (dose: any) => dose.marked
           );
+
           if (markedDoses.length === 6) {
-            this.slides.push({
-              content: {
-                isExpanded: true,
-                component: 'start-dose-inject-done-report',
-                blockNavigationFor: null,
-                toolbar: {
-                  actions: [
-                    {
-                      label: 'Cool!',
-                      action: () => {
-                        this.goTo('home');
-                        this._store.dispatch(
-                          new fromSharedStore.SliderPageClear()
-                        );
+            this.slides = [
+              ...this.slides,
+              {
+                content: {
+                  isExpanded: true,
+                  component: 'start-dose-inject-done-report',
+                  blockNavigationFor: null,
+                  toolbar: {
+                    actions: [
+                      {
+                        label: 'Cool!',
+                        action: () => {
+                          this.goTo('home');
+                          this._store.dispatch(
+                            new fromSharedStore.SliderPageClear()
+                          );
+                        },
                       },
-                    },
-                  ],
+                    ],
+                  },
                 },
               },
-            });
+            ];
           }
         }
       });
