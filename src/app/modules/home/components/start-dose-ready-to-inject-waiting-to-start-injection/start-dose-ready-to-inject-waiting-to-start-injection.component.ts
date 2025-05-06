@@ -1,14 +1,9 @@
 import { CommonModule } from '@angular/common';
 import {
-  AfterViewInit,
   Component,
-  ElementRef,
-  OnInit,
-  ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Capacitor } from '@capacitor/core';
 @Component({
   selector: 'automagic-start-dose-ready-to-inject-waiting-to-start-injection',
   templateUrl:
@@ -20,27 +15,4 @@ import { Capacitor } from '@capacitor/core';
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
 })
-export class StartDoseReadyToInjectWaitingToStartInjectionComponent
-  implements OnInit, AfterViewInit
-{
-  @ViewChild('videoTag') videoTag!: ElementRef;
-
-  constructor() {}
-
-  ngOnInit() {}
-
-  ngAfterViewInit() {
-    this.playVideo();
-  }
-
-  async playVideo() {
-    const videoElement = this.videoTag.nativeElement;
-    if (videoElement) {
-      if (Capacitor.getPlatform() === 'web') {
-        videoElement.muted = true;
-      }
-
-      videoElement.play();
-    }
-  }
-}
+export class StartDoseReadyToInjectWaitingToStartInjectionComponent {}
