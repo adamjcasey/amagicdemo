@@ -66,7 +66,7 @@
       </div>
 
       <div class="main-menu" *ngIf="getType() === 'menu-main'">
-        <swiper-container #sliderMainMenu [init]="false" [autoHeight]="true" [initialSlide]="initialSlide"
+        <swiper-container #sliderMainMenu [init]="false" [initialSlide]="initialSlide"
           (swiper)="onMenuInit()" (slidechange)="onMenuChange()">
           <swiper-slide>
             <h1 class="font-heading-1--bold">Demo Menu</h1>
