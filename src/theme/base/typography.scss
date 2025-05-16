@@ -102,3 +102,11 @@ a,
 .font-paragraph-xs {
   @include mixins.paragraph-xs;
 }
+
+.text-semibold {
+  font-weight: var(--font-weight-semibold) !important;
+}
+
+.text-bold {
+  font-weight: var(--font-weight-bold) !important;
+}

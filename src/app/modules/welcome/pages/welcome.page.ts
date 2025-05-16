@@ -104,11 +104,24 @@ export class WelcomePage
               name: 'name',
               placeholder: 'Name',
               onInput: (event: any) => {
+                const value = event.target.value;
+                const capitalized = value.charAt(0).toUpperCase() + value.slice(1);
+
+                this.welcomeFormGroup.get('name')?.setValue(capitalized, {
+                  emitEvent: false,
+                });
+
                 this._store.dispatch(
                   new fromStore.SetData({
-                    name: event.target.value,
+                    name: capitalized,
                   })
                 );
+              },
+              onKeyDown: (event: KeyboardEvent) => {
+                if (event.key === 'Enter') {
+                  event.preventDefault();
+                  this.handleNameContinue();
+                }
               },
             },
           ],
@@ -116,18 +129,7 @@ export class WelcomePage
         actions: [
           {
             label: 'Continue',
-            action: () => {
-              if (this.welcomeFormGroup.get('name')?.valid) {
-                this._store.dispatch(
-                  new fromSharedStore.TopbarChangeColor(
-                    '--color-bg-pastel-blue'
-                  )
-                );
-                this.sliderPage.slideNext();
-              } else {
-                this.welcomeFormGroup.get('name')?.markAllAsTouched();
-              }
-            },
+            action: () => this.handleNameContinue(),
           },
         ],
       },
@@ -297,6 +299,17 @@ export class WelcomePage
     },
   ];
 
+  handleNameContinue() {
+    if (this.welcomeFormGroup.get('name')?.valid) {
+      this._store.dispatch(
+        new fromSharedStore.TopbarChangeColor('--color-bg-pastel-blue')
+      );
+      this.sliderPage.slideNext();
+    } else {
+      this.welcomeFormGroup.get('name')?.markAllAsTouched();
+    }
+  }
+
   @ViewChild('videoWrapper') videoWrapper!: ElementRef;
   @ViewChild('sliderPage', { static: false })
   sliderPage!: fromSharedComponents.SliderPageComponent;
@@ -365,20 +378,6 @@ export class WelcomePage
 
     setTimeout(() => {
       showWelcomeScreen();
-      this._store.dispatch(
-        new fromSharedStore.BackdropShow({
-          transition: 'move',
-          fullScreen: false,
-          header: true,
-          showBackButton: false,
-          template: `
-          <h1 class="font-heading-1--bold">Welcome</h1>
-          <p>For this demo, this black overlay will sometimes appear to provide additional context.</p>
-          <p>You can access it at any  time by clicking the ‘i’ at the top.</p>
-          <p>Anything you see on this overlay would NOT be visible to patients / end users.</p>
-        `,
-        })
-      );
     }, welcomeGifDuration);
   }
 

@@ -24,7 +24,6 @@
       <ion-img class="logo" src="/assets/images/backdrop-header-logo.svg"></ion-img>
       <div class="background"></div>
       <div class="debugging-status">
-        <ion-icon *ngIf="layoutConfig.noDeviceMode" slot="start" src="/assets/icons/no-device.svg"></ion-icon>
         <ion-icon *ngIf="layoutConfig.noDeviceModeOopsFlow" name="warning-outline" color="light"
           slot="start"></ion-icon>
         <ion-icon *ngIf="layoutConfig.noDeviceModeBatteryLowFlow" slot="start"
@@ -69,8 +68,10 @@
         <swiper-container #sliderMainMenu [init]="false" [initialSlide]="initialSlide"
           (swiper)="onMenuInit()" (slidechange)="onMenuChange()">
           <swiper-slide>
-            <h1 class="font-heading-1--bold">Demo Menu</h1>
-            <p>Here you'll find guidance on resetting, packing, and sharing this demo experience.</p>
+
+            <h1 class="font-heading-1--bold ion-text-center">Demo Menu</h1>
+            <p class="ion-text-center">Here you'll find guidance on resetting, packing, and sharing this demo experience.</p>
+            <p class="ion-text-center text-bold" *ngIf="(isConnected$ | async) === false">No Aria injector is connected</p>
             <div *ngIf="(isConnected$ | async)" class="battery-indicator">
               <p>AutoMagic Injector Battery:</p>
               <automagic-battery-indicator [batteryLevel]="(batteryLevel$ | async) ?? 0"></automagic-battery-indicator>
