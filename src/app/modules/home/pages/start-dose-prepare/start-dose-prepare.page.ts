@@ -201,10 +201,7 @@ export class StartDosePreparePage
         }
       } catch (error: any) {
         if (this.layoutConfig.debuggingDeviceMode) {
-          this._bluetoothService.logger(
-            'isDeviceConnected service method Error',
-            error
-          );
+          console.error('isDeviceConnected service method Error', error);
         }
       }
     }

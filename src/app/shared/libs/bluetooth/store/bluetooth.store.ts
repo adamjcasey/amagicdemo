@@ -4,17 +4,18 @@ export interface BluetoothState {
   // Connection state
   isConnected: boolean;
   isScanning: boolean;
+  isSilentScan: boolean;
   connectionInProgress: boolean;
 
   // Device information
   deviceInfo: {
-    manufacturer: string;
-    model: string;
-    serial: string;
-    softwareRevision: string;
-    hardwareRevision: string;
-    name: string;
-    rssi: number;
+    manufacturer?: string;
+    model?: string;
+    serial?: string;
+    softwareRevision?: string;
+    hardwareRevision?: string;
+    name?: string;
+    rssi?: number;
   };
 
   // Device state
@@ -49,17 +50,10 @@ export interface BluetoothState {
 export const initialBluetoothState: BluetoothState = {
   isConnected: false,
   isScanning: false,
+  isSilentScan: false,
   connectionInProgress: false,
 
-  deviceInfo: {
-    manufacturer: '',
-    model: '',
-    serial: '',
-    softwareRevision: '',
-    hardwareRevision: '',
-    name: '',
-    rssi: 0,
-  },
+  deviceInfo: {},
 
   state: 0,
   stateData: 0,

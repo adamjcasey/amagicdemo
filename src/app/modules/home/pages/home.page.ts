@@ -10,14 +10,14 @@ import {
   CardComponent,
   HeroComponent,
 } from '@app/shared/components';
+import * as fromBluetoothStore from '@app/shared/libs/bluetooth/store';
 import * as fromCoreStore from '@core/store';
 import * as fromStore from '@home/store';
-import { IonContent } from '@ionic/angular/standalone';
+import { IonContent, Platform } from '@ionic/angular/standalone';
 import * as fromResourcesStore from '@resources/store';
 import * as fromServicesShared from '@shared/services';
 import * as fromSharedStore from '@shared/store';
 import * as fromWelcomeStore from '@welcome/store';
-
 @Component({
   selector: 'automagic-home',
   templateUrl: 'home.page.html',
@@ -53,7 +53,8 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
-    private _utils: fromServicesShared.UtilsService
+    private _utils: fromServicesShared.UtilsService,
+    private platform: Platform
   ) {
     this.welcomeState$ = this._store.select(fromWelcomeStore.getWelcomeConfig);
     this.backdropConfig$ = this._store.select(
@@ -108,6 +109,11 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
         phone: '#',
       },
     ];
+
+    this.platform.resume.subscribe(() => {
+      console.log('HomePage: resume scanning');
+      this._store.dispatch(new fromBluetoothStore.StartScan({ silent: true }));
+    });
   }
 
   ngOnInit() {
