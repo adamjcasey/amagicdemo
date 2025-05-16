@@ -18,6 +18,7 @@ import {
   take,
   timer,
 } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import {
   ARIA_ADVERTISING_NAME,
   CHARACTERISTIC_BATTERY_LEVEL,
@@ -106,6 +107,8 @@ export class BluetoothService {
 
   #deviceStateSubject = new BehaviorSubject<number>(0);
   readonly deviceState$ = this.#deviceStateSubject.asObservable();
+
+  #silentReconnectInProgress = false;
 
   get IsScanning(): boolean {
     return this.#scanning;
@@ -214,38 +217,54 @@ export class BluetoothService {
   //--------------------------------------------------
   // Core Bluetooth Methods
   //--------------------------------------------------
-  async scan(): Promise<void> {
-    console.log('Starting Bluetooth scan...');
+  async scan(options?: { silent?: boolean }): Promise<void> {
+    console.log(
+      'Starting Bluetooth scan...',
+      options?.silent ? '(silent)' : ''
+    );
 
     if (this.#scanning) {
+      console.log('Scan already in progress, skipping');
+      return;
+    }
+
+    if (this.#silentReconnectInProgress && !options?.silent) {
+      console.log('Silent reconnect in progress, skipping regular scan');
       return;
     }
 
     this.#devices = [];
     this.#scanning = true;
+    if (options?.silent) {
+      this.#silentReconnectInProgress = true;
+    }
 
     const useMockDevice = await firstValueFrom(
       this.#store.select(getUseMockDevice)
     );
     if (useMockDevice) {
-      console.log('Using mocked device');
+      console.log('Reconnect: Using mocked device');
       await this.#bluetoothMockDeviceProvider.provideMockDevice();
       this.#scanning = false;
+      this.#silentReconnectInProgress = false;
       return;
     }
 
     if (this.#isNativePlatform) {
       try {
         await this.#initializeBLE();
-        await this.#performBLEScan();
+        await this.#performBLEScan(options?.silent);
       } catch (error) {
-        console.error('Error initializing BLE:', error);
-        this.#scanning = false;
-        await this.#showTroubleConnectingBackdrop();
+        console.error('Reconnect: Error initializing BLE:', error);
+        if (!options?.silent && this.#scanning) {
+          await this.#showTroubleConnectingBackdrop();
+        }
       } finally {
-        // Ensure scanning flag is reset if we exit the method
         if (this.#scanning) {
-          await this.#stopScan();
+          this.#scanning = false;
+          if (options?.silent) {
+            this.#silentReconnectInProgress = false;
+          }
         }
       }
     }
@@ -262,18 +281,21 @@ export class BluetoothService {
   /**
    * Performs the BLE scan with timeout handling
    */
-  async #performBLEScan(): Promise<void> {
+  async #performBLEScan(silent?: boolean): Promise<void> {
     const scanTimeout = this.#createScanTimeout();
-    const scanPromise = this.#createScanPromise();
+    const scanPromise = this.#createScanPromise(silent);
 
-    // Race between scan completion and timeout
-    await Promise.race([scanPromise, scanTimeout]).catch(async (error) => {
+    try {
+      await Promise.race([scanPromise, scanTimeout]);
+    } catch (error) {
       console.error('Scan error:', error);
-      await this.#stopScan();
-      if (this.#devices.length === 0) {
-        await this.#showTroubleConnectingBackdrop();
+      if (this.#scanning) {
+        await this.#stopScan(silent);
+        if (!silent && this.#devices.length === 0) {
+          await this.#showTroubleConnectingBackdrop();
+        }
       }
-    });
+    }
   }
 
   /**
@@ -282,7 +304,7 @@ export class BluetoothService {
   #createScanTimeout(): Promise<never> {
     return new Promise((_, reject) => {
       setTimeout(() => {
-        reject(new Error('Scan timeout'));
+        reject(new Error('Reconnect: Scan timeout'));
       }, SCAN_TIMEOUT_MS);
     });
   }
@@ -290,14 +312,14 @@ export class BluetoothService {
   /**
    * Creates the main scan promise that handles device discovery
    */
-  async #createScanPromise(): Promise<void> {
+  async #createScanPromise(silent?: boolean): Promise<void> {
     return new Promise<void>(async (resolve, reject) => {
       try {
         console.log('Requesting BLE scan...');
-        await this.#startLEScan(resolve, reject);
+        await this.#startLEScan(resolve, reject, silent);
       } catch (error: any) {
         if (this.#isAlreadyScanningError(error)) {
-          await this.#handleAlreadyScanningError(resolve, reject);
+          await this.#handleAlreadyScanningError(resolve, reject, silent);
         } else {
           reject(error);
         }
@@ -317,18 +339,19 @@ export class BluetoothService {
    */
   async #handleAlreadyScanningError(
     resolve: (value: void | PromiseLike<void>) => void,
-    reject: (reason?: any) => void
+    reject: (reason?: any) => void,
+    silent?: boolean
   ): Promise<void> {
     console.log(
       'Received "Already scanning" error, stopping scan and retrying...'
     );
     try {
-      await this.#stopScan();
+      await this.#stopScan(silent);
       this.#scanning = false;
       setTimeout(async () => {
         try {
           console.log('Retrying BLE scan after "Already scanning" error...');
-          await this.#startLEScan(resolve, reject);
+          await this.#startLEScan(resolve, reject, silent);
         } catch (retryError) {
           console.error('Error on retry scan:', retryError);
           reject(retryError);
@@ -341,27 +364,13 @@ export class BluetoothService {
   }
 
   /**
-   * Starts the BLE scan with the appropriate options
-   */
-  async #startLEScan(
-    resolve: (value: void | PromiseLike<void>) => void,
-    reject: (reason?: any) => void
-  ): Promise<void> {
-    await BleClient.requestLEScan(
-      {
-        allowDuplicates: false,
-        namePrefix: ARIA_ADVERTISING_NAME,
-      },
-      async (result) => this.#handleScanResult(result, resolve)
-    );
-  }
-
-  /**
    * Handles scan results, filtering for Aria devices
    */
   async #handleScanResult(
     result: ScanResult,
-    resolve: (value: void | PromiseLike<void>) => void
+    resolve: (value: void | PromiseLike<void>) => void,
+    reject: (reason?: any) => void,
+    silent?: boolean
   ): Promise<void> {
     if (!result.device?.name) return;
 
@@ -376,18 +385,43 @@ export class BluetoothService {
         });
 
         if (!this.#connected) {
-          await this.#stopScan();
-          await this.connect(result);
-          resolve();
+          try {
+            await this.connect(result, silent);
+            if (this.#scanning) {
+              await this.#stopScan(silent);
+            }
+            resolve();
+          } catch (error) {
+            console.error('Error connecting to device:', error);
+            reject(error);
+          }
         }
       });
     }
   }
 
-  async connect(device: any): Promise<void> {
+  /**
+   * Starts the BLE scan with the appropriate options
+   */
+  async #startLEScan(
+    resolve: (value: void | PromiseLike<void>) => void,
+    reject: (reason?: any) => void,
+    silent?: boolean
+  ): Promise<void> {
+    await BleClient.requestLEScan(
+      {
+        allowDuplicates: false,
+        namePrefix: ARIA_ADVERTISING_NAME,
+      },
+      async (result) => this.#handleScanResult(result, resolve, reject, silent)
+    );
+  }
+
+  async connect(device: any, silent?: boolean): Promise<void> {
     console.log(
-      'Attempting to connect to device:',
-      device?.device?.name || 'unknown device'
+      'Reconnect: Attempting to connect to device:',
+      device?.device?.name || 'unknown device',
+      silent ? '(silent)' : ''
     );
 
     if (this.#connected) {
@@ -405,8 +439,6 @@ export class BluetoothService {
     this.#connectionInProgress = true;
 
     try {
-      await this.#stopScan();
-
       const useMockDevice = await firstValueFrom(
         this.#store.select(getUseMockDevice)
       );
@@ -450,13 +482,19 @@ export class BluetoothService {
         } catch (error) {
           console.error('Error connecting to device:', error);
           this.#store.dispatch(new fromBluetoothStore.ConnectFailure(error));
-          await this.#showTroubleConnectingBackdrop();
+          if (!silent) {
+            await this.#showTroubleConnectingBackdrop();
+          }
+          throw error;
         }
       }
     } catch (error) {
       console.error('Error in connect method:', error);
       this.#store.dispatch(new fromBluetoothStore.ConnectFailure(error));
-      await this.#showTroubleConnectingBackdrop();
+      if (!silent) {
+        await this.#showTroubleConnectingBackdrop();
+      }
+      throw error;
     } finally {
       this.#connectionInProgress = false;
     }
@@ -493,16 +531,19 @@ export class BluetoothService {
     this.#devices = [];
   }
 
-  #stopScan = async (): Promise<void> => {
+  #stopScan = async (silent?: boolean): Promise<void> => {
     if (this.#isNativePlatform) {
       try {
         await BleClient.stopLEScan();
-        console.log('Scan stopped successfully');
+        console.log('Scan stopped successfully', silent ? '(silent)' : '');
       } catch (error) {
         console.error('Error stopping scan:', error);
       }
     }
     this.#scanning = false;
+    if (silent) {
+      this.#silentReconnectInProgress = false;
+    }
   };
 
   //--------------------------------------------------
@@ -620,6 +661,10 @@ export class BluetoothService {
               dataViewToHighLowBytes(result_state);
             this.#updateState(high_byte);
             this.#updateStateData(low_byte);
+
+            if (high_byte === DeviceStateCode.PoweringOff) {
+              this.#store.dispatch(new fromBluetoothStore.Disconnect());
+            }
           }
         );
       } catch (error) {
@@ -676,7 +721,7 @@ export class BluetoothService {
               filter((connected) => connected),
               map(() => true)
             ),
-            timer(5000).pipe(map(() => false))
+            timer(SCAN_TIMEOUT_MS).pipe(map(() => false))
           )
         );
         return result;
@@ -712,9 +757,13 @@ export class BluetoothService {
             this.connected$.pipe(
               filter((connected) => connected),
               map(() => true),
+              tap(() => console.log('Reconnect: connected')),
               take(1)
             ),
-            timer(5000).pipe(map(() => false))
+            timer(SCAN_TIMEOUT_MS).pipe(
+              map(() => false),
+              tap(() => console.log('Reconnect: timeout'))
+            )
           )
         );
 
@@ -845,6 +894,17 @@ export class BluetoothService {
   // UI Feedback Methods
   //--------------------------------------------------
   async #showTroubleConnectingBackdrop(): Promise<void> {
+    const isSilentScan = await firstValueFrom(
+      this.#store.select(fromBluetoothStore.getIsSilentScan)
+    );
+
+    if (isSilentScan || !this.#scanning) {
+      console.log(
+        'Skipping trouble connecting backdrop - silent scan or scan not running'
+      );
+      return;
+    }
+
     if (this.#connected) {
       console.log('Already connected, skipping trouble connecting backdrop');
       return;
@@ -942,5 +1002,21 @@ export class BluetoothService {
 
   setBattery(value: number): void {
     this.#battery = value;
+  }
+
+  async silentReconnect(): Promise<void> {
+    console.log('Starting silent reconnect...');
+
+    if (this.#silentReconnectInProgress) {
+      console.log('Silent reconnect already in progress, skipping');
+      return;
+    }
+
+    if (this.#connected) {
+      console.log('Device already connected, skipping silent reconnect');
+      return;
+    }
+
+    this.#store.dispatch(new fromBluetoothStore.StartScan({ silent: true }));
   }
 }

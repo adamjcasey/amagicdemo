@@ -49,9 +49,8 @@ export class CassetteRemovePage
   homeConfig$: Observable<any> = this.store.select(fromHomeStore.getHomeConfig);
   homeConfig: any;
 
-  isRemoveCassetteState$: Observable<boolean> = this.store.select(
-    fromBluetoothStore.isRemoveCassetteState
-  );
+  getSuccessfulDoses$: Observable<number> =
+    this.store.select(getSuccessfulDoses);
 
   deviceState$: Observable<number> = this.store.select(
     fromBluetoothStore.getDeviceState
@@ -116,6 +115,12 @@ export class CassetteRemovePage
         MOCK_SCENARIO_IDS.CASSETTE_REMOVE_HAPPY_PATH
       )
     );
+
+    this.homeConfig$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((homeConfig) => {
+        this.homeConfig = homeConfig;
+      });
   }
 
   ngAfterViewInit() {
@@ -154,7 +159,9 @@ export class CassetteRemovePage
     console.log('Navigating to DiscardInjection slide');
     this.sliderPage.slideTo(CassetteRemoveSlides.DiscardInjection);
 
-    this.#showDoNotDiscardBackdrop();
+    if (this.homeConfig.onBoardingDone) {
+      this.#showDoNotDiscardBackdrop();
+    }
   }
 
   #showDoNotDiscardBackdrop(): void {
@@ -187,16 +194,20 @@ export class CassetteRemovePage
   }
 
   #handleCloseAction(): void {
-    this.store
-      .select(getSuccessfulDoses)
-      .pipe(takeUntil(this.ngUnsubscribe), take(1))
-      .subscribe((count) => {
-        if (count === 0) {
-          this.goTo('/home/cassette-journey');
-        } else {
-          this.store.dispatch(new fromSharedStore.SliderPageClear());
-          this.goTo('/home/start-dose/inject-done');
-        }
-      });
+    if (this.homeConfig.onBoardingDone) {
+      this.store.dispatch(new fromSharedStore.SliderPageClear());
+      this.goTo('/home');
+    } else {
+      this.getSuccessfulDoses$
+        .pipe(takeUntil(this.ngUnsubscribe), take(1))
+        .subscribe((count) => {
+          if (count === 0) {
+            this.goTo('/home/cassette-journey');
+          } else {
+            this.store.dispatch(new fromSharedStore.SliderPageClear());
+            this.goTo('/home/start-dose/inject-done');
+          }
+        });
+    }
   }
 }

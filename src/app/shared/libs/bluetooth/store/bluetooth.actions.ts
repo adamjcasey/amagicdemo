@@ -78,6 +78,7 @@ export class DisconnectFailure implements Action {
 
 export class StartScan implements Action {
   readonly type = BluetoothActionTypes.StartScan;
+  constructor(public payload?: { silent?: boolean }) {}
 }
 
 export class StopScan implements Action {

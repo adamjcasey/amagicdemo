@@ -88,6 +88,7 @@ export function bluetoothReducer(
       return {
         ...state,
         isScanning: true,
+        isSilentScan: action.payload?.silent || false,
         devices: [],
         error: null,
       };
@@ -96,6 +97,7 @@ export function bluetoothReducer(
       return {
         ...state,
         isScanning: false,
+        isSilentScan: false,
       };
 
     case fromActions.BluetoothActionTypes.DeviceFound:
@@ -282,4 +284,9 @@ export const getMockScenariosHistory = createSelector(
 export const getSuccessfulDoses = createSelector(
   getBluetoothState,
   (state: BluetoothState) => state.successfulDoses
+);
+
+export const getIsSilentScan = createSelector(
+  getBluetoothState,
+  (state: BluetoothState) => state.isSilentScan
 );

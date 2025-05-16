@@ -66,5 +66,5 @@ export const STATUS_NAMES: Record<DeviceStateCode, string> = {
 
 export const ARIA_ADVERTISING_NAME = 'Aria NIS';
 export const ARIA_RSSI_THRESHOLD = -60;
-export const SCAN_TIMEOUT_MS = 5000;
+export const SCAN_TIMEOUT_MS = 10000;
 export const CONNECTION_TIMEOUT_MS = 30000;
