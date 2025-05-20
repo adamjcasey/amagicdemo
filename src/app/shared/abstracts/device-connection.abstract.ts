@@ -2,7 +2,7 @@ import { Directive, OnDestroy } from '@angular/core';
 import { Observable, takeUntil } from 'rxjs';
 
 import * as fromBluetoothStore from '@app/shared/libs/bluetooth/store';
-import { SCAN_TIMEOUT_MS } from '@shared/libs/bluetooth';
+import { DeviceStateCode, SCAN_TIMEOUT_MS } from '@shared/libs/bluetooth';
 import * as fromSharedStore from '@shared/store';
 import { tap } from 'rxjs/operators';
 import { BaseComponentAbstract } from './base-component.abstract';
@@ -20,6 +20,10 @@ export abstract class DeviceConnectionAbstract
 
   protected isDeviceConnected$: Observable<boolean> = this.store.select(
     fromBluetoothStore.getIsConnected
+  );
+
+  protected deviceState$: Observable<number> = this.store.select(
+    fromBluetoothStore.getDeviceState
   );
 
   protected constructor(
@@ -89,6 +93,30 @@ export abstract class DeviceConnectionAbstract
           }
         }
       });
+
+    this.deviceState$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((deviceState) => {
+        console.log(
+          'DeviceConnectionAbstract: Device state changed:',
+          deviceState
+        );
+        if (this.isDeviceInErrorState(deviceState)) {
+          console.log(
+            'DeviceConnectionAbstract: Device in error state, showing alert'
+          );
+          this.showInjectorErrorAlert();
+        }
+      });
+  }
+
+  protected isDeviceInErrorState(deviceState: number): boolean {
+    return (
+      deviceState === DeviceStateCode.Undefined ||
+      deviceState === DeviceStateCode.DeviceError ||
+      deviceState === DeviceStateCode.EndOfLife ||
+      deviceState === DeviceStateCode.DeviceErrorSelftest
+    );
   }
 
   protected silentReconnect() {
@@ -134,6 +162,46 @@ export abstract class DeviceConnectionAbstract
         ],
       })
     );
+  }
+
+  protected showInjectorErrorAlert(): void {
+    this.isAlertShown = true;
+    this.store.dispatch(
+      new fromSharedStore.AlertShow({
+        mode: 'full',
+        template: `
+          <img src="/assets/images/device-connection-warning.svg" />
+          <h1 class="font-heading-1--bold">Injector error</h1>
+          <p>There seems to be an issue with the injector and it is unsafe to use. We are sorry!</p>
+          <p><b>Please contact your Pharmacy for a new dose.</b></p>
+        `,
+        actions: [
+          {
+            label: 'OK',
+            fill: 'outline',
+            action: () => {
+              this.isAlertShown = false;
+              this.handleInjectorError();
+              this.store.dispatch(new fromSharedStore.AlertHide());
+            },
+          },
+          {
+            label: 'My Pharmacy',
+            fill: 'outline',
+            action: () => {
+              // do nothing
+            },
+          },
+        ],
+      })
+    );
+  }
+
+  protected handleInjectorError(): void {
+    console.log('DeviceConnectionAbstract: Handling injector error');
+
+    this.store.dispatch(new fromBluetoothStore.Disconnect());
+    this.goTo('/home/cassette-journey');
   }
 
   override ngOnDestroy() {
