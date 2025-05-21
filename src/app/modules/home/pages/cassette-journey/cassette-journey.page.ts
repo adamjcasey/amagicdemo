@@ -68,10 +68,6 @@ export class CassetteJourneyPage
     fromBluetoothStore.isCassetteExpiredState
   );
 
-  deviceState$: Observable<number> = this.store.select(
-    fromBluetoothStore.getDeviceState
-  );
-
   mockScenariosHistory$ = this.store.select(getMockScenariosHistory);
 
   slides: Array<any> = [
