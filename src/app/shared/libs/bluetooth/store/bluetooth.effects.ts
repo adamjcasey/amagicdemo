@@ -1,11 +1,11 @@
-import {Injectable} from '@angular/core';
-import {Capacitor} from '@capacitor/core';
-import {Device} from '@capacitor/device';
+import { Injectable } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
+import { Device } from '@capacitor/device';
 import * as fromCoreStore from '@core/store';
-import {Actions, createEffect, ofType} from '@ngrx/effects';
-import {Storage} from "@ionic/storage";
-import {Store} from '@ngrx/store';
-import {from, of} from 'rxjs';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
+import { StorageService } from '@shared/services/storage.service';
+import { from, of } from 'rxjs';
 import {
   catchError,
   map,
@@ -13,12 +13,12 @@ import {
   tap,
   withLatestFrom,
 } from 'rxjs/operators';
-import {BluetoothMockManagerService} from '../services/bluetooth-mock-manager.service';
-import {BluetoothService} from '../services/bluetooth.service';
+import { DeviceStateCode } from '../constants/bluetooth.constants';
+import { BluetoothMockManagerService } from '../services/bluetooth-mock-manager.service';
+import { BluetoothService } from '../services/bluetooth.service';
 import * as fromActions from './bluetooth.actions';
 import * as fromSelector from './bluetooth.reducer';
-import {BluetoothState} from './bluetooth.store';
-import {StorageService} from "@shared/services/storage.service";
+import { BluetoothState } from './bluetooth.store';
 
 @Injectable()
 export class BluetoothEffects {
@@ -28,8 +28,7 @@ export class BluetoothEffects {
     private bluetoothService: BluetoothService,
     private mockManager: BluetoothMockManagerService,
     private storageService: StorageService
-  ) {
-  }
+  ) {}
 
   // Initialize platform detection and device info
   initializePlatform$ = createEffect(() =>
@@ -52,21 +51,23 @@ export class BluetoothEffects {
         const savedState = this.storageService.getStoredState();
         const savedDeviceInfo = savedState?.bluetooth?.deviceInfo;
         const useMockDevice = !isNativePlatform || isVirtualDevice;
-        const deviceInfo = savedDeviceInfo.serial ? savedDeviceInfo : {
-          name: useMockDevice ? 'Mock Device' : '',
-          manufacturer: '',
-          model: '',
-          serial: '',
-          softwareRevision: '',
-          hardwareRevision: '',
-          rssi: 0,
-        };
+        const deviceInfo = savedDeviceInfo.serial
+          ? savedDeviceInfo
+          : {
+              name: useMockDevice ? 'Mock Device' : '',
+              manufacturer: '',
+              model: '',
+              serial: '',
+              softwareRevision: '',
+              hardwareRevision: '',
+              rssi: 0,
+            };
 
         return new fromActions.InitializeBluetoothState({
           isNativePlatform,
           isVirtualDevice,
           useMockDevice,
-          deviceInfo
+          deviceInfo,
         });
       })
     )
@@ -110,6 +111,15 @@ export class BluetoothEffects {
         );
       })
     )
+  );
+
+  stopScan$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(fromActions.BluetoothActionTypes.StopScan),
+        tap(() => this.bluetoothService.stopScan())
+      ),
+    { dispatch: false }
   );
 
   connect$ = createEffect(() =>
@@ -206,12 +216,18 @@ export class BluetoothEffects {
   listenForDeviceState$ = createEffect(() =>
     this.actions$.pipe(
       ofType(fromActions.BluetoothActionTypes.ConnectSuccess),
-      switchMap(() =>
-        this.bluetoothService.state$.pipe(
+      withLatestFrom(this.store.select(fromSelector.getUseMockDevice)),
+      switchMap(([_, useMockDevice]: [fromActions.ConnectSuccess, boolean]) => {
+        if (useMockDevice) {
+          return of(
+            new fromActions.UpdateDeviceState(DeviceStateCode.InsertCassette)
+          );
+        }
+        return this.bluetoothService.state$.pipe(
           map((state) => new fromActions.UpdateDeviceState(state)),
           catchError((error) => of(new fromActions.SetError(error)))
-        )
-      )
+        );
+      })
     )
   );
 

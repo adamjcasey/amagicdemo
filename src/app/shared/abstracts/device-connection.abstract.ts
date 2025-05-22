@@ -1,5 +1,5 @@
 import { Directive, OnDestroy } from '@angular/core';
-import { Observable, takeUntil } from 'rxjs';
+import { combineLatest, Observable, takeUntil } from 'rxjs';
 
 import * as fromBluetoothStore from '@app/shared/libs/bluetooth/store';
 import { DeviceStateCode, SCAN_TIMEOUT_MS } from '@shared/libs/bluetooth';
@@ -94,16 +94,16 @@ export abstract class DeviceConnectionAbstract
         }
       });
 
-    this.deviceState$
+    combineLatest([this.isDeviceConnected$, this.deviceState$])
       .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((deviceState) => {
+      .subscribe(([isConnected, deviceState]) => {
         console.log(
-          'DeviceConnectionAbstract: Device state changed:',
-          deviceState
+          'DeviceConnectionAbstract: Device state and connection changed:',
+          { isConnected, deviceState }
         );
-        if (this.isDeviceInErrorState(deviceState)) {
+        if (isConnected && this.isDeviceInErrorState(deviceState)) {
           console.log(
-            'DeviceConnectionAbstract: Device in error state, stopping reconnect process'
+            'DeviceConnectionAbstract: Device in error state and connected, stopping reconnect process'
           );
           if (this.#reconnectTimeout) {
             clearTimeout(this.#reconnectTimeout);
@@ -112,7 +112,7 @@ export abstract class DeviceConnectionAbstract
           this.#reconnectInProgress = false;
 
           console.log(
-            'DeviceConnectionAbstract: Device in error state, showing alert'
+            'DeviceConnectionAbstract: Device in error state and connected, showing alert'
           );
           this.showInjectorErrorAlert();
         }
@@ -148,6 +148,8 @@ export abstract class DeviceConnectionAbstract
   }
 
   protected showDeviceDisconnectedAlert(): void {
+    this.store.dispatch(new fromBluetoothStore.StopScan());
+
     this.isAlertShown = true;
     this.store.dispatch(
       new fromSharedStore.AlertShow({
