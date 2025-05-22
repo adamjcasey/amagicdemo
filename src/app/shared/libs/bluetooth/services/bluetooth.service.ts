@@ -235,9 +235,7 @@ export class BluetoothService {
 
     this.#devices = [];
     this.#scanning = true;
-    if (options?.silent) {
-      this.#silentReconnectInProgress = true;
-    }
+    this.#silentReconnectInProgress = !!options?.silent;
 
     const useMockDevice = await firstValueFrom(
       this.#store.select(getUseMockDevice)
@@ -290,7 +288,7 @@ export class BluetoothService {
     } catch (error) {
       console.error('Scan error:', error);
       if (this.#scanning) {
-        await this.#stopScan(silent);
+        await this.stopScan(silent);
         if (!silent && this.#devices.length === 0) {
           await this.#showTroubleConnectingBackdrop();
         }
@@ -346,7 +344,7 @@ export class BluetoothService {
       'Received "Already scanning" error, stopping scan and retrying...'
     );
     try {
-      await this.#stopScan(silent);
+      await this.stopScan(silent);
       this.#scanning = false;
       setTimeout(async () => {
         try {
@@ -388,7 +386,7 @@ export class BluetoothService {
           try {
             await this.connect(result, silent);
             if (this.#scanning) {
-              await this.#stopScan(silent);
+              await this.stopScan(silent);
             }
             resolve();
           } catch (error) {
@@ -531,7 +529,7 @@ export class BluetoothService {
     this.#devices = [];
   }
 
-  #stopScan = async (silent?: boolean): Promise<void> => {
+  stopScan = async (silent?: boolean): Promise<void> => {
     if (this.#isNativePlatform) {
       try {
         await BleClient.stopLEScan();
@@ -898,7 +896,7 @@ export class BluetoothService {
       this.#store.select(fromBluetoothStore.getIsSilentScan)
     );
 
-    if (isSilentScan || !this.#scanning) {
+    if (isSilentScan) {
       console.log(
         'Skipping trouble connecting backdrop - silent scan or scan not running'
       );

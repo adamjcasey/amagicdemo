@@ -1,5 +1,5 @@
 import { Directive, OnDestroy } from '@angular/core';
-import { Observable, takeUntil } from 'rxjs';
+import { combineLatest, Observable, takeUntil } from 'rxjs';
 
 import * as fromBluetoothStore from '@app/shared/libs/bluetooth/store';
 import { DeviceStateCode, SCAN_TIMEOUT_MS } from '@shared/libs/bluetooth';
@@ -94,16 +94,25 @@ export abstract class DeviceConnectionAbstract
         }
       });
 
-    this.deviceState$
+    combineLatest([this.deviceState$, this.isDeviceConnected$])
       .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((deviceState) => {
+      .subscribe(([deviceState, isConnected]) => {
         console.log(
-          'DeviceConnectionAbstract: Device state changed:',
-          deviceState
+          'DeviceConnectionAbstract: Device state and connection changed:',
+          { isConnected, deviceState }
         );
-        if (this.isDeviceInErrorState(deviceState)) {
+        if (isConnected && this.isDeviceInErrorState(deviceState)) {
           console.log(
-            'DeviceConnectionAbstract: Device in error state, showing alert'
+            'DeviceConnectionAbstract: Device in error state and connected, stopping reconnect process'
+          );
+          if (this.#reconnectTimeout) {
+            clearTimeout(this.#reconnectTimeout);
+            this.#reconnectTimeout = null;
+          }
+          this.#reconnectInProgress = false;
+
+          console.log(
+            'DeviceConnectionAbstract: Device in error state and connected, showing alert'
           );
           this.showInjectorErrorAlert();
         }
@@ -139,6 +148,8 @@ export abstract class DeviceConnectionAbstract
   }
 
   protected showDeviceDisconnectedAlert(): void {
+    this.store.dispatch(new fromBluetoothStore.StopScan());
+
     this.isAlertShown = true;
     this.store.dispatch(
       new fromSharedStore.AlertShow({
@@ -164,16 +175,21 @@ export abstract class DeviceConnectionAbstract
     );
   }
 
+  // Similar alert will be shown for Drug expired and Error message
   protected showInjectorErrorAlert(): void {
+    this.store.dispatch(new fromBluetoothStore.StopScan());
+
     this.isAlertShown = true;
     this.store.dispatch(
       new fromSharedStore.AlertShow({
-        mode: 'full',
+        mode: 'window',
+        overlay: true,
+        margin: true,
         template: `
-          <img src="/assets/images/device-connection-warning.svg" />
-          <h1 class="font-heading-1--bold">Injector error</h1>
-          <p>There seems to be an issue with the injector and it is unsafe to use. We are sorry!</p>
-          <p><b>Please contact your Pharmacy for a new dose.</b></p>
+            <img src="/assets/images/device-connection-warning.svg" style="margin: 0 auto; width: 100px;" />
+            <h3 class="font-heading-1--semibold">Injector Error</h3>
+            <p>There seems to be an issue with the injector and it is unsafe to use. We are sorry!</p>
+            <p><b>Please contact your Pharmacy for a new dose.</b></p>
         `,
         actions: [
           {

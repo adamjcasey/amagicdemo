@@ -55,6 +55,10 @@ h1,
 .font-heading-1 {
   @include mixins.heading-1;
 
+  &.font-heading-1--semibold {
+    font-weight: var(--font-weight-semibold);
+  }
+
   &.font-heading-1--bold {
     font-weight: var(--font-weight-extrabold);
   }
