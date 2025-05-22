@@ -13,6 +13,7 @@ export const initialState: SharedState = {
     mode: 'move',
     template: null,
     component: null,
+    margin: false,
   },
   overlayConfig: {
     show: false,

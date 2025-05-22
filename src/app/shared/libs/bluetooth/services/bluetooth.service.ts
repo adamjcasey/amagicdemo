@@ -235,9 +235,7 @@ export class BluetoothService {
 
     this.#devices = [];
     this.#scanning = true;
-    if (options?.silent) {
-      this.#silentReconnectInProgress = true;
-    }
+    this.#silentReconnectInProgress = !!options?.silent;
 
     const useMockDevice = await firstValueFrom(
       this.#store.select(getUseMockDevice)
@@ -898,7 +896,7 @@ export class BluetoothService {
       this.#store.select(fromBluetoothStore.getIsSilentScan)
     );
 
-    if (isSilentScan || !this.#scanning) {
+    if (isSilentScan) {
       console.log(
         'Skipping trouble connecting backdrop - silent scan or scan not running'
       );

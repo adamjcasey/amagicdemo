@@ -107,9 +107,14 @@ automagic-alert {
       grid-template-rows: auto max-content;
       gap: var(--size-m);
       opacity: 0;
+      padding: var(--size-s) var(--size-m);
       transition-property: opacity;
       transition-duration: 400ms;
       transition-timing-function: ease-in;
+
+      &.has-margin {
+        margin-inline: 20px;
+      }
 
       .alert__template {
         display: flex;
@@ -140,7 +145,6 @@ automagic-alert {
 
     &.is-window-mode {
       .alert__content {
-        padding: var(--size-s) var(--size-m);
         opacity: 1;
         transition-timing-function: ease-in;
       }

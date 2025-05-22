@@ -1,28 +1,16 @@
-<section 
-  #alert id="alert" class="alert" 
-  (click)="handleOverlayClick($event)" 
-  [ngClass]="{ 
-    'is-open': config.show, 
-    'is-full-mode': config.mode === 'full', 
-    'is-window-mode': config.mode === 'window', 
-    'is-floating-mode': config.mode === 'floating', 
+<section #alert id="alert" class="alert" (click)="handleOverlayClick($event)" [ngClass]="{
+    'is-open': config.show,
+    'is-full-mode': config.mode === 'full',
+    'is-window-mode': config.mode === 'window',
+    'is-floating-mode': config.mode === 'floating',
   }">
 
-  <div class="alert__content">
-    <div 
-      class="alert__template" 
-      *ngIf="config.template" 
-      [innerHTML]="sanitizeContent(config.template)"
-    ></div>
+  <div class="alert__content" [ngClass]="{'has-margin': config.mode === 'window' && config.margin}">
+    <div class="alert__template" *ngIf="config.template" [innerHTML]="sanitizeContent(config.template)"></div>
 
     <div class="alert__actions" *ngIf="config.actions">
-      <ion-button 
-        *ngFor="let button of config.actions; let i = index" 
-        class="hotspot-element"
-        color="purple" 
-        size="large" 
-        [disabled]="button.disabled ? true : null"
-        (click)="button.action ? button.action($event) : null" 
+      <ion-button *ngFor="let button of config.actions; let i = index" class="hotspot-element" color="purple"
+        size="large" [disabled]="button.disabled ? true : null" (click)="button.action ? button.action($event) : null"
         [fill]="i % 2 !== 1 && config.actions.length > 1 ? 'outline': null">
         {{ button.label }}
       </ion-button>
