@@ -94,9 +94,9 @@ export abstract class DeviceConnectionAbstract
         }
       });
 
-    combineLatest([this.isDeviceConnected$, this.deviceState$])
+    combineLatest([this.deviceState$, this.isDeviceConnected$])
       .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe(([isConnected, deviceState]) => {
+      .subscribe(([deviceState, isConnected]) => {
         console.log(
           'DeviceConnectionAbstract: Device state and connection changed:',
           { isConnected, deviceState }

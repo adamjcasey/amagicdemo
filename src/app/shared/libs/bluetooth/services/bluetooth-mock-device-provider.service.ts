@@ -71,6 +71,17 @@ export class BluetoothMockDeviceProvider {
     try {
       this.#connected = true;
 
+      // Set initial state to InsertCassette
+      this.#store.dispatch(
+        new fromBluetoothStore.UpdateDeviceState(DeviceStateCode.InsertCassette)
+      );
+      this.#store.dispatch(new fromBluetoothStore.UpdateDeviceStateData(0));
+      this.#store.dispatch(
+        new fromBluetoothStore.UpdateBatteryLevel(
+          this.#defaultDeviceInfo.battery
+        )
+      );
+
       this.#store.dispatch(
         new fromBluetoothStore.ConnectSuccess({
           deviceInfo: {
@@ -83,17 +94,6 @@ export class BluetoothMockDeviceProvider {
             rssi: this.#defaultDeviceInfo.rssi,
           },
         })
-      );
-
-      // Set initial state to InsertCassette
-      this.#store.dispatch(
-        new fromBluetoothStore.UpdateDeviceState(DeviceStateCode.InsertCassette)
-      );
-      this.#store.dispatch(new fromBluetoothStore.UpdateDeviceStateData(0));
-      this.#store.dispatch(
-        new fromBluetoothStore.UpdateBatteryLevel(
-          this.#defaultDeviceInfo.battery
-        )
       );
 
       console.log('Mock device connected successfully');

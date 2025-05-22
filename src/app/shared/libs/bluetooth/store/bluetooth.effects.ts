@@ -220,7 +220,7 @@ export class BluetoothEffects {
       switchMap(([_, useMockDevice]: [fromActions.ConnectSuccess, boolean]) => {
         if (useMockDevice) {
           return of(
-            new fromActions.UpdateDeviceState(DeviceStateCode.InsertCassette)
+            new fromActions.MockDeviceState(DeviceStateCode.InsertCassette)
           );
         }
         return this.bluetoothService.state$.pipe(
