@@ -33,6 +33,10 @@ export const mockScenarios: { [key: string]: MockScenario } = {
         duration: 3000,
       },
       {
+        state: DeviceStateCode.RemoveNeedleCap,
+        duration: 2000,
+      },
+      {
         state: DeviceStateCode.ReadyForInjection,
         duration: 0,
       },
