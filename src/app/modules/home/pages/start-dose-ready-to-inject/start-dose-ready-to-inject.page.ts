@@ -368,18 +368,6 @@ export class StartDoseReadyToInjectPage
             hideNavigation: true,
             actions: [
               {
-                label: 'Replay',
-                action: () => {
-                  const videoElement = document.getElementById(
-                    'start-dose-ready-to-inject-video'
-                  ) as HTMLMediaElement;
-                  if (videoElement) {
-                    videoElement.currentTime = 0;
-                    videoElement.play();
-                  }
-                },
-              },
-              {
                 label: 'Continue',
                 action: () => {
                   const videoElement = document.getElementById(
@@ -626,7 +614,6 @@ export class StartDoseReadyToInjectPage
             )
             .subscribe(() => {
               this.goTo('/home/cassette-remove');
-              this._store.dispatch(new fromSharedStore.AlertHide());
             });
         },
       }

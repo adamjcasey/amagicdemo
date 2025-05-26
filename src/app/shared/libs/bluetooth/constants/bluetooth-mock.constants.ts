@@ -20,15 +20,6 @@ export const mockScenarios: { [key: string]: MockScenario } = {
         duration: 3000,
       },
       {
-        state: DeviceStateCode.PoweringOff,
-        duration: 10000,
-      },
-      // get poweringOn after successful scanning
-      // {
-      //   state: DeviceStateCode.PoweringOn,
-      //   duration: 1000,
-      // },
-      {
         state: DeviceStateCode.PreparingCassette,
         duration: 3000,
       },

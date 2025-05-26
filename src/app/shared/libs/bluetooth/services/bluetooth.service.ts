@@ -242,7 +242,9 @@ export class BluetoothService {
     );
     if (useMockDevice) {
       console.log('Reconnect: Using mocked device');
-      await this.#bluetoothMockDeviceProvider.provideMockDevice();
+      await this.#bluetoothMockDeviceProvider.provideMockDevice(
+        useMockDevice && !this.#silentReconnectInProgress
+      );
       this.#scanning = false;
       this.#silentReconnectInProgress = false;
       return;

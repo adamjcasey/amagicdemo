@@ -125,7 +125,7 @@ export class StartDoseReadyToInjectDosingComponent
       );
 
       this.releasingCassette$.pipe(take(1)).subscribe(() => {
-        this.#handleReleasingCassetteScreen();
+        this.#handleReleasingCassetteScreen(false);
       });
 
       this.#showDosingSuccessAlert();
@@ -164,25 +164,6 @@ export class StartDoseReadyToInjectDosingComponent
     this.#store.dispatch(new fromSharedStore.SliderPageSlideNext());
   }
 
-  #showContinueDosingBackdrop() {
-    this.#store.dispatch(
-      new fromSharedStore.BackdropShow({
-        transition: 'move',
-        header: true,
-        showBackButton: false,
-        template: `
-        <div class="no-needless-message">
-          <h1 class="font-heading-1--bold">For this demo let's try that again</h1>
-          <img src="assets/images/injection-try-again.svg">
-          <p>For the correct injection experience:</p>
-          <p>1. Follow the app prompts to begin the injection.</p>
-          <p>2. <b>Hold the injector down until the app shows a completed injection (10 seconds).</b></p>
-        </div>
-      `,
-      })
-    );
-  }
-
   #showDosingSuccessAlert() {
     const doseDateFormatted = moment().format('D MMMM YYYY H:mm A');
 
@@ -202,7 +183,7 @@ export class StartDoseReadyToInjectDosingComponent
             label: 'Done',
             fill: 'outline',
             action: () => {
-              this.#handleReleasingCassetteScreen();
+              this.#store.dispatch(new fromSharedStore.AlertHide());
             },
           },
         ],
@@ -229,7 +210,6 @@ export class StartDoseReadyToInjectDosingComponent
             label: 'Ok',
             action: () => {
               this.#store.dispatch(new fromSharedStore.AlertHide());
-              this.#showContinueDosingBackdrop();
             },
           },
           {
