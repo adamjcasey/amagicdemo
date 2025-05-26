@@ -74,6 +74,9 @@ export class StartDoseReadyToInjectPage
   isInjecting$: Observable<boolean> = this._store.select(
     fromBluetoothStore.isInjectingState
   );
+  isReadyForInjection$: Observable<boolean> = this._store.select(
+    fromBluetoothStore.isReadyForInjectionState
+  );
   isRemoveCassette$: Observable<boolean> = this._store.select(
     fromBluetoothStore.isRemoveCassetteState
   );
@@ -121,15 +124,10 @@ export class StartDoseReadyToInjectPage
         }
       });
 
-    this.deviceStateName$
-      .pipe(
-        filter((stateName) => stateName === 'ReadyForInjection'),
-        takeUntil(this.ngUnsubscribe)
-      )
+    this.isReadyForInjection$
+      .pipe(takeUntil(this.ngUnsubscribe), filter(Boolean))
       .subscribe(() => {
-        this.readyForInjection = true;
-        this.buildSlides();
-        this._cdr.detectChanges();
+        this.sliderPage.slideNext();
       });
   }
 
@@ -465,7 +463,7 @@ export class StartDoseReadyToInjectPage
                       DeviceStateCode.ReadyForInjection
                     )
                   );
-                }, 1000);
+                }, 3000);
               },
             },
           ],
@@ -488,35 +486,11 @@ export class StartDoseReadyToInjectPage
                     </p>
                    </div>
                 </div>
+                <div class="loader loader--bottom"></div>
             `,
         },
         content: {
-          blockNavigationFor: null,
-          actions: [
-            {
-              label: 'Previous step',
-              action: () => {
-                this._store.dispatch(
-                  new fromSharedStore.TopbarChangeColor(
-                    '--color-bg-pastel-blue'
-                  )
-                );
-                this.sliderPage.slidePrev();
-              },
-            },
-            {
-              label: 'Next Step',
-              disabled: !this.readyForInjection,
-              action: () => {
-                this._store.dispatch(
-                  new fromSharedStore.TopbarChangeColor(
-                    '--color-bg-pastel-beige'
-                  )
-                );
-                this.sliderPage.slideNext();
-              },
-            },
-          ],
+          hide: true,
         },
       },
       {
