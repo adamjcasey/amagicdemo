@@ -91,7 +91,7 @@
               class="hotspot-element {{ button.cssClasses ? button.cssClasses : null }}" color="purple" size="large"
               [ngClass]="{ 'is-hidden': button.hidden, 'is-blocked': blockNavigation }"
               [disabled]="button.disabled ? true : null"
-              (click)="button.action ? button.action($event) : null"
+              (touchend)="button.action ? button.action($event) : null"
               [fill]="
                 button.fill
                 ? button.fill
