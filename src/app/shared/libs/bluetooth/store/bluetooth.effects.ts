@@ -100,16 +100,20 @@ export class BluetoothEffects {
     this.actions$.pipe(
       ofType(fromActions.BluetoothActionTypes.StartScan),
       withLatestFrom(this.store.select(fromSelector.getIsConnected)),
-      switchMap(([_, isConnected]) => {
-        if (isConnected) {
-          return of(new fromActions.StopScan());
-        }
+      switchMap(
+        ([{ payload }, isConnected]: [fromActions.StartScan, boolean]) => {
+          const silent = !!payload?.silent;
 
-        return from(this.bluetoothService.scan()).pipe(
-          map(() => new fromActions.StopScan()),
-          catchError((error) => of(new fromActions.SetError(error)))
-        );
-      })
+          if (isConnected) {
+            return of(new fromActions.StopScan());
+          }
+
+          return from(this.bluetoothService.scan({ silent })).pipe(
+            map(() => new fromActions.StopScan()),
+            catchError((error) => of(new fromActions.SetError(error)))
+          );
+        }
+      )
     )
   );
 

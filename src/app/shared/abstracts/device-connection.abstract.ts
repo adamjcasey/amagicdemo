@@ -87,6 +87,7 @@ export abstract class DeviceConnectionAbstract
           }
 
           this.#reconnectInProgress = false;
+          // TODO: Test if this is needed
           if (this.isAlertShown) {
             console.log('DeviceConnectionAbstract: Closing alert');
             this.closeAlertWhenConnected();

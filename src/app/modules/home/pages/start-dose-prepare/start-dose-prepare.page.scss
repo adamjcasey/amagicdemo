@@ -1,6 +1,14 @@
 @import 'src/theme/base/mixins';
 
 .start-dose-prepare__instructions {
+  h1 {
+    font-size: 32px;
+    line-height: 40px;
+    letter-spacing: 0;
+    text-align: center;
+    font-weight: 800;
+  }
+
   h3 {
     @include paragraph-xl;
     font-weight: var(--font-weight-bold);
@@ -8,21 +16,22 @@
 
   img {
     display: block;
-    width: 100%;
-    height: auto;
+    width: 280px;
+    height: 280px;
     opacity: 1;
     transition: opacity 0.3s ease;
+    margin: 0 auto;
   }
 
   .temperature-status {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: var(--size-xs);
+    gap: 10px;
 
     .indicator {
-      margin-top: var(--size-xxxs);
-      margin-bottom: var(--size-xxxs);
+      margin-top: 0;
+      margin-bottom: 0;
       font-size: 4rem;
       font-weight: var(--font-weight-extra-light);
       text-align: center;
