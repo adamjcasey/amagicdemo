@@ -24,6 +24,24 @@ import { EffectFade, Pagination } from 'swiper/modules';
 
 register();
 
+const SWIPER_NO_TOUCH_CONFIG = {
+  allowTouchMove: false,
+  touchRatio: 0,
+  simulateTouch: false,
+};
+
+const SWIPER_NO_TOUCH_ATTRIBUTES = [
+  ['allow-touch-move', 'false'],
+  ['touch-ratio', '0'],
+  ['simulate-touch', 'false'],
+];
+
+const applySwiperNoTouchAttributes = (element: HTMLElement) => {
+  SWIPER_NO_TOUCH_ATTRIBUTES.forEach(([attr, value]) => {
+    element.setAttribute(attr, value);
+  });
+};
+
 import * as fromActivityComponents from '@activity/components';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -90,21 +108,21 @@ export class SliderPageComponent implements OnInit, OnDestroy {
     fadeEffect: {
       crossFade: true,
     },
-    allowTouchMove: false,
+    ...SWIPER_NO_TOUCH_CONFIG,
     speed: 500,
     modules: [EffectFade],
     lazy: false,
   };
 
   contentSwiperConfig = {
-    // effect: 'fade',
-    // fadeEffect: {
-    //   crossFade: true,
-    // },
-    // allowTouchMove: false,
-    // pagination: {
-    //   el: '.swiper-pagination',
-    // },
+    effect: 'fade',
+    fadeEffect: {
+      crossFade: true,
+    },
+    ...SWIPER_NO_TOUCH_CONFIG,
+    pagination: {
+      el: '.swiper-pagination',
+    },
   };
 
   private _sanitizedContentCache: Map<string, SafeHtml> | null = null;
@@ -606,19 +624,21 @@ export class SliderPageComponent implements OnInit, OnDestroy {
       // Set up parameters before initialization
       headerSwiperEl.setAttribute('effect', 'fade');
       headerSwiperEl.setAttribute('lazy', 'false');
+      applySwiperNoTouchAttributes(headerSwiperEl);
 
       // Update content swiper attributes
       contentSwiperEl.setAttribute('effect', 'fade');
       contentSwiperEl.setAttribute('pagination', 'true');
       contentSwiperEl.setAttribute('pagination-clickable', 'true');
       contentSwiperEl.setAttribute('pagination-el', '.swiper-pagination');
+      applySwiperNoTouchAttributes(contentSwiperEl);
 
       const headerParams = {
         effect: 'fade',
         fadeEffect: {
           crossFade: true,
         },
-        allowTouchMove: false,
+        ...SWIPER_NO_TOUCH_CONFIG,
         speed: 500,
         modules: [EffectFade],
         lazy: false,
@@ -629,7 +649,7 @@ export class SliderPageComponent implements OnInit, OnDestroy {
         fadeEffect: {
           crossFade: true,
         },
-        allowTouchMove: false,
+        ...SWIPER_NO_TOUCH_CONFIG,
         speed: 500,
         modules: [EffectFade, Pagination],
         pagination: {

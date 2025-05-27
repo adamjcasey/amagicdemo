@@ -23,7 +23,8 @@
       'no-scroll': config.header?.noScroll,
     }">
 
-    <swiper-container *ngIf="slides.length > 0" #sliderHeader [init]="false" effect="fade">
+    <swiper-container *ngIf="slides.length > 0" #sliderHeader [init]="false" effect="fade" allow-touch-move="false"
+      touch-ratio="0" simulate-touch="false">
       <swiper-slide *ngFor="let slide of slides; trackBy: trackBySlideFn" class="slider-page__header-slide">
         <div class="asset-wrapper" *ngIf="slide.header?.asset">
           <img [src]="slide.header.asset" [alt]="slide.header?.assetAlt || 'Slide image'" />
@@ -62,7 +63,7 @@
       </div>
 
       <swiper-container #sliderContent [init]="false" effect="fade" pagination="true" pagination-clickable="true"
-        pagination-el=".swiper-pagination">
+        pagination-el=".swiper-pagination" allow-touch-move="false" touch-ratio="0" simulate-touch="false">
         <swiper-slide *ngFor=" let slide of slides; trackBy: trackBySlideFn" class="wrapper-small__slide">
           <div class="content-wrapper">
             <div class="template-wrapper" *ngIf="slide.content?.template"
@@ -90,8 +91,7 @@
             <ion-button *ngFor="let button of slide.content.actions; let i = index"
               class="hotspot-element {{ button.cssClasses ? button.cssClasses : null }}" color="purple" size="large"
               [ngClass]="{ 'is-hidden': button.hidden, 'is-blocked': blockNavigation }"
-              [disabled]="button.disabled ? true : null"
-              (touchend)="button.action ? button.action($event) : null"
+              [disabled]="button.disabled ? true : null" (touchend)="button.action ? button.action($event) : null"
               [fill]="
                 button.fill
                 ? button.fill
