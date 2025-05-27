@@ -187,7 +187,7 @@ export class CassetteJourneyPage
           <section class="cassette-inspection">
             <img src="assets/images/cassette-verified.svg" alt="Cassette verified" />
             <h1 class="font-heading-1--bold ion-text-nowrap">Cassette is verified</h1>
-            <p>Your cassette passed the authenticity and expiration checks.</p>
+            <!-- <p>Your cassette passed the authenticity and expiration checks.</p> -->
           </section>
         `,
         cards: [
