@@ -21,6 +21,7 @@ bootstrapApplication(LayoutPage, {
     provideIonicAngular({
       mode: 'ios',
       innerHTMLTemplatesEnabled: true,
+      swipeBackEnabled: false
     }),
     provideRouter(routes, withPreloading(PreloadAllModules)),
     provideHttpClient(),
