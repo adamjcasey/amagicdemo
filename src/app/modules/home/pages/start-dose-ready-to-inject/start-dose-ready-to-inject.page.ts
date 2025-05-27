@@ -127,11 +127,18 @@ export class StartDoseReadyToInjectPage
     this.isReadyForInjection$
       .pipe(takeUntil(this.ngUnsubscribe), filter(Boolean))
       .subscribe(() => {
-        if (this.homeConfig.firstTimeDose) {
-          this.sliderPage.slideTo(FirstTimeSlides.AlmostThere);
-        } else {
-          this.sliderPage.slideTo(NonFirstTimeSlides.WaitingToStart);
-        }
+        this.buildSlides();
+        this._cdr.detectChanges();
+
+        this.successfulDoses$
+          .pipe(takeUntil(this.ngUnsubscribe), take(1))
+          .subscribe((count) => {
+            if (count === 0) {
+              this.sliderPage.slideTo(FirstTimeSlides.AlmostThere);
+            } else {
+              this.sliderPage.slideTo(NonFirstTimeSlides.WaitingToStart);
+            }
+          });
       });
   }
 
@@ -419,6 +426,7 @@ export class StartDoseReadyToInjectPage
         },
         content: {
           // blockNavigationFor: 1500,
+          hide: false,
           actions: [
             {
               label: 'Previous step',
