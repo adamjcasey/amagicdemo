@@ -127,7 +127,11 @@ export class StartDoseReadyToInjectPage
     this.isReadyForInjection$
       .pipe(takeUntil(this.ngUnsubscribe), filter(Boolean))
       .subscribe(() => {
-        this.sliderPage.slideNext();
+        if (this.homeConfig.firstTimeDose) {
+          this.sliderPage.slideTo(FirstTimeSlides.AlmostThere);
+        } else {
+          this.sliderPage.slideTo(NonFirstTimeSlides.WaitingToStart);
+        }
       });
   }
 
@@ -517,6 +521,7 @@ export class StartDoseReadyToInjectPage
           ],
         },
         content: {
+          hide: false,
           actions: [
             {
               label: 'Previous step',

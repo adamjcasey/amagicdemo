@@ -168,7 +168,9 @@ export class StartDoseInjectDonePage
                     {
                       type: 'featured',
                       eyebrow: 'Next Dose:',
-                      title: moment(nextDose.date).format('MMMM Do'),
+                      title: !!nextDose.date
+                        ? moment(nextDose.date).format('MMMM Do')
+                        : moment().add(7, 'days').format('MMMM Do'),
                       asset: '/assets/images/start-dose-inject-done-drug.svg',
                       button: {
                         label: 'Edit schedule',
