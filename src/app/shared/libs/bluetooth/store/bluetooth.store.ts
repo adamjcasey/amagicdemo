@@ -55,7 +55,8 @@ export const initialBluetoothState: BluetoothState = {
 
   deviceInfo: {},
 
-  state: 0,
+  // state can't be 0 because it's used to check if the state is defined
+  state: -1,
   stateData: 0,
   stateRaw: 0,
   stateName: 'Undefined',
