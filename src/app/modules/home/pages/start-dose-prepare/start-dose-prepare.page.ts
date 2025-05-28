@@ -62,10 +62,8 @@ export class StartDosePreparePage
           isExpanded: true,
           hide: false,
           hideNavigation: true,
-          template:
-            // this.homeConfig?.firstTimeDose || true
-            false
-              ? `
+          template: this.homeConfig?.firstTimeDose
+            ? `
           <div class="start-dose-prepare__instructions">
             <img src="assets/images/drug-cold-temp.svg" />
             <h1 class="font-heading-1--bold ion-text-nowrap">Theryx® temperature</h1>
@@ -84,7 +82,7 @@ export class StartDosePreparePage
             <p>It's best to let it warm up for a bit to room temperature (65°F) before injecting.</p>
           </div>
         `
-              : `
+            : `
           <div class="start-dose-prepare__instructions">
             <img src="assets/images/drug-cold-temp.svg" />
             <h1 class="font-heading-1--bold ion-text-nowrap">Theryx® temperature</h1>
@@ -105,8 +103,12 @@ export class StartDosePreparePage
               {
                 label: 'Proceed',
                 action: () => {
-                  this._store.dispatch(new fromSharedStore.SliderPageClear());
-                  this.goTo('home/start-dose/ready-to-inject');
+                  if (this.homeConfig?.firstTimeDose) {
+                    this.showStepTempTimer();
+                  } else {
+                    this._store.dispatch(new fromSharedStore.SliderPageClear());
+                    this.goTo('home/start-dose/ready-to-inject');
+                  }
                 },
               },
             ],
@@ -285,8 +287,16 @@ export class StartDosePreparePage
               // setting as disabled to avoid user unnecessary action,
               // will be enable after show Dose setup view
               disabled: true,
+              // action: () => {
+              //   this.showStepInspect();
+              // },
               action: () => {
-                this.showStepInspect();
+                if (this.homeConfig.firstTimeDose) {
+                  this.showStepSurvey();
+                } else {
+                  this._store.dispatch(new fromSharedStore.SliderPageClear());
+                  this.goTo('home/start-dose/ready-to-inject');
+                }
               },
             },
           ],

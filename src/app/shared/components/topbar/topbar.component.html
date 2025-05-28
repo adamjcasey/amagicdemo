@@ -23,7 +23,7 @@
       </ion-menu-button>
 
       <ng-container *ngIf="!layoutConfig.debuggingDeviceMode">
-        <div *ngIf="layoutConfig.rightCornerEl; else default">
+        <div *ngIf="layoutConfig.rightCornerEl?.display; else default">
           <div class="timer" *ngIf="layoutConfig.rightCornerEl.type === 'timer'">
             <span class="timer__label">{{ layoutConfig?.rightCornerEl?.timer|secondsToMinutes }}</span>
             <ion-icon src="/assets/icons/timer.svg"></ion-icon>

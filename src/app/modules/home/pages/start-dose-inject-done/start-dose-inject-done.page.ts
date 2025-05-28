@@ -156,53 +156,56 @@ export class StartDoseInjectDonePage
           if (this.slides.length === 2) {
             if (this.homeConfig.firstTimeDose) {
               const nextDose = this.homeConfig.doses[1];
-              this.slides.push({
-                header: {
-                  color: '--color-bg-pastel-green',
-                  template: `
+              this.slides = [
+                ...this.slides,
+                {
+                  header: {
+                    color: '--color-bg-pastel-green',
+                    template: `
                       <div class="start-dose-inject-done">
                         <h1 class="font-heading-1--bold">Next Dose</h1>
                       </div>
                     `,
-                  cards: [
-                    {
-                      type: 'featured',
-                      eyebrow: 'Next Dose:',
-                      title: !!nextDose.date
-                        ? moment(nextDose.date).format('MMMM Do')
-                        : moment().add(7, 'days').format('MMMM Do'),
-                      asset: '/assets/images/start-dose-inject-done-drug.svg',
-                      button: {
-                        label: 'Edit schedule',
-                        fill: 'outline',
+                    cards: [
+                      {
+                        type: 'featured',
+                        eyebrow: 'Next Dose:',
+                        title: !!nextDose.date
+                          ? moment(nextDose.date).format('MMMM Do')
+                          : moment().add(7, 'days').format('MMMM Do'),
+                        asset: '/assets/images/start-dose-inject-done-drug.svg',
+                        button: {
+                          label: 'Edit schedule',
+                          fill: 'outline',
+                        },
                       },
-                    },
-                    {
-                      title: 'Like a smart reminder?',
-                      cssClasses: 'hotspot-element',
-                      asset:
-                        '/assets/images/start-dose-inject-done-notification.svg',
-                      description:
-                        'Smart reminders can notify you at the right time and place by using calendar and location data to improve recommendations.',
-                    },
-                  ],
-                },
-                content: {
-                  hideNavigation: true,
-                  blockNavigationFor: null,
-                  actions: [
-                    {
-                      label: 'Set up smart reminders',
-                      action: () => {
-                        this.goTo('settings/setup-reminders');
-                        this._store.dispatch(
-                          new fromSharedStore.SliderPageClear()
-                        );
+                      {
+                        title: 'Like a smart reminder?',
+                        cssClasses: 'hotspot-element',
+                        asset:
+                          '/assets/images/start-dose-inject-done-notification.svg',
+                        description:
+                          'Smart reminders can notify you at the right time and place by using calendar and location data to improve recommendations.',
                       },
-                    },
-                  ],
+                    ],
+                  },
+                  content: {
+                    hideNavigation: true,
+                    blockNavigationFor: null,
+                    actions: [
+                      {
+                        label: 'Set up smart reminders',
+                        action: () => {
+                          this.goTo('settings/setup-reminders');
+                          this._store.dispatch(
+                            new fromSharedStore.SliderPageClear()
+                          );
+                        },
+                      },
+                    ],
+                  },
                 },
-              });
+              ];
             }
           }
 

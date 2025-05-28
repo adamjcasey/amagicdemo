@@ -39,9 +39,12 @@ export enum NonFirstTimeSlides {
   Welcome = 0,
   QuickGuide = 1,
   BodyPartSelector = 2,
-  WaitingToStart = 3,
-  Dosing = 4,
-  PlungerRetracting = 5,
+  CleanSite = 3,
+  UncapInjector = 4,
+  AlmostThere = 5,
+  WaitingToStart = 6,
+  Dosing = 7,
+  PlungerRetracting = 8,
 }
 
 @Component({
@@ -120,16 +123,12 @@ export class StartDoseReadyToInjectPage
         if (homeConfig) {
           this.homeConfig = homeConfig;
           this.buildSlides();
-          this._cdr.detectChanges();
         }
       });
 
     this.isReadyForInjection$
       .pipe(takeUntil(this.ngUnsubscribe), filter(Boolean))
       .subscribe(() => {
-        this.buildSlides();
-        this._cdr.detectChanges();
-
         this.successfulDoses$
           .pipe(takeUntil(this.ngUnsubscribe), take(1))
           .subscribe((count) => {
@@ -144,6 +143,67 @@ export class StartDoseReadyToInjectPage
 
   private buildSlides() {
     this.slides = [
+      ...(this.homeConfig.firstTimeDose
+        ? [
+            {
+              header: {
+                color: '--color-bg-pastel-green',
+                component: 'start-dose-ready-to-inject-first-time-user',
+              },
+              content: {
+                hideNavigation: true,
+                actions: [
+                  {
+                    label: 'Skip',
+                    fill: 'outline',
+                    action: () => {
+                      this.sliderPage.slideTo(FirstTimeSlides.Welcome);
+                      this.showNoNeedlessMessage();
+                    },
+                  },
+                ],
+              },
+            },
+            {
+              header: {
+                fullSize: true,
+                color: '--color-bg-pastel-green',
+                component: 'start-dose-ready-to-inject-video',
+              },
+              content: {
+                hideNavigation: true,
+                actions: [
+                  {
+                    label: 'Continue',
+                    action: () => {
+                      const videoElement = document.getElementById(
+                        'start-dose-ready-to-inject-video'
+                      ) as HTMLMediaElement;
+                      // pausing the video if it's ended
+                      if (!videoElement?.ended) {
+                        videoElement?.pause();
+                      }
+                      this._store.dispatch(
+                        new fromSharedStore.SliderPageSetHeaderOptions({
+                          fullSize: false,
+                        })
+                      );
+                      // remove timeline
+                      this._store.dispatch(
+                        new fromSharedStore.SliderPageSetContentOptions({
+                          timeline: null,
+                        })
+                      );
+
+                      this.sliderPage.slideNext();
+                      this.showNoNeedlessMessage();
+                    },
+                  },
+                ],
+              },
+            },
+          ]
+        : []),
       {
         header: {
           color: '--color-bg-pastel-green',
@@ -162,7 +222,8 @@ export class StartDoseReadyToInjectPage
                       </div>`,
         },
         content: {
-          hideNavigation: true,
+          // hideNavigation: true,
+          hide: false,
           actions: [
             {
               label: this.homeConfig?.firstTimeDose ? 'Postpone' : 'View Guide',
@@ -344,75 +405,6 @@ export class StartDoseReadyToInjectPage
           ],
         },
       },
-    ];
-
-    // if this is the first dose
-    if (this.homeConfig.firstTimeDose) {
-      // set steps for video training
-      this.slides.unshift(
-        {
-          header: {
-            color: '--color-bg-pastel-green',
-            component: 'start-dose-ready-to-inject-first-time-user',
-          },
-          content: {
-            hideNavigation: true,
-            actions: [
-              {
-                label: 'Skip',
-                fill: 'outline',
-                action: () => {
-                  this.sliderPage.slideTo(FirstTimeSlides.Welcome);
-                  this.showNoNeedlessMessage();
-                },
-              },
-            ],
-          },
-        },
-        {
-          header: {
-            fullSize: true,
-            color: '--color-bg-pastel-green',
-            component: 'start-dose-ready-to-inject-video',
-          },
-          content: {
-            hideNavigation: true,
-            actions: [
-              {
-                label: 'Continue',
-                action: () => {
-                  const videoElement = document.getElementById(
-                    'start-dose-ready-to-inject-video'
-                  ) as HTMLMediaElement;
-                  // pausing the video if it's ended
-                  if (!videoElement?.ended) {
-                    videoElement?.pause();
-                  }
-                  this._store.dispatch(
-                    new fromSharedStore.SliderPageSetHeaderOptions({
-                      fullSize: false,
-                    })
-                  );
-                  // remove timeline
-                  this._store.dispatch(
-                    new fromSharedStore.SliderPageSetContentOptions({
-                      timeline: null,
-                    })
-                  );
-
-                  this.sliderPage.slideNext();
-                  this.showNoNeedlessMessage();
-                },
-              },
-            ],
-          },
-        }
-      );
-    }
-
-    // set instruction steps to clean-site,
-    // uncap-injector, and pre-loading for dosing
-    this.slides.push(
       {
         header: {
           color: '--color-bg-pastel-blue',
@@ -545,6 +537,7 @@ export class StartDoseReadyToInjectPage
             {
               label: 'Next Step',
               action: () => {
+                this._store.dispatch(new fromSharedStore.SliderPageClear());
                 this.sliderPage.slideNext();
               },
             },
@@ -555,12 +548,7 @@ export class StartDoseReadyToInjectPage
             this.startWaitingForStartDosing();
           }
         },
-      }
-    );
-    // }
-
-    // set dosing step
-    this.slides.push(
+      },
       {
         header: {
           color: '--color-bg-pastel-honey-yellow',
@@ -629,8 +617,10 @@ export class StartDoseReadyToInjectPage
               this.goTo('/home/cassette-remove');
             });
         },
-      }
-    );
+      },
+    ];
+
+    this._cdr.detectChanges();
   }
 
   playVideo() {
@@ -668,6 +658,8 @@ export class StartDoseReadyToInjectPage
       this.isInjecting$
         .pipe(takeUntil(this.ngUnsubscribe), filter(Boolean))
         .subscribe(() => {
+          this._store.dispatch(new fromSharedStore.SliderPageClear());
+
           if (this.homeConfig.firstTimeDose) {
             if (
               this.sliderPageConfig?.header.currentSlide ===
