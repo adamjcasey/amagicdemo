@@ -78,14 +78,14 @@
             </div>
 
             <div class="links-container">
-              <a class="link hotspot-element" (click)="goToSubmenu(1)">
-                <ion-icon src="/assets/icons/flag.svg" slot="start" size="large"></ion-icon>
-                <ion-label>I'm all done with the demo</ion-label>
-                <ion-icon name="chevron-forward-outline" slot="end" color="light"></ion-icon>
-              </a>
               <a class="link hotspot-element" (click)="resetApp()">
-                <ion-icon src="/assets/icons/time-loader.svg" slot="start" size="large"></ion-icon>
-                <ion-label>Restart the app</ion-label>
+                <ion-icon src="/assets/icons/time-loader.svg" slot="start" size="medium"></ion-icon>
+                <ion-label>Reset the demo</ion-label>
+              </a>
+              <a class="link hotspot-element" (click)="goToSubmenu(1)">
+                <ion-icon src="/assets/icons/help.svg" slot="start" size="medium"></ion-icon>
+                <ion-label>Help! Something broke</ion-label>
+                <ion-icon name="chevron-forward-outline" slot="end" color="light"></ion-icon>
               </a>
             </div>
           </swiper-slide>

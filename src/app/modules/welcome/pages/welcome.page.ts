@@ -202,7 +202,7 @@ export class WelcomePage
     {
       header: {
         color: '--color-bg-pastel-green-dark',
-        asset: '/assets/images/welcome-step-2-3.svg',
+        asset: '/assets/images/welcome-step-2-3.gif',
       },
       content: {
         hideNavigation: null,
