@@ -523,17 +523,17 @@ export class StartDoseReadyToInjectPage
         content: {
           hide: false,
           actions: [
-            {
-              label: 'Previous step',
-              action: () => {
-                this._store.dispatch(
-                  new fromSharedStore.TopbarChangeColor(
-                    '--color-bg-pastel-green'
-                  )
-                );
-                this.sliderPage.slidePrev();
-              },
-            },
+            // {
+            //   label: 'Previous step',
+            //   action: () => {
+            //     this._store.dispatch(
+            //       new fromSharedStore.TopbarChangeColor(
+            //         '--color-bg-pastel-green'
+            //       )
+            //     );
+            //     this.sliderPage.slidePrev();
+            //   },
+            // },
             {
               label: 'Next Step',
               action: () => {
