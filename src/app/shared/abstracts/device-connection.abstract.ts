@@ -122,7 +122,8 @@ export abstract class DeviceConnectionAbstract
 
   protected isDeviceInErrorState(deviceState: number): boolean {
     return (
-      deviceState === DeviceStateCode.Undefined ||
+      // Device probably can't even be in undefined state, commenting this out for now as it breaks the app's behavior
+      // deviceState === DeviceStateCode.Undefined ||
       deviceState === DeviceStateCode.DeviceError ||
       deviceState === DeviceStateCode.EndOfLife ||
       deviceState === DeviceStateCode.DeviceErrorSelftest
