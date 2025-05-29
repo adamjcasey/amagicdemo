@@ -1,6 +1,7 @@
 import { Action } from '@ngrx/store';
 import { DeviceStateCode } from '../constants/bluetooth.constants';
 import { MockScenario } from '../models/bluetooth-mock.models';
+import { InjectionStatus } from './bluetooth.store';
 
 export enum BluetoothActionTypes {
   Connect = '[Bluetooth] Connect',
@@ -37,6 +38,8 @@ export enum BluetoothActionTypes {
   MockScenarioStepExecuted = '[Bluetooth] Mock Scenario Step Executed',
 
   IncrementSuccessfulDoses = '[Bluetooth] Increment Successful Doses',
+
+  UpdateLastInjection = '[Bluetooth] Update Last Injection',
 }
 
 export class Connect implements Action {
@@ -192,6 +195,11 @@ export class IncrementSuccessfulDoses implements Action {
   readonly type = BluetoothActionTypes.IncrementSuccessfulDoses;
 }
 
+export class UpdateLastInjection implements Action {
+  readonly type = BluetoothActionTypes.UpdateLastInjection;
+  constructor(public payload: InjectionStatus) {}
+}
+
 export type BluetoothActions =
   | Connect
   | ConnectSuccess
@@ -218,4 +226,5 @@ export type BluetoothActions =
   | StopMockScenario
   | CreateMockScenario
   | MockScenarioStepExecuted
-  | IncrementSuccessfulDoses;
+  | IncrementSuccessfulDoses
+  | UpdateLastInjection;

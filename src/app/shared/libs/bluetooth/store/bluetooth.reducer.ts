@@ -184,6 +184,12 @@ export function bluetoothReducer(
         successfulDoses: state.successfulDoses + 1,
       };
 
+    case fromActions.BluetoothActionTypes.UpdateLastInjection:
+      return {
+        ...state,
+        lastInjection: action.payload,
+      };
+
     default:
       return state;
   }
@@ -289,4 +295,9 @@ export const getSuccessfulDoses = createSelector(
 export const getIsSilentScan = createSelector(
   getBluetoothState,
   (state: BluetoothState) => state.isSilentScan
+);
+
+export const getLastInjection = createSelector(
+  getBluetoothState,
+  (state: BluetoothState) => state.lastInjection
 );

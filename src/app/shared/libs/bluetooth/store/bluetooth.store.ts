@@ -1,5 +1,7 @@
 import { ScanResult } from '@capacitor-community/bluetooth-le';
 
+export type InjectionStatus = 'NONE' | 'COMPLETE' | 'INCOMPLETE';
+
 export interface BluetoothState {
   // Connection state
   isConnected: boolean;
@@ -45,6 +47,8 @@ export interface BluetoothState {
 
   // Dosing counter
   successfulDoses: number;
+
+  lastInjection: InjectionStatus;
 }
 
 export const initialBluetoothState: BluetoothState = {
@@ -76,4 +80,6 @@ export const initialBluetoothState: BluetoothState = {
   mockScenariosHistory: [],
 
   successfulDoses: 0,
+
+  lastInjection: 'NONE',
 };

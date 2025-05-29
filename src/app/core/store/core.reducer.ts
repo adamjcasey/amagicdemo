@@ -1,31 +1,7 @@
-import {
-  Action,
-  ActionReducerMap,
-  createFeatureSelector,
-  createSelector,
-} from '@ngrx/store';
-import { Params, RouterStateSnapshot } from '@angular/router';
-import { RouterStateSerializer, routerReducer } from '@ngrx/router-store';
+import { Action, createFeatureSelector, createSelector } from '@ngrx/store';
 
-import * as fromStore from './core.store';
 import * as fromActions from './core.actions';
-
-// export function CoreReducer(
-//   state = fromStore.initialCoreState,
-//   action: fromActions.ActionsUnion,
-// ): fromStore.CoreState {
-//   switch (action.type) {
-//     case fromActions.ActionTypes.SetStore: {
-//       return {
-//         ...action.payload,
-//       };
-//     }
-
-//     default: {
-//       return state;
-//     }
-//   }
-// }
+import * as fromStore from './core.store';
 
 export function CoreReducer(
   state: fromStore.CoreState = fromStore.initialCoreState,

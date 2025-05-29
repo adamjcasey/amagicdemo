@@ -131,6 +131,9 @@ export class StartDoseReadyToInjectDosingComponent
       this.#showDosingSuccessAlert();
 
       this.#store.dispatch(new fromBluetoothStore.IncrementSuccessfulDoses());
+      this.#store.dispatch(
+        new fromBluetoothStore.UpdateLastInjection('COMPLETE')
+      );
     });
 
     // Handle incomplete injection
@@ -152,6 +155,10 @@ export class StartDoseReadyToInjectDosingComponent
         });
 
         this.#showDosingErrorAlert();
+
+        this.#store.dispatch(
+          new fromBluetoothStore.UpdateLastInjection('INCOMPLETE')
+        );
       }
     });
   }
@@ -170,6 +177,7 @@ export class StartDoseReadyToInjectDosingComponent
     this.#store.dispatch(
       new fromSharedStore.AlertShow({
         mode: 'window',
+        overlay: true,
         template: `
           <h1 class="font-heading-1--bold">Full dose delivered!</h1>
           <p><b>The injection is complete.<br />It's ok to lift the autoinjector.</b></p>
@@ -195,6 +203,7 @@ export class StartDoseReadyToInjectDosingComponent
     this.#store.dispatch(
       new fromSharedStore.AlertShow({
         mode: 'window',
+        overlay: true,
         template: `
         <div class="dosing-error-alert">
           <img src="assets/images/dose-dosing-error.svg" />

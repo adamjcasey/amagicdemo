@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  ChangeDetectorRef,
   Component,
   OnInit,
   ViewEncapsulation,
@@ -35,7 +36,10 @@ export class StartDosePrepareTempTimerComponent
   public layoutConfig: any;
   public limitTime: number = 720; // 720segs - 12min
 
-  constructor(private _store: Store<fromCoreStore.CoreState>) {
+  constructor(
+    private _store: Store<fromCoreStore.CoreState>,
+    private _cdr: ChangeDetectorRef
+  ) {
     this.sliderPageConfig$ = this._store.select(
       fromSharedStore.getSliderPageConfig
     );
@@ -93,8 +97,8 @@ export class StartDosePrepareTempTimerComponent
       setTimeout(() => {
         this._store.dispatch(
           new fromSharedStore.SliderPageSetContentOptions({
-            template: null,
-            component: 'start-dose-prepare-setup',
+            // template: null,
+            // component: 'start-dose-prepare-setup',
             toolbar: {
               actions: [
                 {
@@ -105,7 +109,7 @@ export class StartDosePrepareTempTimerComponent
             },
           })
         );
-      }, 300);
+      }, 800);
     }, 1500);
   }
 
@@ -114,11 +118,15 @@ export class StartDosePrepareTempTimerComponent
       new fromCoreStore.SetRightCornerEl({
         type: 'timer',
         timer: this.limitTime,
+        display: false,
       })
     );
 
     const loop = setInterval(() => {
       this.limitTime--;
+
+      this._cdr.detectChanges();
+
       this._store.dispatch(
         new fromCoreStore.SetRightCornerEl({
           timer: this.limitTime,

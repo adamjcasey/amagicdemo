@@ -1,4 +1,10 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  ViewChild,
+  ViewEncapsulation,
+} from '@angular/core';
 import { Store } from '@ngrx/store';
 import { firstValueFrom, Observable, takeUntil } from 'rxjs';
 
@@ -43,7 +49,8 @@ export class StartDosePreparePage
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
-    private _bluetoothService: BluetoothService
+    private _bluetoothService: BluetoothService,
+    private _cdr: ChangeDetectorRef
   ) {
     super();
     addIcons({ closeCircle, checkmarkCircle });
@@ -53,67 +60,6 @@ export class StartDosePreparePage
     this.sliderPageConfig$ = this._store.select(
       fromSharedStore.getSliderPageConfig
     );
-    this.slides = [
-      {
-        header: {
-          color: '--color-white',
-        },
-        content: {
-          isExpanded: true,
-          hide: false,
-          hideNavigation: true,
-          template:
-            // this.homeConfig?.firstTimeDose || true
-            false
-              ? `
-          <div class="start-dose-prepare__instructions">
-            <img src="assets/images/drug-cold-temp.svg" />
-            <h1 class="font-heading-1--bold ion-text-nowrap">Theryx® temperature</h1>
-
-            <div class="temperature-status">
-              <p class="indicator">
-                46°
-                <span>Current</span>
-              </p>
-              <p class="indicator">
-                65°
-                <span>Recommended</span>
-              </p>
-            </div>
-            <h3>Your Theryx® is currently too cold for a comfortable injection.</h3>
-            <p>It's best to let it warm up for a bit to room temperature (65°F) before injecting.</p>
-          </div>
-        `
-              : `
-          <div class="start-dose-prepare__instructions">
-            <img src="assets/images/drug-cold-temp.svg" />
-            <h1 class="font-heading-1--bold ion-text-nowrap">Theryx® temperature</h1>
-
-            <div class="temperature-status">
-              <p class="indicator green">
-                68°
-                <span>Current</span>
-              </p>
-            </div>
-            <h3>Theryx® is warm enough for a comfortable injection.</h3>
-            <p>Good job taking it out of the fridge ahead of time!</p>
-          </div>
-        `,
-          cards: null,
-          toolbar: {
-            actions: [
-              {
-                label: 'Proceed',
-                action: () => {
-                  this._store.dispatch(new fromSharedStore.SliderPageClear());
-                  this.goTo('home/start-dose/ready-to-inject');
-                },
-              },
-            ],
-          },
-        },
-      },
-    ];
   }
 
   ngOnInit() {
@@ -142,6 +88,9 @@ export class StartDosePreparePage
       .subscribe((homeConfig) => {
         if (homeConfig) {
           this.homeConfig = homeConfig;
+
+          this.buildSlides();
+
           const markedDoses = this.homeConfig.doses.filter(
             (dose: any) => dose.marked
           );
@@ -159,6 +108,8 @@ export class StartDosePreparePage
               })
             );
           }
+
+          this._cdr.detectChanges();
         }
       });
 
@@ -169,6 +120,72 @@ export class StartDosePreparePage
           this.layoutConfig = layoutConfig;
         }
       });
+  }
+
+  buildSlides() {
+    this.slides = [
+      {
+        header: {
+          color: '--color-white',
+        },
+        content: {
+          isExpanded: true,
+          hide: false,
+          hideNavigation: true,
+          template: this.homeConfig?.firstTimeDose
+            ? `
+          <div class="start-dose-prepare__instructions">
+            <img src="assets/images/drug-cold-temp.svg" />
+            <h1 class="font-heading-1--bold ion-text-nowrap">Theryx® temperature</h1>
+
+            <div class="temperature-status">
+              <p class="indicator">
+                46°
+                <span>Current</span>
+              </p>
+              <p class="indicator">
+                65°
+                <span>Recommended</span>
+              </p>
+            </div>
+            <h3>Your Theryx® is currently too cold for a comfortable injection.</h3>
+            <p>It's best to let it warm up for a bit to room temperature (65°F) before injecting.</p>
+          </div>
+        `
+            : `
+          <div class="start-dose-prepare__instructions">
+            <img src="assets/images/drug-cold-temp.svg" />
+            <h1 class="font-heading-1--bold ion-text-nowrap">Theryx® temperature</h1>
+
+            <div class="temperature-status">
+              <p class="indicator green">
+                68°
+                <span>Current</span>
+              </p>
+            </div>
+            <h3>Theryx® is warm enough for a comfortable injection.</h3>
+            <p>Good job taking it out of the fridge ahead of time!</p>
+          </div>
+        `,
+          cards: null,
+          toolbar: {
+            actions: [
+              {
+                label: 'Proceed',
+                action: () => {
+                  if (this.homeConfig?.firstTimeDose) {
+                    this.showStepTempTimer();
+                  } else {
+                    this._store.dispatch(new fromSharedStore.SliderPageClear());
+                    this.goTo('home/start-dose/ready-to-inject');
+                  }
+                },
+              },
+            ],
+          },
+        },
+      },
+    ];
   }
 
   async slideNext(sliders: any) {
@@ -207,72 +224,6 @@ export class StartDosePreparePage
     }
   }
 
-  showStepTemperature = () => {
-    // hold on a few ms the change of the topbar bgcolor to match with the opening
-    // of the expanded box in SlidePage component
-    setTimeout(() => {
-      this._store.dispatch(
-        new fromSharedStore.TopbarChangeColor('--color-white')
-      );
-    }, 500);
-    this._store.dispatch(
-      new fromSharedStore.SliderPageSetContent({
-        isExpanded: true,
-        template:
-          this.homeConfig.firstTimeDose || true
-            ? `
-          <div class="start-dose-prepare__instructions">
-            <img src="assets/images/drug-cold-temp.svg" />
-            <h1 class="font-heading-1--bold ion-text-nowrap">Theryx® temperature</h1>
-
-            <div class="temperature-status">
-              <p class="indicator">
-                46°
-                <span>Current</span>
-              </p>
-              <p class="indicator">
-                65°
-                <span>Recommended</span>
-              </p>
-            </div>
-            <h3>Your Theryx® is currently too cold for a comfortable injection.</h3>
-            <p>It's best to let it warm up for a bit to room temperature (65°F) before injecting.</p>
-          </div>
-        `
-            : `
-          <div class="start-dose-prepare__instructions">
-            <img src="assets/images/drug-cold-temp.svg" />
-            <h1 class="font-heading-1--bold ion-text-nowrap">Theryx® temperature</h1>
-
-            <div class="temperature-status">
-              <p class="indicator green">
-                68°
-                <span>Current</span>
-              </p>
-            </div>
-            <h3>Theryx® is warm enough for a comfortable injection.</h3>
-            <p>Good job taking it out of the fridge ahead of time!</p>
-          </div>
-        `,
-        toolbar: {
-          actions: [
-            {
-              label: 'Proceed',
-              action: () => {
-                if (this.homeConfig.firstTimeDose) {
-                  this.showStepTempTimer();
-                } else {
-                  this.sliderPage.slideNext();
-                  this.showStepInspect();
-                }
-              },
-            },
-          ],
-        },
-      })
-    );
-  };
-
   showStepTempTimer() {
     this._store.dispatch(
       new fromSharedStore.SliderPageSetContentOptions({
@@ -285,8 +236,16 @@ export class StartDosePreparePage
               // setting as disabled to avoid user unnecessary action,
               // will be enable after show Dose setup view
               disabled: true,
+              // action: () => {
+              //   this.showStepInspect();
+              // },
               action: () => {
-                this.showStepInspect();
+                if (this.homeConfig.firstTimeDose) {
+                  this.showStepSurvey();
+                } else {
+                  this._store.dispatch(new fromSharedStore.SliderPageClear());
+                  this.goTo('home/start-dose/ready-to-inject');
+                }
               },
             },
           ],
@@ -346,12 +305,7 @@ export class StartDosePreparePage
   showStepSurvey() {
     this._store.dispatch(
       new fromSharedStore.SliderPageSetContentOptions({
-        template: `
-        <div class="start-dose-prepare__survey">
-          <h1 class="font-heading-1--bold">While you are waiting, how are you feeling?</h1>
-          <p>Tracking these ratings over time can help you<br> and your care team understand how Theryx®<br> impacts your condition.</p>
-        </div>
-      `,
+        template: null,
         component: 'start-dose-prepare-survey',
         toolbar: {
           actions: [

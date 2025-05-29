@@ -41,6 +41,12 @@ export class StartDosePrepareWaitingToInjectComponent
   }
 
   ngOnInit() {
+    this._store.dispatch(
+      new fromCoreStore.SetRightCornerEl({
+        display: true,
+      })
+    );
+
     this.homeConfig$.subscribe((homeConfig) => {
       if (homeConfig) {
         this.homeConfig = homeConfig;
@@ -110,6 +116,7 @@ export class StartDosePrepareWaitingToInjectComponent
               action: () => {
                 this._store.dispatch(new fromSharedStore.AlertHide());
                 this._store.dispatch(new fromSharedStore.SliderPageClear());
+                this._store.dispatch(new fromCoreStore.ClearRightCornerEl());
                 this._store.dispatch(
                   new fromCoreStore.Go({
                     path: ['/home/start-dose/ready-to-inject'],
