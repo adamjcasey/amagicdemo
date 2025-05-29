@@ -149,7 +149,7 @@ export class StartDosePreparePage
               </p>
             </div>
             <h3>Your Theryx® is currently too cold for a comfortable injection.</h3>
-            <p>It's best to let it warm up for a bit to room temperature (65°F) before injecting.</p>
+            <p class="ion-no-margin">It's best to let it warm up for a bit to room temperature (65°F) before injecting.</p>
           </div>
         `
             : `
