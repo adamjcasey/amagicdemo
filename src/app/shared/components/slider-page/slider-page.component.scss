@@ -329,7 +329,7 @@
       pointer-events: none;
       padding-top: var(--size-l);
       padding-top: calc(var(--size-l) + env(safe-area-inset-top));
-      padding-bottom: env(safe-area-inset-bottom);
+      padding-bottom: 0;
       padding-left: env(safe-area-inset-left);
       padding-right: env(safe-area-inset-right);
       overflow: hidden;
