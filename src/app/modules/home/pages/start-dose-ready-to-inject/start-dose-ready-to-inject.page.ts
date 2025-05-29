@@ -660,6 +660,10 @@ export class StartDoseReadyToInjectPage
         .subscribe(() => {
           this._store.dispatch(new fromSharedStore.SliderPageClear());
 
+          this._store.dispatch(
+            new fromBluetoothStore.UpdateLastInjection('INCOMPLETE')
+          );
+
           if (this.homeConfig.firstTimeDose) {
             if (
               this.sliderPageConfig?.header.currentSlide ===
