@@ -12,6 +12,7 @@ import { DeviceStateCode } from '@app/shared/libs/bluetooth';
 import { MOCK_SCENARIO_IDS } from '@app/shared/libs/bluetooth/constants/bluetooth-mock.constants';
 import * as fromBluetoothStore from '@app/shared/libs/bluetooth/store';
 import { getSuccessfulDoses } from '@app/shared/libs/bluetooth/store';
+import { getLastInjection } from '@app/shared/libs/bluetooth/store/bluetooth.reducer';
 import * as fromHomeStore from '@home/store';
 import { IonContent } from '@ionic/angular/standalone';
 import { BaseComponentAbstract } from '@shared/abstracts/base-component.abstract';
@@ -51,6 +52,8 @@ export class CassetteRemovePage
 
   getSuccessfulDoses$: Observable<number> =
     this.store.select(getSuccessfulDoses);
+
+  lastInjection$: Observable<string> = this.store.select(getLastInjection);
 
   deviceState$: Observable<number> = this.store.select(
     fromBluetoothStore.getDeviceState
@@ -194,20 +197,22 @@ export class CassetteRemovePage
   }
 
   #handleCloseAction(): void {
-    if (this.homeConfig.onBoardingDone) {
-      this.store.dispatch(new fromSharedStore.SliderPageClear());
-      this.goTo('/home');
-    } else {
-      this.getSuccessfulDoses$
-        .pipe(takeUntil(this.ngUnsubscribe), take(1))
-        .subscribe((count) => {
-          if (count === 0) {
-            this.goTo('/home/cassette-journey');
-          } else {
-            this.store.dispatch(new fromSharedStore.SliderPageClear());
-            this.goTo('/home/start-dose/inject-done');
-          }
-        });
-    }
+    this.lastInjection$.pipe(take(1)).subscribe((lastInjection) => {
+      if (this.homeConfig.onBoardingDone || lastInjection !== 'COMPLETE') {
+        this.store.dispatch(new fromSharedStore.SliderPageClear());
+        this.goTo('/home');
+      } else {
+        this.getSuccessfulDoses$
+          .pipe(takeUntil(this.ngUnsubscribe), take(1))
+          .subscribe((count) => {
+            if (count === 0) {
+              this.goTo('/home/cassette-journey');
+            } else {
+              this.store.dispatch(new fromSharedStore.SliderPageClear());
+              this.goTo('/home/start-dose/inject-done');
+            }
+          });
+      }
+    });
   }
 }

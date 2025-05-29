@@ -131,6 +131,9 @@ export class StartDoseReadyToInjectDosingComponent
       this.#showDosingSuccessAlert();
 
       this.#store.dispatch(new fromBluetoothStore.IncrementSuccessfulDoses());
+      this.#store.dispatch(
+        new fromBluetoothStore.UpdateLastInjection('COMPLETE')
+      );
     });
 
     // Handle incomplete injection
@@ -152,6 +155,10 @@ export class StartDoseReadyToInjectDosingComponent
         });
 
         this.#showDosingErrorAlert();
+
+        this.#store.dispatch(
+          new fromBluetoothStore.UpdateLastInjection('INCOMPLETE')
+        );
       }
     });
   }
