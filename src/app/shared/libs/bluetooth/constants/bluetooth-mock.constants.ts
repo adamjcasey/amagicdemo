@@ -27,10 +27,6 @@ export const mockScenarios: { [key: string]: MockScenario } = {
         state: DeviceStateCode.RemoveNeedleCap,
         duration: 2000,
       },
-      {
-        state: DeviceStateCode.ReadyForInjection,
-        duration: 0,
-      },
     ],
   },
   [MOCK_SCENARIO_IDS.CASSETTE_JOURNEY_USED_CASSETTE_PATH]: {

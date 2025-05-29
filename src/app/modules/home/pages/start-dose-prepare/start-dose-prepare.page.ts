@@ -1,4 +1,10 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  ViewChild,
+  ViewEncapsulation,
+} from '@angular/core';
 import { Store } from '@ngrx/store';
 import { firstValueFrom, Observable, takeUntil } from 'rxjs';
 
@@ -43,7 +49,8 @@ export class StartDosePreparePage
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
-    private _bluetoothService: BluetoothService
+    private _bluetoothService: BluetoothService,
+    private _cdr: ChangeDetectorRef
   ) {
     super();
     addIcons({ closeCircle, checkmarkCircle });
@@ -101,6 +108,8 @@ export class StartDosePreparePage
               })
             );
           }
+
+          this._cdr.detectChanges();
         }
       });
 
