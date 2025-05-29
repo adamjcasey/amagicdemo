@@ -467,7 +467,7 @@ export class StartDoseReadyToInjectPage
           template: `
               <div class="start-dose-ready-to-inject__content">
                 <h1 class="font-heading-1--bold">Uncap injector.</h1>
-                <img src="assets/images/start-dose-ready-to-inject-uncap.svg">
+                <img src="assets/images/start-dose-ready-to-inject-uncap.gif">
                 <div class="pro-tip">
                     <ion-icon name="information-circle-outline"></ion-icon>
                     <h5><strong>Pro Tip</strong></h5>
@@ -598,7 +598,7 @@ export class StartDoseReadyToInjectPage
           template: `
             <div class="start-dose-ready-to-inject-waiting-to-start-injection">
               <h1 class="font-heading-1--bold">Plunger is retracting...</h1>
-              <img src="assets/images/plunger-retracting.svg">
+              <img src="assets/images/plunger-retracting.gif">
               <p>You will hear a motor sound while the plunger is retracting.</p>
               <p>Do not attempt to remove the cassette until the plunger is fully retracted.</p>
               <div class="loader"></div>

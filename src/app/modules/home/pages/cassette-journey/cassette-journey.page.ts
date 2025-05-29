@@ -136,7 +136,7 @@ export class CassetteJourneyPage
         },
         template: `
           <section class="cassette-inspection">
-            <img src="assets/images/cassette-insert.svg" alt="Cassette insertion" class="cassette-check__image" />
+            <img src="assets/images/cassette-insert.gif" alt="Cassette insertion" class="cassette-check__image" />
             <h1 class="font-heading-1--bold ion-text-nowrap">Insert the cassette into<br>the Aria Autoinjector</h1>
             <p>Press the cassette until it clicks.</p>
             <p>Aria will play a sound to confirm the cassette is loaded.</p>

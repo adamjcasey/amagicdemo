@@ -68,7 +68,7 @@ export class CassetteRemovePage
         bgColor: '--color-bg-pastel-green-dark',
         template: `
           <section class="cassette-remove">
-            <img src="assets/images/cassette-remove.svg" alt="Cassette removal" class="cassette-remove__image" />
+            <img src="assets/images/cassette-remove.gif" alt="Cassette removal" class="cassette-remove__image" />
             <h1 class="font-heading-1--bold ion-text-nowrap">Remove the old<br>cassette</h1>
             <p>You will hear a confirmation chime indicating that the cassette has been removed.</p>
             <div class="loader"></div>
