@@ -26,16 +26,16 @@
     <swiper-container *ngIf="slides.length > 0" #sliderHeader [init]="false" effect="fade" allow-touch-move="false"
       touch-ratio="0" simulate-touch="false">
       <swiper-slide *ngFor="let slide of slides; trackBy: trackBySlideFn" class="slider-page__header-slide">
-        <div class="asset-wrapper" *ngIf="config.header?.asset">
-          <img [src]="config.header.asset" [alt]="config.header?.assetAlt || 'Slide image'" />
+        <div class="asset-wrapper" *ngIf="slide.header?.asset">
+          <img [src]="slide.header.asset" [alt]="slide.header?.assetAlt || 'Slide image'" />
         </div>
 
         <div class="content-wrapper">
-          <div class="template-wrapper" *ngIf="config.header?.template" [dinamicInnerHtml]="config.header?.template">
+          <div class="template-wrapper" *ngIf="slide.header?.template" [dinamicInnerHtml]="slide.header?.template">
           </div>
 
-          <div class="cards-wrapper" *ngIf="config.header?.cards">
-            <automagic-card *ngFor="let card of config.header.cards" [card]="card"></automagic-card>
+          <div class="cards-wrapper" *ngIf="slide.header?.cards">
+            <automagic-card *ngFor="let card of slide.header.cards" [card]="card"></automagic-card>
           </div>
 
           <div class="component-wrapper">
@@ -66,20 +66,20 @@
         pagination-el=".swiper-pagination" allow-touch-move="false" touch-ratio="0" simulate-touch="false">
         <swiper-slide *ngFor=" let slide of slides; trackBy: trackBySlideFn" class="wrapper-small__slide">
           <div class="content-wrapper">
-            <div class="template-wrapper" *ngIf="config.content?.template"
-              [innerHTML]="sanitizeContent(config.content.template)"></div>
+            <div class="template-wrapper" *ngIf="slide.content?.template"
+              [innerHTML]="sanitizeContent(slide.content.template)"></div>
 
-            <div class="cards-wrapper" *ngIf="config.content?.cards">
-              <automagic-card *ngFor="let card of config.content.cards" [card]="card"></automagic-card>
+            <div class="cards-wrapper" *ngIf="slide.content?.cards">
+              <automagic-card *ngFor="let card of slide.content.cards" [card]="card"></automagic-card>
             </div>
 
-            <div class="form-wrapper" *ngIf="config.content?.form">
-              <form [formGroup]="config.content.form.group" autocomplete="off">
-                <div class="field-wrapper" *ngFor="let field of config.content.form.fields">
+            <div class="form-wrapper" *ngIf="slide.content?.form">
+              <form [formGroup]="slide.content.form.group" autocomplete="off">
+                <div class="field-wrapper" *ngFor="let field of slide.content.form.fields">
                   <p class="field-label">{{ field.label }}</p>
                   <ion-input color="purple" fill="outline" mode="md" (keyup.enter)="handlerEnterKey($event)"
                     [formControlName]="field.name" [placeholder]="field.placeholder"
-                    [errorText]="config.content.form.group.get(field.name)?.errors?.['required'] ? 'Please enter your name' : null"
+                    [errorText]="slide.content.form.group.get(field.name)?.errors?.['required'] ? 'Please enter your name' : null"
                     (keydown)="field.onKeydown ? field.onKeydown($event) : null"
                     (input)="field.onInput ? field.onInput($event) : null"></ion-input>
                 </div>
@@ -87,15 +87,15 @@
             </div>
           </div>
 
-          <div class="actions-wrapper" *ngIf="config.content?.actions">
-            <ion-button *ngFor="let button of config.content.actions; let i = index"
+          <div class="actions-wrapper" *ngIf="slide.content?.actions">
+            <ion-button *ngFor="let button of slide.content.actions; let i = index"
               class="hotspot-element {{ button.cssClasses ? button.cssClasses : null }}" color="purple" size="large"
               [ngClass]="{ 'is-hidden': button.hidden, 'is-blocked': blockNavigation }"
               [disabled]="button.disabled ? true : null" (touchend)="button.action ? button.action($event) : null"
               [fill]="
                 button.fill
                 ? button.fill
-                : (i % 2 !== 1 && config.content.actions.length > 1
+                : (i % 2 !== 1 && slide.content.actions.length > 1
                   ? 'outline'
                   : null)
               ">
