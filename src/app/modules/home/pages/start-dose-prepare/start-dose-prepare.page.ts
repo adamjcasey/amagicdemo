@@ -53,6 +53,67 @@ export class StartDosePreparePage
     this.sliderPageConfig$ = this._store.select(
       fromSharedStore.getSliderPageConfig
     );
+  }
+
+  ngOnInit() {
+    this._store.dispatch(
+      new fromSharedStore.TopbarChangeColor('--color-white')
+    );
+
+    // Subscribe to connection state changes
+    this._bluetoothService.connected$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(async (isConnected) => {
+        if (!isConnected) {
+          // Get current slide from the config
+          const currentConfig = await firstValueFrom(this.sliderPageConfig$);
+          if (currentConfig?.header?.currentSlide > 2) {
+            // If device disconnects after we've moved past the connection slides,
+            // go back to the Theryx info slide and attempt to reconnect
+            this.sliderPage.slideTo(2);
+            await this._bluetoothService.isDeviceConnected();
+          }
+        }
+      });
+
+    this.homeConfig$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((homeConfig) => {
+        if (homeConfig) {
+          this.homeConfig = homeConfig;
+
+          this.buildSlides();
+
+          const markedDoses = this.homeConfig.doses.filter(
+            (dose: any) => dose.marked
+          );
+          if (markedDoses.length === 1) {
+            this._store.dispatch(
+              new fromStore.SetData({
+                doses: this.homeConfig.doses.map((dose: any, index: number) => {
+                  return {
+                    ...dose,
+                    bodyPartInjected: markedDoses[0].bodyPartInjected,
+                    marked:
+                      index + 1 < this.homeConfig.doses.length ? true : false,
+                  };
+                }),
+              })
+            );
+          }
+        }
+      });
+
+    this.layoutConfig$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((layoutConfig) => {
+        if (layoutConfig) {
+          this.layoutConfig = layoutConfig;
+        }
+      });
+  }
+
+  buildSlides() {
     this.slides = [
       {
         header: {
@@ -118,61 +179,6 @@ export class StartDosePreparePage
     ];
   }
 
-  ngOnInit() {
-    this._store.dispatch(
-      new fromSharedStore.TopbarChangeColor('--color-white')
-    );
-
-    // Subscribe to connection state changes
-    this._bluetoothService.connected$
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe(async (isConnected) => {
-        if (!isConnected) {
-          // Get current slide from the config
-          const currentConfig = await firstValueFrom(this.sliderPageConfig$);
-          if (currentConfig?.header?.currentSlide > 2) {
-            // If device disconnects after we've moved past the connection slides,
-            // go back to the Theryx info slide and attempt to reconnect
-            this.sliderPage.slideTo(2);
-            await this._bluetoothService.isDeviceConnected();
-          }
-        }
-      });
-
-    this.homeConfig$
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((homeConfig) => {
-        if (homeConfig) {
-          this.homeConfig = homeConfig;
-          const markedDoses = this.homeConfig.doses.filter(
-            (dose: any) => dose.marked
-          );
-          if (markedDoses.length === 1) {
-            this._store.dispatch(
-              new fromStore.SetData({
-                doses: this.homeConfig.doses.map((dose: any, index: number) => {
-                  return {
-                    ...dose,
-                    bodyPartInjected: markedDoses[0].bodyPartInjected,
-                    marked:
-                      index + 1 < this.homeConfig.doses.length ? true : false,
-                  };
-                }),
-              })
-            );
-          }
-        }
-      });
-
-    this.layoutConfig$
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((layoutConfig) => {
-        if (layoutConfig) {
-          this.layoutConfig = layoutConfig;
-        }
-      });
-  }
-
   async slideNext(sliders: any) {
     sliders.asset.slideNext(500);
     sliders.content.slideNext(500);
@@ -208,72 +214,6 @@ export class StartDosePreparePage
       }
     }
   }
-
-  showStepTemperature = () => {
-    // hold on a few ms the change of the topbar bgcolor to match with the opening
-    // of the expanded box in SlidePage component
-    setTimeout(() => {
-      this._store.dispatch(
-        new fromSharedStore.TopbarChangeColor('--color-white')
-      );
-    }, 500);
-    this._store.dispatch(
-      new fromSharedStore.SliderPageSetContent({
-        isExpanded: true,
-        template:
-          this.homeConfig.firstTimeDose || true
-            ? `
-          <div class="start-dose-prepare__instructions">
-            <img src="assets/images/drug-cold-temp.svg" />
-            <h1 class="font-heading-1--bold ion-text-nowrap">Theryx® temperature</h1>
-
-            <div class="temperature-status">
-              <p class="indicator">
-                46°
-                <span>Current</span>
-              </p>
-              <p class="indicator">
-                65°
-                <span>Recommended</span>
-              </p>
-            </div>
-            <h3>Your Theryx® is currently too cold for a comfortable injection.</h3>
-            <p>It's best to let it warm up for a bit to room temperature (65°F) before injecting.</p>
-          </div>
-        `
-            : `
-          <div class="start-dose-prepare__instructions">
-            <img src="assets/images/drug-cold-temp.svg" />
-            <h1 class="font-heading-1--bold ion-text-nowrap">Theryx® temperature</h1>
-
-            <div class="temperature-status">
-              <p class="indicator green">
-                68°
-                <span>Current</span>
-              </p>
-            </div>
-            <h3>Theryx® is warm enough for a comfortable injection.</h3>
-            <p>Good job taking it out of the fridge ahead of time!</p>
-          </div>
-        `,
-        toolbar: {
-          actions: [
-            {
-              label: 'Proceed',
-              action: () => {
-                if (this.homeConfig.firstTimeDose) {
-                  this.showStepTempTimer();
-                } else {
-                  this.sliderPage.slideNext();
-                  this.showStepInspect();
-                }
-              },
-            },
-          ],
-        },
-      })
-    );
-  };
 
   showStepTempTimer() {
     this._store.dispatch(
@@ -356,12 +296,7 @@ export class StartDosePreparePage
   showStepSurvey() {
     this._store.dispatch(
       new fromSharedStore.SliderPageSetContentOptions({
-        template: `
-        <div class="start-dose-prepare__survey">
-          <h1 class="font-heading-1--bold">While you are waiting, how are you feeling?</h1>
-          <p>Tracking these ratings over time can help you<br> and your care team understand how Theryx®<br> impacts your condition.</p>
-        </div>
-      `,
+        template: null,
         component: 'start-dose-prepare-survey',
         toolbar: {
           actions: [

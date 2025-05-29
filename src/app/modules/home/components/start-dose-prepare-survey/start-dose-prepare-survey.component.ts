@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RatingFieldComponent } from '@app/shared/components';
 import * as fromCoreStore from '@core/store';
+import { IonContent } from '@ionic/angular/standalone';
 import * as fromSharedStore from '@shared/store';
 import * as fromStore from '../../store';
 
@@ -21,6 +22,7 @@ import * as fromStore from '../../store';
     FormsModule,
     ReactiveFormsModule,
     RatingFieldComponent,
+    IonContent,
   ],
 })
 export class StartDosePrepareSurveyComponent implements OnInit {
