@@ -105,7 +105,8 @@ export class WelcomePage
               placeholder: 'Name',
               onInput: (event: any) => {
                 const value = event.target.value;
-                const capitalized = value.charAt(0).toUpperCase() + value.slice(1);
+                const capitalized =
+                  value.charAt(0).toUpperCase() + value.slice(1);
 
                 this.welcomeFormGroup.get('name')?.setValue(capitalized, {
                   emitEvent: false,
@@ -655,6 +656,7 @@ export class WelcomePage
                     ],
                   })
                 );
+                this.sliderPage.slidePrev();
               },
             },
             {
