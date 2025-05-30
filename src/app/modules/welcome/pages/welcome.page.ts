@@ -180,7 +180,7 @@ export class WelcomePage
     {
       header: {
         color: '--color-bg-pastel-green-dark',
-        asset: '/assets/images/welcome-step-2-2.svg',
+        asset: '/assets/images/welcome-step-2-2.gif',
       },
       content: {
         hideNavigation: null,
