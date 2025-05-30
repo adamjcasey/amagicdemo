@@ -4,7 +4,7 @@ import {
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
-import { Observable, take, takeUntil } from 'rxjs';
+import { combineLatest, Observable, take, takeUntil } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -99,7 +99,7 @@ export class CassetteRemovePage
             <img src="assets/images/cassette-discard-injection.svg">
             <div class="pro-tip">
               <p><ion-icon name="information-circle-outline"></ion-icon><strong>Pro Tip</strong></p>
-              <p>Discard cassette in your sharps “take-back” bin for recycling.</p>
+              <p>Discard cassette in your sharps "take-back" bin for recycling.</p>
             </div>
           </div>
         `,
@@ -197,22 +197,30 @@ export class CassetteRemovePage
   }
 
   #handleCloseAction(): void {
-    this.lastInjection$.pipe(take(1)).subscribe((lastInjection) => {
-      if (this.homeConfig.onBoardingDone || lastInjection !== 'COMPLETE') {
-        this.store.dispatch(new fromSharedStore.SliderPageClear());
-        this.goTo('/home');
-      } else {
-        this.getSuccessfulDoses$
-          .pipe(takeUntil(this.ngUnsubscribe), take(1))
-          .subscribe((count) => {
-            if (count === 0) {
-              this.goTo('/home/cassette-journey');
-            } else {
-              this.store.dispatch(new fromSharedStore.SliderPageClear());
-              this.goTo('/home/start-dose/inject-done');
-            }
-          });
-      }
-    });
+    if (!this.homeConfig.onBoardingDone) {
+      this.store.dispatch(new fromSharedStore.SliderPageClear());
+      this.goTo('/welcome');
+      return;
+    }
+
+    combineLatest([
+      this.lastInjection$.pipe(take(1)),
+      this.getSuccessfulDoses$.pipe(take(1)),
+    ])
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(([lastInjection, successfulDosesCount]) => {
+        if (this.homeConfig.onBoardingDone || lastInjection !== 'COMPLETE') {
+          this.store.dispatch(new fromSharedStore.SliderPageClear());
+          this.goTo('/home');
+          return;
+        }
+
+        if (successfulDosesCount === 0) {
+          this.goTo('/home/cassette-journey');
+        } else {
+          this.store.dispatch(new fromSharedStore.SliderPageClear());
+          this.goTo('/home/start-dose/inject-done');
+        }
+      });
   }
 }
