@@ -228,10 +228,11 @@ export class BluetoothService {
       return;
     }
 
-    if (this.#silentReconnectInProgress && !options?.silent) {
-      console.log('Silent reconnect in progress, skipping regular scan');
-      return;
-    }
+    // Comment this out
+    // if (this.#silentReconnectInProgress && !options?.silent) {
+    //   console.log('Silent reconnect in progress, skipping regular scan');
+    //   return;
+    // }
 
     this.#devices = [];
     this.#scanning = true;

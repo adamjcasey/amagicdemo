@@ -242,14 +242,8 @@ export class CassetteJourneyPage
     isInsertionRequired,
     isBeingPrepared,
     isVerified,
-    isLoadingError,
-    isExpired,
   ]: boolean[]): void {
-    if (isLoadingError) {
-      this.#handleCassetteLoadingError();
-    } else if (isExpired) {
-      this.#handleCassetteExpired();
-    } else if (isInsertionRequired) {
+    if (isInsertionRequired) {
       this.#handleCassetteInsertionRequired();
     } else if (isBeingPrepared) {
       this.#handleCassetteBeingPrepared();
@@ -294,10 +288,6 @@ export class CassetteJourneyPage
         })
       );
     });
-  }
-
-  #handleCassetteExpired(): void {
-    this.#showDrugExpiredAlert();
   }
 
   #handleCassetteInsertionRequired(): void {
@@ -366,38 +356,6 @@ export class CassetteJourneyPage
       console.log('Navigating to CassetteVerified slide');
       this.sliderPage.slideTo(CassetteJourneySlides.CassetteVerified);
     });
-  }
-
-  #showDrugExpiredAlert() {
-    this.store.dispatch(
-      new fromSharedStore.AlertShow({
-        mode: 'full',
-        template: `
-      <img src="assets/images/cassette-expired.svg" />
-      <h1 class="font-heading-1--bold">Drug expired</h1>
-      <p>The dose has expired and is not safe to use.</p>
-      <p><b>Please remove the cassette and replace with unexpired cassette and contact your Pharmacy for a new dose.</b></p>
-    `,
-        actions: [
-          {
-            label: 'Ok',
-            fill: 'outline',
-            action: () => {
-              this.store.dispatch(new fromSharedStore.AlertHide());
-              this.#goToRemoveCassette();
-            },
-          },
-          {
-            label: 'My Pharmacy',
-            fill: 'outline',
-            action: () => {
-              this.store.dispatch(new fromSharedStore.AlertHide());
-              this.#goToRemoveCassette();
-            },
-          },
-        ],
-      })
-    );
   }
 
   #goToRemoveCassette(): void {

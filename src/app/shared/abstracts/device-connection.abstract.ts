@@ -4,7 +4,7 @@ import { combineLatest, Observable, takeUntil } from 'rxjs';
 import * as fromBluetoothStore from '@app/shared/libs/bluetooth/store';
 import { DeviceStateCode, SCAN_TIMEOUT_MS } from '@shared/libs/bluetooth';
 import * as fromSharedStore from '@shared/store';
-import { tap } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { BaseComponentAbstract } from './base-component.abstract';
 
 @Directive()
@@ -102,7 +102,12 @@ export abstract class DeviceConnectionAbstract
           'DeviceConnectionAbstract: Device state and connection changed:',
           { isConnected, deviceState }
         );
-        if (isConnected && this.isDeviceInErrorState(deviceState)) {
+        if (
+          isConnected &&
+          (this.isDeviceInErrorState(deviceState) ||
+            this.isCassetteInErrorState(deviceState) ||
+            this.isDeviceInRemoveCassetteState(deviceState))
+        ) {
           console.log(
             'DeviceConnectionAbstract: Device in error state and connected, stopping reconnect process'
           );
@@ -112,10 +117,22 @@ export abstract class DeviceConnectionAbstract
           }
           this.#reconnectInProgress = false;
 
-          console.log(
-            'DeviceConnectionAbstract: Device in error state and connected, showing alert'
-          );
-          this.showInjectorErrorAlert();
+          if (this.isCassetteInErrorState(deviceState)) {
+            console.log(
+              'DeviceConnectionAbstract: Device in cassette error state and connected, showing alert'
+            );
+            this.handleCassetteWarning(deviceState);
+          } else if (this.isDeviceInErrorState(deviceState)) {
+            console.log(
+              'DeviceConnectionAbstract: Device in error state and connected, showing alert'
+            );
+            this.showInjectorErrorAlert();
+          } else if (this.isDeviceInRemoveCassetteState(deviceState)) {
+            console.log(
+              'DeviceConnectionAbstract: Device in release cassette state and connected, showing alert'
+            );
+            this.goTo('/home/cassette-remove');
+          }
         }
       });
   }
@@ -130,6 +147,19 @@ export abstract class DeviceConnectionAbstract
     );
   }
 
+  protected isCassetteInErrorState(deviceState: number): boolean {
+    return (
+      deviceState === DeviceStateCode.WarningCassette ||
+      deviceState === DeviceStateCode.WarningCassetteUsed ||
+      deviceState === DeviceStateCode.WarningCassetteExpired ||
+      deviceState === DeviceStateCode.WarningCassetteUnknown
+    );
+  }
+
+  protected isDeviceInRemoveCassetteState(deviceState: number): boolean {
+    return deviceState === DeviceStateCode.RemoveCassette;
+  }
+
   protected silentReconnect() {
     console.log('DeviceConnectionAbstract: Executing silent reconnect');
     this.store.dispatch(new fromBluetoothStore.StartScan({ silent: true }));
@@ -138,6 +168,14 @@ export abstract class DeviceConnectionAbstract
   protected closeAlertWhenConnected() {
     this.isAlertShown = false;
     this.store.dispatch(new fromSharedStore.AlertHide());
+  }
+
+  protected handleCassetteWarning(deviceState: number) {
+    if (deviceState === DeviceStateCode.WarningCassetteExpired) {
+      this.showCassetteExpiredAlert();
+    } else {
+      this.showCassetteLoadingAlert();
+    }
   }
 
   protected showConnectDeviceOverlay(): void {
@@ -215,11 +253,85 @@ export abstract class DeviceConnectionAbstract
     );
   }
 
+  protected showCassetteLoadingAlert(): void {
+    this.deviceState$.pipe(take(1)).subscribe((deviceState) => {
+      let title = 'Cassette Loading Error';
+      let message = 'The cassette may be defective or was not loaded properly.';
+
+      if (deviceState === DeviceStateCode.WarningCassetteUsed) {
+        title = 'Cassette has been used';
+        message = 'The cassette has already been used and cannot be re-used.';
+      } else if (deviceState === DeviceStateCode.WarningCassetteUnknown) {
+        title = 'Cassette is not known';
+        message =
+          'The cassette cannot be verified and may be from an unknown source.';
+      }
+
+      this.store.dispatch(
+        new fromSharedStore.AlertShow({
+          mode: 'full',
+          template: `
+      <img src="assets/images/cassette-expired.svg" />
+      <h1 class="font-heading-1--bold">${title}</h1>
+      <p>${message}</p>
+      <p><b>Please check the cassette and reload a different cassette if problem persists.<b></p>
+    `,
+          actions: [
+            {
+              label: 'Reload cassette',
+              fill: 'outline',
+              action: () => {
+                this.store.dispatch(new fromSharedStore.AlertHide());
+                this.goToRemoveCassette();
+              },
+            },
+          ],
+        })
+      );
+    });
+  }
+
+  protected showCassetteExpiredAlert() {
+    this.store.dispatch(
+      new fromSharedStore.AlertShow({
+        mode: 'full',
+        template: `
+      <img src="assets/images/cassette-expired.svg" />
+      <h1 class="font-heading-1--bold">Drug expired</h1>
+      <p>The dose has expired and is not safe to use.</p>
+      <p><b>Please remove the cassette and replace with unexpired cassette and contact your Pharmacy for a new dose.</b></p>
+    `,
+        actions: [
+          {
+            label: 'Ok',
+            fill: 'outline',
+            action: () => {
+              this.store.dispatch(new fromSharedStore.AlertHide());
+              this.goToRemoveCassette();
+            },
+          },
+          {
+            label: 'My Pharmacy',
+            fill: 'outline',
+            action: () => {
+              this.store.dispatch(new fromSharedStore.AlertHide());
+              this.goToRemoveCassette();
+            },
+          },
+        ],
+      })
+    );
+  }
+
   protected handleInjectorError(): void {
     console.log('DeviceConnectionAbstract: Handling injector error');
 
     this.store.dispatch(new fromBluetoothStore.Disconnect());
     this.goTo('/home/cassette-journey');
+  }
+
+  protected goToRemoveCassette(): void {
+    this.goTo('/home/cassette-remove');
   }
 
   override ngOnDestroy() {
