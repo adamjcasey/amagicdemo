@@ -228,10 +228,11 @@ export class BluetoothService {
       return;
     }
 
-    if (this.#silentReconnectInProgress && !options?.silent) {
-      console.log('Silent reconnect in progress, skipping regular scan');
-      return;
-    }
+    // Comment this out
+    // if (this.#silentReconnectInProgress && !options?.silent) {
+    //   console.log('Silent reconnect in progress, skipping regular scan');
+    //   return;
+    // }
 
     this.#devices = [];
     this.#scanning = true;
@@ -746,11 +747,23 @@ export class BluetoothService {
       }
 
       if (this.#devices.length > 0 && !this.#connected) {
-        console.log(
-          'Found devices but not connected, attempting to connect to:',
-          this.#devices[0].device.name
-        );
-        await this.connect(this.#devices[0]);
+        const connectToDevice = async (device: any) => {
+          console.log(
+            'Found devices but not connected, attempting to connect to:',
+            device.device.name
+          );
+
+          await this.connect(device);
+        };
+
+        if (this.#device) {
+          await connectToDevice(this.#device);
+        } else {
+          const closestDevice = this.#devices.sort(
+            (a, b) => (b?.rssi || 0) - (a?.rssi || 0)
+          )[0];
+          await connectToDevice(closestDevice);
+        }
 
         const connected = await firstValueFrom(
           race(
