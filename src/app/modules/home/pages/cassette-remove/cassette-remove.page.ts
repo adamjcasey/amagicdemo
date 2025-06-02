@@ -13,6 +13,7 @@ import { MOCK_SCENARIO_IDS } from '@app/shared/libs/bluetooth/constants/bluetoot
 import * as fromBluetoothStore from '@app/shared/libs/bluetooth/store';
 import { getSuccessfulDoses } from '@app/shared/libs/bluetooth/store';
 import { getLastInjection } from '@app/shared/libs/bluetooth/store/bluetooth.reducer';
+import * as fromCoreStore from '@core/store';
 import * as fromHomeStore from '@home/store';
 import { IonContent } from '@ionic/angular/standalone';
 import { BaseComponentAbstract } from '@shared/abstracts/base-component.abstract';
@@ -47,8 +48,15 @@ export class CassetteRemovePage
   @ViewChild('sliderPage', { static: false })
   sliderPage!: fromSharedComponents.SliderPageComponent;
 
-  homeConfig$: Observable<any> = this.store.select(fromHomeStore.getHomeConfig);
-  homeConfig: any;
+  homeConfig$: Observable<fromHomeStore.HomeState> = this.store.select(
+    fromHomeStore.getHomeConfig
+  );
+  homeConfig!: fromHomeStore.HomeState;
+
+  layoutConfig$: Observable<fromCoreStore.LayoutState> = this.store.select(
+    fromCoreStore.getLayoutConfig
+  );
+  layoutConfig!: fromCoreStore.LayoutState;
 
   getSuccessfulDoses$: Observable<number> =
     this.store.select(getSuccessfulDoses);
@@ -124,6 +132,12 @@ export class CassetteRemovePage
       .subscribe((homeConfig) => {
         this.homeConfig = homeConfig;
       });
+
+    this.layoutConfig$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((layoutConfig) => {
+        this.layoutConfig = layoutConfig;
+      });
   }
 
   ngAfterViewInit() {
@@ -197,7 +211,7 @@ export class CassetteRemovePage
   }
 
   #handleCloseAction(): void {
-    if (!this.homeConfig.onBoardingDone) {
+    if (!this.layoutConfig.welcomeFlowDone) {
       this.store.dispatch(new fromSharedStore.SliderPageClear());
       this.goTo('/welcome');
       return;
