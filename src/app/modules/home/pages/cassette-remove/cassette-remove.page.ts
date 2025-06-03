@@ -223,7 +223,11 @@ export class CassetteRemovePage
     ])
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(([lastInjection, successfulDosesCount]) => {
-        if (this.homeConfig.onBoardingDone || lastInjection !== 'COMPLETE') {
+        if (
+          this.homeConfig.onBoardingDone ||
+          lastInjection !== 'COMPLETE' ||
+          successfulDosesCount > 2
+        ) {
           this.store.dispatch(new fromSharedStore.SliderPageClear());
           this.goTo('/home');
           return;
