@@ -337,7 +337,7 @@ export class SharedEffects {
           } else {
             animate(
               `.slider-page__content`,
-              { height: `${window.innerHeight * 0.45}px` },
+              { height: `48vh` },
               { easing: spring(easingConfig) }
             );
 
