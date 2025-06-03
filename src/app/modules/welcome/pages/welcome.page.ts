@@ -74,7 +74,7 @@ export class WelcomePage
       content: {
         hideNavigation: true,
         template: `
-          <h1 class="font-heading-1--bold">Welcome to <br>AutoMagic for Theryx.</h1>
+          <h1 class="font-heading-1--bold margin-top-0">Welcome to <br>AutoMagic for Theryx.</h1>
           <p>The AutoMagic connected ecosystem empowers you to make the most of your Theryx prescription</p>
         `,
         actions: [
@@ -93,8 +93,9 @@ export class WelcomePage
         asset: '/assets/images/welcome-step-1.svg',
       },
       content: {
+        hideNavigation: false,
         template: `
-          <h1 class="font-heading-1--bold">Let's get to know each other.</h1>
+          <h1 class="font-heading-1--bold margin-top-0">Let's get to know each other.</h1>
         `,
         form: {
           group: this.welcomeFormGroup,
@@ -141,10 +142,10 @@ export class WelcomePage
         asset: '/assets/images/welcome-step-2.svg',
       },
       content: {
-        hideNavigation: null,
+        hideNavigation: false,
         template: `
-          <h1 class="font-heading-1--bold">Let's get connected.</h1>
-          <p>To get the most out of your connected autoinjector and enable dose tracking and help with your injection experience, please enable bluetooth.</p>
+          <h1 class="font-heading-1--bold margin-top-0">Let's get connected.</h1>
+          <p>To get the most out of your connected autoinjector, enable dose tracking and help with your injection experience, please allow AutoMagic to use bluetooth.</p>
         `,
         actions: [
           {
@@ -162,7 +163,7 @@ export class WelcomePage
         asset: '/assets/images/welcome-step-2.svg',
       },
       content: {
-        hideNavigation: null,
+        hideNavigation: false,
         template: `
           <h1 class="font-heading-1--bold">This experience requires bluetooth</h1>
           <p>You'll need to allow Bluetooth for AutoMagic in your settings to continue this app experience.</p>
@@ -184,11 +185,11 @@ export class WelcomePage
         asset: '/assets/images/welcome-step-2-2.gif',
       },
       content: {
-        hideNavigation: null,
+        hideNavigation: false,
         template: `
-          <h1 class="font-heading-1--bold">Let's connect your Aria Autoinjector.</h1>
+          <h1 class="font-heading-1--bold margin-top-0">Let's connect your Aria Autoinjector.</h1>
           <p>Power on the Aria Autoinjector.</p>
-          <p>The light above the power button should blink to indicate the power is on and ready to pair.</p>
+          <p>The light above the power button should turn on to indicate the power is on..</p>
         `,
         actions: [
           {
@@ -206,9 +207,9 @@ export class WelcomePage
         asset: '/assets/images/welcome-step-2-3.gif',
       },
       content: {
-        hideNavigation: null,
+        hideNavigation: false,
         template: `
-          <h1 class="font-heading-1--bold">Connecting...</h1>
+          <h1 class="font-heading-1--bold margin-top-0">Connecting...</h1>
           <p>Searching for Aria Autoinjectors...</p>
           <p>Ensure that your Aria is powered on and in range while pairing.</p>
           <div class="loader"></div>
@@ -222,11 +223,10 @@ export class WelcomePage
         asset: '/assets/images/welcome-step-2-4.svg',
       },
       content: {
-        hideNavigation: null,
+        hideNavigation: false,
         template: `
-          <h1 class="font-heading-1--bold">Connected!</h1>
-          <p>Your Aria Autoinjector is now connected to your phone.</p>
-          <p>You're ready to proceed to the next step.</p>
+          <h1 class="font-heading-1--bold margin-top-0">Connected!</h1>
+          <p>Your Aria Autoinjector has successfully been paired with this phone.</p>
         `,
         actions: [
           {
@@ -256,7 +256,7 @@ export class WelcomePage
       },
       content: {
         template: `
-          <h1 class="font-heading-1--bold">Allow Notifications.</h1>
+          <h1 class="font-heading-1--bold margin-top-0">Allow Notifications.</h1>
           <p>To help you remember your dose schedule and know when medication is at the right temperature, please <strong>enable notifications.</strong> You can customize notifications in the Settings menu.</p>
         `,
         actions: [
@@ -275,8 +275,9 @@ export class WelcomePage
         asset: '/assets/images/welcome-step-4.svg',
       },
       content: {
+        hideNavigation: false,
         template: `
-          <h1 class="font-heading-1--bold">You're ready to rock!</h1>
+          <h1 class="font-heading-1--bold margin-top-0">You're ready to rock!</h1>
           <p>The AutoMagic app is configured to harness the power of the AutoMagic autoinjector.</p>
         `,
         actions: [
@@ -622,7 +623,7 @@ export class WelcomePage
       new fromSharedStore.SliderPageSetContent({
         isExpanded: true,
         template: `
-        <h1 class="font-heading-1--bold">Confirm your dosing schedule.</h1>
+        <h1 class="font-heading-1--bold margin-top-0">Confirm your dosing schedule.</h1>
         <p>Typical dosing for Theryx®:<br> 1 weekly for the first 4 weeks,<br> Every 2 weeks afterwards</p>
       `,
         component: 'welcome-doses-selector',
@@ -643,7 +644,7 @@ export class WelcomePage
                   new fromSharedStore.SliderPageSetContent({
                     isExpanded: false,
                     template: `
-                    <h1 class="font-heading-1--bold">Allow Notifications.</h1>
+                    <h1 class="font-heading-1--bold margin-top-0">Allow Notifications.</h1>
                     <p>To help you remember your dose schedule and know when medication is at the right temperature, please <strong>enable notifications.</strong> You can customize notifications in the Settings menu.</p>
                   `,
                     actions: [

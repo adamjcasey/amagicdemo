@@ -52,6 +52,10 @@
   --swiper-scrollbar-drag-bg-color: rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.5);
 }
 
+.swiper-pagination-bullet {
+  pointer-events: none;
+}
+
 .field-custom {
   --padding-start: var(--size-s);
   --padding-end: var(--size-s);

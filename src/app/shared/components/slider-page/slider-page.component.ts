@@ -654,7 +654,7 @@ export class SliderPageComponent implements OnInit, OnDestroy {
         modules: [EffectFade, Pagination],
         pagination: {
           el: '.swiper-pagination',
-          clickable: true,
+          clickable: false,
           type: 'bullets',
           bulletActiveClass: 'swiper-pagination-bullet-active',
           bulletClass: 'swiper-pagination-bullet',
