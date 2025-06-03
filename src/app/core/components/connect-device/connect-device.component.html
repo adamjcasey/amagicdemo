@@ -21,6 +21,26 @@
       </div>
     </div>
 
+    <div *ngIf="currentScreen === ConnectDeviceScreens.BluetoothRequired" class="connect-screen">
+      <div class="header has-asset">
+        <div class="header__asset asset-wrapper">
+          <img src="/assets/images/welcome-step-2.svg" alt="Bluetooth Required">
+        </div>
+      </div>
+      <div class="content has-template">
+        <div class="content-wrapper">
+          <h1 class="font-heading-1--bold">This experience requires bluetooth</h1>
+          <p>You'll need to allow Bluetooth for AutoMagic in your settings to continue this app experience.</p>
+        </div>
+
+        <div class="actions">
+          <ion-button color="purple" size="large" (click)="openBluetoothSettings()">
+            Open Settings to Allow Bluetooth
+          </ion-button>
+        </div>
+      </div>
+    </div>
+
     <div *ngIf="currentScreen === ConnectDeviceScreens.Connecting" class="connect-screen">
       <div class="header has-asset">
         <div class="header__asset asset-wrapper">
