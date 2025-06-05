@@ -498,7 +498,7 @@ export class StartDoseReadyToInjectPage
               type: 'stepper',
               indicator: '1',
               title: 'To inject, firmly press and hold down',
-              asset: '/assets/images/start-dose-ready-to-inject-card-1.svg',
+              asset: '/assets/images/start-dose-ready-to-inject-card-1.gif',
               description:
                 'On the next screen, press the injector against skin until it <strong>clicks</strong>.  The light will turn <strong>purple</strong> while injecting.',
             },
@@ -513,10 +513,10 @@ export class StartDoseReadyToInjectPage
             {
               type: 'stepper',
               indicator: '3',
-              title: 'Green means finished',
+              title: 'Solid white means finished',
               asset: '/assets/images/start-dose-ready-to-inject-card-3.svg',
               description:
-                'The light will turn <strong>green</strong> when the injection is complete and you can safely release.',
+                'The light will stay <strong>white</strong> when the injection is complete and you can safely release.',
             },
           ],
         },
