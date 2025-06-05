@@ -380,6 +380,10 @@
         max-width: 340px;
         margin: 0 auto;
 
+        div {
+          height: 100%;
+        }
+
         automagic-card {
           &.hotspot-element {
             position: relative;
