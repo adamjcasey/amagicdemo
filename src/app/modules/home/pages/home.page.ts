@@ -66,6 +66,8 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
       fromResourcesStore.getResourcesConfig
     );
 
+    this._store.dispatch(new fromBluetoothStore.UpdateLastInjection('NONE'));
+
     this.heroConfig = {
       color: '--color-bg-pastel-green',
       image: '/assets/images/homepage.svg',
