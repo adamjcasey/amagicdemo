@@ -81,7 +81,7 @@ export class DatepickerComponent implements OnInit {
   generateMonths(): any[] {
     if (this.selectedDates.length) {
       const lastDate = this.selectedDates[this.selectedDates.length - 1];
-      const lastMonthToGenerate = lastDate.getMonth();
+      const lastMonthToGenerate = new Date(lastDate).getMonth();
       const currentMonth = new Date().getMonth();
       if (currentMonth <= lastMonthToGenerate) {
         this.monthsToGenerate = lastMonthToGenerate - currentMonth + 1;
