@@ -132,6 +132,10 @@ export class BackdropComponent implements OnInit, AfterViewInit {
             this.contentComponent?.clear();
           }
 
+          if (this.config.onHighlightsTourInit) {
+            this.onHighlightsTourInit();
+          }
+
           if (this.getType() === 'dinamic') {
             if (this.config.showBackButton) {
               this.setGoBackMenuButton();
@@ -354,7 +358,7 @@ export class BackdropComponent implements OnInit, AfterViewInit {
     }
 
     const wrapper =
-      this.sliderHighlightsTour.nativeElement.swiper.slides[0].querySelector(
+      this.sliderHighlightsTour?.nativeElement.swiper.slides[0].querySelector(
         '.masonry-layout'
       );
     if (wrapper) {
