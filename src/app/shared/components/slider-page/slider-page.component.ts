@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
@@ -75,7 +76,7 @@ import * as fromWelcomeStore from '@welcome/store';
     IonIcon,
   ],
 })
-export class SliderPageComponent implements OnInit, OnDestroy {
+export class SliderPageComponent implements OnInit, OnDestroy, AfterViewInit {
   public config$: Observable<any>;
   public layoutConfig$: Observable<any>;
   public layoutConfig: any;
@@ -126,6 +127,7 @@ export class SliderPageComponent implements OnInit, OnDestroy {
   };
 
   private _sanitizedContentCache: Map<string, SafeHtml> | null = null;
+  private _pendingComponents: { location: string; component: string }[] = [];
 
   constructor(
     private _store: Store<fromCoreStore.CoreState>,
@@ -146,10 +148,12 @@ export class SliderPageComponent implements OnInit, OnDestroy {
         this.previousConfig = this.config;
         this.config = config;
 
+        // Check if the slider content and components are properly initialized
+        const currentActiveIndex =
+          this.sliderContent?.nativeElement?.swiper?.activeIndex;
         const currentComponentHeader =
-          this.componentsHeader?.toArray()[
-            this.sliderContent.nativeElement.swiper.activeIndex
-          ];
+          this.componentsHeader?.toArray()?.[currentActiveIndex ?? 0];
+
         // previous state: check if there is a component in the header
         if (this.previousConfig?.header?.component) {
           // current state: check if there is a component in the header
@@ -168,8 +172,9 @@ export class SliderPageComponent implements OnInit, OnDestroy {
                   this.config.header.component
                 );
               } else {
-                console.warn(
-                  'currentComponentHeader is not initialized yet. Component will not be loaded:',
+                // Defer loading until ViewChildren are initialized
+                this._deferComponentLoading(
+                  'header',
                   this.config.header.component
                 );
               }
@@ -178,6 +183,12 @@ export class SliderPageComponent implements OnInit, OnDestroy {
         } else {
           // current state: check if there is a component in the header
           if (this.config.header?.component) {
+            console.log(
+              'CURRENT COMPONENT HEADER',
+              currentComponentHeader,
+              this.config.header
+            );
+
             if (currentComponentHeader) {
               // clear previosly to avoid duplicated components
               currentComponentHeader.clear();
@@ -187,8 +198,9 @@ export class SliderPageComponent implements OnInit, OnDestroy {
                 this.config.header.component
               );
             } else {
-              console.warn(
-                'currentComponentHeader is not initialized yet. Component will not be loaded:',
+              // Defer loading until ViewChildren are initialized
+              this._deferComponentLoading(
+                'header',
                 this.config.header.component
               );
             }
@@ -218,16 +230,19 @@ export class SliderPageComponent implements OnInit, OnDestroy {
           }
         } else {
           if (this.config.content?.component) {
-            // Wait for the component to be initialized
-            setTimeout(() => {
-              if (this.componentContent) {
-                this.componentContent.clear();
-                this._loadComponent(
-                  this.componentContent,
-                  this.config.content.component
-                );
-              }
-            });
+            // Use deferred loading for content components
+            if (this.componentContent) {
+              this.componentContent.clear();
+              this._loadComponent(
+                this.componentContent,
+                this.config.content.component
+              );
+            } else {
+              this._deferComponentLoading(
+                'content',
+                this.config.content.component
+              );
+            }
           }
         }
 
@@ -260,9 +275,17 @@ export class SliderPageComponent implements OnInit, OnDestroy {
       });
   }
 
+  ngAfterViewInit() {
+    // Process any pending components after view initialization
+    setTimeout(() => {
+      this._processPendingComponents();
+    }, 0);
+  }
+
   ngOnDestroy() {
     this._ngUnsubscribe.next();
     this._ngUnsubscribe.complete();
+    this._pendingComponents = [];
   }
 
   onSliderInit() {
@@ -603,6 +626,51 @@ export class SliderPageComponent implements OnInit, OnDestroy {
   private markForCheck() {
     console.log('[SliderPageComponent]: markForCheck');
     this._cdr.markForCheck();
+  }
+
+  private _deferComponentLoading(location: string, component: string) {
+    console.warn(
+      `${location} components not initialized yet. Deferring component loading:`,
+      component
+    );
+    this._pendingComponents.push({ location, component });
+
+    // Try to load pending components after a short delay
+    setTimeout(() => {
+      this._processPendingComponents();
+    }, 100);
+  }
+
+  private _processPendingComponents() {
+    if (this._pendingComponents.length === 0) return;
+
+    const componentsToProcess = [...this._pendingComponents];
+    this._pendingComponents = [];
+
+    componentsToProcess.forEach(({ location, component }) => {
+      if (location === 'header') {
+        const currentActiveIndex =
+          this.sliderContent?.nativeElement?.swiper?.activeIndex;
+        const currentComponentHeader =
+          this.componentsHeader?.toArray()?.[currentActiveIndex ?? 0];
+
+        if (currentComponentHeader) {
+          currentComponentHeader.clear();
+          this._loadComponent(currentComponentHeader, component);
+        } else {
+          // If still not ready, add back to pending
+          this._pendingComponents.push({ location, component });
+        }
+      } else if (location === 'content') {
+        if (this.componentContent) {
+          this.componentContent.clear();
+          this._loadComponent(this.componentContent, component);
+        } else {
+          // If still not ready, add back to pending
+          this._pendingComponents.push({ location, component });
+        }
+      }
+    });
   }
 
   private async initializeSwipers() {

@@ -46,6 +46,8 @@ export class AddSymptomPage implements OnInit, OnDestroy {
   sliderPage!: fromSharedComponents.SliderPageComponent;
 
   constructor(private _store: Store<fromCoreStore.CoreState>) {
+    this._store.dispatch(new fromSharedStore.SliderPageClear());
+
     this.homeConfig$ = this._store.select(fromStore.getHomeConfig);
     this.activityConfig$ = this._store.select(
       fromActivityStore.getActivityConfig
