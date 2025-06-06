@@ -74,6 +74,7 @@ export class StartGuidedDemoComponent implements OnInit, OnDestroy {
         component: null,
         contentCentered: false,
         showBackButton: true,
+        onHighlightsTourInit: true,
         highlights: [
           {
             type: 'simple',
