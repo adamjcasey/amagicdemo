@@ -931,7 +931,7 @@ export class BluetoothService {
         showBackButton: false,
         template: `
         <div class="trouble-connecting-message">
-          <h1 class="font-heading-1--bold">Trouble connecting?</h1>
+          <h1 class="font-heading-1--bold text-no-wrap">Trouble connecting?</h1>
           <img src="assets/images/dosing-trouble-connecting.svg">
           <p>The injector may need to be reset. <br>Use the power button to shut off and restart the Aria injector.</p>
           <p>This demo unit <strong>does not</strong> have a <br>needle nor drug substance.</p>

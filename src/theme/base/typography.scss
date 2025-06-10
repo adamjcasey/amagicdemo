@@ -114,3 +114,7 @@ a,
 .text-bold {
   font-weight: var(--font-weight-bold) !important;
 }
+
+.text-no-wrap {
+  text-wrap: nowrap;
+}

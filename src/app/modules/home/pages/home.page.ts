@@ -225,7 +225,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
                           template: `
                           <div class="start-dose-message">
                             <h1 class="font-heading-1--bold">Start dose</h1>
-                            <p>Please press <strong>Start dose</strong> to continue this demo</p>
+                            <p>You should start dose to continue the demo</p>
                           </div>
                         `,
                           onClose: () => {
