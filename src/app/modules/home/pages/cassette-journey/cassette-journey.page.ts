@@ -195,7 +195,7 @@ export class CassetteJourneyPage
             asset: '/assets/images/dose.svg',
             title: 'Theryx®, 80mg',
             description: 'Synthesized in Dayton, OH on 05/04/2023',
-            disclamerText: 'Expires 06/24/2024',
+            disclamerText: `Expires ${this.getExpiryDate()}`,
           },
         ],
       },
@@ -214,6 +214,12 @@ export class CassetteJourneyPage
 
   ngAfterViewInit() {
     this.#initStateSubscriptions();
+  }
+
+  getExpiryDate() {
+    const date = new Date();
+    date.setMonth(date.getMonth() + 6);
+    return date.toLocaleDateString('en-US', {year: 'numeric', month: '2-digit', day: '2-digit'});
   }
 
   slideNext(sliders: any) {
