@@ -1,11 +1,24 @@
 @import 'src/theme/base/mixins';
 
 .start-dose-ready-to-inject-waiting-to-start-injection {
+  animation: backgroundChange 4.5s linear forwards;
   padding: var(--topbar-size) var(--size-m) var(--size-m);
 
   img {
     width: 350px;
     height: auto;
     margin: 0 auto;
+  }
+
+  @keyframes backgroundChange {
+    0% {
+      background-color: var(--color-bg-pastel-honey-yellow);
+    }
+    27.78% {
+      background-color: var(--color-bg-pastel-purple);
+    }
+    100% {
+      background-color: var(--color-bg-pastel-green);
+    }
   }
 }
