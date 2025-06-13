@@ -551,7 +551,6 @@ export class StartDoseReadyToInjectPage
       },
       {
         header: {
-          color: '--color-bg-pastel-honey-yellow',
           fullSize: true,
           template: null,
           component: 'start-dose-ready-to-inject-waiting-to-start-injection',
