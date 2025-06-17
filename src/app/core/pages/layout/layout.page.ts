@@ -100,7 +100,7 @@ export class LayoutPage implements OnInit, AfterContentInit, OnDestroy {
   // disable of showing low power notification by setting unrealistic minimum level value
   // and left dedicated logic and layout untouched to be able switch in on in future
   // or remove it fully later after final testing of this major release
-  public minBatteryLevelDisabled: number = 5;
+  public minBatteryLevelDisabled: number = 15;
   public batteryLowMessageShowed: boolean = false;
   public deviceInfo: any;
   public lowPowerModeEnabled: boolean = false;
