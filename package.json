@@ -1,7 +1,7 @@
 {
-  "name": "automagic",
+  "name": "amagicdemo",
   "version": "0.0.1",
-  "author": "Ionic Framework",
+  "author": "Adam Casey",
   "homepage": "https://ionicframework.com/",
   "scripts": {
     "ng": "ng",

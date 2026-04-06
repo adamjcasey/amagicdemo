@@ -4,7 +4,7 @@
 <dict>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
-		<string>io.ionic.automagic.backgroundTask</string>
+		<string>net.adamcasey.amagicdemo.backgroundTask</string>
 	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
@@ -32,7 +32,7 @@
 		<true/>
 	</dict>
 	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>This will enable "AutoMagic" to find and connect to your Theryx AutoMagic injector to track and help manage your therapy</string>
+	<string>This will enable "AMagic Demo" to find and connect to your Demo injector to track and help manage your therapy</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>bluetooth-central</string>
