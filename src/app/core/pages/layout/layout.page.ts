@@ -274,7 +274,7 @@ export class LayoutPage implements OnInit, AfterContentInit {
             label: 'Go to settings',
             action: () => {
               NativeSettings.openIOS({
-                option: 'battery',
+                option: 'battery' as any,
               });
             },
           }

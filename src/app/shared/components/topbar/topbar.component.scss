@@ -1,3 +1,10 @@
+:host {
+  display: none !important;
+  height: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
 @import 'src/theme/base/mixins';
 
 .topbar__toolbar {
