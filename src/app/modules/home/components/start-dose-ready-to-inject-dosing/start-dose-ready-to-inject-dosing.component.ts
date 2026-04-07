@@ -117,7 +117,7 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
           template: `
             <img src="assets/images/dose-delivered.svg" />
             <h1 class="font-heading-1--bold">Full dose delivered!</h1>
-            <h3>Theryx®, 80mg</h3>
+            <h3>[Therapy], 80mg</h3>
             <p>Dose Completed:</p>
             <p>${doseDateFormatted}</p>
           `,

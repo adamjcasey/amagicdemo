@@ -109,7 +109,7 @@ if (environment.production) {
         asset: `/assets/images/feed-card-article-1.png`,
         date: moment().subtract(40, 'minutes').toString(),
         template: `
-          <h5>Supplements to consider for Theryx patients</h5>
+          <h5>Supplements to consider for [Therapy] patients</h5>
           <p>Sit expedita ullam qui itaque veniam et officia quae ut illo corporis. Aut enim nemo qui... Continue Reading</p>
         `,
       },
@@ -140,7 +140,7 @@ if (environment.production) {
       messages: [
         {
           type: 'from',
-          content: 'I’m going to be traveling for my next injection. How do I make sure to get my Theryx when I’m away?',
+          content: 'I’m going to be traveling for my next injection. How do I make sure to get my [Therapy] when I’m away?',
         },
         {
           type: 'to',
@@ -148,7 +148,7 @@ if (environment.production) {
         },
         {
           type: 'from',
-          content: 'I’m going to be traveling for my next injection. How do I make sure to get my Theryx when I’m away?',
+          content: 'I’m going to be traveling for my next injection. How do I make sure to get my [Therapy] when I’m away?',
         },
         {
           type: 'to',
@@ -156,7 +156,7 @@ if (environment.production) {
         },
         {
           type: 'from',
-          content: 'I’m going to be traveling for my next injection. How do I make sure to get my Theryx when I’m away?',
+          content: 'I’m going to be traveling for my next injection. How do I make sure to get my [Therapy] when I’m away?',
         },
         {
           type: 'to',
@@ -164,7 +164,7 @@ if (environment.production) {
         },
         {
           type: 'from',
-          content: 'I’m going to be traveling for my next injection. How do I make sure to get my Theryx when I’m away?',
+          content: 'I’m going to be traveling for my next injection. How do I make sure to get my [Therapy] when I’m away?',
         },
         {
           type: 'to',
@@ -172,7 +172,7 @@ if (environment.production) {
         },
         {
           type: 'from',
-          content: 'I’m going to be traveling for my next injection. How do I make sure to get my Theryx when I’m away?',
+          content: 'I’m going to be traveling for my next injection. How do I make sure to get my [Therapy] when I’m away?',
         },
         {
           type: 'to',
@@ -277,7 +277,7 @@ else {
         asset: `/assets/images/feed-card-article-1.png`,
         date: moment().subtract(40, 'minutes').toString(),
         template: `
-          <h5>Supplements to consider for Theryx patients</h5>
+          <h5>Supplements to consider for [Therapy] patients</h5>
           <p>Sit expedita ullam qui itaque veniam et officia quae ut illo corporis. Aut enim nemo qui... Continue Reading</p>
         `,
       },
@@ -308,7 +308,7 @@ else {
       messages: [
         {
           type: 'from',
-          content: 'I’m going to be traveling for my next injection. How do I make sure to get my Theryx when I’m away?',
+          content: 'I’m going to be traveling for my next injection. How do I make sure to get my [Therapy] when I’m away?',
         },
         {
           type: 'to',
@@ -316,7 +316,7 @@ else {
         },
         {
           type: 'from',
-          content: 'I’m going to be traveling for my next injection. How do I make sure to get my Theryx when I’m away?',
+          content: 'I’m going to be traveling for my next injection. How do I make sure to get my [Therapy] when I’m away?',
         },
         {
           type: 'to',
@@ -324,7 +324,7 @@ else {
         },
         {
           type: 'from',
-          content: 'I’m going to be traveling for my next injection. How do I make sure to get my Theryx when I’m away?',
+          content: 'I’m going to be traveling for my next injection. How do I make sure to get my [Therapy] when I’m away?',
         },
         {
           type: 'to',
@@ -332,7 +332,7 @@ else {
         },
         {
           type: 'from',
-          content: 'I’m going to be traveling for my next injection. How do I make sure to get my Theryx when I’m away?',
+          content: 'I’m going to be traveling for my next injection. How do I make sure to get my [Therapy] when I’m away?',
         },
         {
           type: 'to',
@@ -340,7 +340,7 @@ else {
         },
         {
           type: 'from',
-          content: 'I’m going to be traveling for my next injection. How do I make sure to get my Theryx when I’m away?',
+          content: 'I’m going to be traveling for my next injection. How do I make sure to get my [Therapy] when I’m away?',
         },
         {
           type: 'to',

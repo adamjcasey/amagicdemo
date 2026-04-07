@@ -29,3 +29,17 @@
   margin: 0 auto;
   text-align: center;
 }
+
+/* Force only the ACTIVE slide to be visible */
+automagic-slider-page {
+  .swiper-slide {
+    display: none !important; /* Kill all slides by default */
+  }
+
+  .swiper-slide-active {
+    display: block !important; /* Only turn on the one that is 'Active' */
+    position: relative !important;
+    width: 100% !important;
+    opacity: 1 !important;
+  }
+}

@@ -90,7 +90,7 @@ export class StartDosePrepareWaitingToInjectComponent implements OnInit, AfterVi
         template: `
           <img src="assets/images/drug-ready-to-inject.svg" />
           <h1 class="font-heading-1--bold">Ready to inject</h1>
-          <p>Theryx has reached a comfortable temperature of 65° </p>
+          <p>[Therapy] has reached a comfortable temperature of 65° </p>
         `,
         actions: [
           {

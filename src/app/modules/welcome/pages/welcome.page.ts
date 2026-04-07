@@ -60,8 +60,8 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
         content: {
           hideNavigation: true,
           template: `
-            <h1 class="font-heading-1--bold">Welcome to <br>AutoMagic for Theryx.</h1>
-            <p>The AutoMagic connected ecosystem empowers you to make the most of your Theryx prescription</p>
+            <h1 class="font-heading-1--bold">Welcome to <br>[AppName] for [Therapy].</h1>
+            <p>The [AppName] connected ecosystem empowers you to make the most of your [Therapy] prescription</p>
           `,
           actions: [
             {
@@ -156,7 +156,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
         content: {
           template: `
             <h1 class="font-heading-1--bold">You're ready to rock!</h1>
-            <p>The AutoMagic app is configured to harness the power of the AutoMagic autoinjector.</p>
+            <p>The [AppName] app is configured to harness the power of the [AppName] autoinjector.</p>
           `,
           actions: [
             {
@@ -209,7 +209,18 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
       this.isFullPowerMode = !lowPowerMode.lowPowerModeEnabled;
     }
 
-    this.playIntroAnimation();
+    // this.playIntroAnimation();
+
+    // 1. Force the app out of "Full Screen Intro" mode
+    this._store.dispatch(new fromCoreStore.SetFullScreen(false));
+
+    // 2. Ensure the Backdrop (the "Curtain") is hidden
+    this._store.dispatch(new fromSharedStore.BackdropHide());
+
+    // 3. Manually hide the video wrapper just in case it's still in the DOM
+    if (this.videoWrapper) {
+        this.videoWrapper.nativeElement.classList.add('is-ended');
+    }
   }
 
   ngOnDestroy() {
@@ -310,7 +321,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
       isExpanded: true,
       template: `
         <h1 class="font-heading-1--bold">Confirm your dosing schedule.</h1>
-        <p>Typical dosing for Theryx®:<br> 1 weekly for the first 4 weeks,<br> Every 2 weeks afterwards</p>
+        <p>Typical dosing for [Therapy]®:<br> 1 weekly for the first 4 weeks,<br> Every 2 weeks afterwards</p>
       `,
       component: 'welcome-doses-selector',
       toolbar: {

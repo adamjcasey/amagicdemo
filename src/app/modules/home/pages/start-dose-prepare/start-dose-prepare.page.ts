@@ -88,7 +88,7 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
           cards: [
             {
               asset: '/assets/images/dose.svg',
-              title: 'Theryx®, 80mg',
+              title: '[Therapy], 80mg',
               description: 'Synthesized in Dayton, OH on 05/04/2023',
               disclamerText: 'Expires 06/24/2024',
             }
@@ -178,7 +178,7 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
         ? `
           <div class="start-dose-prepare__instructions">
             <img src="assets/images/drug-cold-temp.svg" />
-            <h1 class="font-heading-1--bold">Theryx® temperature</h1>
+            <h1 class="font-heading-1--bold">[Therapy] temperature</h1>
 
             <div class="temperature-status">
               <p class="indicator">
@@ -190,14 +190,14 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
                 <span>Recommended</span>
               </p>
             </div>
-            <h3>Your Theryx® is currently too cold for a comfortable injection.</h3>
+            <h3>Your [Therapy] is currently too cold for a comfortable injection.</h3>
             <p>It's best to let it warm up for a bit to room temperature (65°F) before injecting.</p>
           </div>
         `
         : `
           <div class="start-dose-prepare__instructions">
             <img src="assets/images/drug-cold-temp.svg" />
-            <h1 class="font-heading-1--bold">Theryx® temperature</h1>
+            <h1 class="font-heading-1--bold">[Therapy] temperature</h1>
 
             <div class="temperature-status">
               <p class="indicator green">
@@ -205,7 +205,7 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
                 <span>Current</span>
               </p>
             </div>
-            <h3>Theryx® is warm enough for a comfortable injection.</h3>
+            <h3>[Therapy] is warm enough for a comfortable injection.</h3>
             <p>Good job taking it out of the fridge ahead of time!</p>
           </div>
         `,
@@ -254,7 +254,7 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
       template: `
         <div class="start-dose-prepare__instructions">
           <img src="assets/images/drug-window.svg" />
-          <h1 class="font-heading-1--bold">Inspect your Theryx®</h1>
+          <h1 class="font-heading-1--bold">Inspect your [Therapy]</h1>
           <div class="inspection">
             <div class="statement incorrect">
               <h3>
@@ -304,7 +304,7 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
       template: `
         <div class="start-dose-prepare__survey">
           <h1 class="font-heading-1--bold">While you’re waiting, how are you feeling?</h1>
-          <p>Tracking these ratings over time can help you<br> and your care team understand how Theryx®<br> impacts your condition.</p>
+          <p>Tracking these ratings over time can help you<br> and your care team understand how [Therapy]<br> impacts your condition.</p>
         </div>
       `,
       component: 'start-dose-prepare-survey',

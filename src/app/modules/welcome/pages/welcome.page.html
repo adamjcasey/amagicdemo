@@ -1,12 +1,39 @@
 <ion-content [fullscreen]="true" [scrollY]="false">
-  <div #videoWrapper class="welcome-page__video-wrapper">
+  <!-- <div #videoWrapper class="welcome-page__video-wrapper">
     <ion-img alt="welcome introduction animation" src="/assets/gifs/welcome-screen.gif"></ion-img>
     <audio autoplay preload="auto" src="assets/gifs/Splash_Screen_Sound.m4a"></audio>
-  </div>
+  </div> -->
 
-  <automagic-slider-page
+  <!-- <automagic-slider-page
     #sliderPage
     [slides]="slides"
     (onNextSlide)="slideNext($event)"
-  ></automagic-slider-page>
+  ></automagic-slider-page> -->
+
+<div class="demo-wrapper">
+    
+    <div class="demo-image-safe-area">
+      <div class="demo-image-bg">
+        <img src="assets/images/welcome-step-1.svg" alt="Welcome to Therapy" class="demo-static-image">
+      </div>
+    </div>
+
+    <div class="demo-content-safe-area">
+      <div class="demo-text-block">
+        <h1 class="font-heading-1--bold demo-main-heading">
+          Welcome to <br>[AppName] for Therapy
+        </h1>
+        <p class="demo-sub-heading">
+          The [AppName] connected ecosystem empowers you to make the most of your Therapy prescription.
+        </p>
+      </div>
+
+      <div class="demo-action-block">
+        <ion-button (click)="goTo('home')" expand="block" mode="ios" class="demo-get-started-button">
+          Get Started
+        </ion-button>
+      </div>
+    </div>
+
+  </div>
 </ion-content>

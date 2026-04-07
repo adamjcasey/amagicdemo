@@ -91,7 +91,7 @@
             <h1 class="font-heading-1--bold">Demo Menu</h1>
             <p>Here you’ll find guidance on resetting, packing, and sharing this demo experience.</p>
             <div *ngIf="layoutConfig?.dosageDevice?.isConnected" class="battery-indicator">
-              <p>AutoMagic Injector Battery:</p>
+              <p>[AppName] Injector Battery:</p>
               <ion-icon src="/assets/icons/battery-indicator-{{ getPercentageBatteryAsset(batteryLevel) }}.svg"></ion-icon>
               <span class="battery-indicator__value">{{ batteryLevel }}%</span>
             </div>
