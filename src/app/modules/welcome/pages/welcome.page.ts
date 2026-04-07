@@ -11,7 +11,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Observable, Subject, takeUntil } from 'rxjs';
 import { Capacitor } from '@capacitor/core';
-import { PushNotifications } from '@capacitor/push-notifications';
 import { PowerMode } from 'power-mode';
 
 import * as fromStore from '../store';
@@ -302,37 +301,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async allowNotifications() {
-    if (this.config.notificationsAllowed) {
       this.showDosesSelector();
-    }
-    else {
-      if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios') {
-        let permissionStatus = await PushNotifications.checkPermissions();
-
-        if (permissionStatus.receive === 'prompt') {
-          permissionStatus = await PushNotifications.requestPermissions();
-        }
-
-        if (permissionStatus.receive !== 'granted') {
-          this._store.dispatch(new fromStore.SetData({
-            notificationsAllowed: false,
-          }));
-            this.showDosesSelector();
-        }
-
-        if (permissionStatus.receive === 'granted') {
-          this._store.dispatch(new fromStore.SetData({
-            notificationsAllowed: true,
-          }));
-          this.showDosesSelector();
-        }
-
-        await PushNotifications.register();
-      }
-      else {
-        this.showDosesSelector();
-      }
-    }
   }
 
   showDosesSelector() {

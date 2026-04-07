@@ -9,9 +9,6 @@ const config: CapacitorConfig = {
     androidScheme: 'https'
   },
   plugins: {
-    PushNotifications: {
-      presentationOptions: ['badge', 'sound', 'alert']
-    },
     BluetoothLe: {
       displayStrings: {
         scanning: 'Scanning...',
