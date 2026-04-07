@@ -30,6 +30,48 @@
   text-align: center;
 }
 
+/* Ensure encapsulation is handled for the custom component */
+automagic-welcome {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+.welcome-demo-container {
+  --background: #f4f7f6; /* Set the light pastel background color */
+
+  .demo-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    position: relative;
+  }
+
+  /* 1. The Image/Header Section (pastoral blue area) */
+  .demo-image-safe-area {
+    flex: 1 1 50%; /* Take 50% of the screen */
+    background-color: #E2ECF7; /* pastoral blue from step 1 */
+    display: flex;
+    justify-content: center;
+    align-items: flex-end; /* Pin image to bottom of this section */
+    position: relative;
+    overflow: hidden;
+
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: -2px; /* Slight overlap */
+        left: 0;
+        width: 100%;
+        height: 60px;
+        background-color: var(--color-white); /* pastoral blue */
+        border-radius: 40px 40px 0 0; /* Match the curved white section from your screenshot */
+        z-index: 1;
+    }
+  }
+}
+
 /* Force only the ACTIVE slide to be visible */
 automagic-slider-page {
   .swiper-slide {
