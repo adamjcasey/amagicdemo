@@ -71,12 +71,12 @@ if (environment.production) {
       {
         completed: false,
         title: 'Activity Dose Report',
-        description: 'Make a note of your symptoms to see Theryx® at work.'
+        description: 'Make a note of your symptoms to see [Therapy] at work.'
       },
       {
         completed: false,
         title: 'Activity Progress',
-        description: 'Make a note of your symptoms to see Theryx® at work.'
+        description: 'Make a note of your symptoms to see [Therapy] at work.'
       },
       {
         completed: false,
@@ -86,12 +86,12 @@ if (environment.production) {
       {
         completed: false,
         title: 'Resources',
-        description: 'Make a note of your symptoms to see Theryx® at work.'
+        description: 'Make a note of your symptoms to see [Therapy] at work.'
       },
       {
         completed: false,
         title: 'Care Team',
-        description: 'Make a note of your symptoms to see Theryx® at work.'
+        description: 'Make a note of your symptoms to see [Therapy] at work.'
       }
     ],
     onBoardingDone: false,
@@ -158,12 +158,12 @@ else {
       {
         completed: false,
         title: 'Activity Dose Report',
-        description: 'Make a note of your symptoms to see Theryx® at work.'
+        description: 'Make a note of your symptoms to see [Therapy] at work.'
       },
       {
         completed: false,
         title: 'Activity Progress',
-        description: 'Make a note of your symptoms to see Theryx® at work.'
+        description: 'Make a note of your symptoms to see [Therapy] at work.'
       },
       {
         completed: false,
@@ -173,12 +173,12 @@ else {
       {
         completed: false,
         title: 'Resources',
-        description: 'Make a note of your symptoms to see Theryx® at work.'
+        description: 'Make a note of your symptoms to see [Therapy] at work.'
       },
       {
         completed: false,
         title: 'Care Team',
-        description: 'Make a note of your symptoms to see Theryx® at work.'
+        description: 'Make a note of your symptoms to see [Therapy] at work.'
       }
     ],
     onBoardingDone: false,

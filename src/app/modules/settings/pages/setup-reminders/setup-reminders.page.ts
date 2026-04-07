@@ -93,7 +93,7 @@ export class SetupRemindersPage implements OnInit, OnDestroy {
           template: `
             <img src="assets/images/alert-setup-reminders.svg" />
             <h1 class="font-heading-1--bold">Smart reminders saved</h1>
-            <p>AutoMagic will learn from your selections to improve recommendations.</p>
+            <p>[AppName] will learn from your selections to improve recommendations.</p>
           `,
           actions: [
             {

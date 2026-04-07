@@ -58,7 +58,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     this.card = {
       asset: '/assets/images/note.svg',
       title: 'Track your progress',
-      description: 'Make a note of your symptoms to see Theryx® at work.',
+      description: 'Make a note of your symptoms to see [Therapy] at work.',
       link: {
         label: 'Let’s start',
         action: () => {
@@ -146,7 +146,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
                   const nextDoseDateFormatted = moment(nextDose.date).format('D MMMM YYYY');
                   this.heroConfig.template = `
                     <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
-                    <p>Your next Theryx® dose is scheduled for<br> <stong>${nextDoseDateFormatted}</stong></p>
+                    <p>Your next [Therapy] dose is scheduled for<br> <stong>${nextDoseDateFormatted}</stong></p>
                   `;
 
                   if (!this.homeConfig.firstTimeDose) {
@@ -157,7 +157,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
                       setTimeout(() => {
                         this.heroConfig.template = `
                           <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
-                          <p>Your Theryx® dose is scheduled for today!</p>
+                          <p>Your [Therapy] dose is scheduled for today!</p>
                         `;
                       }, 800);
                     }, 800);
@@ -173,7 +173,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
                     // DEMO: only for demo purposes
                     this.heroConfig.template = `
                       <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
-                      <p>Your Theryx® dose is scheduled for today!</p>
+                      <p>Your [Therapy] dose is scheduled for today!</p>
                     `;
 
                     setTimeout(() => {
@@ -213,7 +213,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
                   const lastDoseDateFormatted = lastDoseDate.format('D MMMM YYYY');
                   this.heroConfig.template = `
                     <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
-                    <p>Your next Theryx® dose is scheduled for<br> <stong>${lastDoseDateFormatted}</stong></p>
+                    <p>Your next [Therapy] dose is scheduled for<br> <stong>${lastDoseDateFormatted}</stong></p>
                   `;
                 }
                 else {
@@ -223,7 +223,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
                   const nextDoseDateFormatter = moment(nextDose.date).format('D MMMM YYYY');
                   this.heroConfig.template = `
                     <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
-                    <p>Your next Theryx® dose is scheduled for<br> <stong>${nextDoseDateFormatter}</stong></p>
+                    <p>Your next [Therapy] dose is scheduled for<br> <stong>${nextDoseDateFormatter}</stong></p>
                   `;
                 }
 
@@ -260,7 +260,7 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
               this.heroConfig.template = `
                 <h1 class="font-heading-1--bold">Hi ${this.name}!</h1>
                 <h5>Welcome to wellness on your schedule.</h5>
-                <p>Ready to start your Theryx® injections?<br> Your first guided injection will take about <strong>10 minutes.</strong></p>
+                <p>Ready to start your [Therapy] injections?<br> Your first guided injection will take about <strong>10 minutes.</strong></p>
               `;
             }
           }

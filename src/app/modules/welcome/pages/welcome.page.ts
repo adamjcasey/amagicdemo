@@ -61,8 +61,8 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
         content: {
           hideNavigation: true,
           template: `
-            <h1 class="font-heading-1--bold">Welcome to <br>AutoMagic for Theryx.</h1>
-            <p>The AutoMagic connected ecosystem empowers you to make the most of your Theryx prescription</p>
+            <h1 class="font-heading-1--bold">Welcome to <br>[AppName] for [Therapy].</h1>
+            <p>The [AppName] connected ecosystem empowers you to make the most of your [Therapy] prescription</p>
           `,
           actions: [
             {
@@ -157,7 +157,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
         content: {
           template: `
             <h1 class="font-heading-1--bold">You're ready to rock!</h1>
-            <p>The AutoMagic app is configured to harness the power of the AutoMagic autoinjector.</p>
+            <p>The [AppName] app is configured to harness the power of the [AppName] autoinjector.</p>
           `,
           actions: [
             {
@@ -222,39 +222,50 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   playVideoIntro() {
-    // set full screen option for global layout
-    this._store.dispatch(new fromCoreStore.SetFullScreen(true));
-    const endHandler = () => {
-      // turn off full screen option for global layout
-      this._store.dispatch(new fromCoreStore.SetFullScreen(false));
-      // show pin asking screen
-      this._store.dispatch(new fromSharedStore.BackdropShow({
-        transition: 'fade',
-        fullScreen: true,
-        header: false,
-        contentCentered: true,
-        showBackButton: false,
-        template: null,
-        component: 'welcome-sign-up',
-      }));
+    // 1. Force the layout out of fullscreen mode so headers/footers work
+    this._store.dispatch(new fromCoreStore.SetFullScreen(false));
 
-      // holding a moment to hide the video and do match with the opening of Backdrop
-      setTimeout(() => {
+    // 2. Hide the video wrapper immediately if it exists in the DOM
+    if (this.videoWrapper) {
         this.videoWrapper.nativeElement.classList.add('is-ended');
-      }, 400);
-    };
-
-    // setup and playing the video
-    const videoElement = this.videoTag.nativeElement;
-    videoElement.onended = () => {
-      endHandler();
     }
 
-    if (Capacitor.getPlatform() === 'web') {
-      videoElement.muted = true;
-    }
+    // 3. EXIT HERE: Do not dispatch the BackdropShow action
+    return;
 
-    videoElement.play();
+    // // set full screen option for global layout
+    // this._store.dispatch(new fromCoreStore.SetFullScreen(true));
+    // const endHandler = () => {
+    //   // turn off full screen option for global layout
+    //   this._store.dispatch(new fromCoreStore.SetFullScreen(false));
+    //   // show pin asking screen
+    //   this._store.dispatch(new fromSharedStore.BackdropShow({
+    //     transition: 'fade',
+    //     fullScreen: true,
+    //     header: false,
+    //     contentCentered: true,
+    //     showBackButton: false,
+    //     template: null,
+    //     component: 'welcome-sign-up',
+    //   }));
+
+    //   // holding a moment to hide the video and do match with the opening of Backdrop
+    //   setTimeout(() => {
+    //     this.videoWrapper.nativeElement.classList.add('is-ended');
+    //   }, 400);
+    // };
+
+    // // setup and playing the video
+    // const videoElement = this.videoTag.nativeElement;
+    // videoElement.onended = () => {
+    //   endHandler();
+    // }
+
+    // if (Capacitor.getPlatform() === 'web') {
+    //   videoElement.muted = true;
+    // }
+
+    // videoElement.play();
   }
 
   slideNext(sliders: any) {
@@ -349,7 +360,7 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
       isExpanded: true,
       template: `
         <h1 class="font-heading-1--bold">Confirm your dosing schedule.</h1>
-        <p>Typical dosing for Theryx®:<br> 1 weekly for the first 4 weeks,<br> Every 2 weeks afterwards</p>
+        <p>Typical dosing for [Therapy]®:<br> 1 weekly for the first 4 weeks,<br> Every 2 weeks afterwards</p>
       `,
       component: 'welcome-doses-selector',
       toolbar: {
