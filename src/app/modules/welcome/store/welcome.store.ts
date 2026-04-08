@@ -13,7 +13,7 @@ export interface WelcomeState {
 let initialState: WelcomeState;
 if (environment.production) {
   initialState = {
-    name: '',
+    name: 'Marissa',
     doses: [],
     bleAllowed: false,
     notificationsAllowed: false,
