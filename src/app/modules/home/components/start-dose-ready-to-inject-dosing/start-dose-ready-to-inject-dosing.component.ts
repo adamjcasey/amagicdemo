@@ -172,7 +172,7 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
               this._store.dispatch(new fromSharedStore.AlertHide);
               //this.continueDosing();
               this._store.dispatch(new fromCoreStore.Go({
-                  path: ['/home/start-dose/inject-done']
+                  path: ['/home']
                 }));
             },
           },

@@ -67,7 +67,8 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
           actions: [
             {
               label: 'Get started',
-              action: () => { this.sliderPage.slideNext() }
+              // action: () => { this.sliderPage.slideNext() }
+              action: () => { this.goTo('home') }
             }
           ],
         },
