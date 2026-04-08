@@ -45,7 +45,7 @@ export class StartDosePreparePage implements OnInit, OnDestroy {
           hideNavigation: true,
           template: `
             <h1 class="font-heading-1--bold">Take the autoinjector out of the box.</h1>
-            <p>Your Automagic autoinjector will turn on automatically when you pick it up.</p>
+            <p>Your [AppName] autoinjector will turn on automatically when you pick it up.</p>
           `,
           actions: [
             {

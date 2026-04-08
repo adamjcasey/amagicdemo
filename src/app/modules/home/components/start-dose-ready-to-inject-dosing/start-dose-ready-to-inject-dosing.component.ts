@@ -170,7 +170,10 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
                 this._store.dispatch(new fromCoreStore.SetNoDeviceModeOopsFlow(false));
               }
               this._store.dispatch(new fromSharedStore.AlertHide);
-              this.continueDosing();
+              //this.continueDosing();
+              this._store.dispatch(new fromCoreStore.Go({
+                  path: ['/home/start-dose/inject-done']
+                }));
             },
           },
           {
@@ -180,7 +183,10 @@ export class StartDoseReadyToInjectDosingComponent implements OnInit, AfterViewI
                 this._store.dispatch(new fromCoreStore.SetNoDeviceModeOopsFlow(false));
               }
               this._store.dispatch(new fromSharedStore.AlertHide);
-              this.continueDosing();
+              //this.continueDosing();
+              this._store.dispatch(new fromCoreStore.Go({
+                  path: ['/home/start-dose/inject-done']
+                }));
             },
           }
         ],
