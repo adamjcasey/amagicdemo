@@ -21,7 +21,7 @@ if (environment.production) {
 }
 else {
   initialState = {
-    name: 'Developer',
+    name: 'Marissa',
     doses: [],
     bleAllowed: false,
     notificationsAllowed: false,

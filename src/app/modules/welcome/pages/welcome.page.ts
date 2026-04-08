@@ -67,89 +67,88 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
           actions: [
             {
               label: 'Get started',
-              // action: () => { this.sliderPage.slideNext() }
-              action: () => { this.goTo('home') }
+              action: () => { this.sliderPage.slideNext() }
             }
           ],
         },
       },
-      {
-        header: {
-          color: '--color-bg-pastel-green',
-          asset: '/assets/images/welcome-step-1.svg',
-        },
-        content: {
-          template: `
-            <h1 class="font-heading-1--bold">Let’s get to know each other.</h1>
-          `,
-          form: {
-            group: this.welcomeFormGroup,
-            fields: [
-              {
-                label: 'What’s your name?',
-                name: 'name',
-                placeholder: 'Name',
-                onInput: (event: any) => {
-                  this._store.dispatch(new fromStore.SetData({
-                    name: event.target.value
-                  }));
-                },
-              }
-            ],
-          },
-          actions: [
-            {
-              label: 'Continue',
-              action: () => {
-                if (this.welcomeFormGroup.get('name')?.valid) {
-                  this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-blue'));
-                  this.sliderPage.slideNext();
-                }
-                else {
-                  this.welcomeFormGroup.get('name')?.markAllAsTouched();
-                }
-              }
-            }
-          ],
-        },
-      },
-      {
-        header: {
-          color: '--color-bg-pastel-blue',
-          asset: '/assets/images/welcome-step-2.svg',
-        },
-        content: {
-          hideNavigation: null,
-          template: `
-            <h1 class="font-heading-1--bold">Let's get connected.</h1>
-            <p>To get the most out of your connected autoinjector and enable dose tracking and help with your injection experience, please enable bluetooth.</p>
-          `,
-          actions: [
-            {
-              label: 'Allow Bluetooth',
-              action: () => { this.allowBluetooth() }
-            },
-          ],
-        },
-      },
-      {
-        header: {
-          color: '--color-bg-pastel-honey-yellow',
-          asset: '/assets/images/welcome-step-3.svg',
-        },
-        content: {
-          template: `
-            <h1 class="font-heading-1--bold">Allow Notifications.</h1>
-            <p>To help you remember your dose schedule and know when medication is at the right temperature, please <strong>enable notifications.</strong> You can customize notifications in the Settings menu.</p>
-          `,
-          actions: [
-            {
-              label: 'Allow Notifications',
-              action: () => { this.allowNotifications() }
-            },
-          ],
-        },
-      },
+    //   {
+    //     header: {
+    //       color: '--color-bg-pastel-green',
+    //       asset: '/assets/images/welcome-step-1.svg',
+    //     },
+    //     content: {
+    //       template: `
+    //         <h1 class="font-heading-1--bold">Let’s get to know each other.</h1>
+    //       `,
+    //       form: {
+    //         group: this.welcomeFormGroup,
+    //         fields: [
+    //           {
+    //             label: 'What’s your name?',
+    //             name: 'name',
+    //             placeholder: 'Name',
+    //             onInput: (event: any) => {
+    //               this._store.dispatch(new fromStore.SetData({
+    //                 name: event.target.value
+    //               }));
+    //             },
+    //           }
+    //         ],
+    //       },
+    //       actions: [
+    //         {
+    //           label: 'Continue',
+    //           action: () => {
+    //             if (this.welcomeFormGroup.get('name')?.valid) {
+    //               this._store.dispatch(new fromSharedStore.TopbarChangeColor('--color-bg-pastel-blue'));
+    //               this.sliderPage.slideNext();
+    //             }
+    //             else {
+    //               this.welcomeFormGroup.get('name')?.markAllAsTouched();
+    //             }
+    //           }
+    //         }
+    //       ],
+    //     },
+    //   },
+    //   {
+    //     header: {
+    //       color: '--color-bg-pastel-blue',
+    //       asset: '/assets/images/welcome-step-2.svg',
+    //     },
+    //     content: {
+    //       hideNavigation: null,
+    //       template: `
+    //         <h1 class="font-heading-1--bold">Let's get connected.</h1>
+    //         <p>To get the most out of your connected autoinjector and enable dose tracking and help with your injection experience, please enable bluetooth.</p>
+    //       `,
+    //       actions: [
+    //         {
+    //           label: 'Allow Bluetooth',
+    //           action: () => { this.allowBluetooth() }
+    //         },
+    //       ],
+    //     },
+    //   },
+    //   {
+    //     header: {
+    //       color: '--color-bg-pastel-honey-yellow',
+    //       asset: '/assets/images/welcome-step-3.svg',
+    //     },
+    //     content: {
+    //       template: `
+    //         <h1 class="font-heading-1--bold">Allow Notifications.</h1>
+    //         <p>To help you remember your dose schedule and know when medication is at the right temperature, please <strong>enable notifications.</strong> You can customize notifications in the Settings menu.</p>
+    //       `,
+    //       actions: [
+    //         {
+    //           label: 'Allow Notifications',
+    //           action: () => { this.allowNotifications() }
+    //         },
+    //       ],
+    //     },
+    //   },
       {
         header: {
           color: '--color-bg-pastel-lime',
@@ -171,6 +170,8 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
             {
               label: 'Continue',
               action: () => {
+                this.allowBluetooth();
+                this.allowNotifications();
                 this._store.dispatch(new fromSharedStore.SliderPageClear);
                 this._store.dispatch(new fromCoreStore.SetWelcomeFlowAsDone);
                 this.goTo('home');
