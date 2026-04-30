@@ -144,7 +144,12 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
           actions: [
             {
               label: 'Allow Notifications',
-              action: () => { this.allowNotifications() }
+              action: () => { 
+                this.allowNotifications();
+                this._store.dispatch(new fromSharedStore.SliderPageClear);
+                this._store.dispatch(new fromCoreStore.SetWelcomeFlowAsDone);
+                this.goTo('home'); 
+                }
             },
           ],
         },

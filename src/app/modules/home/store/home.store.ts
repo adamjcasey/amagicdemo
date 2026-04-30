@@ -17,41 +17,41 @@ export interface HomeState {
 let initialState: HomeState;
 if (environment.production) {
   initialState = {
-    firstTimeDose: true,
+    firstTimeDose: false,
     doses: [
       {
-        marked: false,
-        date: '',
-        bodyPartInjected: '',
+        marked: true,
+        date: new Date(moment.now()),
+        bodyPartInjected: 'bottom-left',
+        notes: null, // { painful: 2, mood: 3, symptoms: ['Redness', 'Itching'], note: 'Custom Note', }
+      },
+      {
+        marked: true,
+        date: new Date(moment().add(1, 'week').calendar()),
+        bodyPartInjected: 'bottom-left',
+        notes: null,
+      },
+      {
+        marked: true,
+        date: new Date(moment().add(2, 'week').calendar()),
+        bodyPartInjected: 'bottom-left',
+        notes: null,
+      },
+      {
+        marked: true,
+        date: new Date(moment().add(3, 'week').calendar()),
+        bodyPartInjected: 'bottom-left',
+        notes: null,
+      },
+      {
+        marked: true,
+        date: new Date(moment().add(5, 'week').calendar()),
+        bodyPartInjected: 'bottom-left',
         notes: null,
       },
       {
         marked: false,
-        date: '',
-        bodyPartInjected: '',
-        notes: null,
-      },
-      {
-        marked: false,
-        date: '',
-        bodyPartInjected: '',
-        notes: null,
-      },
-      {
-        marked: false,
-        date: '',
-        bodyPartInjected: '',
-        notes: null,
-      },
-      {
-        marked: false,
-        date: '',
-        bodyPartInjected: '',
-        notes: null,
-      },
-      {
-        marked: false,
-        date: '',
+        date: new Date(moment().add(7, 'week').calendar()),
         bodyPartInjected: '',
         notes: null,
       }
@@ -100,38 +100,38 @@ if (environment.production) {
 else {
   initialState = {
     // to skip start dose flow set as false
-    firstTimeDose: true,
+    firstTimeDose: false,
     // to skip welcome flow just fill the date of the doses
     // to skip start dose flow just fill body part and marked properties of the doses
     doses: [
       {
-        marked: false,
+        marked: true,
         date: new Date(moment.now()),
-        bodyPartInjected: '',
+        bodyPartInjected: 'bottom-left',
         notes: null, // { painful: 2, mood: 3, symptoms: ['Redness', 'Itching'], note: 'Custom Note', }
       },
       {
-        marked: false,
+        marked: true,
         date: new Date(moment().add(1, 'week').calendar()),
-        bodyPartInjected: '',
+        bodyPartInjected: 'bottom-left',
         notes: null,
       },
       {
-        marked: false,
+        marked: true,
         date: new Date(moment().add(2, 'week').calendar()),
-        bodyPartInjected: '',
+        bodyPartInjected: 'bottom-left',
         notes: null,
       },
       {
-        marked: false,
+        marked: true,
         date: new Date(moment().add(3, 'week').calendar()),
-        bodyPartInjected: '',
+        bodyPartInjected: 'bottom-left',
         notes: null,
       },
       {
-        marked: false,
+        marked: true,
         date: new Date(moment().add(5, 'week').calendar()),
-        bodyPartInjected: '',
+        bodyPartInjected: 'bottom-left',
         notes: null,
       },
       {
