@@ -9,7 +9,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>Automagic Ally</string>
+	<string>[AppName]</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -32,7 +32,7 @@
 		<true/>
 	</dict>
 	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>This will enable "AutoMagic" to find and connect to your Theryx AutoMagic injector to track and help manage your therapy</string>
+	<string>This will enable "[AppName]" to find and connect to your [Therapy] [AppName] injector to track and help manage your therapy</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>bluetooth-central</string>
