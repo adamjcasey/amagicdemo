@@ -146,9 +146,10 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
               label: 'Allow Notifications',
               action: () => { 
                 this.allowNotifications();
-                this._store.dispatch(new fromSharedStore.SliderPageClear);
-                this._store.dispatch(new fromCoreStore.SetWelcomeFlowAsDone);
-                this.goTo('home'); 
+                // this.sliderPage.slideNext();
+                // this._store.dispatch(new fromSharedStore.SliderPageClear);
+                // this._store.dispatch(new fromCoreStore.SetWelcomeFlowAsDone);
+                // this.goTo('home'); 
                 }
             },
           ],
@@ -326,37 +327,41 @@ export class WelcomePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async allowNotifications() {
-    if (this.config.notificationsAllowed) {
-      this.showDosesSelector();
-    }
-    else {
-      if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios') {
-        let permissionStatus = await PushNotifications.checkPermissions();
+    this._store.dispatch(new fromSharedStore.SliderPageClear);
+    this._store.dispatch(new fromCoreStore.SetWelcomeFlowAsDone);
+    this.goTo('home'); 
+    // this.sliderPage.slideNext();
+    // if (this.config.notificationsAllowed) {
+    //   this.showDosesSelector();
+    // }
+    // else {
+    //   if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios') {
+    //     let permissionStatus = await PushNotifications.checkPermissions();
         
-        if (permissionStatus.receive === 'prompt') {
-          permissionStatus = await PushNotifications.requestPermissions();
-        }
+    //     if (permissionStatus.receive === 'prompt') {
+    //       permissionStatus = await PushNotifications.requestPermissions();
+    //     }
   
-        if (permissionStatus.receive !== 'granted') {
-          this._store.dispatch(new fromStore.SetData({
-            notificationsAllowed: false,
-          }));
-          throw new Error('User denied permissions!');
-        }
+    //     if (permissionStatus.receive !== 'granted') {
+    //       this._store.dispatch(new fromStore.SetData({
+    //         notificationsAllowed: false,
+    //       }));
+    //       throw new Error('User denied permissions!');
+    //     }
   
-        if (permissionStatus.receive === 'granted') {
-          this._store.dispatch(new fromStore.SetData({
-            notificationsAllowed: true,
-          }));
-          this.showDosesSelector();
-        }
+    //     if (permissionStatus.receive === 'granted') {
+    //       this._store.dispatch(new fromStore.SetData({
+    //         notificationsAllowed: true,
+    //       }));
+    //       this.showDosesSelector();
+    //     }
   
-        await PushNotifications.register();
-      }
-      else {
-        this.showDosesSelector();
-      }
-    }
+    //     await PushNotifications.register();
+    //   }
+    //   else {
+    //     this.showDosesSelector();
+    //   }
+    // }
   }
 
   showDosesSelector() {
